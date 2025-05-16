@@ -8,7 +8,117 @@
     <script src="https://unpkg.com/@xverse/wallet@0.1.1/dist/umd/index.js"></script>
     <!-- Unisat SDK -->
     <script src="https://unpkg.com/unisat-wallet@1.0.0/dist/unisat.js"></script>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: monospace;
+            margin: 0;
+            padding: 0;
+            background-color: white;
+            color: black;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            border-bottom: 2px solid black;
+        }
+        .game-title {
+            font-size: 36px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        .player-info {
+            text-align: right;
+        }
+        .wallet-connect {
+            border: 2px solid black;
+            padding: 5px;
+            position: relative;
+            cursor: pointer;
+        }
+        .wallet-options {
+            position: absolute;
+            right: 0;
+            background: white;
+            border: 2px solid black;
+            width: 200px;
+            z-index: 10;
+            display: none;
+        }
+        .wallet-option {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .wallet-option:hover {
+            background-color: #f0f0f0;
+        }
+        .game-content {
+            display: flex;
+            margin-top: 20px;
+        }
+        .left-panel {
+            width: 30%;
+            padding-right: 20px;
+        }
+        .right-panel {
+            width: 70%;
+            position: relative;
+        }
+        .adventures-container {
+            position: relative;
+            height: 400px;
+        }
+        .adventure {
+            position: absolute;
+            text-align: center;
+        }
+        .adventure-box {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .green-triangle {
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 100px solid green;
+            position: relative;
+        }
+        .yellow-triangle {
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 100px solid #FFD700;
+            position: relative;
+        }
+        .red-box {
+            width: 100px;
+            height: 60px;
+            background-color: red;
+            position: relative;
+        }
+        .tree-trunk {
+            width: 20px;
+            height: 40px;
+            background-color: #8B4513;
+            position: absolute;
+            bottom: -40px;
+            left: 40px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -20,7 +130,7 @@
             </div>
             <div class="wallet-connect" id="wallet-connect">
                 CONNECT WALLET
-                <div class="wallet-options" id="wallet-options" style="display: none;">
+                <div class="wallet-options" id="wallet-options">
                     <div class="wallet-option" data-wallet="xverse">XVERSE</div>
                     <div class="wallet-option" data-wallet="unisat">UNISAT</div>
                     <div class="wallet-option" data-wallet="magiceden">MAGIC EDEN WALLET</div>
@@ -30,104 +140,14 @@
     </div>
 
     <script>
-        // Game state
-        const gameState = {
-            player: {
-                id: Math.floor(Math.random() * 100000),
-                pv: 0,
-                gold: 0,
-                punks: 0,
-                connected: false,
-                wallet: null,
-                address: null
-            }
-        };
+        window.onload = () => {
+            const walletConnectBtn = document.getElementById('wallet-connect');
+            const walletOptions = document.getElementById('wallet-options');
 
-        // DOM Elements
-        const playerIdEl = document.getElementById('player-id');
-        const pvAmountEl = document.getElementById('pv-amount');
-        const goldAmountEl = document.getElementById('gold-amount');
-        const walletConnectBtn = document.getElementById('wallet-connect');
-        const walletOptions = document.getElementById('wallet-options');
-
-        // Initialize game
-        function initGame() {
-            updateUI();
-
-            // Wallet connect button click
             walletConnectBtn.addEventListener('click', () => {
                 walletOptions.style.display = walletOptions.style.display === 'none' ? 'block' : 'none';
             });
-
-            // Wallet options click
-            document.querySelectorAll('.wallet-option').forEach(option => {
-                option.addEventListener('click', () => {
-                    connectWallet(option.dataset.wallet);
-                    walletOptions.style.display = 'none';
-                });
-            });
         }
-
-        // Update UI elements based on game state
-        function updateUI() {
-            playerIdEl.textContent = gameState.player.id;
-            pvAmountEl.textContent = gameState.player.pv;
-            goldAmountEl.textContent = gameState.player.gold;
-
-            if (gameState.player.connected) {
-                walletConnectBtn.textContent = gameState.player.wallet.toUpperCase() + ' CONNECTED';
-            } else {
-                walletConnectBtn.textContent = 'CONNECT WALLET';
-            }
-        }
-
-        // Connect wallet function
-        async function connectWallet(walletType) {
-            try {
-                let address = '';
-                let punks = 0;
-
-                if (walletType === 'xverse') {
-                    if (typeof XverseWallet !== 'undefined') {
-                        address = await XverseWallet.getAddress();
-                        punks = 3; // Simulated NFTs
-                    } else {
-                        alert('Xverse wallet not detected. Please install the Xverse extension.');
-                        window.open('https://www.xverse.app/download', '_blank');
-                        return;
-                    }
-                } else if (walletType === 'unisat') {
-                    if (typeof window.unisat !== 'undefined') {
-                        const accounts = await window.unisat.requestAccounts();
-                        address = accounts[0];
-                        punks = 3; // Simulated NFTs
-                    } else {
-                        alert('Unisat wallet not detected. Please install the Unisat extension.');
-                        window.open('https://unisat.io/download', '_blank');
-                        return;
-                    }
-                } else if (walletType === 'magiceden') {
-                    alert('Magic Eden wallet integration coming soon!');
-                    return;
-                }
-
-                gameState.player.connected = true;
-                gameState.player.wallet = walletType;
-                gameState.player.address = address;
-                gameState.player.punks = punks;
-                gameState.player.pv = 260; // Starting balance
-                gameState.player.gold = 1; // Starting gold
-
-                updateUI();
-                alert(`${walletType.toUpperCase()} wallet connected successfully!`);
-            } catch (error) {
-                console.error('Wallet connection error:', error);
-                alert('Error connecting wallet. Please try again.');
-            }
-        }
-
-        // Initialize game on page load
-        window.onload = initGame;
     </script>
 </body>
 </html>
