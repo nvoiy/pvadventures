@@ -69,7 +69,7 @@
         .player-stats .wallet-address {
             font-size: 0.8em;
             color: var(--connected-color);
-            word-break: break-all; /* To prevent long addresses from breaking layout */
+            word-break: break-all;
         }
 
 
@@ -84,7 +84,7 @@
             cursor: pointer;
             font-family: 'VT323', monospace;
             font-size: 1em;
-            min-width: 150px; /* Give button some base width */
+            min-width: 150px;
             text-align: center;
         }
         .connect-wallet-btn:hover, .menu-button:hover, .social-btn:hover {
@@ -420,12 +420,13 @@
         const walletOptions = walletDropdown.querySelectorAll('li');
         const walletAddressDisplay = document.getElementById('walletAddressDisplay');
 
-        let connectedAccount = null; // To store the connected account address
+        let connectedAccount = null;
+        let connectedWalletType = null; // To remember which wallet is connected
 
-        function updateButtonAndDisplay(account) {
+        function updateButtonAndDisplay(account, walletName = '') {
             if (account) {
                 const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
-                connectWalletBtn.textContent = `CONNECTED: ${shortAddress}`;
+                connectWalletBtn.textContent = `${walletName}: ${shortAddress}`;
                 connectWalletBtn.classList.add('connected');
                 walletAddressDisplay.textContent = `Wallet: ${account}`;
             } else {
@@ -435,16 +436,9 @@
             }
         }
 
-
         connectWalletBtn.addEventListener('click', (event) => {
             event.stopPropagation();
-            if (connectedAccount) { // If already connected, clicking might disconnect or show options
-                console.log("Already connected with:", connectedAccount);
-                // Potentially add disconnect logic here or just keep dropdown for switching
-                 walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block';
-            } else {
-                walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block';
-            }
+            walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block';
         });
 
         document.addEventListener('click', (event) => {
@@ -453,92 +447,110 @@
             }
         });
 
+        // --- Xverse Connection ---
+        // Xverse is best used with Sats Connect. For direct provider:
+        // Their injected provider is `window.XverseProviders.BitcoinProvider`.
+        // It uses a specific `getAddress` method structure.
         async function connectXverse() {
             try {
-                if (typeof window.XverseProviders !== 'undefined' && typeof window.XverseProviders.BitcoinProvider !== 'undefined') {
-                    // Using a common pattern found with Sats Connect for Xverse
-                    // This is a simplified getAddress call.
-                    // Real Xverse integration via their SDK or Sats Connect might have different parameters.
+                if (typeof XverseProviders !== 'undefined' && XverseProviders.BitcoinProvider) {
                     const getAddressOptions = {
                         payload: {
-                            purposes: ['payment', 'ordinals'], // Request both payment and ordinals addresses
-                            message: 'Connect to Punk Voyage Adventures',
-                            network: {
-                                type: 'Mainnet' // or 'Testnet'
-                            },
+                            purposes: ['ordinals', 'payment'],
+                            message: 'Connect to Punk Voyage Adventures (Xverse)',
+                            network: { type: 'Mainnet' }, // or 'Testnet'
                         },
                         onFinish: (response) => {
                             // response.addresses is an array of address objects
-                            // { purpose: 'payment', address: '...', publicKey: '...' }
-                            // { purpose: 'ordinals', address: '...', publicKey: '...' }
-                            const ordinalsAddress = response.addresses.find(addr => addr.purpose === 'ordinals');
-                            const paymentAddress = response.addresses.find(addr => addr.purpose === 'payment');
+                            const ordinalsAddressInfo = response.addresses.find(addr => addr.purpose === 'ordinals');
+                            const paymentAddressInfo = response.addresses.find(addr => addr.purpose === 'payment');
                             
-                            if (ordinalsAddress) {
-                                connectedAccount = ordinalsAddress.address;
-                                console.log('Xverse Ordinals Address:', connectedAccount);
-                            } else if (paymentAddress) {
-                                connectedAccount = paymentAddress.address;
-                                console.log('Xverse Payment Address:', connectedAccount);
-                            } else {
-                                console.error('Xverse: No suitable address found.');
-                                alert('Xverse: Could not get a suitable address.');
-                                return;
+                            let addressToUse = null;
+                            if (ordinalsAddressInfo) {
+                                addressToUse = ordinalsAddressInfo.address;
+                            } else if (paymentAddressInfo) {
+                                addressToUse = paymentAddressInfo.address; // Fallback to payment
                             }
-                            updateButtonAndDisplay(connectedAccount);
-                            alert(`Xverse Connected: ${connectedAccount}`);
+
+                            if (addressToUse) {
+                                connectedAccount = addressToUse;
+                                connectedWalletType = 'Xverse';
+                                updateButtonAndDisplay(connectedAccount, 'Xverse');
+                                console.log('Xverse Connected:', connectedAccount);
+                                alert(`Xverse Connected: ${connectedAccount}`);
+                            } else {
+                                console.error('Xverse: No suitable address found in response.');
+                                alert('Xverse: Could not retrieve a suitable address.');
+                            }
                         },
                         onCancel: () => {
                             alert('Xverse connection request canceled.');
                             console.log('Xverse connection request canceled.');
                         },
                     };
-                    // This is how Sats Connect often invokes, Xverse's direct provider might be different
-                    // For a more direct Xverse provider, you might need to instantiate or call methods on window.XverseProviders.BitcoinProvider
-                    // This part is highly dependent on Xverse's specific vanilla JS API for their injected provider.
-                    // The most reliable way for Xverse is often via a library like Sats Connect.
-                    // For direct injection, it might look something like this (THIS IS A GUESS without their direct vanilla JS docs for injection):
-                    // const provider = new window.XverseProviders.BitcoinProvider();
-                    // await provider.connect(); // or similar method
-                    // For now, we simulate the onFinish callback as if a library handled it:
-                     alert('Xverse: Please ensure you have Xverse and it is set up. This mock uses a simplified connection flow. Sats Connect library is recommended for robust Xverse integration.');
-                     // Simulate successful connection for UI testing if direct API is unknown
-                     // getAddressOptions.onFinish({ addresses: [{ purpose: 'ordinals', address: 'xverse_test_address_123...' }] });
-                     console.warn("Xverse connection is simplified. Direct `window.XverseProviders.BitcoinProvider` usage needs specific API calls not fully detailed here. Consider Sats Connect.");
-
+                    // The Xverse provider's `getAddress` method is what Sats Connect typically calls.
+                    // This assumes `XverseProviders.BitcoinProvider.getAddress` is available statically or on an instance.
+                    // Usually, you'd get an instance of the provider first.
+                    // However, the global `getAddress` for Xverse (often from their SDK or a global registration) is the most cited way.
+                    // Let's try invoking it if available. This is the pattern most visible in Xverse's own examples for connecting.
+                    if (typeof getAddress === 'function' && getAddress.toString().includes("Xverse")) { // Heuristic check
+                         getAddress(getAddressOptions); // Call the global getAddress often provided by Xverse SDK/adapter
+                    } else if (XverseProviders?.BitcoinProvider?.getAddress) { // Check static method
+                        XverseProviders.BitcoinProvider.getAddress(getAddressOptions);
+                    }
+                    else {
+                        // Fallback: This is a simplified call, actual Xverse provider might need instantiation or specific calls
+                        // For a more direct use of window.XverseProviders.BitcoinProvider, it would typically be:
+                        // const xverseProvider = new XverseProviders.BitcoinProvider();
+                        // And then a method on xverseProvider.
+                        // However, their examples often show a global `getAddress` or one from an adapter.
+                        console.warn("Xverse direct connection method is complex without their full SDK or Sats Connect. Trying a common pattern.");
+                        alert("Xverse wallet found, but direct connection pattern is tricky. Sats Connect is recommended. This is a best-effort attempt.");
+                        // Attempting to manually trigger if the structure is known
+                        // This part is highly speculative without their exact vanilla JS provider docs.
+                        // If you have `window.btc?.request('getAddresses', getAddressOptions)` or similar, that would be it.
+                        // For now, we'll rely on the `getAddress` if it's globally available or on BitcoinProvider.
+                         if (typeof XverseProviders.BitcoinProvider.getAddress !== 'function') {
+                            alert('Xverse: getAddress function not found on BitcoinProvider. Please use Sats Connect or check Xverse SDK.');
+                         }
+                    }
                 } else {
-                    alert('Xverse Wallet extension not found. Please install it.');
+                    alert('Xverse Wallet extension not found or not initialized. Please install it.');
                     window.open('https://www.xverse.app/', '_blank');
                 }
             } catch (error) {
                 console.error('Xverse connection error:', error);
-                alert('Xverse connection failed: ' + error.message);
+                alert(`Xverse connection failed: ${error.message || error}`);
             }
         }
 
+
+        // --- UniSat Connection (Working Well) ---
         async function connectUnisat() {
             try {
                 if (typeof window.unisat !== 'undefined') {
                     const accounts = await window.unisat.requestAccounts();
                     if (accounts && accounts.length > 0) {
                         connectedAccount = accounts[0];
-                        updateButtonAndDisplay(connectedAccount);
+                        connectedWalletType = 'UniSat';
+                        updateButtonAndDisplay(connectedAccount, 'UniSat');
                         console.log('UniSat Connected:', connectedAccount);
                         alert(`UniSat Connected: ${connectedAccount}`);
 
-                        // You can also listen for account changes
                         window.unisat.on('accountsChanged', (newAccounts) => {
-                            if (newAccounts && newAccounts.length > 0) {
-                                connectedAccount = newAccounts[0];
-                                updateButtonAndDisplay(connectedAccount);
-                                console.log('UniSat account changed to:', connectedAccount);
-                            } else {
-                                connectedAccount = null;
-                                updateButtonAndDisplay(null);
-                                console.log('UniSat disconnected or no accounts.');
+                            if (connectedWalletType === 'UniSat') { // Only update if UniSat was the active wallet
+                                if (newAccounts && newAccounts.length > 0) {
+                                    connectedAccount = newAccounts[0];
+                                    updateButtonAndDisplay(connectedAccount, 'UniSat');
+                                    console.log('UniSat account changed to:', connectedAccount);
+                                } else {
+                                    connectedAccount = null;
+                                    connectedWalletType = null;
+                                    updateButtonAndDisplay(null);
+                                    console.log('UniSat disconnected or no accounts.');
+                                }
                             }
                         });
-
                     } else {
                         alert('UniSat: No accounts found or permission denied.');
                     }
@@ -548,79 +560,89 @@
                 }
             } catch (error) {
                 console.error('UniSat connection error:', error);
-                alert('UniSat connection failed: ' + (error.message || error));
+                alert(`UniSat connection failed: ${error.message || error}`);
             }
         }
 
+        // --- Magic Eden Wallet Connection ---
+        // Magic Eden Bitcoin Wallet aims for Sats Connect compatibility and Bitcoin Wallet Standard.
+        // It likely injects `window.magicEden.bitcoin` and might support `requestAccounts` or a `getAddress` like structure.
         async function connectMagicEden() {
             try {
-                // Magic Eden's Bitcoin wallet often injects as window.magicEden.bitcoin
-                // or can be compatible with generic BitcoinProvider (window.BitcoinProvider)
-                // or via Sats Connect
                 if (typeof window.magicEden !== 'undefined' && typeof window.magicEden.bitcoin !== 'undefined') {
-                    const meBitcoinProvider = window.magicEden.bitcoin;
-                    // The Magic Eden Bitcoin provider API might be similar to Sats Connect getAddress
-                    // Or it might have its own `requestAccounts` or `connect` method.
-                    // Based on docs [7, 8], it aligns with Sats Connect.
+                    const meProvider = window.magicEden.bitcoin;
+
+                    // Attempt 1: `requestAccounts()` - a common standard
+                    if (typeof meProvider.requestAccounts === 'function') {
+                        const accounts = await meProvider.requestAccounts();
+                        if (accounts && accounts.length > 0) {
+                            connectedAccount = accounts[0]; // Assuming the first account is the primary one
+                            connectedWalletType = 'Magic Eden';
+                            updateButtonAndDisplay(connectedAccount, 'Magic Eden');
+                            console.log('Magic Eden Wallet Connected (via requestAccounts):', connectedAccount);
+                            alert(`Magic Eden Wallet Connected: ${connectedAccount}`);
+                            // TODO: Listen for account changes if API provides it
+                            return;
+                        }
+                    }
                     
-                    // We'll attempt a getAddress-like call, common in the Bitcoin wallet ecosystem
-                    // This is a simplified interpretation for direct provider access
+                    // Attempt 2: Sats Connect `getAddress` pattern, if `requestAccounts` is not available or fails
+                    // This is based on their compatibility statements.
                     const getAddressOptions = {
                         payload: {
                             purposes: ['ordinals', 'payment'],
-                            message: 'Connect to Punk Voyage Adventures via Magic Eden Wallet',
+                            message: 'Connect to Punk Voyage Adventures (Magic Eden)',
                             network: { type: 'Mainnet' },
                         },
                         onFinish: (response) => {
-                            const ordinalsAddress = response.addresses.find(addr => addr.purpose === 'ordinals');
-                            const paymentAddress = response.addresses.find(addr => addr.purpose === 'payment');
-                            
-                            if (ordinalsAddress) {
-                                connectedAccount = ordinalsAddress.address;
-                            } else if (paymentAddress) {
-                                connectedAccount = paymentAddress.address;
+                            const ordinalsAddressInfo = response.addresses.find(addr => addr.purpose === 'ordinals');
+                            const paymentAddressInfo = response.addresses.find(addr => addr.purpose === 'payment');
+                            let addressToUse = null;
+
+                            if (ordinalsAddressInfo) addressToUse = ordinalsAddressInfo.address;
+                            else if (paymentAddressInfo) addressToUse = paymentAddressInfo.address;
+
+                            if (addressToUse) {
+                                connectedAccount = addressToUse;
+                                connectedWalletType = 'Magic Eden';
+                                updateButtonAndDisplay(connectedAccount, 'Magic Eden');
+                                console.log('Magic Eden Wallet Connected (via getAddress pattern):', connectedAccount);
+                                alert(`Magic Eden Wallet Connected: ${connectedAccount}`);
                             } else {
                                 alert('Magic Eden Wallet: No suitable address found.');
-                                return;
                             }
-                            updateButtonAndDisplay(connectedAccount);
-                            alert(`Magic Eden Wallet Connected: ${connectedAccount}`);
-                            console.log('Magic Eden Wallet Connected:', connectedAccount);
                         },
                         onCancel: () => {
                             alert('Magic Eden Wallet connection request canceled.');
                         },
                     };
 
-                    // The actual method to call on `meBitcoinProvider` needs to be confirmed from their specific injected provider docs.
-                    // It might be `meBitcoinProvider.request({ method: 'getAddresses', params: ... })` or similar.
-                    // For now, we'll show an alert and simulate for UI.
-                    if (typeof meBitcoinProvider.request === 'function' || typeof meBitcoinProvider.getAddresses === 'function') {
-                        // This is a conceptual call structure. The exact method and parameters may vary.
-                        // E.g., if it follows a request pattern:
-                        // const response = await meBitcoinProvider.request({ method: 'getAddresses', params: getAddressOptions.payload });
-                        // getAddressOptions.onFinish(response);
-                        alert("Magic Eden Bitcoin Wallet detected. Connection logic is conceptual. Please refer to official ME Bitcoin Wallet docs for direct provider API.");
-                        // Simulate for UI
-                        // getAddressOptions.onFinish({ addresses: [{ purpose: 'ordinals', address: 'me_test_address_789...' }] });
-
+                    if (typeof meProvider.getAddress === 'function') { // Check if provider has getAddress directly
+                        meProvider.getAddress(getAddressOptions);
+                    } else if (typeof meProvider.request === 'function') {
+                        // Some providers might use a generic request method for this:
+                        // const response = await meProvider.request({ method: 'getAddresses', params: getAddressOptions.payload });
+                        // getAddressOptions.onFinish(response); 
+                        // This is more complex to implement without knowing the exact response structure.
+                        alert("Magic Eden Wallet: `requestAccounts` not found. It might use a different method or `getAddress` structure. The `getAddress` pattern will be attempted if available. Full functionality may require their specific SDK or Sats Connect.");
+                        console.warn("Magic Eden: Trying getAddress pattern after requestAccounts failed/absent.");
+                         // Fallback to trying a generic getAddress if it exists on window (less likely for ME specific)
+                        if (typeof getAddress === 'function' && getAddress !== window.unisat?.getAddress) { // Ensure it's not UniSat's
+                            getAddress(getAddressOptions); // Very speculative global getAddress
+                        } else {
+                             alert('Magic Eden Wallet: Could not determine connection method. Please check console or use Sats Connect.');
+                        }
                     } else {
-                         alert("Magic Eden Bitcoin Wallet detected, but connection method is unclear for direct vanilla JS. Consider using Sats Connect or check their specific developer docs.");
+                        alert('Magic Eden Wallet: Neither `requestAccounts` nor `getAddress` seems available on the provider. Please check their developer documentation.');
                     }
-                     console.warn("Magic Eden Wallet connection is simplified. Direct provider usage needs specific API calls. Consider Sats Connect or official ME Bitcoin Wallet docs.");
 
-
-                } else if (typeof window.BitcoinProvider !== 'undefined') {
-                    // Fallback if it registered as a generic BitcoinProvider
-                    alert('Generic BitcoinProvider detected (could be Magic Eden). Connection via this route is not specifically implemented. Try selecting Magic Eden again or ensure the ME specific provider is active.');
-                }
-                else {
+                } else {
                     alert('Magic Eden Bitcoin Wallet extension not found. Please install it.');
-                    window.open('https://wallet.magiceden.io/', '_blank'); // Link to their wallet page
+                    window.open('https://wallet.magiceden.io/', '_blank');
                 }
             } catch (error) {
                 console.error('Magic Eden Wallet connection error:', error);
-                alert('Magic Eden Wallet connection failed: ' + error.message);
+                alert(`Magic Eden Wallet connection failed: ${error.message || error}`);
             }
         }
 
@@ -631,10 +653,12 @@
                 walletDropdown.style.display = 'none';
 
                 console.log('Attempting to connect with:', walletType);
-
-                // Disconnect previous before connecting new, or handle as an update
-                connectedAccount = null; 
+                
+                // Reset connection state before attempting a new one
+                connectedAccount = null;
+                connectedWalletType = null;
                 updateButtonAndDisplay(null);
+
 
                 if (walletType === 'xverse') {
                     await connectXverse();
