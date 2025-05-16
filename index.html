@@ -15,6 +15,7 @@
             --button-bg: #E0E0E0;
             --button-border: #000000;
             --danger-color: #FF0000;
+            --connected-color: #4CAF50;
         }
 
         body {
@@ -65,6 +66,11 @@
         }
         .player-stats .pv { color: var(--highlight-color); }
         .player-stats .gold { color: var(--gold-color); }
+        .player-stats .wallet-address {
+            font-size: 0.8em;
+            color: var(--connected-color);
+            word-break: break-all; /* To prevent long addresses from breaking layout */
+        }
 
 
         .wallet-connector {
@@ -78,10 +84,18 @@
             cursor: pointer;
             font-family: 'VT323', monospace;
             font-size: 1em;
+            min-width: 150px; /* Give button some base width */
+            text-align: center;
         }
         .connect-wallet-btn:hover, .menu-button:hover, .social-btn:hover {
             background-color: #cccccc;
         }
+        .connect-wallet-btn.connected {
+            background-color: var(--connected-color);
+            color: white;
+            border-color: var(--connected-color);
+        }
+
 
         .wallet-dropdown {
             display: none;
@@ -119,6 +133,7 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            flex-shrink: 0;
         }
 
         .wallet-summary, .adventurer-setup, .items-info, .main-menu-nav, .socials-nav {
@@ -270,15 +285,15 @@
         }
 
         .adventure-icon.tree {
-            background-image: url('input_file_0.png'); /* Ensure this path is correct */
+            background-image: url('input_file_0.png');
         }
 
         .adventure-icon.mountain {
-            background-image: url('input_file_1.png'); /* Ensure this path is correct */
+            background-image: url('input_file_1.png');
         }
 
         .adventure-icon.fire-fields {
-            background-image: url('input_file_2.png'); /* Ensure this path is correct */
+            background-image: url('input_file_2.png');
         }
 
         .adventure-details {
@@ -298,16 +313,17 @@
         <header>
             <h1>PUNK VOYAGE ADVENTURES</h1>
             <div class="player-info-wallet">
-                <div class="player-stats">
+                <div class="player-stats" id="playerStats">
                     PLAYER 37365, WELCOME<br>
                     <span class="pv">PV = 260</span> , <span class="gold">GOLD = 1</span>
+                    <div class="wallet-address" id="walletAddressDisplay"></div>
                 </div>
                 <div class="wallet-connector">
                     <button class="connect-wallet-btn" id="connectWalletBtn">CONNECT WALLET</button>
                     <ul class="wallet-dropdown" id="walletDropdown">
-                        <li>XVERSE</li>
-                        <li>UNISAT</li>
-                        <li>MAGIC EDEN WALLET</li>
+                        <li data-wallet="xverse">XVERSE</li>
+                        <li data-wallet="unisat">UNISAT</li>
+                        <li data-wallet="magiceden">MAGIC EDEN WALLET</li>
                     </ul>
                 </div>
             </div>
@@ -401,43 +417,247 @@
     <script>
         const connectWalletBtn = document.getElementById('connectWalletBtn');
         const walletDropdown = document.getElementById('walletDropdown');
-        const walletOptions = walletDropdown.querySelectorAll('li'); // Get all wallet list items
+        const walletOptions = walletDropdown.querySelectorAll('li');
+        const walletAddressDisplay = document.getElementById('walletAddressDisplay');
+
+        let connectedAccount = null; // To store the connected account address
+
+        function updateButtonAndDisplay(account) {
+            if (account) {
+                const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
+                connectWalletBtn.textContent = `CONNECTED: ${shortAddress}`;
+                connectWalletBtn.classList.add('connected');
+                walletAddressDisplay.textContent = `Wallet: ${account}`;
+            } else {
+                connectWalletBtn.textContent = 'CONNECT WALLET';
+                connectWalletBtn.classList.remove('connected');
+                walletAddressDisplay.textContent = '';
+            }
+        }
+
 
         connectWalletBtn.addEventListener('click', (event) => {
-            event.stopPropagation(); // Prevent click from immediately closing if already open
-            walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block';
+            event.stopPropagation();
+            if (connectedAccount) { // If already connected, clicking might disconnect or show options
+                console.log("Already connected with:", connectedAccount);
+                // Potentially add disconnect logic here or just keep dropdown for switching
+                 walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block';
+            } else {
+                walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block';
+            }
         });
 
-        // Close dropdown if clicked outside
         document.addEventListener('click', (event) => {
             if (!connectWalletBtn.contains(event.target) && !walletDropdown.contains(event.target)) {
                 walletDropdown.style.display = 'none';
             }
         });
 
-        // Add event listeners to each wallet option
+        async function connectXverse() {
+            try {
+                if (typeof window.XverseProviders !== 'undefined' && typeof window.XverseProviders.BitcoinProvider !== 'undefined') {
+                    // Using a common pattern found with Sats Connect for Xverse
+                    // This is a simplified getAddress call.
+                    // Real Xverse integration via their SDK or Sats Connect might have different parameters.
+                    const getAddressOptions = {
+                        payload: {
+                            purposes: ['payment', 'ordinals'], // Request both payment and ordinals addresses
+                            message: 'Connect to Punk Voyage Adventures',
+                            network: {
+                                type: 'Mainnet' // or 'Testnet'
+                            },
+                        },
+                        onFinish: (response) => {
+                            // response.addresses is an array of address objects
+                            // { purpose: 'payment', address: '...', publicKey: '...' }
+                            // { purpose: 'ordinals', address: '...', publicKey: '...' }
+                            const ordinalsAddress = response.addresses.find(addr => addr.purpose === 'ordinals');
+                            const paymentAddress = response.addresses.find(addr => addr.purpose === 'payment');
+                            
+                            if (ordinalsAddress) {
+                                connectedAccount = ordinalsAddress.address;
+                                console.log('Xverse Ordinals Address:', connectedAccount);
+                            } else if (paymentAddress) {
+                                connectedAccount = paymentAddress.address;
+                                console.log('Xverse Payment Address:', connectedAccount);
+                            } else {
+                                console.error('Xverse: No suitable address found.');
+                                alert('Xverse: Could not get a suitable address.');
+                                return;
+                            }
+                            updateButtonAndDisplay(connectedAccount);
+                            alert(`Xverse Connected: ${connectedAccount}`);
+                        },
+                        onCancel: () => {
+                            alert('Xverse connection request canceled.');
+                            console.log('Xverse connection request canceled.');
+                        },
+                    };
+                    // This is how Sats Connect often invokes, Xverse's direct provider might be different
+                    // For a more direct Xverse provider, you might need to instantiate or call methods on window.XverseProviders.BitcoinProvider
+                    // This part is highly dependent on Xverse's specific vanilla JS API for their injected provider.
+                    // The most reliable way for Xverse is often via a library like Sats Connect.
+                    // For direct injection, it might look something like this (THIS IS A GUESS without their direct vanilla JS docs for injection):
+                    // const provider = new window.XverseProviders.BitcoinProvider();
+                    // await provider.connect(); // or similar method
+                    // For now, we simulate the onFinish callback as if a library handled it:
+                     alert('Xverse: Please ensure you have Xverse and it is set up. This mock uses a simplified connection flow. Sats Connect library is recommended for robust Xverse integration.');
+                     // Simulate successful connection for UI testing if direct API is unknown
+                     // getAddressOptions.onFinish({ addresses: [{ purpose: 'ordinals', address: 'xverse_test_address_123...' }] });
+                     console.warn("Xverse connection is simplified. Direct `window.XverseProviders.BitcoinProvider` usage needs specific API calls not fully detailed here. Consider Sats Connect.");
+
+                } else {
+                    alert('Xverse Wallet extension not found. Please install it.');
+                    window.open('https://www.xverse.app/', '_blank');
+                }
+            } catch (error) {
+                console.error('Xverse connection error:', error);
+                alert('Xverse connection failed: ' + error.message);
+            }
+        }
+
+        async function connectUnisat() {
+            try {
+                if (typeof window.unisat !== 'undefined') {
+                    const accounts = await window.unisat.requestAccounts();
+                    if (accounts && accounts.length > 0) {
+                        connectedAccount = accounts[0];
+                        updateButtonAndDisplay(connectedAccount);
+                        console.log('UniSat Connected:', connectedAccount);
+                        alert(`UniSat Connected: ${connectedAccount}`);
+
+                        // You can also listen for account changes
+                        window.unisat.on('accountsChanged', (newAccounts) => {
+                            if (newAccounts && newAccounts.length > 0) {
+                                connectedAccount = newAccounts[0];
+                                updateButtonAndDisplay(connectedAccount);
+                                console.log('UniSat account changed to:', connectedAccount);
+                            } else {
+                                connectedAccount = null;
+                                updateButtonAndDisplay(null);
+                                console.log('UniSat disconnected or no accounts.');
+                            }
+                        });
+
+                    } else {
+                        alert('UniSat: No accounts found or permission denied.');
+                    }
+                } else {
+                    alert('UniSat Wallet extension not found. Please install it.');
+                    window.open('https://unisat.io/', '_blank');
+                }
+            } catch (error) {
+                console.error('UniSat connection error:', error);
+                alert('UniSat connection failed: ' + (error.message || error));
+            }
+        }
+
+        async function connectMagicEden() {
+            try {
+                // Magic Eden's Bitcoin wallet often injects as window.magicEden.bitcoin
+                // or can be compatible with generic BitcoinProvider (window.BitcoinProvider)
+                // or via Sats Connect
+                if (typeof window.magicEden !== 'undefined' && typeof window.magicEden.bitcoin !== 'undefined') {
+                    const meBitcoinProvider = window.magicEden.bitcoin;
+                    // The Magic Eden Bitcoin provider API might be similar to Sats Connect getAddress
+                    // Or it might have its own `requestAccounts` or `connect` method.
+                    // Based on docs [7, 8], it aligns with Sats Connect.
+                    
+                    // We'll attempt a getAddress-like call, common in the Bitcoin wallet ecosystem
+                    // This is a simplified interpretation for direct provider access
+                    const getAddressOptions = {
+                        payload: {
+                            purposes: ['ordinals', 'payment'],
+                            message: 'Connect to Punk Voyage Adventures via Magic Eden Wallet',
+                            network: { type: 'Mainnet' },
+                        },
+                        onFinish: (response) => {
+                            const ordinalsAddress = response.addresses.find(addr => addr.purpose === 'ordinals');
+                            const paymentAddress = response.addresses.find(addr => addr.purpose === 'payment');
+                            
+                            if (ordinalsAddress) {
+                                connectedAccount = ordinalsAddress.address;
+                            } else if (paymentAddress) {
+                                connectedAccount = paymentAddress.address;
+                            } else {
+                                alert('Magic Eden Wallet: No suitable address found.');
+                                return;
+                            }
+                            updateButtonAndDisplay(connectedAccount);
+                            alert(`Magic Eden Wallet Connected: ${connectedAccount}`);
+                            console.log('Magic Eden Wallet Connected:', connectedAccount);
+                        },
+                        onCancel: () => {
+                            alert('Magic Eden Wallet connection request canceled.');
+                        },
+                    };
+
+                    // The actual method to call on `meBitcoinProvider` needs to be confirmed from their specific injected provider docs.
+                    // It might be `meBitcoinProvider.request({ method: 'getAddresses', params: ... })` or similar.
+                    // For now, we'll show an alert and simulate for UI.
+                    if (typeof meBitcoinProvider.request === 'function' || typeof meBitcoinProvider.getAddresses === 'function') {
+                        // This is a conceptual call structure. The exact method and parameters may vary.
+                        // E.g., if it follows a request pattern:
+                        // const response = await meBitcoinProvider.request({ method: 'getAddresses', params: getAddressOptions.payload });
+                        // getAddressOptions.onFinish(response);
+                        alert("Magic Eden Bitcoin Wallet detected. Connection logic is conceptual. Please refer to official ME Bitcoin Wallet docs for direct provider API.");
+                        // Simulate for UI
+                        // getAddressOptions.onFinish({ addresses: [{ purpose: 'ordinals', address: 'me_test_address_789...' }] });
+
+                    } else {
+                         alert("Magic Eden Bitcoin Wallet detected, but connection method is unclear for direct vanilla JS. Consider using Sats Connect or check their specific developer docs.");
+                    }
+                     console.warn("Magic Eden Wallet connection is simplified. Direct provider usage needs specific API calls. Consider Sats Connect or official ME Bitcoin Wallet docs.");
+
+
+                } else if (typeof window.BitcoinProvider !== 'undefined') {
+                    // Fallback if it registered as a generic BitcoinProvider
+                    alert('Generic BitcoinProvider detected (could be Magic Eden). Connection via this route is not specifically implemented. Try selecting Magic Eden again or ensure the ME specific provider is active.');
+                }
+                else {
+                    alert('Magic Eden Bitcoin Wallet extension not found. Please install it.');
+                    window.open('https://wallet.magiceden.io/', '_blank'); // Link to their wallet page
+                }
+            } catch (error) {
+                console.error('Magic Eden Wallet connection error:', error);
+                alert('Magic Eden Wallet connection failed: ' + error.message);
+            }
+        }
+
+
         walletOptions.forEach(option => {
-            option.addEventListener('click', (event) => {
-                const selectedWallet = event.target.textContent;
-                console.log('Attempting to connect with:', selectedWallet);
-                alert('Connecting with ' + selectedWallet + '...'); // Replace with actual wallet connection logic
-                walletDropdown.style.display = 'none'; // Close dropdown after selection
+            option.addEventListener('click', async (event) => {
+                const walletType = event.target.dataset.wallet;
+                walletDropdown.style.display = 'none';
+
+                console.log('Attempting to connect with:', walletType);
+
+                // Disconnect previous before connecting new, or handle as an update
+                connectedAccount = null; 
+                updateButtonAndDisplay(null);
+
+                if (walletType === 'xverse') {
+                    await connectXverse();
+                } else if (walletType === 'unisat') {
+                    await connectUnisat();
+                } else if (walletType === 'magiceden') {
+                    await connectMagicEden();
+                } else {
+                    alert('Unknown wallet type selected.');
+                }
             });
         });
 
-        // Handle selection for adventurer numbers
+        // --- Other UI event listeners (unchanged) ---
         const numAdventurersContainer = document.getElementById('numAdventurersContainer');
         numAdventurersContainer.addEventListener('click', (event) => {
             if (event.target.classList.contains('selection-box')) {
-                // Remove active class from siblings
                 Array.from(numAdventurersContainer.children).forEach(child => child.classList.remove('active'));
-                // Add active class to clicked item
                 event.target.classList.add('active');
                 console.log('Number of Adventurers:', event.target.dataset.value);
             }
         });
 
-        // Handle selection for send to adventure
         const sendToAdventureContainer = document.getElementById('sendToAdventureContainer');
         sendToAdventureContainer.addEventListener('click', (event) => {
             if (event.target.classList.contains('adventure-option')) {
