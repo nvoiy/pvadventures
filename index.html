@@ -109,8 +109,7 @@
             list-style: none;
             padding: 0;
             margin: 5px 0 0 0;
-            /* width: max-content; - let button width dictate */
-            width: 100%; /* Match button width */
+            width: 100%; 
             z-index: 10;
         }
 
@@ -118,7 +117,7 @@
             padding: 8px 12px;
             cursor: pointer;
             border-bottom: 1px solid var(--border-color);
-            text-align: center; /* Center text in dropdown */
+            text-align: center;
         }
         .wallet-dropdown li:last-child {
             border-bottom: none;
@@ -325,12 +324,10 @@
                 <div class="wallet-connector">
                     <button class="connect-wallet-btn" id="connectWalletBtn">CONNECT WALLET</button>
                     <ul class="wallet-dropdown" id="walletDropdown">
-                        <!-- We can simplify the dropdown if Sats Connect handles wallet selection -->
-                        <!-- Or keep them to pre-filter, though Sats Connect will show its own UI -->
                         <li data-wallet="satsconnect_xverse">XVERSE (via SatsConnect)</li>
                         <li data-wallet="unisat">UNISAT (Direct)</li>
                         <li data-wallet="satsconnect_magiceden">MAGIC EDEN (via SatsConnect)</li>
-                         <li data-wallet="satsconnect_general">ANY BTC WALLET (SatsConnect)</li>
+                        <li data-wallet="satsconnect_general">ANY BTC WALLET (SatsConnect)</li>
                     </ul>
                 </div>
             </div>
@@ -422,177 +419,173 @@
     </div>
 
     <script>
-        const connectWalletBtn = document.getElementById('connectWalletBtn');
-        const walletDropdown = document.getElementById('walletDropdown');
-        const walletOptions = walletDropdown.querySelectorAll('li');
-        const walletAddressDisplay = document.getElementById('walletAddressDisplay');
+        // Wait for the DOM to be fully loaded before running the script
+        document.addEventListener('DOMContentLoaded', () => {
+            const connectWalletBtn = document.getElementById('connectWalletBtn');
+            const walletDropdown = document.getElementById('walletDropdown');
+            const walletOptions = walletDropdown.querySelectorAll('li');
+            const walletAddressDisplay = document.getElementById('walletAddressDisplay');
 
-        let connectedAccount = null;
-        let connectedWalletName = null; // To store the name of the connected wallet for UI
+            let connectedAccount = null;
+            let connectedWalletName = null; 
 
-        function updateButtonAndDisplay(account, walletName = '') {
-            if (account) {
-                const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
-                connectWalletBtn.textContent = `${walletName}: ${shortAddress}`;
-                connectWalletBtn.classList.add('connected');
-                walletAddressDisplay.textContent = `Wallet: ${account}`;
-            } else {
-                connectWalletBtn.textContent = 'CONNECT WALLET';
-                connectWalletBtn.classList.remove('connected');
-                walletAddressDisplay.textContent = '';
-            }
-        }
-
-        connectWalletBtn.addEventListener('click', (event) => {
-            event.stopPropagation();
-            walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block';
-        });
-
-        document.addEventListener('click', (event) => {
-            if (!connectWalletBtn.contains(event.target) && !walletDropdown.contains(event.target)) {
-                walletDropdown.style.display = 'none';
-            }
-        });
-
-        // --- Sats Connect Common Function ---
-        async function connectWithSatsConnect(walletTypeHint = null) {
-            if (typeof SatsConnect === 'undefined' || typeof SatsConnect.getAddresses === 'undefined') {
-                alert('Sats Connect library not loaded. Please check the script include.');
-                console.error('Sats Connect library not loaded.');
-                return;
-            }
-            try {
-                const getAddressesOptions = {
-                    payload: {
-                        purposes: ['ordinals', 'payment'], // Request both types of addresses
-                        message: 'Connect to Punk Voyage Adventures',
-                        network: {
-                            type: 'Mainnet' // Or 'Testnet' based on your game's needs
-                        },
-                        // Optional: If you want to suggest a specific wallet, though SatsConnect usually shows a selector
-                        // This part of the SatsConnect API for `defaultProvider` or similar might need checking in their docs
-                        // For now, we'll let SatsConnect show its default wallet selection UI.
-                    },
-                    onFinish: (response) => {
-                        // response.addresses is an array like:
-                        // [{ purpose: 'ordinals', address: '...', publicKey: '...' }, { purpose: 'payment', address: '...', publicKey: '...' }]
-                        const ordinalsAddressInfo = response.addresses.find(addr => addr.purpose === 'ordinals');
-                        const paymentAddressInfo = response.addresses.find(addr => addr.purpose === 'payment');
-                        
-                        let addressToUse = null;
-                        let walletDisplayName = "BTC Wallet"; // Generic, can be improved if SatsConnect provides wallet name
-
-                        if (ordinalsAddressInfo) {
-                            addressToUse = ordinalsAddressInfo.address;
-                        } else if (paymentAddressInfo) {
-                            addressToUse = paymentAddressInfo.address; // Fallback to payment address
-                        }
-
-                        if (addressToUse) {
-                            connectedAccount = addressToUse;
-                            // SatsConnect doesn't directly return the chosen wallet's name in `onFinish`
-                            // We can use the hint or a generic name.
-                            walletDisplayName = walletTypeHint ? walletTypeHint.replace('satsconnect_', '').toUpperCase() : "BTC Wallet";
-                            if (walletDisplayName === "GENERAL") walletDisplayName = "BTC Wallet";
-                            
-                            connectedWalletName = walletDisplayName;
-                            updateButtonAndDisplay(connectedAccount, connectedWalletName);
-                            console.log(`${walletDisplayName} (via SatsConnect) Connected:`, connectedAccount);
-                            alert(`${walletDisplayName} (via SatsConnect) Connected: ${connectedAccount}`);
-                        } else {
-                            console.error('SatsConnect: No suitable address found in response.');
-                            alert('SatsConnect: Could not retrieve a suitable address.');
-                        }
-                    },
-                    onCancel: () => {
-                        alert('SatsConnect: Connection request canceled by user.');
-                        console.log('SatsConnect connection request canceled.');
-                    },
-                };
-                SatsConnect.getAddresses(getAddressesOptions);
-            } catch (error) {
-                console.error('SatsConnect connection error:', error);
-                alert(`SatsConnect connection failed: ${error.message || error}`);
-            }
-        }
-
-        // --- UniSat Connection (Direct - Working Well) ---
-        async function connectUnisat() {
-            try {
-                if (typeof window.unisat !== 'undefined') {
-                    const accounts = await window.unisat.requestAccounts();
-                    if (accounts && accounts.length > 0) {
-                        connectedAccount = accounts[0];
-                        connectedWalletName = 'UniSat';
-                        updateButtonAndDisplay(connectedAccount, 'UniSat');
-                        console.log('UniSat Connected:', connectedAccount);
-                        alert(`UniSat Connected: ${connectedAccount}`);
-
-                        window.unisat.on('accountsChanged', (newAccounts) => {
-                            if (connectedWalletName === 'UniSat') {
-                                if (newAccounts && newAccounts.length > 0) {
-                                    connectedAccount = newAccounts[0];
-                                    updateButtonAndDisplay(connectedAccount, 'UniSat');
-                                } else {
-                                    connectedAccount = null;
-                                    connectedWalletName = null;
-                                    updateButtonAndDisplay(null);
-                                }
-                            }
-                        });
-                    } else {
-                        alert('UniSat: No accounts found or permission denied.');
-                    }
+            function updateButtonAndDisplay(account, walletName = '') {
+                if (account) {
+                    const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
+                    connectWalletBtn.textContent = `${walletName}: ${shortAddress}`;
+                    connectWalletBtn.classList.add('connected');
+                    walletAddressDisplay.textContent = `Wallet: ${account}`;
                 } else {
-                    alert('UniSat Wallet extension not found. Please install it.');
-                    window.open('https://unisat.io/', '_blank');
+                    connectWalletBtn.textContent = 'CONNECT WALLET';
+                    connectWalletBtn.classList.remove('connected');
+                    walletAddressDisplay.textContent = '';
                 }
-            } catch (error) {
-                console.error('UniSat connection error:', error);
-                alert(`UniSat connection failed: ${error.message || error}`);
             }
-        }
 
-        walletOptions.forEach(option => {
-            option.addEventListener('click', async (event) => {
-                const walletType = event.target.dataset.wallet;
-                walletDropdown.style.display = 'none';
-                
-                // Reset previous connection state
-                connectedAccount = null;
-                connectedWalletName = null;
-                updateButtonAndDisplay(null);
+            connectWalletBtn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block';
+            });
 
-                console.log('Attempting to connect with:', walletType);
-
-                if (walletType === 'unisat') {
-                    await connectUnisat();
-                } else if (walletType.startsWith('satsconnect_')) {
-                    // Extract a hint for UI, e.g., 'xverse' or 'magiceden' or 'general'
-                    const hint = walletType.split('_')[1]; 
-                    await connectWithSatsConnect(hint);
-                } else {
-                    alert('Unknown wallet type selected.');
+            document.addEventListener('click', (event) => {
+                if (connectWalletBtn && walletDropdown && !connectWalletBtn.contains(event.target) && !walletDropdown.contains(event.target)) {
+                    walletDropdown.style.display = 'none';
                 }
             });
-        });
 
-        // Other UI event listeners (unchanged)
-        const numAdventurersContainer = document.getElementById('numAdventurersContainer');
-        numAdventurersContainer.addEventListener('click', (event) => {
-            if (event.target.classList.contains('selection-box')) {
-                Array.from(numAdventurersContainer.children).forEach(child => child.classList.remove('active'));
-                event.target.classList.add('active');
-            }
-        });
+            async function connectWithSatsConnect(walletTypeHint = null) {
+                // Check if SatsConnect global object is available
+                if (typeof SatsConnect === 'undefined' || typeof SatsConnect.getAddresses === 'undefined') {
+                    alert('Sats Connect library not loaded or not ready. Please ensure you have a good internet connection and try again. If the issue persists, the CDN might be temporarily unavailable.');
+                    console.error('Sats Connect library not loaded or `getAddresses` is not defined on it.');
+                    return;
+                }
+                try {
+                    const getAddressesOptions = {
+                        payload: {
+                            purposes: ['ordinals', 'payment'],
+                            message: 'Connect to Punk Voyage Adventures',
+                            network: { type: 'Mainnet' },
+                        },
+                        onFinish: (response) => {
+                            const ordinalsAddressInfo = response.addresses.find(addr => addr.purpose === 'ordinals');
+                            const paymentAddressInfo = response.addresses.find(addr => addr.purpose === 'payment');
+                            
+                            let addressToUse = null;
+                            let walletDisplayName = "BTC Wallet"; 
 
-        const sendToAdventureContainer = document.getElementById('sendToAdventureContainer');
-        sendToAdventureContainer.addEventListener('click', (event) => {
-            if (event.target.classList.contains('adventure-option')) {
-                Array.from(sendToAdventureContainer.children).forEach(child => child.classList.remove('active'));
-                event.target.classList.add('active');
+                            if (ordinalsAddressInfo) {
+                                addressToUse = ordinalsAddressInfo.address;
+                            } else if (paymentAddressInfo) {
+                                addressToUse = paymentAddressInfo.address;
+                            }
+
+                            if (addressToUse) {
+                                connectedAccount = addressToUse;
+                                walletDisplayName = walletTypeHint ? walletTypeHint.replace('satsconnect_', '').toUpperCase() : "BTC Wallet";
+                                if (walletDisplayName === "GENERAL") walletDisplayName = "BTC Wallet";
+                                
+                                connectedWalletName = walletDisplayName;
+                                updateButtonAndDisplay(connectedAccount, connectedWalletName);
+                                console.log(`${walletDisplayName} (via SatsConnect) Connected:`, connectedAccount);
+                                alert(`${walletDisplayName} (via SatsConnect) Connected: ${connectedAccount}`);
+                            } else {
+                                console.error('SatsConnect: No suitable address found in response.');
+                                alert('SatsConnect: Could not retrieve a suitable address.');
+                            }
+                        },
+                        onCancel: () => {
+                            alert('SatsConnect: Connection request canceled by user.');
+                            console.log('SatsConnect connection request canceled.');
+                        },
+                    };
+                    SatsConnect.getAddresses(getAddressesOptions);
+                } catch (error) {
+                    console.error('SatsConnect connection error:', error);
+                    alert(`SatsConnect connection failed: ${error.message || error}`);
+                }
             }
-        });
+
+            async function connectUnisat() {
+                try {
+                    if (typeof window.unisat !== 'undefined') {
+                        const accounts = await window.unisat.requestAccounts();
+                        if (accounts && accounts.length > 0) {
+                            connectedAccount = accounts[0];
+                            connectedWalletName = 'UniSat';
+                            updateButtonAndDisplay(connectedAccount, 'UniSat');
+                            console.log('UniSat Connected:', connectedAccount);
+                            alert(`UniSat Connected: ${connectedAccount}`);
+
+                            window.unisat.on('accountsChanged', (newAccounts) => {
+                                if (connectedWalletName === 'UniSat') {
+                                    if (newAccounts && newAccounts.length > 0) {
+                                        connectedAccount = newAccounts[0];
+                                        updateButtonAndDisplay(connectedAccount, 'UniSat');
+                                    } else {
+                                        connectedAccount = null;
+                                        connectedWalletName = null;
+                                        updateButtonAndDisplay(null);
+                                    }
+                                }
+                            });
+                        } else {
+                            alert('UniSat: No accounts found or permission denied.');
+                        }
+                    } else {
+                        alert('UniSat Wallet extension not found. Please install it.');
+                        window.open('https://unisat.io/', '_blank');
+                    }
+                } catch (error) {
+                    console.error('UniSat connection error:', error);
+                    alert(`UniSat connection failed: ${error.message || error}`);
+                }
+            }
+
+            if (walletOptions) {
+                walletOptions.forEach(option => {
+                    option.addEventListener('click', async (event) => {
+                        const walletType = event.target.dataset.wallet;
+                        if(walletDropdown) walletDropdown.style.display = 'none';
+                        
+                        connectedAccount = null;
+                        connectedWalletName = null;
+                        updateButtonAndDisplay(null);
+
+                        console.log('Attempting to connect with:', walletType);
+
+                        if (walletType === 'unisat') {
+                            await connectUnisat();
+                        } else if (walletType && walletType.startsWith('satsconnect_')) {
+                            const hint = walletType.split('_')[1]; 
+                            await connectWithSatsConnect(hint);
+                        } else {
+                            alert('Unknown wallet type selected.');
+                        }
+                    });
+                });
+            }
+
+            const numAdventurersContainer = document.getElementById('numAdventurersContainer');
+            if (numAdventurersContainer) {
+                numAdventurersContainer.addEventListener('click', (event) => {
+                    if (event.target.classList.contains('selection-box')) {
+                        Array.from(numAdventurersContainer.children).forEach(child => child.classList.remove('active'));
+                        event.target.classList.add('active');
+                    }
+                });
+            }
+            
+            const sendToAdventureContainer = document.getElementById('sendToAdventureContainer');
+            if (sendToAdventureContainer) {
+                sendToAdventureContainer.addEventListener('click', (event) => {
+                    if (event.target.classList.contains('adventure-option')) {
+                        Array.from(sendToAdventureContainer.children).forEach(child => child.classList.remove('active'));
+                        event.target.classList.add('active');
+                    }
+                });
+            }
+        }); // End of DOMContentLoaded listener
     </script>
 </body>
 </html>
