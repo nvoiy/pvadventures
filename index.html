@@ -1,106 +1,815 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- ... (keep all existing meta tags and styles the same) ... -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Punk Voyage Adventures</title>
+    <!-- Xverse SDK -->
+    <script src="https://unpkg.com/@xverse/wallet@0.1.1/dist/umd/index.js"></script>
+    <!-- Unisat SDK -->
+    <script src="https://unpkg.com/unisat-wallet@1.0.0/dist/unisat.js"></script>
+    <style>
+        body {
+            font-family: monospace;
+            margin: 0;
+            padding: 0;
+            background-color: white;
+            color: black;
+                // Add transaction to history
+        function addTransactionToHistory(type, description, txHash) {
+            const txHistoryEl = document.getElementById('tx-history');
+            const txListEl = document.getElementById('tx-list');
+            
+            // Show the history section
+            txHistoryEl.style.display = 'block';
+            
+            // Create transaction element
+            const txEl = document.createElement('div');
+            txEl.style.marginBottom = '5px';
+            
+            // Format timestamp
+            const timestamp = new Date();
+            const timeStr = `${timestamp.getHours()}:${timestamp.getMinutes().toString().padStart(2, '0')}`;
+            
+            // Create transaction HTML
+            txEl.innerHTML = `
+                <div>${timeStr} - ${description}</div>
+                <div>TX: ${txHash.substring(0, 6)}...${txHash.substring(txHash.length - 4)}</div>
+            `;
+            
+            // Add to list (at top)
+            if (txListEl.firstChild) {
+                txListEl.insertBefore(txEl, txListEl.firstChild);
+            } else {
+                txListEl.appendChild(txEl);
+            }
+            
+            // Limit history to 5 items
+            if (txListEl.children.length > 5) {
+                txListEl.removeChild(txListEl.lastChild);
+            }
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            border-bottom: 2px solid black;
+        }
+        .game-title {
+            font-size: 36px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        .player-info {
+            text-align: right;
+        }
+        .wallet-connect {
+            border: 2px solid black;
+            padding: 5px;
+            position: relative;
+        }
+        .wallet-options {
+            position: absolute;
+            right: 0;
+            background: white;
+            border: 2px solid black;
+            width: 200px;
+            z-index: 10;
+        }
+        .wallet-option {
+            padding: 5px;
+            cursor: pointer;
+        }
+        .wallet-option:hover {
+            background-color: #f0f0f0;
+        }
+        .game-content {
+            display: flex;
+            margin-top: 20px;
+        }
+        .left-panel {
+            width: 30%;
+            padding-right: 20px;
+        }
+        .right-panel {
+            width: 70%;
+            position: relative;
+        }
+        .menu-box {
+            border: 2px solid black;
+            margin-bottom: 20px;
+        }
+        .menu-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid black;
+        }
+        .menu-header {
+            background-color: white;
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid black;
+        }
+        .socials {
+            display: flex;
+            gap: 10px;
+            border: 2px solid black;
+            padding: 10px;
+        }
+        .social-btn {
+            border: 2px solid black;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .wallet-info {
+            border: 2px solid black;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .adventures-container {
+            position: relative;
+            height: 400px;
+        }
+        .adventure {
+            position: absolute;
+            text-align: center;
+        }
+        .adventure-1 {
+            top: 0;
+            right: 50px;
+        }
+        .adventure-2 {
+            top: 150px;
+            right: 0;
+        }
+        .adventure-3 {
+            bottom: 0;
+            right: 150px;
+        }
+        .character {
+            position: absolute;
+            left: 200px;
+            top: 150px;
+            width: 80px;
+            height: 120px;
+            text-align: center;
+        }
+        .path {
+            position: absolute;
+            z-index: -1;
+        }
+        .path-1, .path-2, .path-3 {
+            stroke: black;
+            fill: none;
+            stroke-width: 2;
+        }
+        .adventure-box {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .green-triangle {
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 100px solid green;
+            position: relative;
+        }
+        .yellow-triangle {
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 100px solid #FFD700;
+            position: relative;
+        }
+        .red-box {
+            width: 100px;
+            height: 60px;
+            background-color: red;
+            position: relative;
+        }
+        .tree-trunk {
+            width: 20px;
+            height: 40px;
+            background-color: #8B4513;
+            position: absolute;
+            bottom: -40px;
+            left: 40px;
+        }
+        .adventurer-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .number-box {
+            width: 30px;
+            height: 30px;
+            border: 2px solid black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .number-box.selected {
+            background-color: #ccc;
+        }
+        .adventure-link {
+            display: inline-block;
+            border: 2px solid black;
+            padding: 5px;
+            margin: 2px;
+            cursor: pointer;
+        }
+        .adventure-link.selected {
+            background-color: #ccc;
+        }
+        .adventure-info {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .prize {
+            color: green;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border: 2px solid black;
+            width: 60%;
+            position: relative;
+        }
+        .close-modal {
+            position: absolute;
+            right: 10px;
+            top: 5px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .send-btn {
+            background-color: black;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: monospace;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-    <!-- ... (keep all existing HTML structure the same) ... -->
+    <div class="container">
+        <header>
+            <div class="game-title">PUNK VOYAGE ADVENTURES</div>
+            <div class="player-info">
+                PLAYER <span id="player-id">0</span>, WELCOME<br>
+                <span class="pv-tokens">PV = <span id="pv-amount">0</span></span> , GOLD = <span id="gold-amount">0</span>
+            </div>
+            <div class="wallet-connect" id="wallet-connect">
+                CONNECT WALLET
+                <div class="wallet-options" id="wallet-options" style="display: none;">
+                    <div class="wallet-option" data-wallet="xverse">XVERSE</div>
+                    <div class="wallet-option" data-wallet="unisat">UNISAT</div>
+                    <div class="wallet-option" data-wallet="magiceden">MAGIC EDEN WALLET</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="game-content">
+            <div class="left-panel">
+                <div class="wallet-info">
+                    <div>PUNK VOYAGE FOUND IN WALLET: <span id="punk-count">0</span></div>
+                    <div class="adventurer-selector">
+                        <div>NUMBER OF ADVENTURERS</div>
+                        <div class="number-box" data-number="1">1</div>
+                        <div class="number-box" data-number="2">2</div>
+                        <div class="number-box" data-number="3">3</div>
+                    </div>
+                    <div>
+                        <div>SEND TO:</div>
+                        <div class="adventure-link" data-adventure="1">ADVENTURE 1</div>
+                        <div class="adventure-link" data-adventure="2">ADVENTURE 2</div>
+                        <div class="adventure-link" data-adventure="3">ADVENTURE 3</div>
+                    </div>
+                </div>
+
+                <div class="wallet-info">
+                    <div>ITEMS FOUND IN WALLET: coming soon</div>
+                </div>
+                
+                <div class="wallet-info" id="tx-history" style="display: none;">
+                    <div>RECENT TRANSACTIONS:</div>
+                    <div id="tx-list" style="font-size: 10px; margin-top: 5px;"></div>
+                </div>
+
+                <div class="menu-box">
+                    <div class="menu-header">MENU</div>
+                    <div class="menu-item" data-page="quests">QUESTS</div>
+                    <div class="menu-item" data-page="rewards">DAILY LOGIN REWARDS</div>
+                    <div class="menu-item" data-page="shop">SHOP</div>
+                    <div class="menu-item" data-page="help">HELP</div>
+                </div>
+
+                <div class="socials">
+                    <div>SOCIALS</div>
+                    <div class="social-btn" data-social="x">X</div>
+                    <div class="social-btn" data-social="discord">DISCORD</div>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <div class="adventures-container">
+                    <svg width="100%" height="400" style="position: absolute; top: 0; left: 0;">
+                        <path class="path path-1" d="M 250,150 C 350,50 500,100 600,100" />
+                        <path class="path path-2" d="M 250,150 C 350,250 500,250 600,250" />
+                        <path class="path path-3" d="M 250,150 C 300,300 400,400 500,400" />
+                    </svg>
+
+                    <div class="character">
+                        <div style="background-color: #89CFF0; width: 60px; height: 80px; margin: 0 auto; position: relative;">
+                            <div style="background-color: gold; width: 40px; height: 20px; position: absolute; top: -20px; left: 10px;"></div>
+                        </div>
+                    </div>
+
+                    <div class="adventure adventure-1">
+                        <div class="adventure-box">
+                            <div class="green-triangle">
+                                <div class="tree-trunk"></div>
+                            </div>
+                        </div>
+                        <div class="adventure-info">
+                            <div>ADVENTURE 1, SPIRIT FOREST</div>
+                            <div>ADVENTURE TIME = 4 HOURS</div>
+                            <div class="prize">PRIZE = 25 PV TOKENS</div>
+                        </div>
+                    </div>
+
+                    <div class="adventure adventure-2">
+                        <div class="adventure-box">
+                            <div class="yellow-triangle"></div>
+                        </div>
+                        <div class="adventure-info">
+                            <div>ADVENTURE 2</div>
+                            <div>MOUNTAIN OF THE MAROWAN</div>
+                            <div>ADVENTURE TIME = 8 HOURS</div>
+                            <div class="prize">PRIZE = 40 PV TOKENS</div>
+                        </div>
+                    </div>
+
+                    <div class="adventure adventure-3">
+                        <div class="adventure-box">
+                            <div class="red-box"></div>
+                        </div>
+                        <div class="adventure-info">
+                            <div>ADVENTURE 3</div>
+                            <div>FIRE FIELDS OF FLYINALS</div>
+                            <div>ADVENTURE TIME = 24 HOURS</div>
+                            <div class="prize">PRIZE = 100 PV TOKENS</div>
+                            <div>x1 CHANCE OF GOLD</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="adventure-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" data-modal="adventure-modal">&times;</span>
+            <h2>CONFIRM ADVENTURE</h2>
+            <div id="adventure-details"></div>
+            <button class="send-btn" id="confirm-adventure">SEND ON ADVENTURE</button>
+        </div>
+    </div>
+
+    <div id="wallet-connect-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" data-modal="wallet-connect-modal">&times;</span>
+            <h2>CONNECT WALLET</h2>
+            <p>Please connect your wallet to continue.</p>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="send-btn wallet-btn" data-wallet="xverse">CONNECT XVERSE</button>
+                <button class="send-btn wallet-btn" data-wallet="unisat">CONNECT UNISAT</button>
+                <button class="send-btn wallet-btn" data-wallet="magiceden">CONNECT MAGIC EDEN</button>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // Game state and configuration
-        const collectionConfig = {
-            // UPDATE THESE WITH YOUR ACTUAL COLLECTION DETAILS
-            inscriptionIdPrefix: "PUNKVY", // First characters of your inscription IDs
-            metadataIdentifier: { 
-                trait: "Collection",  // Metadata trait name to check
-                value: "Punk Voyage"  // Expected trait value
-            }
-        };
-
+        // Game state
         const gameState = {
-            // ... (keep existing gameState properties the same) ...
+            player: {
+                id: Math.floor(Math.random() * 100000),
+                pv: 0,
+                gold: 0,
+                punks: 0,
+                connected: false,
+                wallet: null,
+                address: null
+            },
+            selectedAdventurers: 0,
+            selectedAdventure: null,
+            adventures: [
+                { id: 1, name: "SPIRIT FOREST", time: 4, prize: 25, goldChance: 0 },
+                { id: 2, name: "MOUNTAIN OF THE MAROWAN", time: 8, prize: 40, goldChance: 0 },
+                { id: 3, name: "FIRE FIELDS OF FLYINALS", time: 24, prize: 100, goldChance: 1 }
+            ],
+            activeAdventures: []
         };
 
-        // Modified checkForPunkVoyagers function
-        async function checkForPunkVoyagers(address, walletType) {
-            try {
-                let inscriptions = [];
-                
-                if (walletType === 'xverse') {
-                    // Xverse API call
-                    const response = await fetch(`https://api.xverse.app/v1/address/${address}/ordinals`);
-                    const data = await response.json();
-                    inscriptions = data.results;
-                } else if (walletType === 'unisat') {
-                    // Unisat in-page API
-                    inscriptions = await window.unisat.getInscriptions();
-                }
+        // DOM Elements
+        const playerIdEl = document.getElementById('player-id');
+        const pvAmountEl = document.getElementById('pv-amount');
+        const goldAmountEl = document.getElementById('gold-amount');
+        const punkCountEl = document.getElementById('punk-count');
+        const adventureModal = document.getElementById('adventure-modal');
+        const adventureDetails = document.getElementById('adventure-details');
+        const walletConnectBtn = document.getElementById('wallet-connect');
+        const walletOptions = document.getElementById('wallet-options');
+        const walletConnectModal = document.getElementById('wallet-connect-modal');
 
-                // Filter for Punk Voyage NFTs
-                return inscriptions.filter(inscription => {
-                    // Check inscription ID prefix match
-                    const idMatch = inscription.id.startsWith(collectionConfig.inscriptionIdPrefix);
+        // Initialize game
+        function initGame() {
+            updateUI();
+            
+            // Event listeners
+            document.querySelectorAll('.number-box').forEach(box => {
+                box.addEventListener('click', () => {
+                    selectAdventurers(parseInt(box.dataset.number));
+                });
+            });
+
+            document.querySelectorAll('.adventure-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    selectAdventure(parseInt(link.dataset.adventure));
+                });
+            });
+
+            document.getElementById('confirm-adventure').addEventListener('click', startAdventure);
+
+            document.querySelectorAll('.close-modal').forEach(closeBtn => {
+                closeBtn.addEventListener('click', () => {
+                    document.getElementById(closeBtn.dataset.modal).style.display = 'none';
+                });
+            });
+
+            walletConnectBtn.addEventListener('click', () => {
+                walletConnectModal.style.display = 'block';
+            });
+
+            document.querySelectorAll('.wallet-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    connectWallet(btn.dataset.wallet);
+                });
+            });
+
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    alert(`${item.dataset.page.toUpperCase()} feature coming soon!`);
+                });
+            });
+
+            document.querySelectorAll('.social-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const socialUrls = {
+                        'x': 'https://twitter.com/YourPunkVoyage', // Replace with your actual Twitter/X URL
+                        'discord': 'https://discord.gg/yourserver' // Replace with your actual Discord invite
+                    };
                     
-                    // Check metadata match (if available)
-                    const metadataMatch = inscription.content?.metadata?.[collectionConfig.metadataIdentifier.trait] === 
-                                       collectionConfig.metadataIdentifier.value;
-                    
-                    return idMatch || metadataMatch;
-                }).length;
-                
-            } catch (error) {
-                console.error("NFT Check Error:", error);
-                return 0;
+                    if (socialUrls[btn.dataset.social]) {
+                        window.open(socialUrls[btn.dataset.social], '_blank');
+                    } else {
+                        alert(`${btn.dataset.social.toUpperCase()} community coming soon!`);
+                    }
+                });
+            });
+        }
+        
+        // Function to check for Punk Voyage NFTs in a wallet
+        async function checkForPunkVoyagers(address) {
+            // In a real implementation, you would:
+            // 1. Query the blockchain for Ordinals owned by this address
+            // 2. Filter for your specific collection ID
+            // 3. Count the number of Punk Voyage NFTs
+            
+            // For demo purposes, we'll just simulate finding 3 NFTs
+            console.log("Checking for Punk Voyagers in wallet:", address);
+            
+            // Simulate API call delay
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            // Simulate finding NFTs
+            const punkCount = 3;
+            
+            return punkCount;
+        }
+        
+        // Function to send tokens (would be implemented in a real app)
+        async function sendTokens(address, amount) {
+            // In a real implementation, this would send tokens to the user
+            console.log(`Sending ${amount} PV tokens to ${address}`);
+            
+            // Simulate blockchain transaction
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            return {
+                success: true,
+                txHash: "0x" + Math.random().toString(16).substr(2, 40)
+            };
+        }
+
+        // Update UI elements based on game state
+        function updateUI() {
+            playerIdEl.textContent = gameState.player.id;
+            pvAmountEl.textContent = gameState.player.pv;
+            goldAmountEl.textContent = gameState.player.gold;
+            punkCountEl.textContent = gameState.player.punks;
+
+            // Update selected adventurers
+            document.querySelectorAll('.number-box').forEach(box => {
+                if (parseInt(box.dataset.number) === gameState.selectedAdventurers) {
+                    box.classList.add('selected');
+                } else {
+                    box.classList.remove('selected');
+                }
+            });
+
+            // Update selected adventure
+            document.querySelectorAll('.adventure-link').forEach(link => {
+                if (parseInt(link.dataset.adventure) === gameState.selectedAdventure) {
+                    link.classList.add('selected');
+                } else {
+                    link.classList.remove('selected');
+                }
+            });
+
+        // Update wallet connection UI
+            if (gameState.player.connected) {
+                walletConnectBtn.textContent = gameState.player.wallet.toUpperCase() + " CONNECTED";
+                // If you want to show part of the address too:
+                if (gameState.player.address) {
+                    const shortAddress = gameState.player.address.substring(0, 6) + "..." + 
+                                        gameState.player.address.substring(gameState.player.address.length - 4);
+                    walletConnectBtn.title = shortAddress;
+                }
+            } else {
+                walletConnectBtn.textContent = "CONNECT WALLET";
             }
         }
 
-        // Modified connectWallet function
+        // Select number of adventurers
+        function selectAdventurers(num) {
+            if (num <= gameState.player.punks) {
+                gameState.selectedAdventurers = num;
+                updateUI();
+            } else {
+                alert(`You only have ${gameState.player.punks} Punk Voyagers in your wallet.`);
+            }
+        }
+
+        // Select adventure
+        function selectAdventure(id) {
+            if (gameState.selectedAdventurers > 0) {
+                gameState.selectedAdventure = id;
+                updateUI();
+                openAdventureModal();
+            } else {
+                alert("Please select the number of adventurers first.");
+            }
+        }
+
+        // Open adventure confirmation modal
+        function openAdventureModal() {
+            const adventure = gameState.adventures.find(a => a.id === gameState.selectedAdventure);
+            
+            let detailsHTML = `
+                <p>You are about to send ${gameState.selectedAdventurers} adventurer(s) to:</p>
+                <p><strong>${adventure.name}</strong></p>
+                <p>Adventure time: ${adventure.time} hours</p>
+                <p>Prize: ${adventure.prize} PV Tokens</p>
+            `;
+            
+            if (adventure.goldChance > 0) {
+                detailsHTML += `<p>Chance of gold: x${adventure.goldChance}</p>`;
+            }
+            
+            adventureDetails.innerHTML = detailsHTML;
+            adventureModal.style.display = 'block';
+        }
+
+        // Start adventure
+        async function startAdventure() {
+            if (!gameState.player.connected) {
+                alert("Please connect your wallet first.");
+                adventureModal.style.display = 'none';
+                walletConnectModal.style.display = 'block';
+                return;
+            }
+
+            const adventure = gameState.adventures.find(a => a.id === gameState.selectedAdventure);
+            
+            // In a real implementation, this would be a blockchain transaction
+            // Let's simulate it for the demo
+            try {
+                // Show loading state
+                document.getElementById('confirm-adventure').textContent = "PROCESSING...";
+                document.getElementById('confirm-adventure').disabled = true;
+                
+                // Simulate blockchain transaction delay
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Add to active adventures
+                const adventureId = Date.now();
+                gameState.activeAdventures.push({
+                    id: adventureId,
+                    adventureId: adventure.id,
+                    adventurers: gameState.selectedAdventurers,
+                    startTime: new Date(),
+                    endTime: new Date(Date.now() + adventure.time * 60 * 60 * 1000),
+                    completed: false,
+                    txHash: "0x" + Math.random().toString(16).substr(2, 40) // Fake transaction hash
+                });
+                
+                // Add transaction to history
+                addTransactionToHistory("ADVENTURE_START", `Started ${adventure.name}`, gameState.activeAdventures[gameState.activeAdventures.length - 1].txHash);
+                
+                // In a production app, you would:
+                // 1. Send transaction to blockchain
+                // 2. Store adventure state (either on-chain or in a database)
+                // 3. Track progress through events or regular polling
+                
+                // Simulate adventure completion (10 seconds for demo)
+                setTimeout(() => {
+                    completeAdventure(adventure, adventureId);
+                }, 10000);
+                
+                // Reset button state
+                document.getElementById('confirm-adventure').textContent = "SEND ON ADVENTURE";
+                document.getElementById('confirm-adventure').disabled = false;
+                
+                adventureModal.style.display = 'none';
+                alert(`Adventure started! Your adventurers will return in ${adventure.time} hours (simulated as 10 seconds for demo).`);
+            } catch (error) {
+                console.error("Error starting adventure:", error);
+                alert("Failed to start adventure. Please try again.");
+                
+                // Reset button state
+                document.getElementById('confirm-adventure').textContent = "SEND ON ADVENTURE";
+                document.getElementById('confirm-adventure').disabled = false;
+            }
+        }
+
+        // Complete adventure and distribute rewards
+        async function completeAdventure(adventure, adventureId) {
+            try {
+                // Simulate blockchain transaction for reward distribution
+                const reward = adventure.prize * gameState.selectedAdventurers;
+                gameState.player.pv += reward;
+                
+                let message = `Your adventurers have returned from ${adventure.name}!\nYou earned ${reward} PV Tokens!`;
+                let goldFound = false;
+                
+                if (adventure.goldChance > 0 && Math.random() < 0.3) { // 30% chance for gold if applicable
+                    gameState.player.gold += adventure.goldChance;
+                    message += `\nYou also found ${adventure.goldChance} GOLD!`;
+                    goldFound = true;
+                }
+                
+                // Update adventure status
+                const adventureIndex = gameState.activeAdventures.findIndex(a => a.id === adventureId);
+                if (adventureIndex !== -1) {
+                    gameState.activeAdventures[adventureIndex].completed = true;
+                    gameState.activeAdventures[adventureIndex].rewardTxHash = "0x" + Math.random().toString(16).substr(2, 40); // Fake transaction hash
+                    
+                    // Add transaction to history
+                    addTransactionToHistory(
+                        "ADVENTURE_COMPLETE", 
+                        `Completed ${adventure.name} +${reward} PV${goldFound ? ' +1 GOLD' : ''}`,
+                        gameState.activeAdventures[adventureIndex].rewardTxHash
+                    );
+                }
+                
+                // In a real implementation, you would:
+                // 1. Call your smart contract to distribute tokens
+                // 2. Update the adventure state on-chain or in database
+                // 3. Emit events for the frontend to detect
+                
+                updateUI();
+                alert(message);
+                
+                // Optional: Show a special modal for gold found
+                if (goldFound) {
+                    // You could add a special celebration modal here
+                }
+            } catch (error) {
+                console.error("Error completing adventure:", error);
+                alert("There was an issue claiming your rewards. Please contact support.");
+            }
+        }
+
+        // Connect wallet
         async function connectWallet(walletType) {
             try {
                 let address = '';
                 let punks = 0;
                 
-                // Wallet connection logic
                 if (walletType === 'xverse') {
-                    const response = await XverseWallet.getAddress();
-                    address = response.address;
-                    punks = await checkForPunkVoyagers(address, 'xverse');
+                    // Connect to Xverse wallet
+                    if (typeof XverseWallet !== 'undefined') {
+                        try {
+                            const response = await XverseWallet.getAddress();
+                            address = response.address;
+                            console.log("Connected to Xverse wallet:", address);
+                            
+                            // Check for Ordinals in the wallet (in a real implementation)
+                            // For demo, we'll simulate having Punk Voyage NFTs
+                            punks = 3;
+                            
+                        } catch (error) {
+                            console.error("Error connecting to Xverse wallet:", error);
+                            alert("Failed to connect Xverse wallet. Please make sure it's installed.");
+                            return;
+                        }
+                    } else {
+                        alert("Xverse wallet not detected. Please install the Xverse extension.");
+                        window.open("https://www.xverse.app/download", "_blank");
+                        return;
+                    }
                 } 
                 else if (walletType === 'unisat') {
-                    const accounts = await window.unisat.requestAccounts();
-                    address = accounts[0];
-                    punks = await checkForPunkVoyagers(address, 'unisat');
+                    // Connect to Unisat wallet
+                    if (typeof window.unisat !== 'undefined') {
+                        try {
+                            const accounts = await window.unisat.requestAccounts();
+                            address = accounts[0];
+                            console.log("Connected to Unisat wallet:", address);
+                            
+                            // Check for Ordinals in the wallet (in a real implementation)
+                            // For demo, we'll simulate having Punk Voyage NFTs
+                            punks = 3;
+                            
+                        } catch (error) {
+                            console.error("Error connecting to Unisat wallet:", error);
+                            alert("Failed to connect Unisat wallet. Please make sure it's installed.");
+                            return;
+                        }
+                    } else {
+                        alert("Unisat wallet not detected. Please install the Unisat extension.");
+                        window.open("https://unisat.io/download", "_blank");
+                        return;
+                    }
                 }
                 else if (walletType === 'magiceden') {
-                    alert("Magic Eden integration coming soon!");
+                    // For demo purposes only - direct to Magic Eden wallet download
+                    alert("Magic Eden wallet integration coming soon!");
+                    window.open("https://magiceden.io/", "_blank");
                     return;
                 }
-
-                // Validate NFTs
-                if (punks === 0) {
-                    alert("No Punk Voyage NFTs found in this wallet!");
-                    return;
-                }
-
-                // Update game state
+                
+                // Update game state with wallet info
                 gameState.player.connected = true;
                 gameState.player.wallet = walletType;
                 gameState.player.address = address;
                 gameState.player.punks = punks;
-                gameState.player.pv = 0;  // Reset balances
-                gameState.player.gold = 0; // Reset gold
-
+                gameState.player.pv = 260; // Starting balance
+                gameState.player.gold = 1; // Starting gold
+                
                 walletConnectModal.style.display = 'none';
                 updateUI();
-                alert(`Success! Found ${punks} Punk Voyage NFTs!`);
-
+                
+                alert(`${walletType.toUpperCase()} wallet connected successfully!`);
             } catch (error) {
-                console.error("Connection Error:", error);
-                alert("Error: " + error.message);
+                console.error("Wallet connection error:", error);
+                alert("Error connecting wallet. Please try again.");
             }
         }
 
-        // ... (keep rest of the script the same) ...
+        // Initialize game when page loads
+        window.onload = initGame;
     </script>
 </body>
 </html>
