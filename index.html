@@ -103,10 +103,9 @@
             transition: border-color 0.3s;
         }
 
-        /* === MODIFIED: Header h1 color === */
         header h1 { 
             font-size: 2.8em; margin: 0; letter-spacing: 2px; 
-            color: var(--current-header-text-color); /* Uses variable that changes with dark mode */
+            color: var(--current-header-text-color); 
             transition: color 0.3s;
         }
         
@@ -159,19 +158,12 @@
             transition: background-color 0.3s, border-color 0.3s;
         }
         .twitter-feed-container .twitter-timeline { width: 100% !important; height: 100% !important; }
-        /* Twitter's data-theme attribute is primary for its internal styling */
 
 
-        .main-menu-nav, .socials-nav, .left-sidebar > div:not(.twitter-feed-container):not(.socials-nav):not(.main-menu-nav) {
+        .socials-nav, .left-sidebar > div:not(.twitter-feed-container):not(.socials-nav):not(.main-menu-nav) {
             border: 2px solid var(--current-border-color); padding: 10px; background-color: var(--current-section-bg); 
             transition: background-color 0.3s, border-color 0.3s;
         }
-        .main-menu-nav ul { list-style: none; padding: 0; margin: 0; }
-        .main-menu-nav li { padding: 8px 0; border-bottom: 1px solid var(--current-border-color); cursor: pointer; transition: border-color 0.3s, background-color 0.3s; }
-        .main-menu-nav li:last-child { border-bottom: none; }
-        .main-menu-nav li:hover { background-color: #f0f0f0; }
-        body.dark-mode .main-menu-nav li:hover { background-color: #4a4a4a; }
-        .main-menu-nav .menu-button-container { text-align: center; margin-bottom: 10px; }
         
         .socials-nav .social-title, .adventurer-setup label, .adventure-controls label { 
             color: var(--current-label-color); 
@@ -229,17 +221,43 @@
         .adventure-send-btn.active-adv1 { background-color: var(--highlight-color-pv); color: black;}
         .adventure-send-btn.active-adv2 { background-color: var(--highlight-color-gold); color: black;}
         .adventure-send-btn.active-adv3 { background-color: var(--highlight-color-danger); color: white;}
-        body.dark-mode .adventure-send-btn.active-adv1 { background-color: var(--highlight-color-pv); color: black;} /* Keep active button colors distinct */
+        body.dark-mode .adventure-send-btn.active-adv1 { background-color: var(--highlight-color-pv); color: black;} 
         body.dark-mode .adventure-send-btn.active-adv2 { background-color: var(--highlight-color-gold); color: black;}
         body.dark-mode .adventure-send-btn.active-adv3 { background-color: var(--highlight-color-danger); color: white;}
 
 
-        .right-sidebar-menu { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; }
+        /* === MODIFIED: Right Sidebar Menu (25% bigger) === */
+        .right-sidebar-menu { 
+            width: 275px; /* Original 220px * 1.25 = 275px */
+            flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; 
+        }
         .right-sidebar-menu .main-menu-nav {
-             border: 2px solid var(--current-border-color); padding: 10px; background-color: var(--current-section-bg);
+            border: 2px solid var(--current-border-color); padding: 12px; /* Increased padding */
+            background-color: var(--current-section-bg);
             width: 100%; box-sizing: border-box;
             transition: background-color 0.3s, border-color 0.3s;
         }
+        /* MODIFIED: Menu button and list items font size & padding */
+        .right-sidebar-menu .menu-button {
+            min-width: auto; /* Allow button to size based on content */
+            width: 80%; /* Make button wider within its container */
+            padding: 8px 12px; /* Increased padding */
+            font-size: 1.25em; /* Increased font size */
+            margin: 0 auto 15px auto; /* Center button and add more bottom margin */
+            display: block;
+        }
+        .right-sidebar-menu .main-menu-nav ul { list-style: none; padding: 0; margin: 0; }
+        .right-sidebar-menu .main-menu-nav li { 
+            padding: 10px 5px; /* Increased padding */
+            border-bottom: 1px solid var(--current-border-color); 
+            cursor: pointer; transition: border-color 0.3s, background-color 0.3s;
+            font-size: 1.15em; /* Increased font size */
+            text-align: center; /* Center menu items */
+        }
+        .right-sidebar-menu .main-menu-nav li:last-child { border-bottom: none; }
+        .right-sidebar-menu .main-menu-nav li:hover { background-color: #f0f0f0; }
+        body.dark-mode .right-sidebar-menu .main-menu-nav li:hover { background-color: #4a4a4a; }
+
 
         .dark-mode-switch { display: flex; align-items: center; gap: 8px; }
         .dark-mode-switch label { font-size: 0.9em; color: var(--current-text-color); cursor: pointer; transition: color 0.3s; }
@@ -257,7 +275,7 @@
 <body>
     <div class="game-container">
         <header>
-            <h1>PUNK VOYAGE ADVENTURES</h1>
+             <h1>PUNK VOYAGE ADVENTURES</h1>
             <div class="header-controls"> 
                 <div class="player-info-wallet">
                     <div class="player-stats" id="playerStats">PLAYER 37365, WELCOME<br><span class="pv">PV = 260</span> , <span class="gold">GOLD = 1</span><div class="wallet-address" id="walletAddressDisplay"></div></div>
@@ -275,7 +293,7 @@
 
         <main class="main-content">
             <aside class="left-sidebar">
-                <div class="twitter-feed-container" id="twitter-widget-container"> <!-- Added ID for easier JS targeting -->
+                <div class="twitter-feed-container" id="twitter-widget-container">
                     <a class="twitter-timeline" data-dnt="true" href="https://twitter.com/nvart_?ref_src=twsrc%5Etfw">Tweets by nvart_</a> 
                     <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
                 </div>
@@ -348,58 +366,36 @@
             </section>
             
             <aside class="right-sidebar-menu">
-                <nav class="main-menu-nav">
-                    <div class="menu-button-container"><button class="menu-button">MENU</button></div>
-                    <ul><li>QUESTS</li><li>DAILY LOGIN REWARDS</li><li>SHOP</li><li>HELP</li></ul>
+                <nav class="main-menu-nav"> <!-- This nav is now inside .right-sidebar-menu -->
+                    <div class="menu-button-container">
+                        <button class="menu-button">MENU</button> <!-- Button style will be from the new rules below -->
+                    </div>
+                    <ul>
+                        <li>QUESTS</li>
+                        <li>DAILY LOGIN REWARDS</li>
+                        <li>SHOP</li>
+                        <li>HELP</li>
+                    </ul>
                 </nav>
             </aside>
         </main>
     </div>
 
     <script>
+        // JavaScript from previous version (including dark mode toggle)
         document.addEventListener('DOMContentLoaded', () => {
             const darkModeToggle = document.getElementById('darkModeToggle');
             const body = document.body;
-            const twitterWidgetContainer = document.getElementById('twitter-widget-container'); // Target the container
+            const twitterWidgetContainer = document.getElementById('twitter-widget-container'); 
 
-            // Function to load/reload Twitter widget with a specific theme
-            function loadTwitterWidget(theme) {
-                if (twitterWidgetContainer) {
-                    // Clear previous widget if any
-                    twitterWidgetContainer.innerHTML = ''; 
-                    
-                    const twitterLink = document.createElement('a');
-                    twitterLink.className = 'twitter-timeline';
-                    twitterLink.setAttribute('data-dnt', 'true');
-                    twitterLink.href = 'https://twitter.com/nvart_?ref_src=twsrc%5Etfw';
-                    twitterLink.setAttribute('data-theme', theme); // Set theme here
-                    twitterLink.setAttribute('data-height', '600'); // Keep other attributes
-                    twitterLink.textContent = 'Tweets by nvart_';
-                    
-                    twitterWidgetContainer.appendChild(twitterLink);
+            function loadTwitterWidget(theme) { /* ... as before ... */ }
 
-                    // Reload Twitter's widgets.js if it's already loaded, or load it
-                    // This is a common way to force re-evaluation
-                    let twitterScript = document.querySelector('script[src="https://platform.twitter.com/widgets.js"]');
-                    if (twitterScript) {
-                        twitterScript.remove();
-                    }
-                    twitterScript = document.createElement('script');
-                    twitterScript.async = true;
-                    twitterScript.src = 'https://platform.twitter.com/widgets.js';
-                    twitterScript.charset = 'utf-8';
-                    document.body.appendChild(twitterScript);
-                }
-            }
-
-            // Initialize Dark Mode or Light Mode
             const savedTheme = localStorage.getItem('theme');
-            // === MODIFIED: Default to dark mode if no preference ===
             if (savedTheme === 'light') {
                 body.classList.remove('dark-mode');
                 darkModeToggle.checked = false;
                 loadTwitterWidget('light');
-            } else { // Default to dark or if 'dark' is saved
+            } else { 
                 body.classList.add('dark-mode');
                 darkModeToggle.checked = true;
                 loadTwitterWidget('dark');
@@ -418,7 +414,6 @@
             });
 
             // --- Rest of your existing JavaScript (Wallet, Adventures, etc.) ---
-            // ... (all the script content from the previous full HTML response) ...
             const connectWalletBtn = document.getElementById('connectWalletBtn');
             const walletDropdown = document.getElementById('walletDropdown');
             const walletOptions = walletDropdown.querySelectorAll('li');
@@ -518,6 +513,27 @@
                     alert(`Sending ${numAdventurers} adventurer(s) to Adventure ${adventureId}.\n(This is a placeholder)`);
                 });
             });
+            // Full loadTwitterWidget function
+            function loadTwitterWidget(theme) {
+                if (twitterWidgetContainer) {
+                    twitterWidgetContainer.innerHTML = ''; 
+                    const twitterLink = document.createElement('a');
+                    twitterLink.className = 'twitter-timeline';
+                    twitterLink.setAttribute('data-dnt', 'true');
+                    twitterLink.href = 'https://twitter.com/nvart_?ref_src=twsrc%5Etfw';
+                    twitterLink.setAttribute('data-theme', theme); 
+                    twitterLink.setAttribute('data-height', '600'); 
+                    twitterLink.textContent = 'Tweets by nvart_';
+                    twitterWidgetContainer.appendChild(twitterLink);
+                    let twitterScript = document.querySelector('script[src="https://platform.twitter.com/widgets.js"]');
+                    if (twitterScript) { twitterScript.remove(); }
+                    twitterScript = document.createElement('script');
+                    twitterScript.async = true;
+                    twitterScript.src = 'https://platform.twitter.com/widgets.js';
+                    twitterScript.charset = 'utf-8';
+                    document.body.appendChild(twitterScript);
+                }
+            }
         });
     </script>
 </body>
