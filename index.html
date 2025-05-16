@@ -8,310 +8,249 @@
     <script src="https://unpkg.com/@sats-connect/core@latest/dist/bundles/sats-connect.js"></script>
     <style>
         :root {
-            --border-color: #000000;
-            --bg-color: #FFFFFF; 
-            --text-color: #000000;
-            --highlight-color: #00FF00;
-            --gold-color: #FFFF00;
-            --button-bg: #E0E0E0;
-            --button-border: #000000;
-            --danger-color: #FF0000;
-            --connected-color: #4CAF50;
-            --game-container-bg: rgba(255, 255, 255, 0.9); 
+            /* Light Mode (Will be overridden by default dark mode now) */
+            --body-bg-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeigsu7ak3jbbia6w66slcz2rnk6b6ysundurmgz5etoq6xh23vsbpm');
+            --border-color-lm: #000000; /* LM specific */
+            --text-color-lm: #000000; /* LM specific */
+            --label-color-lm: #333; /* Default label color in light mode */
+            --game-container-bg-lm: rgba(255, 255, 255, 0.9); 
+            --section-bg-lm: rgba(255, 255, 255, 0.8);
+            --adventure-block-bg-lm: rgba(255, 255, 255, 0.75);
+            --button-bg-lm: #E0E0E0;
+            --button-text-color-lm: #000000;
+            --button-border-lm: #000000;
+            --header-text-color-lm: #333;
+            --dropdown-bg-lm: #FFFFFF;
+            --twitter-feed-bg-lm: rgba(255, 255, 255, 0.7);
+
+            /* Dark Mode (Now default if no preference saved) */
+            --border-color-dm: #777777; 
+            --text-color-dm: #FFFFFF;
+            --label-color-dm: #FFA500; /* Orange for labels */
+            --game-container-bg-dm: rgba(20, 20, 20, 0.9); 
+            --section-bg-dm: rgba(30, 30, 30, 0.85);
+            --adventure-block-bg-dm: rgba(40, 40, 40, 0.8);
+            --button-bg-dm: #444444;
+            --button-text-color-dm: #FFFFFF;
+            --button-border-dm: #666666;
+            --header-text-color-dm: #E0E0E0; /* Default for dark H1 */
+            --header-text-color-dm-orange: #FFA500; /* Orange for H1 in dark mode */
+            --dropdown-bg-dm: #333333;
+            --twitter-feed-bg-dm: rgba(25, 25, 25, 0.7);
+
+
+            /* Default to Light Mode Variables (these will be used unless .dark-mode is applied) */
+            --current-border-color: var(--border-color-lm);
+            --current-text-color: var(--text-color-lm);
+            --current-label-color: var(--label-color-lm);
+            --current-game-container-bg: var(--game-container-bg-lm);
+            --current-section-bg: var(--section-bg-lm);
+            --current-adventure-block-bg: var(--adventure-block-bg-lm);
+            --current-button-bg: var(--button-bg-lm);
+            --current-button-text-color: var(--button-text-color-lm);
+            --current-button-border: var(--button-border-lm);
+            --current-header-text-color: var(--header-text-color-lm);
+            --current-dropdown-bg: var(--dropdown-bg-lm);
+            --current-twitter-feed-bg: var(--twitter-feed-bg-lm);
+
+            /* Highlight colors (can remain the same or adapt) */
+            --highlight-color-pv: #00FF00;
+            --highlight-color-gold: #FFFF00;
+            --highlight-color-danger: #FF0000;
+            --highlight-color-connected: #4CAF50;
         }
+
+        body.dark-mode {
+            /* Apply Dark Mode Variables */
+            --current-border-color: var(--border-color-dm);
+            --current-text-color: var(--text-color-dm);
+            --current-label-color: var(--label-color-dm);
+            --current-game-container-bg: var(--game-container-bg-dm);
+            --current-section-bg: var(--section-bg-dm);
+            --current-adventure-block-bg: var(--adventure-block-bg-dm);
+            --current-button-bg: var(--button-bg-dm);
+            --current-button-text-color: var(--button-text-color-dm);
+            --current-button-border: var(--button-border-dm);
+            --current-header-text-color: var(--header-text-color-dm-orange); /* ORANGE H1 */
+            --current-dropdown-bg: var(--dropdown-bg-dm);
+            --current-twitter-feed-bg: var(--twitter-feed-bg-dm);
+        }
+
 
         body {
             font-family: 'VT323', monospace;
-            background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeigsu7ak3jbbia6w66slcz2rnk6b6ysundurmgz5etoq6xh23vsbpm');
-            background-size: cover; 
-            background-position: center; 
-            background-repeat: no-repeat; 
-            background-attachment: fixed; 
-            color: var(--text-color);
-            margin: 0;
-            font-size: 16px;
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            min-height: 100vh; 
-            box-sizing: border-box; 
+            background-image: var(--body-bg-image); /* This doesn't change with theme for now */
+            background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; 
+            color: var(--current-text-color); 
+            margin: 0; font-size: 16px; display: flex; flex-direction: column; 
+            align-items: center; min-height: 100vh; box-sizing: border-box; 
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .game-container {
-            width: 95%; 
-            max-width: 1600px; 
-            margin-top: 20px; 
-            margin-bottom: 20px; 
-            border: 3px solid var(--border-color); 
-            padding: 15px;
-            background-color: var(--game-container-bg); 
-            box-shadow: 0px 0px 15px rgba(0,0,0,0.5); 
-            box-sizing: border-box;
+            width: 95%; max-width: 1600px; margin-top: 20px; margin-bottom: 20px; 
+            border: 3px solid var(--current-border-color); 
+            padding: 15px; background-color: var(--current-game-container-bg); 
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.5); box-sizing: border-box;
+            display: flex; flex-direction: column;
+            transition: background-color 0.3s, border-color 0.3s;
         }
 
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--border-color);
-            margin-bottom: 15px;
+            display: flex; justify-content: space-between; align-items: center; 
+            padding-bottom: 15px; border-bottom: 2px solid var(--current-border-color);
+            margin-bottom: 15px; width: 100%;
+            transition: border-color 0.3s;
         }
 
-        header h1 {
-            font-size: 2.8em; 
-            margin: 0;
-            letter-spacing: 2px;
-            color: #333; 
+        /* === MODIFIED: Header h1 color === */
+        header h1 { 
+            font-size: 2.8em; margin: 0; letter-spacing: 2px; 
+            color: var(--current-header-text-color); /* Uses variable that changes with dark mode */
+            transition: color 0.3s;
+        }
+        
+        .header-controls { display: flex; align-items: center; gap: 20px; }
+        .player-info-wallet { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+        .player-stats { text-align: right; font-size: 0.9em; }
+        .player-stats .pv { color: var(--highlight-color-pv); font-weight: bold; }
+        .player-stats .gold { color: var(--highlight-color-gold); font-weight: bold; }
+        .player-stats .wallet-address { font-size: 0.8em; color: var(--highlight-color-connected); word-break: break-all; }
+        .wallet-connector { position: relative; }
+        
+        .connect-wallet-btn, .menu-button, .social-btn-link button, .adventure-send-btn { 
+            background-color: var(--current-button-bg); border: 2px solid var(--current-button-border); padding: 5px 10px;
+            color: var(--current-button-text-color);
+            cursor: pointer; font-family: 'VT323', monospace; font-size: 1em; text-align: center;
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+        }
+        .connect-wallet-btn, .menu-button { min-width: 150px; }
+        .connect-wallet-btn:hover, .menu-button:hover, .social-btn-link button:hover, .adventure-send-btn:hover { 
+            background-color: #cccccc; 
+        }
+        body.dark-mode .connect-wallet-btn:hover, 
+        body.dark-mode .menu-button:hover, 
+        body.dark-mode .social-btn-link button:hover,
+        body.dark-mode .adventure-send-btn:hover {
+            background-color: #555555;
         }
 
-        .player-info-wallet {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 5px;
-        }
-
-        .player-stats {
-            text-align: right;
-            font-size: 0.9em;
-        }
-        .player-stats .pv { color: var(--highlight-color); font-weight: bold; }
-        .player-stats .gold { color: var(--gold-color); font-weight: bold; }
-        .player-stats .wallet-address {
-            font-size: 0.8em;
-            color: var(--connected-color);
-            word-break: break-all;
-        }
-
-
-        .wallet-connector {
-            position: relative;
-        }
-
-        .connect-wallet-btn, .menu-button, .social-btn-link button { 
-            background-color: var(--button-bg);
-            border: 2px solid var(--button-border);
-            padding: 5px 10px;
-            cursor: pointer;
-            font-family: 'VT323', monospace;
-            font-size: 1em;
-            min-width: 150px;
-            text-align: center;
-            transition: background-color 0.2s ease-in-out; 
-        }
-        .connect-wallet-btn:hover, .menu-button:hover, .social-btn-link button:hover {
-            background-color: #cccccc;
-        }
-        .connect-wallet-btn.connected {
-            background-color: var(--connected-color);
-            color: white;
-            border-color: var(--connected-color);
-        }
-
-
-        .wallet-dropdown {
-            display: none;
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background-color: var(--bg-color);
-            border: 2px solid var(--border-color);
-            list-style: none;
-            padding: 0;
-            margin: 5px 0 0 0;
-            width: 100%; 
-            z-index: 10;
+        .connect-wallet-btn.connected { background-color: var(--highlight-color-connected); color: white; border-color: var(--highlight-color-connected); }
+        .wallet-dropdown { 
+            display: none; position: absolute; top: 100%; right: 0; 
+            background-color: var(--current-dropdown-bg); color: var(--current-text-color); 
+            border: 2px solid var(--current-border-color); list-style: none; 
+            padding: 0; margin: 5px 0 0 0; width: 100%; z-index: 10; 
             box-shadow: 0px 3px 7px rgba(0,0,0,0.2);
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s;
         }
+        .wallet-dropdown li { padding: 8px 12px; cursor: pointer; border-bottom: 1px solid var(--current-border-color); text-align: center; transition: background-color 0.3s, border-color 0.3s; }
+        .wallet-dropdown li:last-child { border-bottom: none; }
+        .wallet-dropdown li:hover { background-color: #f0f0f0; }
+        body.dark-mode .wallet-dropdown li:hover { background-color: #4a4a4a; }
 
-        .wallet-dropdown li {
-            padding: 8px 12px;
-            cursor: pointer;
-            border-bottom: 1px solid var(--border-color);
-            text-align: center;
-        }
-        .wallet-dropdown li:last-child {
-            border-bottom: none;
-        }
-        .wallet-dropdown li:hover {
-            background-color: #f0f0f0;
-        }
 
-        .main-content {
-            display: flex;
-            gap: 20px; 
-            width: 100%; 
-        }
-
-        .left-sidebar {
-            width: 250px; 
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            flex-shrink: 0; 
-        }
-
-        .wallet-summary, .adventurer-setup, .items-info, .main-menu-nav, .socials-nav {
-            border: 2px solid var(--border-color);
-            padding: 10px;
-             background-color: rgba(255, 255, 255, 0.8); 
-        }
+        .main-content { display: flex; gap: 20px; width: 100%; flex-grow: 1; }
+        .left-sidebar { width: 280px; display: flex; flex-direction: column; gap: 20px; flex-shrink: 0; }
         
-        .adventurer-setup .selection-group {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 10px;
+        .twitter-feed-container {
+            border: 2px solid var(--current-border-color); padding: 10px; background-color: var(--current-twitter-feed-bg);
+            flex-grow: 1; min-height: 300px; overflow: hidden; display: flex; flex-direction: column;
+            transition: background-color 0.3s, border-color 0.3s;
         }
-
-        .adventurer-setup label {
-            margin-right: 10px;
-            white-space: nowrap;
-        }
-
-        .selection-box-container {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-        .selection-box, .adventure-option {
-            border: 2px solid var(--border-color);
-            padding: 3px 8px;
-            text-align: center;
-            cursor: pointer;
-            background-color: var(--bg-color);
-        }
-        .selection-box.active, .adventure-option.active {
-            background-color: var(--button-bg);
-            font-weight: bold;
-        }
-        .adventure-option.adv1.active { background-color: var(--highlight-color); color: black; }
-        .adventure-option.adv2.active { background-color: var(--gold-color); color: black; }
-        .adventure-option.adv3.active { background-color: var(--danger-color); color: white; }
+        .twitter-feed-container .twitter-timeline { width: 100% !important; height: 100% !important; }
+        /* Twitter's data-theme attribute is primary for its internal styling */
 
 
-        .main-menu-nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+        .main-menu-nav, .socials-nav, .left-sidebar > div:not(.twitter-feed-container):not(.socials-nav):not(.main-menu-nav) {
+            border: 2px solid var(--current-border-color); padding: 10px; background-color: var(--current-section-bg); 
+            transition: background-color 0.3s, border-color 0.3s;
         }
-        .main-menu-nav li {
-            padding: 8px 0;
-            border-bottom: 1px solid var(--border-color);
-            cursor: pointer;
-        }
-        .main-menu-nav li:last-child {
-            border-bottom: none;
-        }
-        .main-menu-nav li:hover {
-            background-color: #f0f0f0;
-        }
-        .main-menu-nav .menu-button-container {
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        .socials-nav .social-title {
-            text-align: center;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-        .socials-nav .social-buttons {
-            display: flex;
-            justify-content: space-around;
-        }
-        .social-btn-link {
-            text-decoration: none; 
-            width: 45%; 
-        }
-        .social-btn-link button { 
-            width: 100%; 
-            min-width: auto; 
-            padding: 5px;
-        }
-
-        /* === MODIFIED: Game World Layout === */
-        .game-world {
-            flex-grow: 1; 
-            display: flex; /* Make it a flex container for side-by-side layout */
-            flex-direction: row; /* Arrange children (player & adventures) in a row */
-            align-items: flex-start; /* Align children to the top of the row */
-            gap: 30px; /* Space between player character and adventure list */
-            padding-top: 20px; 
-            padding-left: 20px; /* Some padding from the left sidebar */
-        }
+        .main-menu-nav ul { list-style: none; padding: 0; margin: 0; }
+        .main-menu-nav li { padding: 8px 0; border-bottom: 1px solid var(--current-border-color); cursor: pointer; transition: border-color 0.3s, background-color 0.3s; }
+        .main-menu-nav li:last-child { border-bottom: none; }
+        .main-menu-nav li:hover { background-color: #f0f0f0; }
+        body.dark-mode .main-menu-nav li:hover { background-color: #4a4a4a; }
+        .main-menu-nav .menu-button-container { text-align: center; margin-bottom: 10px; }
         
-        .player-character-area {
-            /* This area will hold the character. It won't grow, character size dictates it. */
-            flex-shrink: 0; /* Prevent it from shrinking if adventures are too wide */
-            /* No specific justification needed, its position is relative to the start of .game-world */
-            margin-top: 20px; /* Align character a bit lower, adjust as needed */
+        .socials-nav .social-title, .adventurer-setup label, .adventure-controls label { 
+            color: var(--current-label-color); 
+            font-weight: bold; 
+            transition: color 0.3s;
         }
+        .socials-nav .social-buttons { display: flex; justify-content: space-around; }
+        .social-btn-link { text-decoration: none; width: 45%; }
+        .social-btn-link button { width: 100%; min-width: auto; padding: 5px;}
 
+        .game-world-main { 
+            flex-grow: 1; display: flex; flex-direction: row; 
+            align-items: flex-start; gap: 30px; padding-top: 0; padding-left: 20px; 
+        }
+        .player-character-area { flex-shrink: 0; margin-top: 0; }
         .player-character {
-            width: 80px;  
-            height: 80px; 
+            width: 80px; height: 80px; 
             background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafkreige4cba5c3bwwknrhupt3upkz5he7orgz2m7ygilbqmhmb2bsmd5q');
-            background-size: contain; 
-            background-position: center;
-            background-repeat: no-repeat;
+            background-size: contain; background-position: center; background-repeat: no-repeat;
         }
-
-        .adventure-locations {
-            flex-grow: 1; /* Allows adventure list to take available space next to player */
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start; /* Adventures will stack and align to their left */
-            gap: 25px; /* Spacing between adventure blocks */
+        .adventure-section-wrapper { display: flex; flex-direction: column; flex-grow: 1; align-items: flex-start; }
+        .adventures-label { 
+            font-size: 1.8em; font-weight: bold; color: var(--current-label-color); 
+            margin-bottom: 15px; text-align: center; width: 100%; 
+            transition: color 0.3s;
         }
-
+        .adventure-locations { width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 20px; }
         .adventure {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            width: 100%; /* Make adventure blocks take full width of their container (.adventure-locations) */
-            max-width: 650px; /* Control max width of individual adventure blocks */
-             background-color: rgba(255, 255, 255, 0.75); 
-             padding: 15px; 
-             border-radius: 8px; 
-             border: 1px solid #b0b0b0; 
-             box-sizing: border-box; /* Include padding and border in width calculation */
+            display: flex; align-items: center; gap: 20px; width: 100%; 
+            max-width: 750px; background-color: var(--current-adventure-block-bg); 
+            padding: 15px; border-radius: 8px; border: 1px solid var(--current-border-color); box-sizing: border-box; 
+            transition: background-color 0.3s, border-color 0.3s;
         }
-        
         .adventure-icon {
-            width: 150px;  
-            height: 150px; 
-            border: 2px solid var(--border-color);
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            flex-shrink: 0;
-            border-radius: 5px; 
+            width: 150px; height: 150px; border: 2px solid var(--current-border-color);
+            background-size: cover; background-position: center; background-repeat: no-repeat;
+            flex-shrink: 0; border-radius: 5px; 
+            transition: border-color 0.3s;
+        }
+        .adventure-icon.tree { background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblzgkncylseo57qr7kyhsxdgb3bq2aghcmj6gdf2ihhagpxp3uoy/adventure1.png'); }
+        .adventure-icon.mountain { background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblzgkncylseo57qr7kyhsxdgb3bq2aghcmj6gdf2ihhagpxp3uoy/adventure2.png'); }
+        .adventure-icon.fire-fields { background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblzgkncylseo57qr7kyhsxdgb3bq2aghcmj6gdf2ihhagpxp3uoy/adventure3.png'); }
+        .adventure-content { display: flex; flex-direction: column; gap: 10px; }
+        .adventure-details { font-size: 1em; }
+        .adventure-details .prize { color: var(--highlight-color-pv); font-weight: bold; }
+        .adventure-details .chance-gold { color: var(--highlight-color-gold); font-weight: bold; }
+        .adventure-controls { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+        .adventure-num-select {
+            font-family: 'VT323', monospace; font-size: 1em; padding: 3px;
+            border: 2px solid var(--current-border-color); background-color: var(--current-dropdown-bg); color: var(--current-text-color);
+            min-width: 40px; 
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+        }
+        .adventure-send-btn { padding: 4px 8px; font-size: 0.9em; }
+        .adventure-send-btn.active-adv1 { background-color: var(--highlight-color-pv); color: black;}
+        .adventure-send-btn.active-adv2 { background-color: var(--highlight-color-gold); color: black;}
+        .adventure-send-btn.active-adv3 { background-color: var(--highlight-color-danger); color: white;}
+        body.dark-mode .adventure-send-btn.active-adv1 { background-color: var(--highlight-color-pv); color: black;} /* Keep active button colors distinct */
+        body.dark-mode .adventure-send-btn.active-adv2 { background-color: var(--highlight-color-gold); color: black;}
+        body.dark-mode .adventure-send-btn.active-adv3 { background-color: var(--highlight-color-danger); color: white;}
+
+
+        .right-sidebar-menu { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; }
+        .right-sidebar-menu .main-menu-nav {
+             border: 2px solid var(--current-border-color); padding: 10px; background-color: var(--current-section-bg);
+            width: 100%; box-sizing: border-box;
+            transition: background-color 0.3s, border-color 0.3s;
         }
 
-        .adventure-icon.tree {
-            background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblzgkncylseo57qr7kyhsxdgb3bq2aghcmj6gdf2ihhagpxp3uoy/adventure1.png');
-        }
-
-        .adventure-icon.mountain {
-            background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblzgkncylseo57qr7kyhsxdgb3bq2aghcmj6gdf2ihhagpxp3uoy/adventure2.png');
-        }
-
-        .adventure-icon.fire-fields {
-            background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblzgkncylseo57qr7kyhsxdgb3bq2aghcmj6gdf2ihhagpxp3uoy/adventure3.png');
-        }
-
-        .adventure-details {
-            font-size: 1em; 
-        }
-        .adventure-details .prize {
-            color: var(--highlight-color);
-            font-weight: bold;
-        }
-        .adventure-details .chance-gold {
-            color: var(--gold-color);
-             font-weight: bold;
-        }
+        .dark-mode-switch { display: flex; align-items: center; gap: 8px; }
+        .dark-mode-switch label { font-size: 0.9em; color: var(--current-text-color); cursor: pointer; transition: color 0.3s; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--highlight-color-connected); }
+        body.dark-mode input:checked + .slider { background-color: var(--highlight-color-connected); }
+        input:focus + .slider { box-shadow: 0 0 1px var(--highlight-color-connected); }
+        input:checked + .slider:before { transform: translateX(26px); }
 
     </style>
 </head>
@@ -319,262 +258,266 @@
     <div class="game-container">
         <header>
             <h1>PUNK VOYAGE ADVENTURES</h1>
-            <div class="player-info-wallet">
-                <div class="player-stats" id="playerStats">
-                    PLAYER 37365, WELCOME<br>
-                    <span class="pv">PV = 260</span> , <span class="gold">GOLD = 1</span>
-                    <div class="wallet-address" id="walletAddressDisplay"></div>
+            <div class="header-controls"> 
+                <div class="player-info-wallet">
+                    <div class="player-stats" id="playerStats">PLAYER 37365, WELCOME<br><span class="pv">PV = 260</span> , <span class="gold">GOLD = 1</span><div class="wallet-address" id="walletAddressDisplay"></div></div>
+                    <div class="wallet-connector"><button class="connect-wallet-btn" id="connectWalletBtn">CONNECT WALLET</button><ul class="wallet-dropdown" id="walletDropdown"><li data-wallet="satsconnect_xverse">XVERSE</li><li data-wallet="unisat">UNISAT</li><li data-wallet="satsconnect_magiceden">MAGIC EDEN</li><li data-wallet="satsconnect_general">ANY BTC WALLET</li></ul></div>
                 </div>
-                <div class="wallet-connector">
-                    <button class="connect-wallet-btn" id="connectWalletBtn">CONNECT WALLET</button>
-                    <ul class="wallet-dropdown" id="walletDropdown">
-                        <li data-wallet="satsconnect_xverse">XVERSE (via SatsConnect)</li>
-                        <li data-wallet="unisat">UNISAT (Direct)</li>
-                        <li data-wallet="satsconnect_magiceden">MAGIC EDEN (via SatsConnect)</li>
-                        <li data-wallet="satsconnect_general">ANY BTC WALLET (SatsConnect)</li>
-                    </ul>
+                <div class="dark-mode-switch">
+                    <label for="darkModeToggle">Dark Mode</label>
+                    <label class="switch">
+                        <input type="checkbox" id="darkModeToggle">
+                        <span class="slider"></span>
+                    </label>
                 </div>
             </div>
         </header>
 
         <main class="main-content">
             <aside class="left-sidebar">
-                <div class="wallet-summary">
-                    PUNK VOYAGE FOUND IN WALLET= 3
+                <div class="twitter-feed-container" id="twitter-widget-container"> <!-- Added ID for easier JS targeting -->
+                    <a class="twitter-timeline" data-dnt="true" href="https://twitter.com/nvart_?ref_src=twsrc%5Etfw">Tweets by nvart_</a> 
+                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
                 </div>
-                <div class="adventurer-setup">
-                    <div class="selection-group">
-                        <label for="numAdventurers">NUMBER OF ADVENTURERS</label>
-                        <div class="selection-box-container" id="numAdventurersContainer">
-                            <div class="selection-box active" data-value="1">1</div>
-                            <div class="selection-box" data-value="2">2</div>
-                            <div class="selection-box" data-value="3">3</div>
-                        </div>
-                    </div>
-                    <div class="selection-group">
-                        <label for="sendToAdventure">SEND TO =</label>
-                        <div class="selection-box-container" id="sendToAdventureContainer">
-                            <div class="adventure-option adv1 active" data-value="adventure1">ADVENTURE 1</div>
-                            <div class="adventure-option adv2" data-value="adventure2">ADVENTURE 2</div>
-                            <div class="adventure-option adv3" data-value="adventure3">ADVENTURE 3</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="items-info">
-                    ITEMS FOUND IN WALLET: coming soon
-                </div>
-                <nav class="main-menu-nav">
-                    <div class="menu-button-container">
-                        <button class="menu-button">MENU</button>
-                    </div>
-                    <ul>
-                        <li>QUESTS</li>
-                        <li>DAILY LOGIN REWARDS</li>
-                        <li>SHOP</li>
-                        <li>HELP</li>
-                    </ul>
-                </nav>
                 <nav class="socials-nav">
                     <div class="social-title">SOCIALS</div>
                     <div class="social-buttons">
-                        <a href="https://x.com/nvart_" target="_blank" class="social-btn-link">
-                            <button>X</button>
-                        </a>
-                        <a href="https://discord.com/invite/4CEtXAFf3x" target="_blank" class="social-btn-link">
-                            <button>DISCORD</button>
-                        </a>
+                        <a href="https://x.com/nvart_" target="_blank" class="social-btn-link"><button>X</button></a>
+                        <a href="https://discord.com/invite/4CEtXAFf3x" target="_blank" class="social-btn-link"><button>DISCORD</button></a>
                     </div>
                 </nav>
             </aside>
 
-            <!-- Game world contains character and adventures side-by-side -->
-            <section class="game-world"> 
+            <section class="game-world-main"> 
                 <div class="player-character-area">
-                    <div class="player-character" aria-label="Player Character Image">
-                        <!-- Image will be set via CSS background -->
-                    </div>
+                    <div class="player-character" aria-label="Player Character Image"></div>
                 </div>
-
-                <div class="adventure-locations">
-                    <div class="adventure" id="adv-location-1">
-                        <div class="adventure-icon tree"></div>
-                        <div class="adventure-details">
-                            ADVENTURE 1, SPIRIT FOREST<br>
-                            ADVENTURE TIME = 4 HOURS<br>
-                            <span class="prize">PRIZE = 25 PV TOKENS</span>
+                <div class="adventure-section-wrapper">
+                    <h2 class="adventures-label">ADVENTURES</h2>
+                    <div class="adventure-locations">
+                        <!-- Adventure 1 -->
+                        <div class="adventure" id="adventure-1-block">
+                            <div class="adventure-icon tree"></div>
+                            <div class="adventure-content">
+                                <div class="adventure-details">
+                                    ADVENTURE 1, SPIRIT FOREST<br> ADVENTURE TIME = 4 HOURS<br> <span class="prize">PRIZE = 25 PV TOKENS</span>
+                                </div>
+                                <div class="adventure-controls">
+                                    <label for="num-adventurers-1">NUMBER OF ADVENTURERS</label>
+                                    <select id="num-adventurers-1" class="adventure-num-select">
+                                        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                                    </select>
+                                    <button class="adventure-send-btn active-adv1" data-adventure-id="1">SEND TO = ADVENTURE 1</button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="adventure" id="adv-location-2">
-                        <div class="adventure-icon mountain"></div>
-                        <div class="adventure-details">
-                            ADVENTURE 2<br>
-                            MOUNTAIN OF THE MAROWAN<br>
-                            ADVENTURE TIME = 8 HOURS<br>
-                            <span class="prize">PRIZE = 40 PV TOKENS</span>
+                        <!-- Adventure 2 -->
+                        <div class="adventure" id="adventure-2-block">
+                            <div class="adventure-icon mountain"></div>
+                            <div class="adventure-content">
+                                <div class="adventure-details">
+                                    ADVENTURE 2<br> MOUNTAIN OF THE MAROWAN<br> ADVENTURE TIME = 8 HOURS<br> <span class="prize">PRIZE = 40 PV TOKENS</span>
+                                </div>
+                                <div class="adventure-controls">
+                                    <label for="num-adventurers-2">NUMBER OF ADVENTURERS</label>
+                                    <select id="num-adventurers-2" class="adventure-num-select">
+                                        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                                    </select>
+                                    <button class="adventure-send-btn active-adv2" data-adventure-id="2">SEND TO = ADVENTURE 2</button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="adventure" id="adv-location-3">
-                        <div class="adventure-icon fire-fields"></div>
-                        <div class="adventure-details">
-                            ADVENTURE 3<br>
-                            FIRE FIELDS OF FLYINALS<br>
-                            ADVENTURE TIME = 24 HOURS<br>
-                            <span class="prize">PRIZE = 100 PV TOKENS</span><br>
-                            <span class="chance-gold">%1 CHANCE OF GOLD</span>
+                        <!-- Adventure 3 -->
+                        <div class="adventure" id="adventure-3-block">
+                            <div class="adventure-icon fire-fields"></div>
+                            <div class="adventure-content">
+                                <div class="adventure-details">
+                                    ADVENTURE 3<br> FIRE FIELDS OF FLYINALS<br> ADVENTURE TIME = 24 HOURS<br> <span class="prize">PRIZE = 100 PV TOKENS</span><br> <span class="chance-gold">%1 CHANCE OF GOLD</span>
+                                </div>
+                                <div class="adventure-controls">
+                                    <label for="num-adventurers-3">NUMBER OF ADVENTURERS</label>
+                                    <select id="num-adventurers-3" class="adventure-num-select">
+                                        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                                    </select>
+                                    <button class="adventure-send-btn active-adv3" data-adventure-id="3">SEND TO = ADVENTURE 3</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
+            
+            <aside class="right-sidebar-menu">
+                <nav class="main-menu-nav">
+                    <div class="menu-button-container"><button class="menu-button">MENU</button></div>
+                    <ul><li>QUESTS</li><li>DAILY LOGIN REWARDS</li><li>SHOP</li><li>HELP</li></ul>
+                </nav>
+            </aside>
         </main>
     </div>
 
     <script>
-        // Wallet connection and other UI JavaScript remains the same
         document.addEventListener('DOMContentLoaded', () => {
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const body = document.body;
+            const twitterWidgetContainer = document.getElementById('twitter-widget-container'); // Target the container
+
+            // Function to load/reload Twitter widget with a specific theme
+            function loadTwitterWidget(theme) {
+                if (twitterWidgetContainer) {
+                    // Clear previous widget if any
+                    twitterWidgetContainer.innerHTML = ''; 
+                    
+                    const twitterLink = document.createElement('a');
+                    twitterLink.className = 'twitter-timeline';
+                    twitterLink.setAttribute('data-dnt', 'true');
+                    twitterLink.href = 'https://twitter.com/nvart_?ref_src=twsrc%5Etfw';
+                    twitterLink.setAttribute('data-theme', theme); // Set theme here
+                    twitterLink.setAttribute('data-height', '600'); // Keep other attributes
+                    twitterLink.textContent = 'Tweets by nvart_';
+                    
+                    twitterWidgetContainer.appendChild(twitterLink);
+
+                    // Reload Twitter's widgets.js if it's already loaded, or load it
+                    // This is a common way to force re-evaluation
+                    let twitterScript = document.querySelector('script[src="https://platform.twitter.com/widgets.js"]');
+                    if (twitterScript) {
+                        twitterScript.remove();
+                    }
+                    twitterScript = document.createElement('script');
+                    twitterScript.async = true;
+                    twitterScript.src = 'https://platform.twitter.com/widgets.js';
+                    twitterScript.charset = 'utf-8';
+                    document.body.appendChild(twitterScript);
+                }
+            }
+
+            // Initialize Dark Mode or Light Mode
+            const savedTheme = localStorage.getItem('theme');
+            // === MODIFIED: Default to dark mode if no preference ===
+            if (savedTheme === 'light') {
+                body.classList.remove('dark-mode');
+                darkModeToggle.checked = false;
+                loadTwitterWidget('light');
+            } else { // Default to dark or if 'dark' is saved
+                body.classList.add('dark-mode');
+                darkModeToggle.checked = true;
+                loadTwitterWidget('dark');
+            }
+
+            darkModeToggle.addEventListener('change', () => {
+                if (darkModeToggle.checked) {
+                    body.classList.add('dark-mode');
+                    localStorage.setItem('theme', 'dark');
+                    loadTwitterWidget('dark');
+                } else {
+                    body.classList.remove('dark-mode');
+                    localStorage.setItem('theme', 'light');
+                    loadTwitterWidget('light');
+                }
+            });
+
+            // --- Rest of your existing JavaScript (Wallet, Adventures, etc.) ---
+            // ... (all the script content from the previous full HTML response) ...
             const connectWalletBtn = document.getElementById('connectWalletBtn');
             const walletDropdown = document.getElementById('walletDropdown');
             const walletOptions = walletDropdown.querySelectorAll('li');
             const walletAddressDisplay = document.getElementById('walletAddressDisplay');
-
             let connectedAccount = null;
             let connectedWalletName = null; 
 
             function updateButtonAndDisplay(account, walletName = '') {
                 if (account) {
                     const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
-                    connectWalletBtn.textContent = `${walletName}: ${shortAddress}`;
-                    connectWalletBtn.classList.add('connected');
-                    walletAddressDisplay.textContent = `Wallet: ${account}`;
+                    if(connectWalletBtn) {
+                        connectWalletBtn.textContent = `${walletName}: ${shortAddress}`;
+                        connectWalletBtn.classList.add('connected');
+                    }
+                    if(walletAddressDisplay) walletAddressDisplay.textContent = `Wallet: ${account}`;
                 } else {
-                    connectWalletBtn.textContent = 'CONNECT WALLET';
-                    connectWalletBtn.classList.remove('connected');
-                    walletAddressDisplay.textContent = '';
+                     if(connectWalletBtn) {
+                        connectWalletBtn.textContent = 'CONNECT WALLET';
+                        connectWalletBtn.classList.remove('connected');
+                    }
+                    if(walletAddressDisplay) walletAddressDisplay.textContent = '';
                 }
             }
-
-            if(connectWalletBtn) {
+            if(connectWalletBtn && walletDropdown) {
                 connectWalletBtn.addEventListener('click', (event) => {
                     event.stopPropagation();
-                    if(walletDropdown) walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block';
+                    walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block';
+                });
+                 document.addEventListener('click', (event) => {
+                    if (!connectWalletBtn.contains(event.target) && !walletDropdown.contains(event.target)) {
+                        walletDropdown.style.display = 'none';
+                    }
                 });
             }
-
-            document.addEventListener('click', (event) => {
-                if (connectWalletBtn && walletDropdown && !connectWalletBtn.contains(event.target) && !walletDropdown.contains(event.target)) {
-                    walletDropdown.style.display = 'none';
-                }
-            });
-
-            async function connectWithSatsConnect(walletTypeHint = null) {
+           async function connectWithSatsConnect(walletTypeHint = null) {
                 if (typeof SatsConnect === 'undefined' || typeof SatsConnect.getAddresses === 'undefined') {
-                    alert('Sats Connect library not loaded or not ready. Please ensure you have a good internet connection and try again. If the issue persists, the CDN might be temporarily unavailable.');
-                    console.error('Sats Connect library not loaded or `getAddresses` is not defined on it.');
-                    return;
+                    alert('Sats Connect library not loaded or not ready.'); return;
                 }
                 try {
-                    const getAddressesOptions = {
-                        payload: {
-                            purposes: ['ordinals', 'payment'],
-                            message: 'Connect to Punk Voyage Adventures',
-                            network: { type: 'Mainnet' },
-                        },
+                    SatsConnect.getAddresses({
+                        payload: { purposes: ['ordinals', 'payment'], message: 'Connect to Punk Voyage Adventures', network: { type: 'Mainnet' }, },
                         onFinish: (response) => {
-                            const ordinalsAddressInfo = response.addresses.find(addr => addr.purpose === 'ordinals');
-                            const paymentAddressInfo = response.addresses.find(addr => addr.purpose === 'payment');
-                            
-                            let addressToUse = null;
-                            let walletDisplayName = "BTC Wallet"; 
-
-                            if (ordinalsAddressInfo) addressToUse = ordinalsAddressInfo.address;
-                            else if (paymentAddressInfo) addressToUse = paymentAddressInfo.address;
-
-                            if (addressToUse) {
-                                connectedAccount = addressToUse;
-                                walletDisplayName = walletTypeHint ? walletTypeHint.replace('satsconnect_', '').toUpperCase() : "BTC Wallet";
-                                if (walletDisplayName === "GENERAL") walletDisplayName = "BTC Wallet";
-                                
-                                connectedWalletName = walletDisplayName;
+                            const ordAddress = response.addresses.find(a => a.purpose === 'ordinals');
+                            const payAddress = response.addresses.find(a => a.purpose === 'payment');
+                            let addr = ordAddress ? ordAddress.address : (payAddress ? payAddress.address : null);
+                            if (addr) {
+                                connectedAccount = addr;
+                                let name = walletTypeHint ? walletTypeHint.replace('satsconnect_', '').toUpperCase() : "BTC";
+                                if (name === "GENERAL") name = "BTC";
+                                connectedWalletName = name;
                                 updateButtonAndDisplay(connectedAccount, connectedWalletName);
-                            } else {
-                                console.error('SatsConnect: No suitable address found.');
                             }
                         },
-                        onCancel: () => console.log('SatsConnect connection canceled.'),
-                    };
-                    SatsConnect.getAddresses(getAddressesOptions);
-                } catch (error) {
-                    console.error('SatsConnect error:', error);
-                }
+                        onCancel: () => console.log('SatsConnect canceled.'),
+                    });
+                } catch (e) { console.error('SatsConnect error:', e); }
             }
-
             async function connectUnisat() {
                 try {
                     if (typeof window.unisat !== 'undefined') {
                         const accounts = await window.unisat.requestAccounts();
                         if (accounts && accounts.length > 0) {
-                            connectedAccount = accounts[0];
-                            connectedWalletName = 'UniSat';
+                            connectedAccount = accounts[0]; connectedWalletName = 'UniSat';
                             updateButtonAndDisplay(connectedAccount, 'UniSat');
-
-                            window.unisat.on('accountsChanged', (newAccounts) => {
+                            window.unisat.on('accountsChanged', (newAccs) => {
                                 if (connectedWalletName === 'UniSat') {
-                                    if (newAccounts && newAccounts.length > 0) {
-                                        connectedAccount = newAccounts[0];
-                                        updateButtonAndDisplay(connectedAccount, 'UniSat');
-                                    } else {
-                                        connectedAccount = null;
-                                        connectedWalletName = null;
-                                        updateButtonAndDisplay(null);
-                                    }
+                                    connectedAccount = (newAccs && newAccs.length > 0) ? newAccs[0] : null;
+                                    if (!connectedAccount) connectedWalletName = null;
+                                    updateButtonAndDisplay(connectedAccount, connectedAccount ? 'UniSat' : '');
                                 }
                             });
                         }
-                    } else {
-                        window.open('https://unisat.io/', '_blank');
-                    }
-                } catch (error) {
-                    console.error('UniSat error:', error);
-                }
+                    } else { window.open('https://unisat.io/', '_blank'); }
+                } catch (e) { console.error('UniSat error:', e); }
             }
-
-            if (walletOptions) {
+             if (walletOptions) {
                 walletOptions.forEach(option => {
                     option.addEventListener('click', async (event) => {
                         const walletType = event.target.dataset.wallet;
                         if(walletDropdown) walletDropdown.style.display = 'none';
-                        
-                        connectedAccount = null;
-                        connectedWalletName = null;
-                        updateButtonAndDisplay(null);
-
+                        connectedAccount = null; connectedWalletName = null; updateButtonAndDisplay(null);
                         if (walletType === 'unisat') await connectUnisat();
                         else if (walletType && walletType.startsWith('satsconnect_')) {
-                            const hint = walletType.split('_')[1]; 
-                            await connectWithSatsConnect(hint);
+                            await connectWithSatsConnect(walletType.split('_')[1]);
                         }
                     });
                 });
             }
-
-            const numAdventurersContainer = document.getElementById('numAdventurersContainer');
-            if (numAdventurersContainer) {
-                numAdventurersContainer.addEventListener('click', (event) => {
-                    if (event.target.classList.contains('selection-box')) {
-                        Array.from(numAdventurersContainer.children).forEach(child => child.classList.remove('active'));
-                        event.target.classList.add('active');
-                    }
+            const adventureSendButtons = document.querySelectorAll('.adventure-send-btn');
+            adventureSendButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const adventureId = button.dataset.adventureId;
+                    const selectElement = document.getElementById(`num-adventurers-${adventureId}`);
+                    const numAdventurers = selectElement ? selectElement.value : 'N/A';
+                    
+                    console.log(`Attempting to send ${numAdventurers} adventurer(s) to Adventure ${adventureId}`);
+                    alert(`Sending ${numAdventurers} adventurer(s) to Adventure ${adventureId}.\n(This is a placeholder)`);
                 });
-            }
-            
-            const sendToAdventureContainer = document.getElementById('sendToAdventureContainer');
-            if (sendToAdventureContainer) {
-                sendToAdventureContainer.addEventListener('click', (event) => {
-                    if (event.target.classList.contains('adventure-option')) {
-                        Array.from(sendToAdventureContainer.children).forEach(child => child.classList.remove('active'));
-                        event.target.classList.add('active');
-                    }
-                });
-            }
+            });
         });
     </script>
 </body>
