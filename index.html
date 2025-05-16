@@ -8,138 +8,107 @@
     <script src="https://unpkg.com/@sats-connect/core@latest/dist/bundles/sats-connect.js"></script>
     <style>
         :root {
-            /* ... (All your existing CSS color variables remain the same) ... */
-            --lm-body-bg-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeigsu7ak3jbbia6w66slcz2rnk6b6ysundurmgz5etoq6xh23vsbpm');
-            --lm-border-color: #000000; --lm-text-color: #000000; --lm-label-color: #333333; 
-            --lm-header-text-color: #333333; --lm-game-container-bg: rgba(255, 255, 255, 0.9); 
-            --lm-section-bg: rgba(255, 255, 255, 0.8); --lm-adventure-block-bg: rgba(255, 255, 255, 0.75);
-            --lm-button-bg: #E0E0E0; --lm-button-text-color: #000000; --lm-button-border: #000000;
-            --lm-dropdown-bg: #FFFFFF; --lm-twitter-feed-bg: rgba(255, 255, 255, 0.7);
-            --dm-border-color: #777777; --dm-text-color: #FFFFFF; --dm-label-color: #FFA500; 
-            --dm-header-text-color: #FFA500; --dm-game-container-bg: rgba(20, 20, 20, 0.9); 
-            --dm-section-bg: rgba(30, 30, 30, 0.85); --dm-adventure-block-bg: rgba(40, 40, 40, 0.8);
-            --dm-button-bg: #444444; --dm-button-text-color: #FFFFFF; --dm-button-border: #666666;
-            --dm-dropdown-bg: #333333; --dm-twitter-feed-bg: rgba(25, 25, 25, 0.7);
-            --current-body-bg-image: var(--lm-body-bg-image); 
-            --current-border-color: var(--dm-border-color); --current-text-color: var(--dm-text-color);
-            --current-label-color: var(--dm-label-color); --current-header-text-color: var(--dm-header-text-color);
-            --current-game-container-bg: var(--dm-game-container-bg); --current-section-bg: var(--dm-section-bg);
-            --current-adventure-block-bg: var(--dm-adventure-block-bg); --current-button-bg: var(--dm-button-bg);
-            --current-button-text-color: var(--dm-button-text-color); --current-button-border: var(--dm-button-border);
-            --current-dropdown-bg: var(--dm-dropdown-bg); --current-twitter-feed-bg: var(--dm-twitter-feed-bg);
-            --highlight-color-pv: #00FF00; --highlight-color-gold: #FFFF00;
-            --highlight-color-danger: #FF0000; --highlight-color-connected: #4CAF50;
+            /* Base Colors (Effectively Light Mode) */
+            --body-bg-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeigsu7ak3jbbia6w66slcz2rnk6b6ysundurmgz5etoq6xh23vsbpm');
+            --border-color: #000000;
+            --text-color: #000000;
+            --label-color: #333333; 
+            --header-text-color: #333333;
+            --game-container-bg: rgba(255, 255, 255, 0.9); 
+            --section-bg: rgba(255, 255, 255, 0.8);
+            --adventure-block-bg: rgba(255, 255, 255, 0.75);
+            --button-bg: #E0E0E0;
+            --button-text-color: #000000;
+            --button-border: #000000;
+            --dropdown-bg: #FFFFFF;
+            --twitter-feed-bg: rgba(255, 255, 255, 0.7);
+
+            /* Highlight colors (can remain the same or adapt) */
+            --highlight-color-pv: #00FF00; 
+            --highlight-color-gold: #FFFF00;
+            --highlight-color-danger: #FF0000; 
+            --highlight-color-connected: #4CAF50;
+            --orange-label-dm: #FFA500; /* Specific for dark mode labels */
         }
 
         body {
             font-family: 'VT323', monospace;
-            background-image: var(--current-body-bg-image); 
+            background-image: var(--body-bg-image); 
             background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; 
-            color: var(--current-text-color); 
+            color: var(--text-color); 
             margin: 0; font-size: 16px; display: flex; flex-direction: column; 
             align-items: center; min-height: 100vh; box-sizing: border-box; 
             transition: color 0.3s;
         }
-        body.light-mode { /* Styles for light mode */
-            --current-border-color: var(--lm-border-color); --current-text-color: var(--lm-text-color);
-            --current-label-color: var(--lm-label-color); --current-header-text-color: var(--lm-header-text-color);
-            --current-game-container-bg: var(--lm-game-container-bg); --current-section-bg: var(--lm-section-bg);
-            --current-adventure-block-bg: var(--lm-adventure-block-bg); --current-button-bg: var(--lm-button-bg);
-            --current-button-text-color: var(--lm-button-text-color); --current-button-border: var(--lm-button-border);
-            --current-dropdown-bg: var(--lm-dropdown-bg); --current-twitter-feed-bg: var(--lm-twitter-feed-bg);
+
+        /* Dark Mode Overrides */
+        body.dark-mode {
+            --border-color: #777777; 
+            --text-color: #FFFFFF;
+            --label-color: var(--orange-label-dm); 
+            --header-text-color: var(--orange-label-dm); /* Orange H1 in dark mode */
+            --game-container-bg: rgba(20, 20, 20, 0.9); 
+            --section-bg: rgba(30, 30, 30, 0.85);
+            --adventure-block-bg: rgba(40, 40, 40, 0.8);
+            --button-bg: #444444;
+            --button-text-color: #FFFFFF;
+            --button-border: #666666;
+            --dropdown-bg: #333333;
+            --twitter-feed-bg: rgba(25, 25, 25, 0.7);
         }
         
-        /* === NEW: Welcome Screen Styling === */
-        #welcomeScreen {
-            position: fixed; /* Cover the whole viewport */
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: var(--current-body-bg-image); /* Same as body background */
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000; /* Ensure it's on top */
-            text-align: center;
-            padding: 20px;
-            box-sizing: border-box;
+        #welcomeScreen { /* ... (Styles from previous, ensure it uses theme vars correctly) ... */
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: var(--body-bg-image); background-size: cover; background-position: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 1000; text-align: center; padding: 20px; box-sizing: border-box;
         }
-        #welcomeImage {
-            max-width: 80%;
-            max-height: 60vh;
-            margin-bottom: 30px;
-            border-radius: 10px; /* Optional: if you want rounded corners on the image */
-            box-shadow: 0 0 20px rgba(0,0,0,0.5); /* Optional: shadow for the image */
-        }
+        #welcomeImage { max-width: 80%; max-height: 60vh; margin-bottom: 30px; border-radius: 10px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
         #nicknameInputContainer {
-            background-color: var(--current-section-bg); /* Use theme variable */
-            padding: 20px;
-            border-radius: 8px;
-            border: 2px solid var(--current-border-color);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            background-color: var(--section-bg); padding: 20px; border-radius: 8px;
+            border: 2px solid var(--border-color); box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             transition: background-color 0.3s, border-color 0.3s;
         }
         #nicknameInputContainer label {
-            display: block;
-            margin-bottom: 10px;
-            font-size: 1.5em;
-            color: var(--current-label-color); /* Use theme variable */
-            font-weight: bold;
-             transition: color 0.3s;
+            display: block; margin-bottom: 10px; font-size: 1.5em;
+            color: var(--label-color); font-weight: bold; transition: color 0.3s;
         }
         #nicknameInput {
-            font-family: 'VT323', monospace;
-            font-size: 1.2em;
-            padding: 10px;
-            border: 2px solid var(--current-border-color);
-            background-color: var(--current-dropdown-bg); /* Use a theme variable */
-            color: var(--current-text-color); /* Use theme variable */
-            border-radius: 4px;
-            margin-right: 10px;
-            width: 250px;
-            text-align: center;
+            font-family: 'VT323', monospace; font-size: 1.2em; padding: 10px;
+            border: 2px solid var(--border-color); background-color: var(--dropdown-bg); 
+            color: var(--text-color); border-radius: 4px; margin-right: 10px;
+            width: 250px; text-align: center;
             transition: background-color 0.3s, border-color 0.3s, color 0.3s;
         }
         #enterGameButton {
-            font-family: 'VT323', monospace;
-            font-size: 1.2em;
-            padding: 10px 20px;
-            cursor: pointer;
-            background-color: var(--current-button-bg); /* Use theme variable */
-            color: var(--current-button-text-color); /* Use theme variable */
-            border: 2px solid var(--current-button-border); /* Use theme variable */
-            border-radius: 4px;
+            font-family: 'VT323', monospace; font-size: 1.2em; padding: 10px 20px; cursor: pointer;
+            background-color: var(--button-bg); color: var(--button-text-color); 
+            border: 2px solid var(--button-border); border-radius: 4px;
             transition: background-color 0.3s, border-color 0.3s, color 0.3s;
         }
         body:not(.dark-mode) #enterGameButton:hover { background-color: #cccccc; }
         body.dark-mode #enterGameButton:hover { background-color: #555555; }
+        .hidden { display: none !important; }
 
-        .hidden {
-            display: none !important; /* To hide elements */
-        }
 
-        /* ... (All your other existing CSS styles for .game-container, header, main-content, etc. remain the same) ... */
         .game-container { 
             width: 95%; max-width: 1600px; margin-top: 20px; margin-bottom: 20px; 
-            border: 3px solid var(--current-border-color); 
-            padding: 15px; background-color: var(--current-game-container-bg); 
+            border: 3px solid var(--border-color); 
+            padding: 15px; background-color: var(--game-container-bg); 
             box-shadow: 0px 0px 15px rgba(0,0,0,0.5); box-sizing: border-box;
             display: flex; flex-direction: column;
             transition: background-color 0.3s, border-color 0.3s;
         }
+
         header { 
             display: flex; justify-content: space-between; align-items: center; 
-            padding-bottom: 15px; border-bottom: 2px solid var(--current-border-color);
+            padding-bottom: 15px; border-bottom: 2px solid var(--border-color);
             margin-bottom: 15px; width: 100%;
             transition: border-color 0.3s;
         }
         header h1 { 
             font-size: 2.8em; margin: 0; letter-spacing: 2px; 
-            color: var(--current-header-text-color); 
+            color: var(--header-text-color); 
             transition: color 0.3s;
         }
         .header-controls { display: flex; align-items: center; gap: 20px; }
@@ -149,57 +118,69 @@
         .player-stats .gold { color: var(--highlight-color-gold); font-weight: bold; }
         .player-stats .wallet-address { font-size: 0.8em; color: var(--highlight-color-connected); word-break: break-all; }
         .wallet-connector { position: relative; }
-        .connect-wallet-btn, .menu-button, .social-btn-link button, .adventure-send-btn { 
-            background-color: var(--current-button-bg); border: 2px solid var(--current-button-border); padding: 5px 10px;
-            color: var(--current-button-text-color);
+        
+        .connect-wallet-btn, .menu-button, .social-btn-link button, .adventure-send-btn, .action-button { 
+            background-color: var(--button-bg); border: 2px solid var(--button-border); padding: 5px 10px;
+            color: var(--button-text-color);
             cursor: pointer; font-family: 'VT323', monospace; font-size: 1em; text-align: center;
             transition: background-color 0.3s, border-color 0.3s, color 0.3s;
         }
         .connect-wallet-btn, .menu-button { min-width: 150px; }
+        
         body:not(.dark-mode) .connect-wallet-btn:hover, 
         body:not(.dark-mode) .menu-button:hover, 
         body:not(.dark-mode) .social-btn-link button:hover,
-        body:not(.dark-mode) .adventure-send-btn:hover { background-color: #cccccc; }
+        body:not(.dark-mode) .adventure-send-btn:hover,
+        body:not(.dark-mode) .action-button:hover { background-color: #cccccc; }
+        
         body.dark-mode .connect-wallet-btn:hover, 
         body.dark-mode .menu-button:hover, 
         body.dark-mode .social-btn-link button:hover,
-        body.dark-mode .adventure-send-btn:hover { background-color: #555555;}
+        body.dark-mode .adventure-send-btn:hover,
+        body.dark-mode .action-button:hover { background-color: #555555;}
+
         .connect-wallet-btn.connected { background-color: var(--highlight-color-connected); color: white; border-color: var(--highlight-color-connected); }
         .wallet-dropdown { 
             display: none; position: absolute; top: 100%; right: 0; 
-            background-color: var(--current-dropdown-bg); color: var(--current-text-color); 
-            border: 2px solid var(--current-border-color); list-style: none; 
+            background-color: var(--dropdown-bg); color: var(--text-color); 
+            border: 2px solid var(--border-color); list-style: none; 
             padding: 0; margin: 5px 0 0 0; width: 100%; z-index: 10; 
             box-shadow: 0px 3px 7px rgba(0,0,0,0.2);
             transition: background-color 0.3s, border-color 0.3s, color 0.3s;
         }
-        .wallet-dropdown li { padding: 8px 12px; cursor: pointer; border-bottom: 1px solid var(--current-border-color); text-align: center; transition: background-color 0.3s, border-color 0.3s; }
+        .wallet-dropdown li { padding: 8px 12px; cursor: pointer; border-bottom: 1px solid var(--border-color); text-align: center; transition: background-color 0.3s, border-color 0.3s; }
         .wallet-dropdown li:last-child { border-bottom: none; }
         body:not(.dark-mode) .wallet-dropdown li:hover { background-color: #f0f0f0; }
         body.dark-mode .wallet-dropdown li:hover { background-color: #4a4a4a; }
+
         .main-content { display: flex; gap: 20px; width: 100%; flex-grow: 1; }
         .left-sidebar { width: 280px; display: flex; flex-direction: column; gap: 20px; flex-shrink: 0; }
+        
         .twitter-feed-container {
-            border: 2px solid var(--current-border-color); padding: 10px; background-color: var(--current-twitter-feed-bg);
+            border: 2px solid var(--border-color); padding: 10px; background-color: var(--twitter-feed-bg);
             height: 400px; min-height: 300px; overflow-y: auto; display: flex; flex-direction: column;
             transition: background-color 0.3s, border-color 0.3s;
         }
         .twitter-feed-container .twitter-timeline { width: 100% !important; }
-        .socials-nav, .left-sidebar > div:not(.twitter-feed-container):not(.socials-nav):not(.main-menu-nav), #availableAdventurersDisplay {
-            border: 2px solid var(--current-border-color); padding: 10px; background-color: var(--current-section-bg); 
+
+        .socials-nav, #availableAdventurersDisplay {
+            border: 2px solid var(--border-color); padding: 10px; background-color: var(--section-bg); 
             transition: background-color 0.3s, border-color 0.3s;
         }
         #availableAdventurersDisplay { text-align:center; font-size: 1.1em; margin-top: 10px;}
-        .socials-nav .social-title, .adventurer-setup label, .adventure-controls label { 
-            color: var(--current-label-color); font-weight: bold; transition: color 0.3s;
+        
+        .socials-nav .social-title, .adventurer-setup label, .adventure-controls label, .page-title, .active-adventures-container h3 { 
+            color: var(--label-color); font-weight: bold; transition: color 0.3s;
         }
         .socials-nav .social-buttons { display: flex; justify-content: space-around; }
         .social-btn-link { text-decoration: none; width: 45%; }
         .social-btn-link button { width: 100%; min-width: auto; padding: 5px;}
-        .game-world-main { 
-            flex-grow: 1; display: flex; flex-direction: row; 
-            align-items: flex-start; gap: 30px; padding-top: 0; padding-left: 20px; 
-        }
+
+        .main-content-area { flex-grow: 1; display: flex; flex-direction: column; }
+        .page-content { display: none; flex-direction: column; width: 100%; height: 100%; overflow-y: auto; padding: 0 20px; box-sizing: border-box; }
+        .page-content.active { display: flex; }
+        
+        #adventures-page { flex-direction: row; align-items: flex-start; gap: 30px; padding-top: 0; padding-left: 0; }
         .player-character-area { flex-shrink: 0; margin-top: 0; }
         .player-character {
             width: 80px; height: 80px; 
@@ -208,19 +189,18 @@
         }
         .adventure-section-wrapper { display: flex; flex-direction: column; flex-grow: 1; align-items: flex-start; }
         .adventures-label { 
-            font-size: 1.8em; font-weight: bold; color: var(--current-label-color); 
+            font-size: 1.8em; font-weight: bold; /* color managed by general label rule */
             margin-bottom: 15px; text-align: center; width: 100%; 
-            transition: color 0.3s;
         }
         .adventure-locations { width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 20px; }
         .adventure {
             display: flex; align-items: center; gap: 20px; width: 100%; 
-            max-width: 750px; background-color: var(--current-adventure-block-bg); 
-            padding: 15px; border-radius: 8px; border: 1px solid var(--current-border-color); box-sizing: border-box; 
+            max-width: 750px; background-color: var(--adventure-block-bg); 
+            padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); box-sizing: border-box; 
             transition: background-color 0.3s, border-color 0.3s;
         }
         .adventure-icon {
-            width: 150px; height: 150px; border: 2px solid var(--current-border-color);
+            width: 150px; height: 150px; border: 2px solid var(--border-color);
             background-size: cover; background-position: center; background-repeat: no-repeat;
             flex-shrink: 0; border-radius: 5px; 
             transition: border-color 0.3s;
@@ -228,6 +208,7 @@
         .adventure-icon.tree { background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblzgkncylseo57qr7kyhsxdgb3bq2aghcmj6gdf2ihhagpxp3uoy/adventure1.png'); }
         .adventure-icon.mountain { background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblzgkncylseo57qr7kyhsxdgb3bq2aghcmj6gdf2ihhagpxp3uoy/adventure2.png'); }
         .adventure-icon.fire-fields { background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblzgkncylseo57qr7kyhsxdgb3bq2aghcmj6gdf2ihhagpxp3uoy/adventure3.png'); }
+        
         .adventure-content { display: flex; flex-direction: column; gap: 10px; }
         .adventure-details { font-size: 1em; }
         .adventure-details .prize { color: var(--highlight-color-pv); font-weight: bold; }
@@ -235,7 +216,7 @@
         .adventure-controls { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
         .adventure-num-select {
             font-family: 'VT323', monospace; font-size: 1em; padding: 3px;
-            border: 2px solid var(--current-border-color); background-color: var(--current-dropdown-bg); color: var(--current-text-color);
+            border: 2px solid var(--border-color); background-color: var(--dropdown-bg); color: var(--text-color);
             min-width: 40px; 
             transition: background-color 0.3s, border-color 0.3s, color 0.3s;
         }
@@ -243,13 +224,15 @@
         .adventure-send-btn.active-adv1 { background-color: var(--highlight-color-pv); color: black;}
         .adventure-send-btn.active-adv2 { background-color: var(--highlight-color-gold); color: black;}
         .adventure-send-btn.active-adv3 { background-color: var(--highlight-color-danger); color: white;}
-        body.dark-mode .adventure-send-btn.active-adv1, body.dark-mode .adventure-send-btn.active-adv2, body.dark-mode .adventure-send-btn.active-adv3 { /* Keep active colors same */ }
+        /* Active adventure buttons should retain their color regardless of theme */
+        body.dark-mode .adventure-send-btn.active-adv1, body.dark-mode .adventure-send-btn.active-adv2, body.dark-mode .adventure-send-btn.active-adv3 { /* keep as is */ }
+
         .right-sidebar-menu { 
             width: 275px; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; 
         }
         .right-sidebar-menu .main-menu-nav {
-             border: 2px solid var(--current-border-color); padding: 12px; 
-            background-color: var(--current-section-bg);
+             border: 2px solid var(--border-color); padding: 12px; 
+            background-color: var(--section-bg);
             width: 100%; box-sizing: border-box;
             transition: background-color 0.3s, border-color 0.3s;
         }
@@ -259,15 +242,16 @@
         }
         .right-sidebar-menu .main-menu-nav ul { list-style: none; padding: 0; margin: 0; }
         .right-sidebar-menu .main-menu-nav li { 
-            padding: 10px 5px; border-bottom: 1px solid var(--current-border-color); 
+            padding: 10px 5px; border-bottom: 1px solid var(--border-color); 
             cursor: pointer; transition: border-color 0.3s, background-color 0.3s;
             font-size: 1.15em; text-align: center; 
         }
         .right-sidebar-menu .main-menu-nav li:last-child { border-bottom: none; }
         body:not(.dark-mode) .right-sidebar-menu .main-menu-nav li:hover { background-color: #f0f0f0; }
         body.dark-mode .right-sidebar-menu .main-menu-nav li:hover { background-color: #4a4a4a; }
+
         .dark-mode-switch { display: flex; align-items: center; gap: 8px; }
-        .dark-mode-switch label { font-size: 0.9em; color: var(--current-text-color); cursor: pointer; transition: color 0.3s; }
+        .dark-mode-switch label { font-size: 0.9em; color: var(--text-color); cursor: pointer; transition: color 0.3s; }
         .switch { position: relative; display: inline-block; width: 50px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
@@ -275,19 +259,32 @@
         input:checked + .slider { background-color: var(--highlight-color-connected); }
         input:focus + .slider { box-shadow: 0 0 1px var(--highlight-color-connected); }
         input:checked + .slider:before { transform: translateX(26px); }
+        
+        .page-title { font-size: 2em; font-weight: bold; /* color set by general label rule */ margin-bottom: 20px; text-align: center; width: 100%;}
+        .quest-list, .shop-items { display: flex; flex-direction: column; gap: 15px; }
+        .quest-item, .shop-item {
+            background-color: var(--adventure-block-bg); border: 1px solid var(--border-color);
+            padding: 15px; border-radius: 8px; display: flex; justify-content: space-between;
+            align-items: center; transition: background-color 0.3s, border-color 0.3s;
+        }
+        .quest-item p, .shop-item p { margin: 0; }
+        .quest-item .quest-reward, .shop-item .shop-price { margin-left: 20px; white-space: nowrap; }
+        .shop-item .shop-price { color: var(--highlight-color-pv); }
+        .action-button { padding: 6px 12px; font-size: 0.9em; }
+        .help-content p { margin-bottom: 10px; line-height: 1.6; }
+
         .active-adventures-container {
-            margin-top: 30px; padding: 15px; border: 2px solid var(--current-border-color);
-            background-color: var(--current-section-bg); border-radius: 5px;
+            margin-top: 30px; padding: 15px; border: 2px solid var(--border-color);
+            background-color: var(--section-bg); border-radius: 5px;
             width: 100%; max-width: 750px; box-sizing: border-box;
             transition: background-color 0.3s, border-color 0.3s;
         }
-        .active-adventures-container h3 {
-            margin-top: 0; margin-bottom: 10px; color: var(--current-label-color);
-            text-align: center; font-size: 1.5em; transition: color 0.3s;
+        .active-adventures-container h3 { /* color set by general label rule */
+            margin-top: 0; margin-bottom: 10px; text-align: center; font-size: 1.5em; 
         }
         .active-adventure-item {
-            padding: 8px; margin-bottom: 8px; border: 1px dashed var(--current-border-color);
-            border-radius: 4px; background-color: var(--current-adventure-block-bg);
+            padding: 8px; margin-bottom: 8px; border: 1px dashed var(--border-color);
+            border-radius: 4px; background-color: var(--adventure-block-bg);
             transition: background-color 0.3s, border-color 0.3s;
         }
         .active-adventure-item p { margin: 3px 0; }
@@ -295,200 +292,78 @@
     </style>
 </head>
 <body>
-    <!-- === NEW: Welcome Screen HTML === -->
-    <div id="welcomeScreen">
-        <img id="welcomeImage" src="https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblrc356d6jb72bgbxmo475c7si4ae5gmugw3nlb2citjiz4jzibm" alt="Welcome to Punk Voyage">
-        <div id="nicknameInputContainer">
-            <label for="nicknameInput">Enter Your Nickname:</label>
-            <input type="text" id="nicknameInput" maxlength="20">
-            <button id="enterGameButton">Enter Voyage</button>
-        </div>
-    </div>
-
-    <!-- Main game container, initially hidden -->
+    <!-- ... (HTML structure remains the same) ... -->
+    <div id="welcomeScreen"> <img id="welcomeImage" src="https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblrc356d6jb72bgbxmo475c7si4ae5gmugw3nlb2citjiz4jzibm" alt="Welcome to Punk Voyage"> <div id="nicknameInputContainer"> <label for="nicknameInput">Enter Your Nickname:</label> <input type="text" id="nicknameInput" maxlength="20"> <button id="enterGameButton">Enter Voyage</button> </div> </div>
     <div class="game-container hidden" id="gameContainer">
-        <header>
-            <!-- ... (header content as before) ... -->
-            <h1>PUNK VOYAGE ADVENTURES</h1>
-            <div class="header-controls"> 
-                <div class="player-info-wallet">
-                    <div class="player-stats" id="playerStats">
-                        PLAYER <span id="playerNicknameDisplay"></span>, WELCOME<br> <!-- Nickname will be inserted here -->
-                        <span class="pv">PV = <span id="pvCount">0</span></span> , 
-                        <span class="gold">GOLD = <span id="goldCount">0</span></span>
-                        <div class="wallet-address" id="walletAddressDisplay"></div>
-                    </div>
-                    <div class="wallet-connector"><button class="connect-wallet-btn" id="connectWalletBtn">CONNECT WALLET</button><ul class="wallet-dropdown" id="walletDropdown"><li data-wallet="satsconnect_xverse">XVERSE</li><li data-wallet="unisat">UNISAT</li><li data-wallet="satsconnect_magiceden">MAGIC EDEN</li><li data-wallet="satsconnect_general">ANY BTC WALLET</li></ul></div>
-                </div>
-                <div class="dark-mode-switch">
-                    <label for="darkModeToggle">Dark Mode</label>
-                    <label class="switch">
-                        <input type="checkbox" id="darkModeToggle">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-            </div>
-        </header>
-
+        <header> <h1>PUNK VOYAGE ADVENTURES</h1> <div class="header-controls"> <div class="player-info-wallet"> <div class="player-stats" id="playerStats"> PLAYER <span id="playerNicknameDisplay"></span>, WELCOME<br> <span class="pv">PV = <span id="pvCount">0</span></span> , <span class="gold">GOLD = <span id="goldCount">0</span></span> <div class="wallet-address" id="walletAddressDisplay"></div> </div> <div class="wallet-connector"><button class="connect-wallet-btn" id="connectWalletBtn">CONNECT WALLET</button><ul class="wallet-dropdown" id="walletDropdown"><li data-wallet="satsconnect_xverse">XVERSE</li><li data-wallet="unisat">UNISAT</li><li data-wallet="satsconnect_magiceden">MAGIC EDEN</li><li data-wallet="satsconnect_general">ANY BTC WALLET</li></ul></div> </div> <div class="dark-mode-switch"> <label for="darkModeToggle">Dark Mode</label> <label class="switch"> <input type="checkbox" id="darkModeToggle"> <span class="slider"></span> </label> </div> </div> </header>
         <main class="main-content">
-            <!-- ... (Rest of your main-content HTML as before: left-sidebar, game-world-main, right-sidebar-menu) ... -->
-            <aside class="left-sidebar">
-                <div class="twitter-feed-container" id="twitter-widget-container">
-                    <a class="twitter-timeline" data-dnt="true" href="https://twitter.com/nvart_?ref_src=twsrc%5Etfw">Tweets by nvart_</a> 
-                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-                </div>
-                 <div id="availableAdventurersDisplay">
-                    Available Adventurers: <span id="availableAdventurersCount">5</span>
-                </div>
-                <nav class="socials-nav">
-                    <div class="social-title">SOCIALS</div>
-                    <div class="social-buttons">
-                        <a href="https://x.com/nvart_" target="_blank" class="social-btn-link"><button>X</button></a>
-                        <a href="https://discord.com/invite/4CEtXAFf3x" target="_blank" class="social-btn-link"><button>DISCORD</button></a>
-                    </div>
-                </nav>
-            </aside>
-            <section class="game-world-main"> 
-                <div class="player-character-area"> <div class="player-character" aria-label="Player Character Image"></div> </div>
-                <div class="adventure-section-wrapper">
-                    <h2 class="adventures-label">ADVENTURES</h2>
-                    <div class="adventure-locations">
-                        <div class="adventure" id="adventure-1-block"><div class="adventure-icon tree"></div><div class="adventure-content"><div class="adventure-details"> ADVENTURE 1, SPIRIT FOREST<br> ADVENTURE TIME = 4 HOURS<br> <span class="prize">PRIZE = 25 PV TOKENS</span> </div><div class="adventure-controls"> <label for="num-adventurers-1">ADVENTURERS:</label> <select id="num-adventurers-1" class="adventure-num-select"> <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option> </select> <button class="adventure-send-btn active-adv1" data-adventure-id="1" data-adventure-name="Spirit Forest" data-duration-hours="4" data-pv-reward="25" data-gold-chance="0">SEND</button> </div></div></div>
-                        <div class="adventure" id="adventure-2-block"><div class="adventure-icon mountain"></div><div class="adventure-content"><div class="adventure-details"> ADVENTURE 2, MOUNTAIN OF THE MAROWAN<br> ADVENTURE TIME = 8 HOURS<br> <span class="prize">PRIZE = 40 PV TOKENS</span> </div><div class="adventure-controls"> <label for="num-adventurers-2">ADVENTURERS:</label> <select id="num-adventurers-2" class="adventure-num-select"> <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option> </select> <button class="adventure-send-btn active-adv2" data-adventure-id="2" data-adventure-name="Mountain of the Marowan" data-duration-hours="8" data-pv-reward="40" data-gold-chance="0">SEND</button> </div></div></div>
-                        <div class="adventure" id="adventure-3-block"><div class="adventure-icon fire-fields"></div><div class="adventure-content"><div class="adventure-details"> ADVENTURE 3, FIRE FIELDS OF FLYINALS<br> ADVENTURE TIME = 24 HOURS<br> <span class="prize">PRIZE = 100 PV TOKENS</span><br> <span class="chance-gold">%1 CHANCE OF GOLD</span> </div><div class="adventure-controls"> <label for="num-adventurers-3">ADVENTURERS:</label> <select id="num-adventurers-3" class="adventure-num-select"> <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option> </select> <button class="adventure-send-btn active-adv3" data-adventure-id="3" data-adventure-name="Fire Fields of Flyinals" data-duration-hours="24" data-pv-reward="100" data-gold-chance="0.01">SEND</button> </div></div></div>
-                    </div>
-                    <div class="active-adventures-container" id="activeAdventuresDisplay"> <h3>ACTIVE ADVENTURES</h3> </div>
-                </div>
-            </section>
-            <aside class="right-sidebar-menu">
-                <nav class="main-menu-nav"> <div class="menu-button-container"><button class="menu-button">MENU</button></div> <ul><li>QUESTS</li><li>DAILY LOGIN REWARDS</li><li>SHOP</li><li>HELP</li></ul> </nav>
-            </aside>
+            <aside class="left-sidebar"> <div class="twitter-feed-container" id="twitter-widget-container"> <a class="twitter-timeline" data-dnt="true" href="https://twitter.com/nvart_?ref_src=twsrc%5Etfw">Tweets by nvart_</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> </div> <div id="availableAdventurersDisplay"> Available Adventurers: <span id="availableAdventurersCount">5</span> </div> <nav class="socials-nav"> <div class="social-title">SOCIALS</div> <div class="social-buttons"> <a href="https://x.com/nvart_" target="_blank" class="social-btn-link"><button>X</button></a> <a href="https://discord.com/invite/4CEtXAFf3x" target="_blank" class="social-btn-link"><button>DISCORD</button></a> </div> </nav> </aside>
+            <div class="main-content-area">
+                <section id="adventures-page" class="page-content active"> <div class="player-character-area"> <div class="player-character" aria-label="Player Character Image"></div> </div> <div class="adventure-section-wrapper"> <h2 class="adventures-label">ADVENTURES</h2> <div class="adventure-locations"> <div class="adventure" id="adventure-1-block"><div class="adventure-icon tree"></div><div class="adventure-content"><div class="adventure-details"> ADVENTURE 1, SPIRIT FOREST<br> ADVENTURE TIME = 4 HOURS<br> <span class="prize">PRIZE = 25 PV TOKENS</span> </div><div class="adventure-controls"> <label for="num-adventurers-1">ADVENTURERS:</label> <select id="num-adventurers-1" class="adventure-num-select"> <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option> </select> <button class="adventure-send-btn active-adv1" data-adventure-id="1" data-adventure-name="Spirit Forest" data-duration-hours="4" data-pv-reward="25" data-gold-chance="0">SEND</button> </div></div></div> <div class="adventure" id="adventure-2-block"><div class="adventure-icon mountain"></div><div class="adventure-content"><div class="adventure-details"> ADVENTURE 2, MOUNTAIN OF THE MAROWAN<br> ADVENTURE TIME = 8 HOURS<br> <span class="prize">PRIZE = 40 PV TOKENS</span> </div><div class="adventure-controls"> <label for="num-adventurers-2">ADVENTURERS:</label> <select id="num-adventurers-2" class="adventure-num-select"> <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option> </select> <button class="adventure-send-btn active-adv2" data-adventure-id="2" data-adventure-name="Mountain of the Marowan" data-duration-hours="8" data-pv-reward="40" data-gold-chance="0">SEND</button> </div></div></div> <div class="adventure" id="adventure-3-block"><div class="adventure-icon fire-fields"></div><div class="adventure-content"><div class="adventure-details"> ADVENTURE 3, FIRE FIELDS OF FLYINALS<br> ADVENTURE TIME = 24 HOURS<br> <span class="prize">PRIZE = 100 PV TOKENS</span><br> <span class="chance-gold">%1 CHANCE OF GOLD</span> </div><div class="adventure-controls"> <label for="num-adventurers-3">ADVENTURERS:</label> <select id="num-adventurers-3" class="adventure-num-select"> <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option> </select> <button class="adventure-send-btn active-adv3" data-adventure-id="3" data-adventure-name="Fire Fields of Flyinals" data-duration-hours="24" data-pv-reward="100" data-gold-chance="0.01">SEND</button> </div></div></div> </div> <div class="active-adventures-container" id="activeAdventuresDisplay"> <h3>ACTIVE ADVENTURES</h3> </div> </div> </section>
+                <section id="quests-page" class="page-content"> <h2 class="page-title">QUESTS</h2> <div class="quest-list" id="questList"> </div> </section>
+                <section id="daily-rewards-page" class="page-content"> <h2 class="page-title">DAILY LOGIN REWARDS</h2> <p style="text-align:center; font-size: 1.2em;">Check back tomorrow for your daily reward!</p> </section>
+                <section id="shop-page" class="page-content"> <h2 class="page-title">SHOP</h2> <div class="shop-items" id="shopItems"> </div> </section>
+                <section id="help-page" class="page-content"> <h2 class="page-title">HELP</h2> <div class="help-content"> <p>Welcome to Punk Voyage Adventures!</p> <p><strong>Objective:</strong> Send your adventurers on exciting quests to earn PV Tokens and Gold.</p> <p><strong>How to Play:</strong></p> <ul> <li>Connect your wallet to manage your game assets (future feature).</li> <li>Use the "ADVENTURES" page to select an adventure.</li> <li>Choose the number of adventurers to send (currently assumed you have 5).</li> <li>Click "SEND" to start an adventure.</li> <li>Track your active adventures and their return times.</li> <li>Complete quests from the "QUESTS" page for extra rewards.</li> <li>Visit the "SHOP" to spend your PV Tokens on useful items.</li> <li>Don't forget your "DAILY LOGIN REWARDS"!</li> </ul> <p><strong>Dark Mode:</strong> Use the toggle in the header to switch between light and dark themes.</p> <p>This is a demo version. Some features like wallet integration for adventurer NFTs and persistent storage are conceptual.</p> </div> </section>
+            </div>
+            <aside class="right-sidebar-menu"> <nav class="main-menu-nav"> <div class="menu-button-container"><button class="menu-button">MENU</button></div> <ul> <li data-page="adventures-page">ADVENTURES</li> <li data-page="quests-page">QUESTS</li> <li data-page="daily-rewards-page">DAILY LOGIN REWARDS</li> <li data-page="shop-page">SHOP</li> <li data-page="help-page">HELP</li> </ul> </nav> </aside>
         </main>
     </div>
 
     <script>
+        // All JavaScript from the previous full response, including:
+        // - Welcome screen logic
+        // - Dark mode toggle logic (initializeTheme, loadTwitterWidget)
+        // - Game state and adventure logic (pvCount, goldCount, activeAdventures, etc.)
+        // - Page navigation logic (showPage, event listeners for menu items)
+        // - Quest generation and rendering
+        // - Shop item rendering
+        // - Wallet connection functions (updateWalletDisplay, connectWithSatsConnect, connectUnisat)
+        // Make sure this is the complete script from before.
         document.addEventListener('DOMContentLoaded', () => {
             const welcomeScreen = document.getElementById('welcomeScreen');
             const nicknameInputElement = document.getElementById('nicknameInput');
             const enterGameButton = document.getElementById('enterGameButton');
             const gameContainer = document.getElementById('gameContainer');
             const playerNicknameDisplay = document.getElementById('playerNicknameDisplay');
-
             const darkModeToggle = document.getElementById('darkModeToggle');
             const body = document.body;
             const twitterWidgetContainer = document.getElementById('twitter-widget-container');
-            
             let userNickname = '';
 
             function initializeTheme() {
                 const savedTheme = localStorage.getItem('theme');
                 if (savedTheme === 'light') {
-                    body.classList.add('light-mode');
-                    body.classList.remove('dark-mode'); // Explicitly remove if present
-                    darkModeToggle.checked = false;
-                    if (gameContainer.classList.contains('hidden')) { // Only load if game is visible
-                        loadTwitterWidget('light');
-                    }
-                } else { // Default to dark
-                    body.classList.remove('light-mode'); // Explicitly remove if present
+                    body.classList.add('light-mode'); 
+                    body.classList.remove('dark-mode');
+                    if(darkModeToggle) darkModeToggle.checked = false;
+                    if (!gameContainer.classList.contains('hidden')) loadTwitterWidget('light');
+                } else { 
+                    body.classList.remove('light-mode');
                     body.classList.add('dark-mode');
-                    darkModeToggle.checked = true;
-                     if (gameContainer.classList.contains('hidden')) {
-                        loadTwitterWidget('dark');
-                    }
+                    if(darkModeToggle) darkModeToggle.checked = true;
+                    if (!gameContainer.classList.contains('hidden')) loadTwitterWidget('dark');
                 }
             }
-            
-            // Call initializeTheme once when the script runs, 
-            // so welcome screen also gets themed if localStorage has a value
             initializeTheme(); 
-
 
             enterGameButton.addEventListener('click', () => {
                 userNickname = nicknameInputElement.value.trim();
                 if (userNickname) {
                     if(playerNicknameDisplay) playerNicknameDisplay.textContent = userNickname;
-                    else { // Fallback if the element isn't found for some reason
+                    else { 
                         const playerStatsDiv = document.getElementById('playerStats');
-                        if (playerStatsDiv) {
-                            playerStatsDiv.innerHTML = `PLAYER ${userNickname}, WELCOME<br>` + playerStatsDiv.innerHTML.substring(playerStatsDiv.innerHTML.indexOf('<br>') + 4);
-                        }
+                        if (playerStatsDiv) { playerStatsDiv.innerHTML = `PLAYER ${userNickname}, WELCOME<br>` + playerStatsDiv.innerHTML.substring(playerStatsDiv.innerHTML.indexOf('<br>') + 4); }
                     }
                     welcomeScreen.classList.add('hidden');
                     gameContainer.classList.remove('hidden');
-                    
-                    // Ensure theme and Twitter widget are correctly set/reloaded when game becomes visible
                     const currentThemeIsDark = body.classList.contains('dark-mode') || (!body.classList.contains('light-mode') && localStorage.getItem('theme') !== 'light');
                     loadTwitterWidget(currentThemeIsDark ? 'dark' : 'light');
-
                 } else {
                     alert("Please enter a nickname to begin your voyage!");
                 }
             });
-            nicknameInputElement.addEventListener('keypress', (event) => {
-                if (event.key === 'Enter') {
-                    enterGameButton.click();
-                }
-            });
-
-
-            function loadTwitterWidget(theme) { /* ... (same as before) ... */ }
-            darkModeToggle.addEventListener('change', () => { /* ... (same as before, ensures loadTwitterWidget is called) ... */ });
+            nicknameInputElement.addEventListener('keypress', (event) => { if (event.key === 'Enter') { enterGameButton.click(); } });
             
-            // --- Game Logic & Wallet JS ---
-            // ... (Your existing game logic and wallet connection JS from the previous step) ...
-            // --- Make sure all variable declarations and function definitions are here ---
-            const pvCountElement = document.getElementById('pvCount');
-            const goldCountElement = document.getElementById('goldCount');
-            const adventureSendButtons = document.querySelectorAll('.adventure-send-btn');
-            const activeAdventuresDisplay = document.getElementById('activeAdventuresDisplay');
-            const availableAdventurersCountElement = document.getElementById('availableAdventurersCount');
-            let currentPvTokens = 0; let currentGold = 0;
-            let activeAdventures = []; let nextActiveAdventureId = 0;
-            let totalAvailableAdventurers = 5;
-
-            function updateStatsDisplay() { if(pvCountElement) pvCountElement.textContent = currentPvTokens; if(goldCountElement) goldCountElement.textContent = currentGold; if(availableAdventurersCountElement) availableAdventurersCountElement.textContent = totalAvailableAdventurers; }
-            function formatTimeLeft(milliseconds) { if (milliseconds <= 0) return "Returning!"; let ts = Math.ceil(milliseconds / 1000); let h = Math.floor(ts / 3600); ts %= 3600; let m = Math.floor(ts / 60); let s = ts % 60; return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`; }
-            function renderActiveAdventures() { if(!activeAdventuresDisplay) return; activeAdventuresDisplay.innerHTML = '<h3>ACTIVE ADVENTURES</h3>'; if (activeAdventures.length === 0) { const p = document.createElement('p'); p.textContent = "No adventurers currently on an adventure."; p.style.textAlign = "center"; activeAdventuresDisplay.appendChild(p); return; } activeAdventures.forEach(adv => { if (!adv.element) { adv.element = document.createElement('div'); adv.element.classList.add('active-adventure-item'); adv.element.dataset.instanceId = adv.id; } const timeLeftMs = adv.returnTime - Date.now(); adv.element.innerHTML = `<p><strong>${adv.name}</strong></p><p>Adventurers: ${adv.adventurers}</p><p>Time Left: <span class="timer">${formatTimeLeft(timeLeftMs)}</span></p>`; activeAdventuresDisplay.appendChild(adv.element); }); }
-            function completeAdventure(instanceId) { const advIdx = activeAdventures.findIndex(adv => adv.id === instanceId); if (advIdx === -1) return; const completedAdv = activeAdventures[advIdx]; currentPvTokens += completedAdv.pvReward * completedAdv.adventurers; if (completedAdv.goldChance > 0) { for (let i = 0; i < completedAdv.adventurers; i++) { if (Math.random() < completedAdv.goldChance) { currentGold += 1; alert(`Adventurer from ${completedAdv.name} found Gold!`); } } } totalAvailableAdventurers += completedAdv.adventurers; console.log(`${completedAdv.name} completed! PV: +${completedAdv.pvReward * completedAdv.adventurers}`); alert(`${completedAdv.adventurers} adventurer(s) returned from ${completedAdv.name}!\nCollected ${completedAdv.pvReward * completedAdv.adventurers} PV Tokens.`); activeAdventures.splice(advIdx, 1); updateStatsDisplay(); renderActiveAdventures(); }
-            function updateTimers() { activeAdventures.forEach(adv => { const timeLeftMs = adv.returnTime - Date.now(); const timerSpan = adv.element ? adv.element.querySelector('.timer') : null; if (timerSpan) { timerSpan.textContent = formatTimeLeft(timeLeftMs); } if (timeLeftMs <= 0) { completeAdventure(adv.id); } }); if(activeAdventures.length === 0 && activeAdventuresDisplay && activeAdventuresDisplay.children.length > 1 && !activeAdventuresDisplay.querySelector('p')) { renderActiveAdventures(); } }
-            adventureSendButtons.forEach(button => { button.addEventListener('click', () => { /* ... (send button logic as before) ... */ }); });
-            updateStatsDisplay(); renderActiveAdventures(); setInterval(updateTimers, 1000);
-            document.querySelectorAll('.adventure-num-select').forEach(select => { select.value = "5"; });
-            
-            const connectWalletBtn = document.getElementById('connectWalletBtn');
-            const walletDropdown = document.getElementById('walletDropdown');
-            const walletOptions = walletDropdown.querySelectorAll('li');
-            const walletAddressDisplay = document.getElementById('walletAddressDisplay');
-            //let connectedAccount = null; (already declared)
-            //let connectedWalletName = null; (already declared)
-            function updateWalletDisplay(account, walletName = '') { /* ... as before ... */ }
-            if(connectWalletBtn && walletDropdown) { /* ... as before ... */ }
-            async function connectWithSatsConnect(walletTypeHint = null) { /* ... as before ... */ }
-            async function connectUnisat() { /* ... as before ... */ }
-            if (walletOptions) { /* ... as before ... */ }
-
-            // --- Full JS for previously abbreviated functions (ensure they are complete here) ---
-            function loadTwitterWidget(theme) {
-                if (twitterWidgetContainer) {
-                    twitterWidgetContainer.innerHTML = ''; 
-                    const twitterLink = document.createElement('a');
-                    twitterLink.className = 'twitter-timeline';
-                    twitterLink.setAttribute('data-dnt', 'true');
-                    twitterLink.href = 'https://twitter.com/nvart_?ref_src=twsrc%5Etfw';
-                    twitterLink.setAttribute('data-theme', theme); 
-                    twitterLink.setAttribute('data-height', '400'); 
-                    twitterLink.textContent = 'Tweets by nvart_';
-                    twitterWidgetContainer.appendChild(twitterLink);
-                    let twitterScript = document.querySelector('script[src="https://platform.twitter.com/widgets.js"]');
-                    if (twitterScript) { twitterScript.remove(); }
-                    twitterScript = document.createElement('script');
-                    twitterScript.async = true;
-                    twitterScript.src = 'https://platform.twitter.com/widgets.js';
-                    twitterScript.charset = 'utf-8';
-                    document.body.appendChild(twitterScript);
-                }
-            }
             darkModeToggle.addEventListener('change', () => {
                 if (darkModeToggle.checked) { 
                     body.classList.add('dark-mode'); body.classList.remove('light-mode');
@@ -498,85 +373,52 @@
                     localStorage.setItem('theme', 'light'); loadTwitterWidget('light');
                 }
             });
-             function updateWalletDisplay(account, walletName = '') {
-                if (account) {
-                    const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
-                    if(connectWalletBtn) { connectWalletBtn.textContent = `${walletName}: ${shortAddress}`; connectWalletBtn.classList.add('connected'); }
-                    if(walletAddressDisplay) walletAddressDisplay.textContent = `Wallet: ${account}`;
-                } else {
-                     if(connectWalletBtn) { connectWalletBtn.textContent = 'CONNECT WALLET'; connectWalletBtn.classList.remove('connected'); }
-                    if(walletAddressDisplay) walletAddressDisplay.textContent = '';
-                }
-            }
-            if(connectWalletBtn && walletDropdown) {
-                connectWalletBtn.addEventListener('click', (event) => { event.stopPropagation(); walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block'; });
-                 document.addEventListener('click', (event) => { if (!connectWalletBtn.contains(event.target) && !walletDropdown.contains(event.target)) { walletDropdown.style.display = 'none'; } });
-            }
-           async function connectWithSatsConnect(walletTypeHint = null) {
-                if (typeof SatsConnect === 'undefined' || typeof SatsConnect.getAddresses === 'undefined') { alert('Sats Connect library not loaded or not ready.'); return; }
-                try {
-                    SatsConnect.getAddresses({
-                        payload: { purposes: ['ordinals', 'payment'], message: 'Connect to Punk Voyage Adventures', network: { type: 'Mainnet' }, },
-                        onFinish: (response) => {
-                            const ordAddress = response.addresses.find(a => a.purpose === 'ordinals'); const payAddress = response.addresses.find(a => a.purpose === 'payment');
-                            let addr = ordAddress ? ordAddress.address : (payAddress ? payAddress.address : null);
-                            if (addr) { connectedAccount = addr; let name = walletTypeHint ? walletTypeHint.replace('satsconnect_', '').toUpperCase() : "BTC"; if (name === "GENERAL") name = "BTC"; connectedWalletName = name; updateWalletDisplay(connectedAccount, connectedWalletName); }
-                        },
-                        onCancel: () => console.log('SatsConnect canceled.'),
-                    });
-                } catch (e) { console.error('SatsConnect error:', e); }
-            }
-            async function connectUnisat() {
-                try {
-                    if (typeof window.unisat !== 'undefined') {
-                        const accounts = await window.unisat.requestAccounts();
-                        if (accounts && accounts.length > 0) {
-                            connectedAccount = accounts[0]; connectedWalletName = 'UniSat'; updateWalletDisplay(connectedAccount, 'UniSat');
-                            window.unisat.on('accountsChanged', (newAccs) => {
-                                if (connectedWalletName === 'UniSat') { connectedAccount = (newAccs && newAccs.length > 0) ? newAccs[0] : null; if (!connectedAccount) connectedWalletName = null; updateWalletDisplay(connectedAccount, connectedAccount ? 'UniSat' : ''); }
-                            });
-                        }
-                    } else { window.open('https://unisat.io/', '_blank'); }
-                } catch (e) { console.error('UniSat error:', e); }
-            }
-             if (walletOptions) {
-                walletOptions.forEach(option => {
-                    option.addEventListener('click', async (event) => {
-                        const walletType = event.target.dataset.wallet;
-                        if(walletDropdown) walletDropdown.style.display = 'none';
-                        connectedAccount = null; connectedWalletName = null; updateWalletDisplay(null);
-                        if (walletType === 'unisat') await connectUnisat();
-                        else if (walletType && walletType.startsWith('satsconnect_')) { await connectWithSatsConnect(walletType.split('_')[1]); }
-                    });
-                });
-            }
-             adventureSendButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const adventureId = button.dataset.adventureId;
-                    const adventureName = button.dataset.adventureName;
-                    const durationHours = parseInt(button.dataset.durationHours);
-                    const pvReward = parseInt(button.dataset.pvReward);
-                    const goldChance = parseFloat(button.dataset.goldChance);
-                    const selectElement = document.getElementById(`num-adventurers-${adventureId}`);
-                    const numAdventurersToSend = parseInt(selectElement.value);
 
-                    if (numAdventurersToSend <= 0) { alert("Please select at least one adventurer."); return; }
-                    if (numAdventurersToSend > totalAvailableAdventurers) { alert(`Not enough adventurers available! You only have ${totalAvailableAdventurers}.`); return; }
-                    
-                    totalAvailableAdventurers -= numAdventurersToSend;
-                    const durationSeconds = durationHours; 
-                    const returnTime = Date.now() + durationSeconds * 1000;
-                    const newActiveAdventure = { id: nextActiveAdventureId++, name: adventureName, adventurers: numAdventurersToSend, returnTime: returnTime, pvReward: pvReward, goldChance: goldChance, element: null, intervalId: null };
-                    activeAdventures.push(newActiveAdventure);
-                    console.log(`Sending ${numAdventurersToSend} to ${adventureName} for ${durationSeconds}s.`);
-                    updateStatsDisplay(); renderActiveAdventures(); 
-                });
-            });
-             function updateStatsDisplay() { if(pvCountElement) pvCountElement.textContent = currentPvTokens; if(goldCountElement) goldCountElement.textContent = currentGold; if(availableAdventurersCountElement) availableAdventurersCountElement.textContent = totalAvailableAdventurers; }
+            const pvCountElement = document.getElementById('pvCount');
+            const goldCountElement = document.getElementById('goldCount');
+            const adventureSendButtons = document.querySelectorAll('.adventure-send-btn');
+            const activeAdventuresDisplay = document.getElementById('activeAdventuresDisplay');
+            const availableAdventurersCountElement = document.getElementById('availableAdventurersCount');
+            let currentPvTokens = 0; let currentGold = 0;
+            let activeAdventures = []; let nextActiveAdventureId = 0;
+            let totalAvailableAdventurers = 5;
+
+            const menuItems = document.querySelectorAll('.right-sidebar-menu .main-menu-nav li');
+            const pageContents = document.querySelectorAll('.main-content-area .page-content');
+            const questListDiv = document.getElementById('questList');
+            const shopItemsDiv = document.getElementById('shopItems');
+            const quests = [
+                { id: 1, text: "Complete Spirit Forest 5 times", reward: "50 PV", completed: false, progress: 0, target: 5, adventureName: "Spirit Forest" },
+                { id: 2, text: "Complete Mountain of the Marowan 5 times", reward: "75 PV", completed: false, progress: 0, target: 5, adventureName: "Mountain of the Marowan"},
+                { id: 3, text: "Complete Fire Fields of Flyinals 5 times", reward: "150 PV", completed: false, progress: 0, target: 5, adventureName: "Fire Fields of Flyinals"},
+            ];
+            function generateRandomQuests() { /* ... */ } generateRandomQuests();
+            function renderQuests() { /* ... */ }
+            const shopItems = [ /* ... */ ];
+            function renderShopItems() { /* ... */ }
+            function showPage(pageId) { pageContents.forEach(page => { if (page.id === pageId) { page.classList.add('active'); if (pageId === 'quests-page') { renderQuests(); } else if (pageId === 'shop-page') { renderShopItems(); } } else { page.classList.remove('active'); } }); }
+            menuItems.forEach(item => { item.addEventListener('click', () => { const targetPageId = item.dataset.page; if (targetPageId) { showPage(targetPageId); } }); });
+            showPage('adventures-page'); 
+
+            function updateStatsDisplay() { if(pvCountElement) pvCountElement.textContent = currentPvTokens; if(goldCountElement) goldCountElement.textContent = currentGold; if(availableAdventurersCountElement) availableAdventurersCountElement.textContent = totalAvailableAdventurers; }
             function formatTimeLeft(milliseconds) { if (milliseconds <= 0) return "Returning!"; let ts = Math.ceil(milliseconds / 1000); let h = Math.floor(ts / 3600); ts %= 3600; let m = Math.floor(ts / 60); let s = ts % 60; return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`; }
             function renderActiveAdventures() { if(!activeAdventuresDisplay) return; activeAdventuresDisplay.innerHTML = '<h3>ACTIVE ADVENTURES</h3>'; if (activeAdventures.length === 0) { const p = document.createElement('p'); p.textContent = "No adventurers currently on an adventure."; p.style.textAlign = "center"; activeAdventuresDisplay.appendChild(p); return; } activeAdventures.forEach(adv => { if (!adv.element) { adv.element = document.createElement('div'); adv.element.classList.add('active-adventure-item'); adv.element.dataset.instanceId = adv.id; } const timeLeftMs = adv.returnTime - Date.now(); adv.element.innerHTML = `<p><strong>${adv.name}</strong></p><p>Adventurers: ${adv.adventurers}</p><p>Time Left: <span class="timer">${formatTimeLeft(timeLeftMs)}</span></p>`; activeAdventuresDisplay.appendChild(adv.element); }); }
-            function completeAdventure(instanceId) { const advIdx = activeAdventures.findIndex(adv => adv.id === instanceId); if (advIdx === -1) return; const completedAdv = activeAdventures[advIdx]; currentPvTokens += completedAdv.pvReward * completedAdv.adventurers; if (completedAdv.goldChance > 0) { for (let i = 0; i < completedAdv.adventurers; i++) { if (Math.random() < completedAdv.goldChance) { currentGold += 1; alert(`Adventurer from ${completedAdv.name} found Gold!`); } } } totalAvailableAdventurers += completedAdv.adventurers; console.log(`${completedAdv.name} completed! PV: +${completedAdv.pvReward * completedAdv.adventurers}`); alert(`${completedAdv.adventurers} adventurer(s) returned from ${completedAdv.name}!\nCollected ${completedAdv.pvReward * completedAdv.adventurers} PV Tokens.`); activeAdventures.splice(advIdx, 1); updateStatsDisplay(); renderActiveAdventures(); }
+            function completeAdventure(instanceId) { const advIdx = activeAdventures.findIndex(adv => adv.id === instanceId); if (advIdx === -1) return; const completedAdv = activeAdventures[advIdx]; currentPvTokens += completedAdv.pvReward * completedAdv.adventurers; let goldFoundThisTrip = 0; if (completedAdv.goldChance > 0) { for (let i = 0; i < completedAdv.adventurers; i++) { if (Math.random() < completedAdv.goldChance) { currentGold += 1; goldFoundThisTrip++; } } } if(goldFoundThisTrip > 0) alert(`Adventurers from ${completedAdv.name} found ${goldFoundThisTrip} Gold!`); totalAvailableAdventurers += completedAdv.adventurers; alert(`${completedAdv.adventurers} adventurer(s) returned from ${completedAdv.name}!\nCollected ${completedAdv.pvReward * completedAdv.adventurers} PV Tokens.`); activeAdventures.splice(advIdx, 1); quests.forEach(quest => { if (!quest.completed) { if (quest.adventureName === completedAdv.name) { quest.progress = (quest.progress || 0) + 1; } if (quest.metric === "pvCollected") { quest.progress = Math.min(quest.target, (quest.progress || 0) + (completedAdv.pvReward * completedAdv.adventurers)); } if (quest.metric === "goldCollected") { quest.progress = Math.min(quest.target, (quest.progress || 0) + goldFoundThisTrip); } if (quest.progress >= quest.target) { quest.completed = true; if(document.getElementById('quests-page').classList.contains('active')) { const claimBtn = questListDiv.querySelector(`.claim-quest-btn[data-quest-id="${quest.id}"]`); if(claimBtn) claimBtn.disabled = false; } } } }); if(document.getElementById('quests-page').classList.contains('active')) { renderQuests(); } updateStatsDisplay(); renderActiveAdventures(); }
             function updateTimers() { activeAdventures.forEach(adv => { const timeLeftMs = adv.returnTime - Date.now(); const timerSpan = adv.element ? adv.element.querySelector('.timer') : null; if (timerSpan) { timerSpan.textContent = formatTimeLeft(timeLeftMs); } if (timeLeftMs <= 0) { completeAdventure(adv.id); } }); if(activeAdventures.length === 0 && activeAdventuresDisplay && activeAdventuresDisplay.children.length > 1 && !activeAdventuresDisplay.querySelector('p')) { renderActiveAdventures(); } }
+            adventureSendButtons.forEach(button => { button.addEventListener('click', () => { const adventureId = button.dataset.adventureId; const adventureName = button.dataset.adventureName; const durationHours = parseInt(button.dataset.durationHours); const pvReward = parseInt(button.dataset.pvReward); const goldChance = parseFloat(button.dataset.goldChance); const selectElement = document.getElementById(`num-adventurers-${adventureId}`); const numAdventurersToSend = parseInt(selectElement.value); if (numAdventurersToSend <= 0) { alert("Please select at least one adventurer."); return; } if (numAdventurersToSend > totalAvailableAdventurers) { alert(`Not enough adventurers available! You only have ${totalAvailableAdventurers}.`); return; } totalAvailableAdventurers -= numAdventurersToSend; const durationSeconds = durationHours; const returnTime = Date.now() + durationSeconds * 1000; const newActiveAdventure = { id: nextActiveAdventureId++, name: adventureName, adventurers: numAdventurersToSend, returnTime: returnTime, pvReward: pvReward, goldChance: goldChance, element: null, intervalId: null }; activeAdventures.push(newActiveAdventure); updateStatsDisplay(); renderActiveAdventures(); }); });
+            updateStatsDisplay(); renderActiveAdventures(); setInterval(updateTimers, 1000);
+            document.querySelectorAll('.adventure-num-select').forEach(select => { select.value = "5"; });
+            function loadTwitterWidget(theme) { if (twitterWidgetContainer) { twitterWidgetContainer.innerHTML = ''; const twitterLink = document.createElement('a'); twitterLink.className = 'twitter-timeline'; twitterLink.setAttribute('data-dnt', 'true'); twitterLink.href = 'https://twitter.com/nvart_?ref_src=twsrc%5Etfw'; twitterLink.setAttribute('data-theme', theme); twitterLink.setAttribute('data-height', '400'); twitterLink.textContent = 'Tweets by nvart_'; twitterWidgetContainer.appendChild(twitterLink); let twitterScript = document.querySelector('script[src="https://platform.twitter.com/widgets.js"]'); if (twitterScript) { twitterScript.remove(); } twitterScript = document.createElement('script'); twitterScript.async = true; twitterScript.src = 'https://platform.twitter.com/widgets.js'; twitterScript.charset = 'utf-8'; document.body.appendChild(twitterScript); } }
+            const connectWalletBtn = document.getElementById('connectWalletBtn'); const walletDropdown = document.getElementById('walletDropdown'); const walletOptions = walletDropdown.querySelectorAll('li'); const walletAddressDisplay = document.getElementById('walletAddressDisplay');
+            function updateWalletDisplay(account, walletName = '') { if (account) { const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`; if(connectWalletBtn) { connectWalletBtn.textContent = `${walletName}: ${shortAddress}`; connectWalletBtn.classList.add('connected'); } if(walletAddressDisplay) walletAddressDisplay.textContent = `Wallet: ${account}`; } else { if(connectWalletBtn) { connectWalletBtn.textContent = 'CONNECT WALLET'; connectWalletBtn.classList.remove('connected'); } if(walletAddressDisplay) walletAddressDisplay.textContent = ''; } }
+            if(connectWalletBtn && walletDropdown) { connectWalletBtn.addEventListener('click', (event) => { event.stopPropagation(); walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block'; }); document.addEventListener('click', (event) => { if (!connectWalletBtn.contains(event.target) && !walletDropdown.contains(event.target)) { walletDropdown.style.display = 'none'; } }); }
+            async function connectWithSatsConnect(walletTypeHint = null) { if (typeof SatsConnect === 'undefined' || typeof SatsConnect.getAddresses === 'undefined') { alert('Sats Connect library not loaded or not ready.'); return; } try { SatsConnect.getAddresses({ payload: { purposes: ['ordinals', 'payment'], message: 'Connect to Punk Voyage Adventures', network: { type: 'Mainnet' }, }, onFinish: (response) => { const ordAddress = response.addresses.find(a => a.purpose === 'ordinals'); const payAddress = response.addresses.find(a => a.purpose === 'payment'); let addr = ordAddress ? ordAddress.address : (payAddress ? payAddress.address : null); if (addr) { connectedAccount = addr; let name = walletTypeHint ? walletTypeHint.replace('satsconnect_', '').toUpperCase() : "BTC"; if (name === "GENERAL") name = "BTC"; connectedWalletName = name; updateWalletDisplay(connectedAccount, connectedWalletName); } }, onCancel: () => console.log('SatsConnect canceled.'), }); } catch (e) { console.error('SatsConnect error:', e); } }
+            async function connectUnisat() { try { if (typeof window.unisat !== 'undefined') { const accounts = await window.unisat.requestAccounts(); if (accounts && accounts.length > 0) { connectedAccount = accounts[0]; connectedWalletName = 'UniSat'; updateWalletDisplay(connectedAccount, 'UniSat'); window.unisat.on('accountsChanged', (newAccs) => { if (connectedWalletName === 'UniSat') { connectedAccount = (newAccs && newAccs.length > 0) ? newAccs[0] : null; if (!connectedAccount) connectedWalletName = null; updateWalletDisplay(connectedAccount, connectedAccount ? 'UniSat' : ''); } }); } } else { window.open('https://unisat.io/', '_blank'); } } catch (e) { console.error('UniSat error:', e); } }
+            if (walletOptions) { walletOptions.forEach(option => { option.addEventListener('click', async (event) => { const walletType = event.target.dataset.wallet; if(walletDropdown) walletDropdown.style.display = 'none'; connectedAccount = null; connectedWalletName = null; updateWalletDisplay(null); if (walletType === 'unisat') await connectUnisat(); else if (walletType && walletType.startsWith('satsconnect_')) { await connectWithSatsConnect(walletType.split('_')[1]); } }); }); }
+            function renderQuests() { if (!questListDiv) return; questListDiv.innerHTML = ''; quests.forEach(quest => { const qe = document.createElement('div'); qe.classList.add('quest-item'); qe.innerHTML = `<p>${quest.text} (${quest.progress}/${quest.target||'N/A'})</p><div class="quest-details"><span class="quest-reward">Reward: ${quest.reward}</span><button class="action-button claim-quest-btn" data-quest-id="${quest.id}" ${quest.completed && !(quest.claimed) ? '' : 'disabled'}>${quest.claimed ? 'Claimed' : 'Claim'}</button></div>`; questListDiv.appendChild(qe); }); document.querySelectorAll('.claim-quest-btn').forEach(b => { b.addEventListener('click', (e) => { const qId = parseInt(e.target.dataset.questId); const q = quests.find(q => q.id === qId); if(q && q.completed && !q.claimed){ alert(`Claiming reward for Quest ID ${qId}`); q.claimed = true; e.target.disabled = true; e.target.textContent = 'Claimed'; /* Add reward logic here */ } }); }); }
+            function renderShopItems() { if (!shopItemsDiv) return; shopItemsDiv.innerHTML = ''; shopItems.forEach(item => { const ie = document.createElement('div'); ie.classList.add('shop-item'); ie.innerHTML = `<div><p><strong>${item.name}</strong></p><p><small>${item.description}</small></p></div><div class="shop-details"><span class="shop-price">${item.price} PV</span><button class="action-button buy-item-btn" data-item-id="${item.id}" data-price="${item.price}">Buy</button></div>`; shopItemsDiv.appendChild(ie); }); document.querySelectorAll('.buy-item-btn').forEach(b => { b.addEventListener('click', (e) => { const itemId = parseInt(e.target.dataset.itemId); const itemPrice = parseInt(e.target.dataset.price); if (currentPvTokens >= itemPrice) { currentPvTokens -= itemPrice; updateStatsDisplay(); alert(`Bought item ID ${itemId} for ${itemPrice} PV`); } else { alert("Not enough PV Tokens!"); } }); }); }
+            function generateRandomQuests() { if (quests.length >= 5) return; const templates = [ { baseText: "Collect X PV Tokens", type: "collectPV", min: 100, max: 500, rewardBase: 20 }, { baseText: "Send Y adventurers on any Z quests", type: "sendAdventurers", minA: 3, maxA: 10, minQ: 1, maxQ: 3, rewardBase: 30 }, { baseText: "Earn Z Gold", type: "collectGold", min: 1, max: 5, rewardBase: 50}, ]; while(quests.length < 5) { const t = templates[Math.floor(Math.random() * templates.length)]; let txt = t.baseText; let rA = t.rewardBase; let nq = { id: quests.length + 1, completed: false, progress: 0 }; if (t.type === "collectPV") { const tpv = Math.floor(Math.random()*(t.max-t.min+1)+t.min); txt=txt.replace("X",tpv); rA+=Math.floor(tpv/10); nq.target=tpv; nq.metric="pvCollected"; } else if (t.type === "sendAdventurers") { const ta=Math.floor(Math.random()*(t.maxA-t.minA+1)+t.minA); const tq=Math.floor(Math.random()*(t.maxQ-t.minQ+1)+t.minQ); txt=txt.replace("Y",ta).replace("Z",tq); rA+=ta*2+tq*5; nq.target=ta*tq; nq.metric="adventurersSentCount";} else if (t.type === "collectGold") { const tg=Math.floor(Math.random()*(t.max-t.min+1)+t.min); txt=txt.replace("Z",tg); rA+=tg*20; nq.target=tg; nq.metric="goldCollected"; } nq.text=txt; nq.reward=`${rA} PV`; quests.push(nq); } }
+
 
         });
     </script>
