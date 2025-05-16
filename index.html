@@ -5,39 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Punk Voyage Adventures</title>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-    <!-- Include Sats Connect Library -->
     <script src="https://unpkg.com/@sats-connect/core@latest/dist/bundles/sats-connect.js"></script>
     <style>
         :root {
             --border-color: #000000;
-            --bg-color: #FFFFFF;
+            --bg-color: #FFFFFF; 
             --text-color: #000000;
-            --highlight-color: #00FF00; /* Green for PV */
-            --gold-color: #FFFF00; /* Yellow for Gold */
+            --highlight-color: #00FF00;
+            --gold-color: #FFFF00;
             --button-bg: #E0E0E0;
             --button-border: #000000;
             --danger-color: #FF0000;
             --connected-color: #4CAF50;
+            --game-container-bg: rgba(255, 255, 255, 0.9); 
         }
 
         body {
             font-family: 'VT323', monospace;
-            background-color: var(--bg-color);
+            background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeigsu7ak3jbbia6w66slcz2rnk6b6ysundurmgz5etoq6xh23vsbpm');
+            background-size: cover; 
+            background-position: center; 
+            background-repeat: no-repeat; 
+            background-attachment: fixed; 
             color: var(--text-color);
             margin: 0;
-            padding: 20px;
             font-size: 16px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh; 
+            box-sizing: border-box; 
         }
 
         .game-container {
-            width: 100%;
-            max-width: 1000px;
-            border: 2px solid var(--border-color);
-            padding: 10px;
-            background-color: var(--bg-color);
+            width: 95%; 
+            max-width: 1600px; 
+            margin-top: 20px; 
+            margin-bottom: 20px; 
+            border: 3px solid var(--border-color); 
+            padding: 15px;
+            background-color: var(--game-container-bg); 
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.5); 
+            box-sizing: border-box;
         }
 
         header {
@@ -50,9 +59,10 @@
         }
 
         header h1 {
-            font-size: 2.5em;
+            font-size: 2.8em; 
             margin: 0;
             letter-spacing: 2px;
+            color: #333; 
         }
 
         .player-info-wallet {
@@ -66,8 +76,8 @@
             text-align: right;
             font-size: 0.9em;
         }
-        .player-stats .pv { color: var(--highlight-color); }
-        .player-stats .gold { color: var(--gold-color); }
+        .player-stats .pv { color: var(--highlight-color); font-weight: bold; }
+        .player-stats .gold { color: var(--gold-color); font-weight: bold; }
         .player-stats .wallet-address {
             font-size: 0.8em;
             color: var(--connected-color);
@@ -79,7 +89,7 @@
             position: relative;
         }
 
-        .connect-wallet-btn, .menu-button, .social-btn {
+        .connect-wallet-btn, .menu-button, .social-btn-link button { 
             background-color: var(--button-bg);
             border: 2px solid var(--button-border);
             padding: 5px 10px;
@@ -88,8 +98,9 @@
             font-size: 1em;
             min-width: 150px;
             text-align: center;
+            transition: background-color 0.2s ease-in-out; 
         }
-        .connect-wallet-btn:hover, .menu-button:hover, .social-btn:hover {
+        .connect-wallet-btn:hover, .menu-button:hover, .social-btn-link button:hover {
             background-color: #cccccc;
         }
         .connect-wallet-btn.connected {
@@ -111,6 +122,7 @@
             margin: 5px 0 0 0;
             width: 100%; 
             z-index: 10;
+            box-shadow: 0px 3px 7px rgba(0,0,0,0.2);
         }
 
         .wallet-dropdown li {
@@ -128,20 +140,22 @@
 
         .main-content {
             display: flex;
-            gap: 20px;
+            gap: 20px; 
+            width: 100%; 
         }
 
         .left-sidebar {
-            width: 250px;
+            width: 250px; 
             display: flex;
             flex-direction: column;
             gap: 20px;
-            flex-shrink: 0;
+            flex-shrink: 0; 
         }
 
         .wallet-summary, .adventurer-setup, .items-info, .main-menu-nav, .socials-nav {
             border: 2px solid var(--border-color);
             padding: 10px;
+             background-color: rgba(255, 255, 255, 0.8); 
         }
         
         .adventurer-setup .selection-group {
@@ -206,107 +220,97 @@
             display: flex;
             justify-content: space-around;
         }
-        .socials-nav .social-btn {
+        .social-btn-link {
+            text-decoration: none; 
+            width: 45%; 
+        }
+        .social-btn-link button { 
+            width: 100%; 
+            min-width: auto; 
             padding: 5px;
-            width: 40%;
         }
 
-
+        /* === MODIFIED: Game World Layout === */
         .game-world {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-around;
-            position: relative;
-            padding: 20px 0;
+            flex-grow: 1; 
+            display: flex; /* Make it a flex container for side-by-side layout */
+            flex-direction: row; /* Arrange children (player & adventures) in a row */
+            align-items: flex-start; /* Align children to the top of the row */
+            gap: 30px; /* Space between player character and adventure list */
+            padding-top: 20px; 
+            padding-left: 20px; /* Some padding from the left sidebar */
         }
         
         .player-character-area {
-            width: 100%;
-            display: flex;
-            justify-content: flex-start;
-            padding-left: 10%;
-            margin-bottom: 40px;
+            /* This area will hold the character. It won't grow, character size dictates it. */
+            flex-shrink: 0; /* Prevent it from shrinking if adventures are too wide */
+            /* No specific justification needed, its position is relative to the start of .game-world */
+            margin-top: 20px; /* Align character a bit lower, adjust as needed */
         }
 
         .player-character {
-            width: 50px;
-            height: 70px;
-            background-color: #6CACE4;
-            border: 2px solid var(--border-color);
-            position: relative;
+            width: 80px;  
+            height: 80px; 
+            background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafkreige4cba5c3bwwknrhupt3upkz5he7orgz2m7ygilbqmhmb2bsmd5q');
+            background-size: contain; 
+            background-position: center;
+            background-repeat: no-repeat;
         }
-        .player-character::before { /* Crown */
-            content: '';
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 30px;
-            height: 15px;
-            background-color: var(--gold-color);
-            border: 2px solid var(--border-color);
-            clip-path: polygon(0% 100%, 0% 40%, 20% 60%, 20% 0%, 40% 40%, 50% 0%, 60% 40%, 80% 0%, 80% 60%, 100% 40%, 100% 100%);
-        }
-         .player-character::after { /* Glasses */
-            content: '';
-            position: absolute;
-            top: 15px;
-            left: 5px;
-            width: calc(100% - 10px);
-            height: 10px;
-            background-color: #333;
-            border: 1px solid var(--border-color);
-        }
-
 
         .adventure-locations {
-            width: 100%;
+            flex-grow: 1; /* Allows adventure list to take available space next to player */
             display: flex;
             flex-direction: column;
-            align-items: flex-end;
-            gap: 30px;
+            align-items: flex-start; /* Adventures will stack and align to their left */
+            gap: 25px; /* Spacing between adventure blocks */
         }
 
         .adventure {
             display: flex;
             align-items: center;
             gap: 15px;
-            width: 80%;
-            max-width: 450px;
+            width: 100%; /* Make adventure blocks take full width of their container (.adventure-locations) */
+            max-width: 650px; /* Control max width of individual adventure blocks */
+             background-color: rgba(255, 255, 255, 0.75); 
+             padding: 15px; 
+             border-radius: 8px; 
+             border: 1px solid #b0b0b0; 
+             box-sizing: border-box; /* Include padding and border in width calculation */
         }
         
         .adventure-icon {
-            width: 80px;
-            height: 80px;
+            width: 150px;  
+            height: 150px; 
             border: 2px solid var(--border-color);
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             flex-shrink: 0;
+            border-radius: 5px; 
         }
 
         .adventure-icon.tree {
-            background-image: url('input_file_0.png');
+            background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblzgkncylseo57qr7kyhsxdgb3bq2aghcmj6gdf2ihhagpxp3uoy/adventure1.png');
         }
 
         .adventure-icon.mountain {
-            background-image: url('input_file_1.png');
+            background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblzgkncylseo57qr7kyhsxdgb3bq2aghcmj6gdf2ihhagpxp3uoy/adventure2.png');
         }
 
         .adventure-icon.fire-fields {
-            background-image: url('input_file_2.png');
+            background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblzgkncylseo57qr7kyhsxdgb3bq2aghcmj6gdf2ihhagpxp3uoy/adventure3.png');
         }
 
         .adventure-details {
-            font-size: 0.9em;
+            font-size: 1em; 
         }
         .adventure-details .prize {
             color: var(--highlight-color);
+            font-weight: bold;
         }
         .adventure-details .chance-gold {
             color: var(--gold-color);
+             font-weight: bold;
         }
 
     </style>
@@ -373,15 +377,21 @@
                 <nav class="socials-nav">
                     <div class="social-title">SOCIALS</div>
                     <div class="social-buttons">
-                        <button class="social-btn">X</button>
-                        <button class="social-btn">DISCORD</button>
+                        <a href="https://x.com/nvart_" target="_blank" class="social-btn-link">
+                            <button>X</button>
+                        </a>
+                        <a href="https://discord.com/invite/4CEtXAFf3x" target="_blank" class="social-btn-link">
+                            <button>DISCORD</button>
+                        </a>
                     </div>
                 </nav>
             </aside>
 
-            <section class="game-world">
+            <!-- Game world contains character and adventures side-by-side -->
+            <section class="game-world"> 
                 <div class="player-character-area">
-                    <div class="player-character" aria-label="Player Character">
+                    <div class="player-character" aria-label="Player Character Image">
+                        <!-- Image will be set via CSS background -->
                     </div>
                 </div>
 
@@ -419,7 +429,7 @@
     </div>
 
     <script>
-        // Wait for the DOM to be fully loaded before running the script
+        // Wallet connection and other UI JavaScript remains the same
         document.addEventListener('DOMContentLoaded', () => {
             const connectWalletBtn = document.getElementById('connectWalletBtn');
             const walletDropdown = document.getElementById('walletDropdown');
@@ -442,10 +452,12 @@
                 }
             }
 
-            connectWalletBtn.addEventListener('click', (event) => {
-                event.stopPropagation();
-                walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block';
-            });
+            if(connectWalletBtn) {
+                connectWalletBtn.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    if(walletDropdown) walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block';
+                });
+            }
 
             document.addEventListener('click', (event) => {
                 if (connectWalletBtn && walletDropdown && !connectWalletBtn.contains(event.target) && !walletDropdown.contains(event.target)) {
@@ -454,7 +466,6 @@
             });
 
             async function connectWithSatsConnect(walletTypeHint = null) {
-                // Check if SatsConnect global object is available
                 if (typeof SatsConnect === 'undefined' || typeof SatsConnect.getAddresses === 'undefined') {
                     alert('Sats Connect library not loaded or not ready. Please ensure you have a good internet connection and try again. If the issue persists, the CDN might be temporarily unavailable.');
                     console.error('Sats Connect library not loaded or `getAddresses` is not defined on it.');
@@ -474,11 +485,8 @@
                             let addressToUse = null;
                             let walletDisplayName = "BTC Wallet"; 
 
-                            if (ordinalsAddressInfo) {
-                                addressToUse = ordinalsAddressInfo.address;
-                            } else if (paymentAddressInfo) {
-                                addressToUse = paymentAddressInfo.address;
-                            }
+                            if (ordinalsAddressInfo) addressToUse = ordinalsAddressInfo.address;
+                            else if (paymentAddressInfo) addressToUse = paymentAddressInfo.address;
 
                             if (addressToUse) {
                                 connectedAccount = addressToUse;
@@ -487,22 +495,15 @@
                                 
                                 connectedWalletName = walletDisplayName;
                                 updateButtonAndDisplay(connectedAccount, connectedWalletName);
-                                console.log(`${walletDisplayName} (via SatsConnect) Connected:`, connectedAccount);
-                                alert(`${walletDisplayName} (via SatsConnect) Connected: ${connectedAccount}`);
                             } else {
-                                console.error('SatsConnect: No suitable address found in response.');
-                                alert('SatsConnect: Could not retrieve a suitable address.');
+                                console.error('SatsConnect: No suitable address found.');
                             }
                         },
-                        onCancel: () => {
-                            alert('SatsConnect: Connection request canceled by user.');
-                            console.log('SatsConnect connection request canceled.');
-                        },
+                        onCancel: () => console.log('SatsConnect connection canceled.'),
                     };
                     SatsConnect.getAddresses(getAddressesOptions);
                 } catch (error) {
-                    console.error('SatsConnect connection error:', error);
-                    alert(`SatsConnect connection failed: ${error.message || error}`);
+                    console.error('SatsConnect error:', error);
                 }
             }
 
@@ -514,8 +515,6 @@
                             connectedAccount = accounts[0];
                             connectedWalletName = 'UniSat';
                             updateButtonAndDisplay(connectedAccount, 'UniSat');
-                            console.log('UniSat Connected:', connectedAccount);
-                            alert(`UniSat Connected: ${connectedAccount}`);
 
                             window.unisat.on('accountsChanged', (newAccounts) => {
                                 if (connectedWalletName === 'UniSat') {
@@ -529,16 +528,12 @@
                                     }
                                 }
                             });
-                        } else {
-                            alert('UniSat: No accounts found or permission denied.');
                         }
                     } else {
-                        alert('UniSat Wallet extension not found. Please install it.');
                         window.open('https://unisat.io/', '_blank');
                     }
                 } catch (error) {
-                    console.error('UniSat connection error:', error);
-                    alert(`UniSat connection failed: ${error.message || error}`);
+                    console.error('UniSat error:', error);
                 }
             }
 
@@ -552,15 +547,10 @@
                         connectedWalletName = null;
                         updateButtonAndDisplay(null);
 
-                        console.log('Attempting to connect with:', walletType);
-
-                        if (walletType === 'unisat') {
-                            await connectUnisat();
-                        } else if (walletType && walletType.startsWith('satsconnect_')) {
+                        if (walletType === 'unisat') await connectUnisat();
+                        else if (walletType && walletType.startsWith('satsconnect_')) {
                             const hint = walletType.split('_')[1]; 
                             await connectWithSatsConnect(hint);
-                        } else {
-                            alert('Unknown wallet type selected.');
                         }
                     });
                 });
@@ -585,7 +575,7 @@
                     }
                 });
             }
-        }); // End of DOMContentLoaded listener
+        });
     </script>
 </body>
 </html>
