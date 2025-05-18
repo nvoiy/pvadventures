@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,6 +24,7 @@
             --twitter-feed-bg: rgba(255, 255, 255, 0.7);
             --highlight-color-pv: #00FF00; 
             --highlight-color-gold: #FFFF00;
+            --highlight-color-diamond: #00BFFF; 
             --highlight-color-danger: #FF0000; 
             --highlight-color-connected: #4CAF50;
             --orange-label: #FFA500; 
@@ -33,7 +35,8 @@
             --item-placeholder-ring: #B8860B; --item-placeholder-weapon: #778899;
             --item-placeholder-potion2: #90EE90; 
             --item-placeholder-potion3: #FFB6C1;
-            /* Removed --welcome-screen-bg-image-url as image is now an element */
+            --item-placeholder-misc: #DA70D6; 
+            --item-placeholder-scroll: #F4A460; 
         }
 
         body {
@@ -64,19 +67,21 @@
         
         #welcomeScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            /* Background image removed from here, image is now an element */
-            background-color: var(--game-container-bg); /* Adapts with theme */
+            background-image: var(--body-bg-image-url); 
+            background-size: cover; 
+            background-position: center; 
+            background-repeat: no-repeat;
             display: flex; 
             flex-direction: column; justify-content: center; align-items: center;
             z-index: 1000; text-align: center; padding: 20px; box-sizing: border-box;
-            overflow-y: auto; /* In case content is too tall on small screens */
+            overflow-y: auto; 
         }
         #welcomeImageLarge {
             display: block;
-            margin: 0 auto 30px auto; /* Center and add space below */
-            max-width: 85%; /* Responsive width */
-            max-height: 65vh; /* Responsive height, prevents excessive tallness */
-            object-fit: contain; /* Show whole image without cropping */
+            margin: 0 auto 30px auto; 
+            max-width: 85%; 
+            max-height: 65vh; 
+            object-fit: contain; 
             border-radius: 15px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.3);
         }
@@ -118,69 +123,67 @@
         #enterGameButton:hover { background-color: #3e8e41; }
         .hidden { display: none !important; }
 
-        /* Custom Popup Styles */
         #customPopupOverlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 2000;
-            display: flex; 
-            justify-content: center;
-            align-items: center;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); z-index: 2000; display: flex; 
+            justify-content: center; align-items: center;
         }
         #customPopup {
-            position: fixed; 
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: var(--section-bg);
-            border: 3px solid var(--border-color);
-            padding: 25px;
-            border-radius: 10px;
-            z-index: 2001;
-            text-align: center;
-            min-width: 350px;
-            max-width: 90%; 
-            width: auto; 
-            box-shadow: 0 5px 20px rgba(0,0,0,0.4);
-            font-family: 'VT323', monospace;
-            color: var(--text-color);
-            box-sizing: border-box;
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background-color: var(--section-bg); border: 3px solid var(--border-color);
+            padding: 25px; border-radius: 10px; z-index: 2001; text-align: center;
+            min-width: 350px; max-width: 90%; width: auto; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.4); font-family: 'VT323', monospace;
+            color: var(--text-color); box-sizing: border-box;
         }
         #customPopupTitle {
-            font-size: 1.8em;
-            margin-top: 0;
-            margin-bottom: 15px;
+            font-size: 1.8em; margin-top: 0; margin-bottom: 15px;
             color: var(--label-color); 
         }
         #customPopupMessage {
-            font-size: 1.1em;
-            margin-bottom: 25px;
-            line-height: 1.6;
-            white-space: pre-wrap; 
-            text-align: left; /* For better readability of lists */
+            font-size: 1.1em; margin-bottom: 25px; line-height: 1.6;
+            white-space: pre-wrap; text-align: left; 
         }
         #customPopupCloseBtn {
-            font-size: 1.2em;
-            padding: 10px 20px;
-            min-width: 100px;
+            font-size: 1.2em; padding: 10px 20px; min-width: 100px;
         }
-
 
         .game-container { width: 95%; max-width: 1600px; margin: 20px auto; border: 3px solid var(--border-color); padding: 15px; background-color: var(--game-container-bg); box-shadow: 0px 0px 15px rgba(0,0,0,0.5); box-sizing: border-box; display: flex; flex-direction: column; transition: background-color 0.3s, border-color 0.3s; }
         header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 2px solid var(--border-color); margin-bottom: 15px; width: 100%; transition: border-color 0.3s; }
-        header h1 { font-size: 2.5em; margin: 0; letter-spacing: 2px; color: var(--header-text-color); transition: color 0.3s;}
-        .header-controls { display: flex; align-items: center; gap: 20px; }
+        header h1 { font-size: 2.5em; margin: 0; letter-spacing: 2px; color: var(--header-text-color); transition: color 0.3s; flex-shrink: 0; margin-right: auto; /* Pushes other controls to the right */}
+        .header-controls { display: flex; align-items: center; gap: 25px; /* Increased gap */ }
         .player-info-wallet { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
-        .player-stats { text-align: right; font-size: 1em; } .player-stats .pv { color: var(--highlight-color-pv); font-weight: bold; } .player-stats .gold { color: var(--highlight-color-gold); font-weight: bold; } .player-stats .wallet-address { font-size: 0.9em; color: var(--highlight-color-connected); word-break: break-all; }
+        .player-stats { text-align: right; font-size: 1em; } 
+        .player-stats .pv { color: var(--highlight-color-pv); font-weight: bold; } 
+        .player-stats .gold { color: var(--highlight-color-gold); font-weight: bold; } 
+        .player-stats .diamond { color: var(--highlight-color-diamond); font-weight: bold; }
+        .player-stats .wallet-address { font-size: 0.9em; color: var(--highlight-color-connected); word-break: break-all; }
         .wallet-connector { position: relative; }
-        .connect-wallet-btn, .menu-button, .social-btn-link button, .adventure-send-btn, .action-button, .craft-button, .equip-btn, .unequip-btn { background-color: var(--button-bg); border: 2px solid var(--button-border); padding: 6px 12px; color: var(--button-text-color); cursor: pointer; font-family: 'VT323', monospace; font-size: 1em; text-align: center; transition: background-color 0.3s, border-color 0.3s, color 0.3s; }
+        .connect-wallet-btn, .menu-button, .social-btn-link button, .adventure-send-btn, .action-button, .craft-button, .equip-btn, .unequip-btn, .swap-btn { background-color: var(--button-bg); border: 2px solid var(--button-border); padding: 6px 12px; color: var(--button-text-color); cursor: pointer; font-family: 'VT323', monospace; font-size: 1em; text-align: center; transition: background-color 0.3s, border-color 0.3s, color 0.3s; }
         .connect-wallet-btn, .menu-button { min-width: 160px; }
-        body:not(.dark-mode) .connect-wallet-btn:hover, body:not(.dark-mode) .menu-button:hover, body:not(.dark-mode) .social-btn-link button:hover, body:not(.dark-mode) .adventure-send-btn:hover, body:not(.dark-mode) .action-button:hover, body:not(.dark-mode) .craft-button:hover, body:not(.dark-mode) .equip-btn:hover, body:not(.dark-mode) .unequip-btn:hover { background-color: #cccccc; }
-        body.dark-mode .connect-wallet-btn:hover, body.dark-mode .menu-button:hover, body.dark-mode .social-btn-link button:hover, body.dark-mode .adventure-send-btn:hover, body.dark-mode .action-button:hover, body.dark-mode .craft-button:hover, body.dark-mode .equip-btn:hover, body.dark-mode .unequip-btn:hover { background-color: #555555;}
+        .header-controls .socials-nav { /* Styles for socials in header */
+            padding: 0; /* Remove padding */
+            border: none; /* Remove border */
+            background-color: transparent; /* Remove background */
+            display: flex; /* To align title and buttons */
+            align-items: center;
+            gap: 10px;
+        }
+        .header-controls .socials-nav .social-title {
+            font-size: 1.1em; /* Adjusted size for header */
+            margin-bottom: 0; /* Remove bottom margin */
+        }
+        .header-controls .socials-nav .social-buttons {
+             /* display: flex; already set on parent */
+            gap: 8px; /* Spacing between X and Discord */
+        }
+         .header-controls .socials-nav .social-btn-link button {
+            min-width: 60px; /* Adjust button width if needed */
+            padding: 5px 8px;
+        }
+
+        body:not(.dark-mode) .connect-wallet-btn:hover, body:not(.dark-mode) .menu-button:hover, body:not(.dark-mode) .social-btn-link button:hover, body:not(.dark-mode) .adventure-send-btn:hover, body:not(.dark-mode) .action-button:hover, body:not(.dark-mode) .craft-button:hover, body:not(.dark-mode) .equip-btn:hover, body:not(.dark-mode) .unequip-btn:hover, body:not(.dark-mode) .swap-btn:hover { background-color: #cccccc; }
+        body.dark-mode .connect-wallet-btn:hover, body.dark-mode .menu-button:hover, body.dark-mode .social-btn-link button:hover, body.dark-mode .adventure-send-btn:hover, body.dark-mode .action-button:hover, body.dark-mode .craft-button:hover, body.dark-mode .equip-btn:hover, body.dark-mode .unequip-btn:hover, body.dark-mode .swap-btn:hover { background-color: #555555;}
         .connect-wallet-btn.connected { background-color: var(--highlight-color-connected); color: white; border-color: var(--highlight-color-connected); }
         .wallet-dropdown { display: none; position: absolute; top: 100%; right: 0; background-color: var(--dropdown-bg); color: var(--text-color); border: 2px solid var(--border-color); list-style: none; padding: 0; margin: 5px 0 0 0; width: 100%; z-index: 10; box-shadow: 0px 3px 7px rgba(0,0,0,0.2); transition: background-color 0.3s, border-color 0.3s, color 0.3s; }
         .wallet-dropdown li { padding: 8px 12px; cursor: pointer; border-bottom: 1px solid var(--border-color); text-align: center; transition: background-color 0.3s, border-color 0.3s; } .wallet-dropdown li:last-child { border-bottom: none; }
@@ -189,35 +192,74 @@
         .left-sidebar { width: 300px; display: flex; flex-direction: column; gap: 20px; flex-shrink: 0; }
         .twitter-feed-container { border: 2px solid var(--border-color); padding: 10px; background-color: var(--twitter-feed-bg); height: 400px; min-height: 300px; overflow-y: auto; display: flex; flex-direction: column; transition: background-color 0.3s, border-color 0.3s; }
         .twitter-feed-container .twitter-timeline { width: 100% !important; }
-        #availableAdventurersDisplay, .socials-nav, .materials-display { border: 2px solid var(--border-color); padding: 10px; background-color: var(--section-bg); transition: background-color 0.3s, border-color 0.3s; }
+        #availableAdventurersDisplay, .left-sidebar .socials-nav, .materials-display { /* socials-nav in sidebar specific styling */
+            border: 2px solid var(--border-color); padding: 10px; background-color: var(--section-bg); transition: background-color 0.3s, border-color 0.3s;
+        }
         #availableAdventurersDisplay { text-align:center; font-size: 1.2em; margin-top: 10px;}
         .socials-nav .social-title, .adventure-controls label, .page-title, .materials-display h4, .adventures-label, #activeAdventuresDisplay_page h3, 
-        .equipment-slots-container h4, #inventory-page > h4, .shop-section-wrapper h3, .crafting-section-wrapper h3 { 
+        .equipment-slots-container h4, #inventory-page > h4, .shop-section-wrapper h3, .crafting-section-wrapper h3, .swap-section h3, #whitelist-page h3, #adminRafflePanel h3 { 
             color: var(--label-color); font-weight: bold; transition: color 0.3s; 
         }
-        .socials-nav .social-title { font-size: 1.2em; } .materials-display h4 {font-size: 1.2em; margin-top:0; margin-bottom: 8px;} .materials-display ul { list-style: none; padding: 0; margin: 5px 0 0 0; font-size: 1em; } .materials-display li { margin-bottom: 3px; }
+        .left-sidebar .socials-nav .social-title { font-size: 1.2em; } /* Specific to sidebar socials */
+        .materials-display h4 {font-size: 1.2em; margin-top:0; margin-bottom: 8px;} .materials-display ul { list-style: none; padding: 0; margin: 5px 0 0 0; font-size: 1em; } .materials-display li { margin-bottom: 3px; }
         .socials-nav .social-buttons { display: flex; justify-content: space-around; } .social-btn-link { text-decoration: none; width: 45%; } .social-btn-link button { width: 100%; min-width: auto; padding: 5px;}
         .main-content-area { flex-grow: 1; display: flex; }
-        .page-content { display: none; width: 100%; flex-direction: column; padding: 0 15px; box-sizing: border-box; overflow-y: auto; flex-grow: 1;} .page-content.active { display: flex; }
+        .page-content { display: none; width: 100%; flex-direction: column; padding: 0 15px; box-sizing: border-box; overflow-y: auto; flex-grow: 1;} 
+        .page-content.active { display: flex; }
+
         #adventures-page { flex-direction: row; align-items: flex-start; gap: 25px; padding:0; }
         .player-character-area { flex-shrink: 0; margin-top: 15px; } .player-character { width: 90px; height: 90px; background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafkreige4cba5c3bwwknrhupt3upkz5he7orgz2m7ygilbqmhmb2bsmd5q'); background-size: contain; background-position: center; background-repeat: no-repeat; }
         .adventure-section-wrapper { display: flex; flex-direction: column; flex-grow: 1; align-items: center; } .adventures-label { font-size: 2em; margin-bottom: 20px; text-align: center; width: 100%; }
         .adventure-locations { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 20px; }
         .adventure { display: flex; align-items: center; gap: 20px; width: 100%; max-width: 800px; background-color: var(--adventure-block-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); box-sizing: border-box; transition: background-color 0.3s, border-color 0.3s; position: relative; }
+        
+        .adventure-lock-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(30, 30, 30, 0.85); /* Darker overlay for better text visibility */
+            color: var(--highlight-color-danger);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 1.1em; /* Adjusted for clarity */
+            font-weight: bold;
+            padding: 15px;
+            box-sizing: border-box;
+            border-radius: 8px; /* Match adventure block */
+            z-index: 5; 
+            line-height: 1.4;
+        }
+        .adventure-lock-overlay.hidden {
+            display: none;
+        }
+        /* Styling for when adventure is locked by progression */
+        .adventure.locked-by-progression .adventure-send-btn,
+        .adventure.locked-by-progression .adventure-num-select {
+            filter: grayscale(100%) opacity(0.7);
+            cursor: not-allowed !important; /* Ensure cursor shows not-allowed */
+        }
+
+
         .adventure-icon { width: 150px; height: 150px; border: 2px solid var(--border-color); background-size: cover; background-position: center; background-repeat: no-repeat; flex-shrink: 0; border-radius: 5px; transition: border-color 0.3s; }
-        .adventure-icon.tree { background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblzgkncylseo57qr7kyhsxdgb3bq2aghcmj6gdf2ihhagpxp3uoy/adventure1.png'); } .adventure-icon.mountain { background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblzgkncylseo57qr7kyhsxdgb3bq2aghcmj6gdf2ihhagpxp3uoy/adventure2.png'); } .adventure-icon.fire-fields { background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblzgkncylseo57qr7kyhsxdgb3bq2aghcmj6gdf2ihhagpxp3uoy/adventure3.png'); }
+        .adventure-icon.tree { background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblzgkncylseo57qr7kyhsxdgb3bq2aghcmj6gdf2ihhagpxp3uoy/adventure1.png'); } 
+        .adventure-icon.mountain { background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblzgkncylseo57qr7kyhsxdgb3bq2aghcmj6gdf2ihhagpxp3uoy/adventure2.png'); } 
+        .adventure-icon.fire-fields { background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblzgkncylseo57qr7kyhsxdgb3bq2aghcmj6gdf2ihhagpxp3uoy/adventure3.png'); }
+        .adventure-icon.tomb { background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeign5woq5hi2ze3353d7a6fditxbrpexu4x2eidyxs3lvlhpwdnw6y'); }
         .adventure-main-info { flex-grow: 1; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; } 
         .adventure-content { display: flex; flex-direction: column; gap: 10px; } 
         .adventure-details { font-size: 1.1em; line-height: 1.5; } 
         .adventure-details .prize { color: var(--highlight-color-pv); font-weight: bold; } 
         .adventure-details .chance-gold { color: var(--highlight-color-gold); font-weight: bold; } 
+        .adventure-details .chance-diamond { color: var(--highlight-color-diamond); font-weight: bold; }
+        .adventure-requirement { color: var(--highlight-color-danger); font-weight: bold; font-size: 0.9em; margin-top: 5px;}
         .adventure-controls { display: flex; align-items: center; gap: 12px; margin-top: 10px; } 
         .adventure-controls label { font-size: 1.1em; } 
         .adventure-num-select { font-family: 'VT323', monospace; font-size: 1em; padding: 4px; border: 2px solid var(--border-color); background-color: var(--dropdown-bg); color: var(--text-color); min-width: 40px; transition: background-color 0.3s, border-color 0.3s, color 0.3s; } 
         .adventure-send-btn { padding: 6px 10px; font-size: 1em; } 
         .adventure-send-btn.active-adv1 { background-color: var(--highlight-color-pv); color: black;} 
         .adventure-send-btn.active-adv2 { background-color: var(--highlight-color-gold); color: black;} 
-        .adventure-send-btn.active-adv3 { background-color: var(--highlight-color-danger); color: white;}
+        .adventure-send-btn.active-adv3, .adventure-send-btn.active-adv4 { background-color: var(--highlight-color-danger); color: white;}
         
         .adventure-drops-area { position: relative; align-self: flex-start; min-height: 100px; } 
         .adventure-drops-button { font-size: 1em; padding: 4px 10px; } 
@@ -268,7 +310,19 @@
 
         .dark-mode-switch { display: flex; align-items: center; gap: 8px; } .dark-mode-switch label { font-size: 1em; color: var(--text-color); cursor: pointer; transition: color 0.3s; } .switch { position: relative; display: inline-block; width: 50px; height: 24px; } .switch input { opacity: 0; width: 0; height: 0; } .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; } .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; } input:checked + .slider { background-color: var(--highlight-color-connected); } input:focus + .slider { box-shadow: 0 0 1px var(--highlight-color-connected); } input:checked + .slider:before { transform: translateX(26px); }
         .page-title { font-size: 2.2em; margin-bottom: 25px; text-align:center; width:100%; }
-        #shop-page { align-items: center; } .shop-section-wrapper, .crafting-section-wrapper { width: 100%; max-width: 800px; margin-bottom:30px;} .shop-section-wrapper h3, .crafting-section-wrapper h3 { font-size: 1.8em; text-align: center; margin-bottom: 20px; }
+        
+        #shop-page { align-items: center; } 
+        .swap-section-container { 
+            width: 100%; max-width: 800px; 
+            margin-bottom: 30px; 
+            padding: 20px; 
+            border: 2px solid var(--border-color);
+            background-color: var(--section-bg);
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15); 
+        }
+        .swap-section h3 { font-size: 1.8em; text-align: center; margin-bottom: 15px; }
+        .shop-section-wrapper, .crafting-section-wrapper { width: 100%; max-width: 800px; margin-bottom:30px;} .shop-section-wrapper h3, .crafting-section-wrapper h3 { font-size: 1.8em; text-align: center; margin-bottom: 20px; }
         .quest-list, .shop-items, .crafting-items-container, .inventory-items-container { display: flex; flex-direction: column; gap: 18px; width:100%; max-width:800px; margin:0 auto; }
         .quest-item, .shop-item, .craftable-item-card, .inventory-item-card { background-color: var(--adventure-block-bg); border: 1px solid var(--border-color); padding: 18px; border-radius: 8px; display: flex; align-items: center; transition: background-color 0.3s, border-color 0.3s; gap: 15px; }
         .quest-item p, .shop-item p, .craftable-item-card p, .inventory-item-card p { font-size: 1.05em; margin:3px 0; }
@@ -279,10 +333,14 @@
         .crafting-cost small, .item-perk small { display: block; font-size: 0.9em; opacity: 0.8; }
         .equip-btn, .unequip-btn { font-size: 0.9em; padding: 4px 8px; margin-left: 5px; }
         .inventory-item-card .equipped-status { font-size: 0.9em; color: var(--highlight-color-connected); margin-left: 10px; }
+        .inventory-item-card .use-btn { font-size: 0.9em; padding: 4px 8px; margin-left: 10px; background-color: var(--highlight-color-pv); color: black;}
+
         .equipment-slots-container { margin-bottom: 30px; padding: 15px; border: 1px dashed var(--border-color); border-radius: 5px; width: 100%; max-width: 800px; box-sizing: border-box; margin-left:auto; margin-right:auto; }
         .equipment-slots-container h4 { margin-top: 0; margin-bottom: 15px; text-align: center; color: var(--label-color); font-size: 1.8em; }
-        .equipment-slots { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 12px; }
+        .equipment-slots { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; } 
         .equipment-slot { border: 1px solid var(--border-color); background-color: var(--adventure-block-bg); padding: 10px; border-radius: 4px; text-align: center; min-height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: background-color 0.3s, border-color 0.3s; }
+        .equipment-slot.locked { background-color: #555; opacity:0.6; cursor:not-allowed; }
+        .equipment-slot.locked .slot-name::after { content: " (Locked)"; font-size: 0.8em; color: var(--highlight-color-danger); }
         .equipment-slot .slot-name { font-size: 1em; margin-bottom: 8px; color: var(--label-color); font-weight:normal; }
         .equipment-slot .item-icon-placeholder { margin-bottom: 5px; width: 40px; height: 40px; font-size: 0.7em; }
         .equipment-slot .equipped-item-name { font-size: 0.95em; font-weight: bold; margin-bottom: 5px; }
@@ -293,6 +351,86 @@
         #daily-rewards-page .reward-day h5 { margin: 0 0 5px 0; color: var(--label-color); }
         #daily-rewards-page .reward-day p { margin: 0; font-size: 0.9em; }
         #daily-rewards-page .reward-day button { margin-top: 8px; }
+
+        .swap-section { margin-top:10px; text-align: center;} 
+        .swap-section .swap-info { margin-bottom: 10px; font-size: 1.1em; }
+        .swap-btn { padding: 8px 15px; font-size: 1.1em; }
+
+        /* Whitelist Page Styles */
+        #whitelist-page { align-items: center; } /* Corrected: Removed display:flex and flex-direction */
+        #adminRafflePanel {
+            background-color: var(--section-bg);
+            padding: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 700px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+        }
+        #adminRafflePanel h3 { text-align: center; margin-bottom: 15px; font-size: 1.6em; }
+        .admin-form-group { margin-bottom: 12px; }
+        .admin-form-group label { display: block; margin-bottom: 5px; font-size: 1.1em; color: var(--label-color); }
+        .admin-form-group input[type="text"],
+        .admin-form-group input[type="number"],
+        .admin-form-group textarea {
+            width: calc(100% - 20px);
+            padding: 8px;
+            font-family: 'VT323', monospace;
+            font-size: 1em;
+            border: 1px solid var(--border-color);
+            background-color: var(--dropdown-bg);
+            color: var(--text-color);
+            border-radius: 4px;
+        }
+        .admin-form-group textarea { min-height: 60px; }
+
+        #whitelistRafflesContainer {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            max-width: 800px;
+        }
+        .raffle-card {
+            background-color: var(--adventure-block-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        .raffle-card-image {
+            width: 120px;
+            height: 120px;
+            background-size: cover;
+            background-position: center;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            flex-shrink: 0;
+        }
+        .raffle-card-image.placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #555;
+            color: white;
+            font-size: 0.9em;
+        }
+        .raffle-card-content { flex-grow: 1; }
+        .raffle-card-content h4 { margin: 0 0 10px 0; font-size: 1.5em; color: var(--label-color); }
+        .raffle-card-content p { margin: 5px 0; font-size: 1em; line-height: 1.5; }
+        .raffle-card-description { margin-bottom: 10px !important; }
+        .raffle-card-socials a { margin-right: 10px; text-decoration: none; color: var(--highlight-color-connected); font-weight: bold; }
+        .raffle-card-socials a:hover { text-decoration: underline; }
+        .raffle-card-cost { margin-top: 10px; font-size: 0.95em; }
+        .raffle-card-cost .pv { color: var(--highlight-color-pv); }
+        .raffle-card-cost .gold { color: var(--highlight-color-gold); }
+        .raffle-card-cost .diamond { color: var(--highlight-color-diamond); }
+        .raffle-card-status { margin-top: 10px; font-weight: bold; }
+        .raffle-card-winners ul { list-style: disc; padding-left: 20px; margin-top: 5px;}
+
     </style>
 </head>
 <body>
@@ -307,18 +445,124 @@
         </div>
     </div>
     <div class="game-container hidden" id="gameContainer">
-        <header> <h1>PUNK VOYAGE ADVENTURES</h1> <div class="header-controls"> <div class="player-info-wallet"> <div class="player-stats" id="playerStats"> PLAYER <span id="playerNicknameDisplay">Voyager</span>, WELCOME<br> <span class="pv">PV = <span id="pvCount">0</span></span> , <span class="gold">GOLD = <span id="goldCount">0</span></span> <div class="wallet-address" id="walletAddressDisplay"></div> </div> <div class="wallet-connector"><button class="connect-wallet-btn" id="connectWalletBtn">CONNECT WALLET</button><ul class="wallet-dropdown" id="walletDropdown"><li data-wallet="satsconnect_xverse">XVERSE</li><li data-wallet="unisat">UNISAT</li><li data-wallet="satsconnect_magiceden">MAGIC EDEN</li><li data-wallet="satsconnect_general">ANY BTC WALLET</li></ul></div> </div> <div class="dark-mode-switch"> <label for="darkModeToggle">Dark Mode</label> <label class="switch"> <input type="checkbox" id="darkModeToggle"> <span class="slider"></span> </label> </div> </div> </header>
+        <header> 
+            <h1>PUNK VOYAGE ADVENTURES</h1> 
+            <div class="header-controls"> 
+                <div class="player-info-wallet"> 
+                    <div class="player-stats" id="playerStats"> PLAYER <span id="playerNicknameDisplay">Voyager</span>, WELCOME<br> <span class="pv">PV = <span id="pvCount">0</span></span> , <span class="gold">GOLD = <span id="goldCount">0</span></span>, <span class="diamond">DIAMOND = <span id="diamondCount">0</span></span> <div class="wallet-address" id="walletAddressDisplay"></div> 
+                    </div> 
+                    <div class="wallet-connector"><button class="connect-wallet-btn" id="connectWalletBtn">CONNECT WALLET</button><ul class="wallet-dropdown" id="walletDropdown"><li data-wallet="satsconnect_xverse">XVERSE</li><li data-wallet="unisat">UNISAT</li><li data-wallet="satsconnect_magiceden">MAGIC EDEN</li><li data-wallet="satsconnect_general">ANY BTC WALLET</li></ul>
+                    </div> 
+                </div> 
+                <nav class="socials-nav" id="headerSocialsNav"> 
+                    <div class="social-title">SOCIALS</div> 
+                    <div class="social-buttons"> 
+                        <a href="https://x.com/nvart_" target="_blank" class="social-btn-link"><button>X</button></a> 
+                        <a href="https://discord.com/invite/4CEtXAFf3x" target="_blank" class="social-btn-link"><button>DISCORD</button></a> 
+                    </div> 
+                </nav>
+                <div class="dark-mode-switch"> 
+                    <label for="darkModeToggle">Dark Mode</label> 
+                    <label class="switch"> <input type="checkbox" id="darkModeToggle"> <span class="slider"></span> </label> 
+                </div> 
+            </div> 
+        </header>
         <main class="main-content">
-            <aside class="left-sidebar"> <div class="twitter-feed-container" id="twitter-widget-container"> <a class="twitter-timeline" data-dnt="true" href="https://twitter.com/nvart_?ref_src=twsrc%5Etfw">Tweets by nvart_</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> </div> <div id="availableAdventurersDisplay"> Available Adventurers: <span id="availableAdventurersCount">5</span> </div> <div class="materials-display" id="materialsDisplay"> <h4>MY MATERIALS</h4> <ul id="materialsList"></ul> </div> <nav class="socials-nav"> <div class="social-title">SOCIALS</div> <div class="social-buttons"> <a href="https://x.com/nvart_" target="_blank" class="social-btn-link"><button>X</button></a> <a href="https://discord.com/invite/4CEtXAFf3x" target="_blank" class="social-btn-link"><button>DISCORD</button></a> </div> </nav> </aside>
+            <aside class="left-sidebar"> 
+                <div class="twitter-feed-container" id="twitter-widget-container"> <a class="twitter-timeline" data-dnt="true" href="https://twitter.com/nvart_?ref_src=twsrc%5Etfw">Tweets by nvart_</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> </div> 
+                <div id="availableAdventurersDisplay"> Available Adventurers: <span id="availableAdventurersCount">5</span> </div> 
+                <div class="materials-display" id="materialsDisplay"> <h4>MY MATERIALS</h4> <ul id="materialsList"></ul> </div> 
+            </aside>
             <div class="main-content-area">
-                <section id="adventures-page" class="page-content active"> <div class="player-character-area"> <div class="player-character" aria-label="Player Character Image"></div> </div> <div class="adventure-section-wrapper"> <h2 class="adventures-label">ADVENTURES</h2> <div class="adventure-locations"> <div class="adventure" id="adventure-1-block"> <div class="adventure-icon tree"></div> <div class="adventure-main-info"> <div class="adventure-content"> <div class="adventure-details"> ADVENTURE 1, SPIRIT FOREST<br> ADVENTURE TIME = 4 HOURS<br> <span class="prize">PRIZE = 25 PV TOKENS</span> </div> <div class="adventure-controls"> <label for="num-adventurers-1">ADVENTURERS:</label> <select id="num-adventurers-1" class="adventure-num-select"> <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option> </select> <button class="adventure-send-btn active-adv1" data-adventure-id="1" data-adventure-name="Spirit Forest" data-duration-hours="4" data-pv-reward="25" data-gold-chance="0">SEND</button> </div> </div> <div class="adventure-drops-area"> <button class="adventure-drops-button" data-adventure-id="1">DROPS</button> <div class="drops-popover" id="drops-popover-1"></div>  </div> </div> </div> <div class="adventure" id="adventure-2-block"> <div class="adventure-icon mountain"></div> <div class="adventure-main-info"> <div class="adventure-content"> <div class="adventure-details"> ADVENTURE 2, MOUNTAIN OF THE MAROWAN<br> ADVENTURE TIME = 8 HOURS<br> <span class="prize">PRIZE = 40 PV TOKENS</span> </div> <div class="adventure-controls"> <label for="num-adventurers-2">ADVENTURERS:</label> <select id="num-adventurers-2" class="adventure-num-select"> <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option> </select> <button class="adventure-send-btn active-adv2" data-adventure-id="2" data-adventure-name="Mountain of the Marowan" data-duration-hours="8" data-pv-reward="40" data-gold-chance="0">SEND</button> </div> </div> <div class="adventure-drops-area"> <button class="adventure-drops-button" data-adventure-id="2">DROPS</button> <div class="drops-popover" id="drops-popover-2"></div>  </div> </div> </div> <div class="adventure" id="adventure-3-block"> <div class="adventure-icon fire-fields"></div> <div class="adventure-main-info"> <div class="adventure-content"> <div class="adventure-details"> ADVENTURE 3, FIRE FIELDS OF FLYINALS<br> ADVENTURE TIME = 24 HOURS<br> <span class="prize">PRIZE = 100 PV TOKENS</span><br> <span class="chance-gold">%1 CHANCE OF GOLD</span> </div> <div class="adventure-controls"> <label for="num-adventurers-3">ADVENTURERS:</label> <select id="num-adventurers-3" class="adventure-num-select"> <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option> </select> <button class="adventure-send-btn active-adv3" data-adventure-id="3" data-adventure-name="Fire Fields of Flyinals" data-duration-hours="24" data-pv-reward="100" data-gold-chance="0.01">SEND</button> </div> </div> <div class="adventure-drops-area"> <button class="adventure-drops-button" data-adventure-id="3">DROPS</button> <div class="drops-popover" id="drops-popover-3"></div>  </div> </div> </div> </div> </div> </section>
+                <section id="adventures-page" class="page-content active"> 
+                    <div class="player-character-area"> <div class="player-character" aria-label="Player Character Image"></div> </div> 
+                    <div class="adventure-section-wrapper"> 
+                        <h2 class="adventures-label">ADVENTURES</h2> 
+                        <div class="adventure-locations"> 
+                            <div class="adventure" id="adventure-1-block"> 
+                                <div class="adventure-lock-overlay hidden"></div>
+                                <div class="adventure-icon tree"></div> 
+                                <div class="adventure-main-info"> <div class="adventure-content"> <div class="adventure-details"> ADVENTURE 1, SPIRIT FOREST<br> ADVENTURE TIME = 4 HOURS<br> <span class="prize">PRIZE = 25 PV TOKENS</span> </div> <div class="adventure-controls"> <label for="num-adventurers-1">ADVENTURERS:</label> <select id="num-adventurers-1" class="adventure-num-select"> <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option> </select> <button class="adventure-send-btn active-adv1" data-adventure-id="1" data-adventure-name="Spirit Forest" data-duration-hours="4" data-pv-reward="25" data-gold-chance="0">SEND</button> </div> </div> <div class="adventure-drops-area"> <button class="adventure-drops-button" data-adventure-id="1">DROPS</button> <div class="drops-popover" id="drops-popover-1"></div>  </div> </div> 
+                            </div> 
+                            <div class="adventure" id="adventure-2-block"> 
+                                <div class="adventure-lock-overlay hidden"></div>
+                                <div class="adventure-icon mountain"></div> <div class="adventure-main-info"> <div class="adventure-content"> <div class="adventure-details"> ADVENTURE 2, MOUNTAIN OF THE MAROWAN<br> ADVENTURE TIME = 8 HOURS<br> <span class="prize">PRIZE = 40 PV TOKENS</span> </div> <div class="adventure-controls"> <label for="num-adventurers-2">ADVENTURERS:</label> <select id="num-adventurers-2" class="adventure-num-select"> <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option> </select> <button class="adventure-send-btn active-adv2" data-adventure-id="2" data-adventure-name="Mountain of the Marowan" data-duration-hours="8" data-pv-reward="40" data-gold-chance="0">SEND</button> </div> </div> <div class="adventure-drops-area"> <button class="adventure-drops-button" data-adventure-id="2">DROPS</button> <div class="drops-popover" id="drops-popover-2"></div>  </div> </div> 
+                            </div> 
+                            <div class="adventure" id="adventure-3-block"> 
+                                <div class="adventure-lock-overlay hidden"></div>
+                                <div class="adventure-icon fire-fields"></div> <div class="adventure-main-info"> <div class="adventure-content"> <div class="adventure-details"> ADVENTURE 3, FIRE FIELDS OF FLYINALS<br> ADVENTURE TIME = 24 HOURS<br> <span class="prize">PRIZE = 100 PV TOKENS</span><br> <span class="chance-gold">%1 CHANCE OF GOLD</span> <div class="adventure-requirement">Requires: 2 Adventurers (Simulated)</div> </div> <div class="adventure-controls"> <label for="num-adventurers-3">ADVENTURERS:</label> <select id="num-adventurers-3" class="adventure-num-select"> <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option> </select> <button class="adventure-send-btn active-adv3" data-adventure-id="3" data-adventure-name="Fire Fields of Flyinals" data-duration-hours="24" data-pv-reward="100" data-gold-chance="0.01" data-adventurer-requirement="2">SEND</button> </div> </div> <div class="adventure-drops-area"> <button class="adventure-drops-button" data-adventure-id="3">DROPS</button> <div class="drops-popover" id="drops-popover-3"></div>  </div> </div> 
+                            </div>
+                            <div class="adventure" id="adventure-4-block"> 
+                                <div class="adventure-lock-overlay hidden"></div>
+                                <div class="adventure-icon tomb"></div> <div class="adventure-main-info"> <div class="adventure-content"> <div class="adventure-details"> ADVENTURE 4, TOMB OF THE DEATH RIDERS<br> ADVENTURE TIME = 168 HOURS (1 WEEK)<br> <span class="prize">PRIZE = 700 PV TOKENS</span><br> <span class="chance-gold">5% CHANCE OF GOLD</span><br> <span class="chance-diamond">1% CHANCE OF DIAMOND</span><div class="adventure-requirement">Requires: 5 Adventurers (Simulated)</div></div> <div class="adventure-controls"> <label for="num-adventurers-4">ADVENTURERS:</label> <select id="num-adventurers-4" class="adventure-num-select"> <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option> </select> <button class="adventure-send-btn active-adv4" data-adventure-id="4" data-adventure-name="Tomb of the Death Riders" data-duration-hours="168" data-pv-reward="700" data-gold-chance="0.05" data-diamond-chance="0.01" data-adventurer-requirement="5">SEND</button> </div> </div> <div class="adventure-drops-area"> <button class="adventure-drops-button" data-adventure-id="4">DROPS</button> <div class="drops-popover" id="drops-popover-4"></div>  </div> </div> 
+                            </div>
+                        </div> 
+                    </div> 
+                </section>
                 <section id="quests-page" class="page-content"> <h2 class="page-title">QUESTS</h2> <div class="quest-list" id="questList"> </div> </section>
                 <section id="daily-rewards-page" class="page-content"> <h2 class="page-title">DAILY LOGIN REWARDS</h2> <div class="rewards-grid" id="dailyRewardsGrid"> </div> </section>
-                <section id="shop-page" class="page-content"> <h2 class="page-title">SHOP & CRAFTING</h2> <div class="shop-section-wrapper"> <h3 >Buy Items</h3> <div class="shop-items" id="shopItems"></div> </div> <div class="crafting-section-wrapper"> <h3 >Craft Items</h3> <div class="crafting-items-container" id="craftingItemsContainer"> </div> </div> </section>
+                <section id="shop-page" class="page-content"> 
+                    <h2 class="page-title">SHOP & CRAFTING</h2> 
+                    <div class="swap-section-container"> <div class="swap-section"><h3>Currency Swap</h3> <div class="swap-info">50 <span class="gold">GOLD</span> = 1 <span class="diamond">DIAMOND</span></div> <button id="swapGoldToDiamondBtn" class="action-button swap-btn">Swap</button> </div></div>
+                    <div class="shop-section-wrapper"> <h3 >Buy Items</h3> <div class="shop-items" id="shopItems"></div> </div> 
+                    <div class="crafting-section-wrapper"> <h3 >Craft Items</h3> <div class="crafting-items-container" id="craftingItemsContainer"> </div> </div> 
+                </section>
                 <section id="inventory-page" class="page-content"> <h2 class="page-title">INVENTORY</h2> <div class="equipment-slots-container"> <h4 >EQUIPPED ITEMS</h4> <div class="equipment-slots" id="equipmentSlotsDisplay"> </div> </div> <h4 >My Items</h4> <div class="inventory-items-container" id="inventoryItemsContainer"> </div> </section>
-                <section id="help-page" class="page-content"> <h2 class="page-title">HELP</h2> <div class="help-content"> <p>Welcome to Punk Voyage Adventures!</p>  <p><strong>Objective:</strong> Send your adventurers on exciting quests to earn PV Tokens and Gold, and gather materials to craft powerful items.</p> <p><strong>How to Play:</strong></p> <ul> <li>Enter your nickname to start.</li> <li>The game defaults to Dark Mode. Use the toggle in the header to switch to Light Mode.</li> <li>Use the right-hand menu to navigate between Adventures, Quests, Shop/Crafting, Inventory, etc.</li> <li>On the ADVENTURES page, select an adventure, choose the number of adventurers, and click SEND.</li> <li>Hover over the "DROPS" button on adventures to see potential materials.</li><li>Active adventures and potions are displayed in the right sidebar.</li> <li>Your adventurers will return after the specified time, bringing rewards and possibly materials. Potions provide timed or counted buffs.</li> <li>Use collected materials to CRAFT items in the Shop & Crafting page.</li> <li>View and EQUIP/UNEQUIP your crafted items from the INVENTORY page. Equipped items provide passive bonuses.</li> <li>Complete QUESTS for extra rewards.</li> </ul> <p>This is a demo. Wallet integration and persistent data storage are not yet implemented.</p> </div> </section>
+                <section id="whitelist-page" class="page-content">
+                    <h2 class="page-title">WHITELIST RAFFLES</h2>
+                    <div id="adminRafflePanel" class="hidden">
+                        <h3>Create New Raffle</h3>
+                        <form id="createRaffleForm">
+                            <div class="admin-form-group">
+                                <label for="raffleName">Raffle Name:</label>
+                                <input type="text" id="raffleName" required>
+                            </div>
+                            <div class="admin-form-group">
+                                <label for="raffleDescription">Description:</label>
+                                <textarea id="raffleDescription" required></textarea>
+                            </div>
+                            <div class="admin-form-group">
+                                <label for="raffleImageUrl">Image URL:</label>
+                                <input type="text" id="raffleImageUrl" placeholder="https://example.com/image.png">
+                            </div>
+                            <div class="admin-form-group">
+                                <label for="raffleSocialX">Project X/Twitter URL:</label>
+                                <input type="text" id="raffleSocialX" placeholder="https://x.com/project">
+                            </div>
+                            <div class="admin-form-group">
+                                <label for="raffleSocialDiscord">Project Discord URL:</label>
+                                <input type="text" id="raffleSocialDiscord" placeholder="https://discord.gg/project">
+                            </div>
+                            <div class="admin-form-group">
+                                <label for="raffleCostPV">Cost (PV Tokens):</label>
+                                <input type="number" id="raffleCostPV" value="0" min="0">
+                            </div>
+                            <div class="admin-form-group">
+                                <label for="raffleCostGold">Cost (Gold):</label>
+                                <input type="number" id="raffleCostGold" value="0" min="0">
+                            </div>
+                            <div class="admin-form-group">
+                                <label for="raffleCostDiamonds">Cost (Diamonds):</label>
+                                <input type="number" id="raffleCostDiamonds" value="0" min="0">
+                            </div>
+                             <div class="admin-form-group">
+                                <label for="raffleDurationHours">Duration (Hours):</label>
+                                <input type="number" id="raffleDurationHours" value="24" min="1" required>
+                            </div>
+                            <div class="admin-form-group">
+                                <label for="raffleMaxWinners">Number of Winners:</label>
+                                <input type="number" id="raffleMaxWinners" value="1" min="1" required>
+                            </div>
+                            <button type="submit" class="action-button">Create Raffle</button>
+                        </form>
+                    </div>
+                    <div id="whitelistRafflesContainer">
+                        <!-- Raffles will be dynamically inserted here -->
+                    </div>
+                </section>
+                <section id="help-page" class="page-content"> <h2 class="page-title">HELP</h2> <div class="help-content"> <p>Welcome to Punk Voyage Adventures!</p>  <p><strong>Objective:</strong> Send your adventurers on exciting quests to earn PV Tokens and Gold, and gather materials to craft powerful items.</p> <p><strong>How to Play:</strong></p> <ul> <li>Enter your nickname to start. Game progress is saved to the cloud under your nickname.</li> <li>The game defaults to Dark Mode. Use the toggle in the header to switch to Light Mode.</li> <li>Use the right-hand menu to navigate between Adventures, Quests, Shop/Crafting, Inventory, etc.</li> <li>On the ADVENTURES page, select an adventure, choose the number of adventurers, and click SEND. Some adventures require a certain number of adventurers (simulated). Adventures may also require completion of previous adventure series (e.g., complete Adventure 1 series 5 times to unlock Adventure 2).</li> <li>Hover over the "DROPS" button on adventures to see potential materials.</li><li>Active adventures and potions are displayed in the right sidebar.</li> <li>Your adventurers will return after the specified time, bringing rewards and possibly materials. Potions provide timed or counted buffs.</li> <li>Use collected materials to CRAFT items in the Shop & Crafting page. You cannot craft an item if you already own it.</li> <li>View and EQUIP/UNEQUIP your crafted items from the INVENTORY page. Equipped items provide passive bonuses. Certain items like the "Rider Scroll" unlock new equipment slots.</li> <li>Complete QUESTS for extra rewards.</li><li>Enter WHITELIST raffles for chances at special rewards.</li> <li>Swap Gold for Diamonds in the Shop.</li> </ul> <p>This is a demo. Advanced wallet integration for account linking and some data persistence features are still being refined.</p> </div> </section>
             </div>
-            <aside class="right-sidebar-menu"> <nav class="main-menu-nav"> <div class="menu-button-container-fixed"><button class="menu-button" id="mainMenuToggleBtn">MENU</button></div> <div class="sidebar-content-area" id="sidebarContentArea"> <ul class="main-menu-nav-list" id="mainMenuList"> <li data-page="adventures-page" class="menu-list-item">ADVENTURES</li>  <li data-page="quests-page" class="menu-list-item">QUESTS</li> <li data-page="daily-rewards-page" class="menu-list-item">DAILY LOGIN REWARDS</li> <li data-page="shop-page" class="menu-list-item">SHOP & CRAFTING</li> <li data-page="inventory-page" class="menu-list-item">INVENTORY</li>  <li data-page="help-page" class="menu-list-item">HELP</li> </ul> <div class="sidebar-active-adventures-container" id="sidebarActiveAdventuresDisplay"> <h3>ACTIVE ADVENTURES</h3> <div id="sidebarActiveAdventuresList"></div> </div> <div class="active-potions-display hidden" id="activePotionsDisplay"> <h4>ACTIVE POTIONS</h4> <div id="activePotionsList"></div> </div> </div> </nav> </aside>
+            <aside class="right-sidebar-menu"> <nav class="main-menu-nav"> <div class="menu-button-container-fixed"><button class="menu-button" id="mainMenuToggleBtn">MENU</button></div> <div class="sidebar-content-area" id="sidebarContentArea"> <ul class="main-menu-nav-list" id="mainMenuList"> <li data-page="adventures-page" class="menu-list-item">ADVENTURES</li>  <li data-page="quests-page" class="menu-list-item">QUESTS</li> <li data-page="daily-rewards-page" class="menu-list-item">DAILY LOGIN REWARDS</li> <li data-page="whitelist-page" class="menu-list-item">WHITELIST</li> <li data-page="shop-page" class="menu-list-item">SHOP & CRAFTING</li> <li data-page="inventory-page" class="menu-list-item">INVENTORY</li>  <li data-page="help-page" class="menu-list-item">HELP</li> </ul> <div class="sidebar-active-adventures-container" id="sidebarActiveAdventuresDisplay"> <h3>ACTIVE ADVENTURES</h3> <div id="sidebarActiveAdventuresList"></div> </div> <div class="active-potions-display hidden" id="activePotionsDisplay"> <h4>ACTIVE POTIONS</h4> <div id="activePotionsList"></div> </div> </div> </nav> </aside>
         </main>
     </div>
 
@@ -329,8 +573,63 @@
         <button id="customPopupCloseBtn" class="action-button">OK</button>
     </div>
 
+    <script type="module" id="firebaseModule">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, Timestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-analytics.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyASoKVnbNVJBASSPEnWOvkocTwM16ijNxM",
+            authDomain: "punkvoyage.firebaseapp.com",
+            projectId: "punkvoyage",
+            storageBucket: "punkvoyage.appspot.com", 
+            messagingSenderId: "929081617432",
+            appId: "1:929081617432:web:1603e242f9cceb79ee676d",
+            measurementId: "G-R5ESCD03L9"
+        };
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            const analytics = getAnalytics(app);
+
+            window.firebaseApp = app;
+            window.firebaseDb = db;
+            window.firebaseFirestore = { doc, getDoc, setDoc, collection, Timestamp };
+            
+            document.dispatchEvent(new CustomEvent('firebaseReady'));
+            console.log("Firebase Initialized Successfully and 'firebaseReady' event dispatched.");
+
+        } catch (error) {
+            console.error("Firebase initialization failed:", error);
+            // Attempt to show popup even if DOMContentLoaded hasn't fully run for main script
+            // This is a best-effort for critical Firebase init errors.
+            // Ensure these elements exist if this code runs before main DOMContentLoaded
+            setTimeout(() => { // Delay slightly to give DOM a chance
+                const popupTitle = document.getElementById('customPopupTitle');
+                const popupMessage = document.getElementById('customPopupMessage');
+                const popupOverlay = document.getElementById('customPopupOverlay');
+                const popupItself = document.getElementById('customPopup');
+                if (popupTitle && popupMessage && popupOverlay && popupItself) {
+                     popupTitle.textContent = "Critical Error";
+                     popupMessage.textContent = "Failed to connect to game services. Please try refreshing. Error: " + error.message;
+                     popupOverlay.classList.remove('hidden');
+                     popupItself.classList.remove('hidden');
+                } else {
+                    alert("CRITICAL FIREBASE ERROR: " + error.message); // Fallback alert
+                }
+            }, 100);
+        }
+    </script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('firebaseReady', () => {
+            console.log("'firebaseReady' event received by main script. Initializing game logic.");
+            
+            const db = window.firebaseDb;
+            const { doc, getDoc, setDoc, collection, Timestamp } = window.firebaseFirestore;
+
+            // Define ALL HTML element consts here
             const welcomeScreen = document.getElementById('welcomeScreen');
             const nicknameInputElement = document.getElementById('nicknameInput');
             const enterGameButton = document.getElementById('enterGameButton');
@@ -339,21 +638,19 @@
             const darkModeToggle = document.getElementById('darkModeToggle');
             const body = document.body;
             const twitterWidgetContainer = document.getElementById('twitter-widget-container');
-            let userNickname = '';
-
             const pvCountElement = document.getElementById('pvCount');
             const goldCountElement = document.getElementById('goldCount');
+            const diamondCountElement = document.getElementById('diamondCount');
             const adventureSendButtons = document.querySelectorAll('.adventure-send-btn');
             const adventureDropButtons = document.querySelectorAll('.adventure-drops-button');
-            
+            const swapGoldToDiamondBtn = document.getElementById('swapGoldToDiamondBtn');
             const sidebarActiveAdventuresContainer = document.getElementById('sidebarActiveAdventuresDisplay'); 
             const sidebarActiveAdventuresList = document.getElementById('sidebarActiveAdventuresList');
             const activePotionsDisplay = document.getElementById('activePotionsDisplay');
             const activePotionsList = document.getElementById('activePotionsList');
-
             const availableAdventurersCountElement = document.getElementById('availableAdventurersCount');
             const menuItems = document.querySelectorAll('.right-sidebar-menu .main-menu-nav-list li');
-            const pageContents = document.querySelectorAll('.main-content-area .page-content');
+            const pageContents = document.querySelectorAll('.main-content-area .page-content'); // CRITICAL for showPage
             const questListDiv = document.getElementById('questList');
             const shopItemsDiv = document.getElementById('shopItems');
             const materialsListDiv = document.getElementById('materialsList');
@@ -361,211 +658,526 @@
             const inventoryItemsContainer = document.getElementById('inventoryItemsContainer');
             const equipmentSlotsDisplay = document.getElementById('equipmentSlotsDisplay');
             const dailyRewardsGrid = document.getElementById('dailyRewardsGrid');
-
             const customPopupOverlay = document.getElementById('customPopupOverlay');
             const customPopup = document.getElementById('customPopup');
             const customPopupTitleEl = document.getElementById('customPopupTitle');
             const customPopupMessageEl = document.getElementById('customPopupMessage');
             const customPopupCloseBtn = document.getElementById('customPopupCloseBtn');
+            const adminRafflePanel = document.getElementById('adminRafflePanel');
+            const createRaffleForm = document.getElementById('createRaffleForm');
+            const whitelistRafflesContainer = document.getElementById('whitelistRafflesContainer');
             
+            // Game State Variables
+            let userNickname = '';
             const MAX_PLAYER_ADVENTURERS = 5;
-            let currentPvTokens = 0; let currentGold = 0;
+            let currentPvTokens = 0; let currentGold = 0; let currentDiamonds = 0;
             let activeAdventures = []; let nextActiveAdventureId = 0;
             let totalAvailableAdventurers = MAX_PLAYER_ADVENTURERS;
             let playerInventory = [];
-            let playerMaterials = { "Leather": 0, "Wood": 0, "Clover": 0, "Fabric": 0, "Iron": 0, "Gizmo Tail": 0, "Stone": 0, "Obsidian": 0, "Bitcoin": 0, "Bone": 0, "Flame Essence": 0 };
-            let equippedItems = { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring: null, Weapon: null };
+            let playerMaterials = { 
+                "Leather": 0, "Wood": 0, "Clover": 0, "Fabric": 0, "Iron": 0, "Gizmo Tail": 0, 
+                "Stone": 0, "Obsidian": 0, "Bitcoin": 0, "Bone": 0, "Flame Essence": 0, 
+                "Essence of Death": 0, "Rider's Sigil": 0, "Ancient Tablet Fragment": 0, "Shadowgem": 0 
+            };
+            let equippedItems = { 
+                Armour: null, Helmet: null, Boots: null, Amulet: null, 
+                Ring1: null, Ring2: null, Weapon: null, 
+                Misc1: null, Misc2: null 
+            };
+            let playerAdventurerLevel = 1; 
+            let secondRingSlotUnlocked = false;
             let activePotions = [];
+            let allRaffles = []; 
+            let playerRaffleEntries = {}; 
             
-            const adventuresData = { "1": { name: "Spirit Forest", drops: [ { name: "Leather", chance: 0.05, qty: 1}, { name: "Wood", chance: 0.10, qty: 1}, { name: "Clover", chance: 0.01, qty: 1}, { name: "Fabric", chance: 0.03, qty: 1} ] }, "2": { name: "Mountain of the Marowan", drops: [ { name: "Iron", chance: 0.05, qty: 1}, { name: "Gizmo Tail", chance: 0.01, qty: 1}, { name: "Stone", chance: 0.10, qty: 1} ] }, "3": { name: "Fire Fields of Flyinals", drops: [ { name: "Obsidian", chance: 0.01, qty: 1}, { name: "Bitcoin", chance: 0.00001, qty: 1}, { name: "Bone", chance: 0.02, qty: 1}, { name: "Flame Essence", chance: 0.05, qty: 1} ] } };
-            const craftableItemsData = [ { id: "boots1", name: "Warped Boots", type: "Boots", description: "Reduces adventure time by 5 minutes.", perk: { type: "timeReduction", value: 300 }, recipe: { "Leather": 5, "Fabric": 3 }, imgColor: "var(--item-placeholder-boots)" }, { id: "amulet1", name: "Amulet of Greed", type: "Amulet", description: "Increases Gold find chance by +50% of current chance.", perk: { type: "goldChanceIncrease", multiplier: 0.5 }, recipe: { "Iron": 3, "Gizmo Tail": 1 }, imgColor: "var(--item-placeholder-amulet)" }, { id: "rucksack1", name: "Efficient Rucksack", type: "Rucksack", description: "+5% PV tokens from adventures.", perk: { type: "pvBonus", multiplier: 0.05 }, recipe: { "Fabric": 5, "Leather": 2 }, imgColor: "var(--item-placeholder-rucksack)" }, { id: "trinket1", name: "Lucky Rabbit's Foot", type: "Trinket", description: "Increases material find chance by +30% (additive).", perk: { type: "materialChanceIncrease", additive: 0.30 }, recipe: { "Clover": 3, "Bone": 2 }, imgColor: "var(--item-placeholder-trinket)" } ];
-            const shopItemsData = [ { id: "potion2", name: "PV Doubler (1 Hour)", description: "Doubles PV rewards from adventures for 1 hour.", price: 200, imgColor: "var(--item-placeholder-potion2)", type: "buff", durationSeconds: 3600, effect: { type: "pvMultiplier", value: 2 } }, { id: "potion3", name: "Gold Magnet (3 Adventures)", description: "Adds +5% flat chance of finding gold on next 3 adventures.", price: 150, imgColor: "var(--item-placeholder-potion3)", type: "buff", durationAdventures: 3, effect: { type: "goldChanceBonus", flatValue: 0.05 } }, ];
-            const quests = [ { id: 1, text: "Complete Spirit Forest 5 times", reward: "50 PV", completed: false, progress: 0, target: 5, adventureName: "Spirit Forest" }, { id: 2, text: "Complete Mountain of the Marowan 5 times", reward: "75 PV", completed: false, progress: 0, target: 5, adventureName: "Mountain of the Marowan"}, { id: 3, text: "Complete Fire Fields of Flyinals 5 times", reward: "150 PV", completed: false, progress: 0, target: 5, adventureName: "Fire Fields of Flyinals"}, ];
-            const dailyRewardsData = []; for (let i = 1; i <= 30; i++) { let reward = `${50 + (i * 5)} PV`; if (i % 7 === 0 && Object.keys(playerMaterials).length > 0) reward += `, 1 ${Object.keys(playerMaterials)[i % Object.keys(playerMaterials).length]}`; if (i === 30) reward = "1 Gold, 300 PV"; dailyRewardsData.push({ day: i, reward: reward });}
-            let lastClaimedDay = parseInt(localStorage.getItem('lastClaimedDayPVA')) || 0;
+            // Pre-populate with a sample raffle for demo purposes
+            const DEMO_RAFFLE_DURATION_HOURS = 1; // Game hours for demo raffle
+            const DEMO_RAFFLE_REAL_DURATION_SECONDS = DEMO_RAFFLE_DURATION_HOURS; // 1 game hour = 1 real second
+            allRaffles.push({
+                id: 'raffle_demo_001',
+                name: "Exclusive Early Access WL",
+                description: "Get a chance to be whitelisted for the upcoming ultra-secret Project X mint! Limited spots available for our dedicated voyagers.",
+                imageUrl: "https://beige-managing-snail-510.mypinata.cloud/ipfs/bafkreihdhsuoqpvhyzbugxixxay3sivq7xdqnsfn5qwaxv5nmvyifxb7ai", 
+                socials: { x: "https://x.com/nvart_", discord: "https://discord.com/invite/4CEtXAFf3x" },
+                entryCost: { pv: 50, gold: 5, diamonds: 0 },
+                durationHours: DEMO_RAFFLE_DURATION_HOURS, 
+                maxWinners: 3,
+                startTime: Date.now() - (DEMO_RAFFLE_REAL_DURATION_SECONDS * 1000 / 2), // Start it as if it's halfway through
+                endTime: Date.now() + (DEMO_RAFFLE_REAL_DURATION_SECONDS * 1000 / 2),
+                status: 'active',
+                entries: [], 
+                winners: []  
+            });
+             allRaffles.push({
+                id: 'raffle_demo_002',
+                name: "Super Rare Item Drop Preview",
+                description: "Be one of the first to see and potentially win a super rare upcoming in-game item!",
+                imageUrl: "https://beige-managing-snail-510.mypinata.cloud/ipfs/bafkreicq5b3n77sdlekqcmd3y6x7vwmcw3odxzahrunxfifc7wk3y2dane", 
+                socials: { x: "https://x.com/nvart_", discord: "https://discord.com/invite/4CEtXAFf3x" },
+                entryCost: { pv: 10, gold: 1, diamonds: 1 },
+                durationHours: 2, 
+                maxWinners: 1,
+                startTime: Date.now() - (2 * 1000 * 2), // Start this one further in the past so it might be ended
+                endTime: Date.now() - (2 * 1000),      // End it sooner
+                status: 'active', // Will be updated by timer if endTime is past
+                entries: [], 
+                winners: []  
+            });
 
-            function showCustomPopup(message, title = "Notification") {
-                if (customPopupTitleEl) customPopupTitleEl.textContent = title;
-                if (customPopupMessageEl) customPopupMessageEl.textContent = message;
-                if (customPopupOverlay) customPopupOverlay.classList.remove('hidden');
-                if (customPopup) customPopup.classList.remove('hidden');
-                if (customPopupCloseBtn) customPopupCloseBtn.focus();
-            }
-            function hideCustomPopup() {
-                if (customPopupOverlay) customPopupOverlay.classList.add('hidden');
-                if (customPopup) customPopup.classList.add('hidden');
-            }
+
+            // Game Data
+            const adventuresData = { 
+                "1": { name: "Spirit Forest", drops: [ { name: "Leather", chance: 0.05, qty: 1}, { name: "Wood", chance: 0.10, qty: 1}, { name: "Clover", chance: 0.01, qty: 1}, { name: "Fabric", chance: 0.03, qty: 1} ] }, 
+                "2": { name: "Mountain of the Marowan", drops: [ { name: "Iron", chance: 0.05, qty: 1}, { name: "Gizmo Tail", chance: 0.01, qty: 1}, { name: "Stone", chance: 0.10, qty: 1} ] }, 
+                "3": { name: "Fire Fields of Flyinals", adventurerRequirement: 2, 
+                       drops: [ { name: "Obsidian", chance: 0.01, qty: 1}, { name: "Bitcoin", chance: 0.00001, qty: 1}, { name: "Flame Essence", chance: 0.05, qty: 1} ] },
+                "4": { 
+                    name: "Tomb of the Death Riders", 
+                    adventurerRequirement: 5, 
+                    drops: [ 
+                        { name: "Bone", chance: 0.15, qty: 1}, 
+                        { name: "Essence of Death", chance: 0.10, qty: 1}, 
+                        { name: "Bitcoin", chance: 0.0001, qty: 1}, 
+                        { name: "Rider's Sigil", chance: 0.05, qty: 1},
+                        { name: "Rider Scroll", chance: 0.005, qty: 1}, 
+                        { name: "Ancient Tablet Fragment", chance: 0.02, qty: 1},
+                        { name: "Shadowgem", chance: 0.008, qty: 1},
+                        { name: "Cursed Band", chance: 0.002, qty: 1} 
+                    ] 
+                } 
+            };
+            const craftableItemsData = [ 
+                { id: "boots1", name: "Warped Boots", type: "Boots", description: "Reduces adventure time by 5 minutes.", perk: { type: "timeReduction", value: 300 }, recipe: { "Leather": 5, "Fabric": 3 }, imgColor: "var(--item-placeholder-boots)" }, 
+                { id: "amulet1", name: "Amulet of Greed", type: "Amulet", description: "Increases Gold find chance by +50% of current chance.", perk: { type: "goldChanceIncrease", multiplier: 0.5 }, recipe: { "Iron": 3, "Gizmo Tail": 1 }, imgColor: "var(--item-placeholder-amulet)" }, 
+                { id: "rucksack1", name: "Efficient Rucksack", type: "Rucksack", description: "+5% PV tokens from adventures.", perk: { type: "pvBonus", multiplier: 0.05 }, recipe: { "Fabric": 5, "Leather": 2 }, imgColor: "var(--item-placeholder-rucksack)" }, 
+                { id: "trinket1", name: "Lucky Rabbit's Foot", type: "Trinket", description: "Increases material find chance by +30% (additive).", perk: { type: "materialChanceIncrease", additive: 0.30 }, recipe: { "Clover": 3, "Bone": 2 }, imgColor: "var(--item-placeholder-trinket)" },
+                { id: "weapon1", name: "Rider's Blade", type: "Weapon", description: "A blade echoing with the cries of the fallen. (+5 Combat)", perk: {type: "combatBoost", value: 5}, recipe: { "Rider's Sigil": 2, "Essence of Death": 3, "Iron": 5}, imgColor: "var(--item-placeholder-weapon)"},
+                { id: "armour1", name: "Shadow-Woven Hauberk", type: "Armour", description: "Provides moderate protection. (+10 Defense)", perk: {type: "defenseBoost", value: 10}, recipe: {"Obsidian": 5, "Essence of Death": 2, "Shadowgem": 1}, imgColor: "var(--item-placeholder-armour)"},
+                { id: "helmet1", name: "Helm of the Silent Watcher", type: "Helmet", description: "Offers a gaze that pierces the veil. (+3 Perception)", perk: {type: "perceptionBoost", value: 3}, recipe: {"Iron": 4, "Rider's Sigil": 1, "Shadowgem": 1}, imgColor: "var(--item-placeholder-helmet)"},
+                { id: "ring_warding", name: "Ring of Minor Warding", type: "Ring", description: "Offers slight protection against mishaps. (+1 Luck)", perk: {type: "luck", value: 1}, recipe: {"Stone": 10, "Clover": 5}, imgColor: "var(--item-placeholder-ring)"},
+                { id: "ring_swiftness", name: "Band of Swiftness", type: "Ring", description: "Slightly reduces adventure times. (-1 min)", perk: {type: "timeReduction", value: 60}, recipe: {"Leather": 8, "Gizmo Tail": 3}, imgColor: "var(--item-placeholder-ring)"},
+                { id: "ring_cursedpower", name: "Cursed Band of Power", type: "Ring", description: "Grants power, but at a cost. (+2 Power)", perk: {type: "powerBoost", value: 2}, recipe: {"Rider's Sigil": 3, "Shadowgem": 2, "Essence of Death": 1}, imgColor: "var(--item-placeholder-ring)"}
+            ];
+            const shopItemsData = [ { id: "potion2", name: "PV Doubler (1 Hour)", description: "Doubles PV rewards from adventures for 1 hour.", price: 200, imgColor: "var(--item-placeholder-potion2)", type: "buff", durationSeconds: 3600, effect: { type: "pvMultiplier", value: 2 } }, { id: "potion3", name: "Gold Magnet (3 Adventures)", description: "Adds +5% flat chance of finding gold on next 3 adventures.", price: 150, imgColor: "var(--item-placeholder-potion3)", type: "buff", durationAdventures: 3, effect: { type: "goldChanceBonus", flatValue: 0.05 } }, ];
+            const quests = [ 
+                { id: 1, text: "Complete Spirit Forest 5 times", reward: "50 PV", completed: false, progress: 0, target: 5, adventureName: "Spirit Forest" }, 
+                { id: 2, text: "Complete Mountain of the Marowan 5 times", reward: "75 PV", completed: false, progress: 0, target: 5, adventureName: "Mountain of the Marowan"}, 
+                { id: 3, text: "Complete Fire Fields of Flyinals 5 times", reward: "150 PV", completed: false, progress: 0, target: 5, adventureName: "Fire Fields of Flyinals"}, 
+                { id: 4, text: "Venture into the Tomb of the Death Riders", reward: "250 PV, 1 Diamond", completed: false, progress: 0, target: 1, adventureName: "Tomb of the Death Riders"} 
+            ];
+            const dailyRewardsData = []; for (let i = 1; i <= 30; i++) { let reward = `${50 + (i * 5)} PV`; if (i % 7 === 0 && Object.keys(playerMaterials).length > 0) reward += `, 1 ${Object.keys(playerMaterials)[i % Object.keys(playerMaterials).length]}`; if (i === 30) reward = "1 Gold, 300 PV, 1 Diamond"; dailyRewardsData.push({ day: i, reward: reward });}
+            let lastClaimedDay = parseInt(localStorage.getItem('lastClaimedDayPVA')) || 0;
+            
+            const adventureProgressionConfig = [
+                { id: "1", blockId: "adventure-1-block", unlockQuestId: null, unlockMessage: "" },
+                { id: "2", blockId: "adventure-2-block", unlockQuestId: 1, unlockMessage: "Complete 'Spirit Forest' 5 times to unlock." },
+                { id: "3", blockId: "adventure-3-block", unlockQuestId: 2, unlockMessage: "Complete 'Mountain of the Marowan' 5 times to unlock." },
+                { id: "4", blockId: "adventure-4-block", unlockQuestId: 3, unlockMessage: "Complete 'Fire Fields of Flyinals' 5 times to unlock." }
+            ];
+
+            // --- Popup Functions ---
+            function showCustomPopup(message, title = "Notification") { if (customPopupTitleEl) customPopupTitleEl.textContent = title; if (customPopupMessageEl) customPopupMessageEl.textContent = message; if (customPopupOverlay) customPopupOverlay.classList.remove('hidden'); if (customPopup) customPopup.classList.remove('hidden'); if (customPopupCloseBtn) customPopupCloseBtn.focus(); }
+            function hideCustomPopup() { if (customPopupOverlay) customPopupOverlay.classList.add('hidden'); if (customPopup) customPopup.classList.add('hidden'); }
             if (customPopupCloseBtn) customPopupCloseBtn.addEventListener('click', hideCustomPopup);
             if (customPopupOverlay) customPopupOverlay.addEventListener('click', hideCustomPopup); 
 
-
+            // --- Firebase Save/Load ---
+            async function saveGameStateToFirebase(nickname, gameState) { if (!nickname) { console.error("Cannot save game: Nickname is missing."); showCustomPopup("Error: Nickname is missing. Cannot save progress.", "Save Error"); return; } if (!db) { console.error("Firestore not initialized!"); showCustomPopup("Error: Database connection failed. Cannot save progress.", "Save Error"); return; } try { const savableGameState = { ...gameState }; if (savableGameState.activeAdventures) { savableGameState.activeAdventures = savableGameState.activeAdventures.map(adv => ({ ...adv, returnTime: typeof adv.returnTime === 'number' ? adv.returnTime : (adv.returnTime instanceof Date ? Timestamp.fromDate(adv.returnTime) : Timestamp.now()) })); } if (savableGameState.activePotions) { savableGameState.activePotions = savableGameState.activePotions.map(p => ({ ...p, endTime: typeof p.endTime === 'number' ? p.endTime : (p.endTime instanceof Date ? Timestamp.fromDate(p.endTime) : null) })); } const playerDocRef = doc(collection(db, 'playerProgress'), nickname); await setDoc(playerDocRef, savableGameState); console.log("Game state saved for", nickname); } catch (error) { console.error("Error saving game state: ", error); showCustomPopup(`Failed to save game progress: ${error.message}`, "Save Error");}}
+            async function loadGameStateFromFirebase(nickname) { if (!nickname) { console.error("Cannot load game: Nickname is missing."); return null; } if (!db) { console.error("Firestore not initialized!"); return null;} try { const playerDocRef = doc(collection(db, 'playerProgress'), nickname); const docSnap = await getDoc(playerDocRef); if (docSnap.exists()) { const loadedData = docSnap.data(); console.log("Raw loaded data from Firebase for", nickname, JSON.parse(JSON.stringify(loadedData))); if (loadedData.activeAdventures) { loadedData.activeAdventures = loadedData.activeAdventures.map(adv => ({ ...adv, returnTime: adv.returnTime && typeof adv.returnTime.toDate === 'function' ? adv.returnTime.toDate().getTime() : (typeof adv.returnTime === 'number' ? adv.returnTime : Date.now()) })); } if (loadedData.activePotions) { loadedData.activePotions = loadedData.activePotions.map(p => ({ ...p, endTime: p.endTime && typeof p.endTime.toDate === 'function' ? p.endTime.toDate().getTime() : (typeof p.endTime === 'number' ? p.endTime : null) })); } console.log("Processed loaded data before apply:", JSON.parse(JSON.stringify(loadedData))); return loadedData; } else { console.log("No saved game state found for", nickname); showCustomPopup(`No saved game found for ${nickname}. Starting a new voyage!`, "New Game"); return null; } } catch (error) { console.error("Error directly within loadGameStateFromFirebase:", error); showCustomPopup(`Failed to load game progress from Firebase: ${error.message}`, "DB Load Error"); return null;}}
+            function getCurrentGameState() { return { pvTokens: currentPvTokens || 0, gold: currentGold || 0, diamonds: currentDiamonds || 0, activeAdventures: Array.isArray(activeAdventures) ? activeAdventures.map(adv => ({ id: adv.id, originalAdventureId: adv.originalAdventureId, name: adv.name || "Unknown Adventure", adventurers: adv.adventurers || 0, returnTime: adv.returnTime || Date.now(), pvReward: adv.pvReward || 0, goldChance: adv.goldChance || 0, diamondChance: adv.diamondChance || 0 })) : [], totalAvailableAdventurers: totalAvailableAdventurers !== undefined ? totalAvailableAdventurers : MAX_PLAYER_ADVENTURERS, playerInventory: Array.isArray(playerInventory) ? playerInventory.map(item => typeof item === 'string' ? item : item.id) : [], playerMaterials: playerMaterials || {}, equippedItems: equippedItems || { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Misc1: null, Misc2: null }, quests: Array.isArray(quests) ? quests.map(q => ({ id: q.id, text: q.text || "UKN", reward: q.reward || "0", completed: q.completed || false, progress: q.progress || 0, target: q.target || 0, adventureName: q.adventureName || null, metric: q.metric || null, claimed: q.claimed || false })) : [], lastClaimedDayPVA: lastClaimedDay || 0, activePotions: Array.isArray(activePotions) ? activePotions.map(p => ({ id: p.id, endTime: p.endTime || null, adventuresLeft: p.adventuresLeft !== undefined ? p.adventuresLeft : null })).filter(p => p.id) : [], playerAdventurerLevel: playerAdventurerLevel || 1, secondRingSlotUnlocked: secondRingSlotUnlocked || false, playerRaffleEntries: playerRaffleEntries || {} };}
+            function applyLoadedGameState(loadedState) { console.log("Applying loaded game state:", JSON.parse(JSON.stringify(loadedState))); if (!loadedState) { console.error("applyLoadedGameState called with null or undefined state."); return; } try { currentPvTokens = loadedState.pvTokens || 0; currentGold = loadedState.gold || 0; currentDiamonds = loadedState.diamonds || 0; activeAdventures = Array.isArray(loadedState.activeAdventures) ? loadedState.activeAdventures.map(advData => { return { id: advData.id || nextActiveAdventureId++, originalAdventureId: advData.originalAdventureId || "1", name: advData.name || "Unknown Adventure", adventurers: advData.adventurers || 0, returnTime: typeof advData.returnTime === 'number' ? advData.returnTime : Date.now(), pvReward: advData.pvReward || 0, goldChance: advData.goldChance || 0, diamondChance: advData.diamondChance || 0 }; }) : []; nextActiveAdventureId = activeAdventures.length > 0 ? Math.max(0, ...activeAdventures.map(a => a.id)) + 1 : 0; totalAvailableAdventurers = loadedState.totalAvailableAdventurers !== undefined ? loadedState.totalAvailableAdventurers : MAX_PLAYER_ADVENTURERS; playerInventory = Array.isArray(loadedState.playerInventory) ? loadedState.playerInventory.map(itemSource => { if (typeof itemSource === 'string') { let itemData = craftableItemsData.find(i => i.id === itemSource); if (!itemData && itemSource === "riderScroll") itemData = { id: "riderScroll", name: "Rider Scroll", type: "Consumable", description: "Unlocks a second ring slot.", imgColor: "var(--item-placeholder-scroll)" }; if (!itemData && itemSource === "cursedBand") itemData = { id: "cursedBand", name: "Cursed Band", type: "Ring", description: "A ring pulsing with dark energy. (+1 Dark Power)", perk: { type: "darkPower", value: 1 }, imgColor: "var(--item-placeholder-ring)" }; return itemData || { id: itemSource, name: "Unknown Item ID", type: "Unknown" }; } return itemSource || { id: "unknownObjectInInventory", name: "Unknown Item Obj", type: "Unknown" }; }).filter(item => item && item.id) : []; playerMaterials = loadedState.playerMaterials || { "Leather": 0, "Wood": 0, "Clover": 0, "Fabric": 0, "Iron": 0, "Gizmo Tail": 0, "Stone": 0, "Obsidian": 0, "Bitcoin": 0, "Bone": 0, "Flame Essence": 0, "Essence of Death": 0, "Rider's Sigil": 0, "Ancient Tablet Fragment": 0, "Shadowgem": 0 }; equippedItems = loadedState.equippedItems || { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Misc1: null, Misc2: null }; playerAdventurerLevel = loadedState.playerAdventurerLevel || 1; secondRingSlotUnlocked = loadedState.secondRingSlotUnlocked || false; playerRaffleEntries = loadedState.playerRaffleEntries || {}; if (Array.isArray(loadedState.quests)) { quests.forEach(q_default => { const loaded_q = loadedState.quests.find(lq => lq && lq.id === q_default.id); if (loaded_q) { q_default.completed = loaded_q.completed || false; q_default.progress = loaded_q.progress || 0; q_default.claimed = loaded_q.claimed || false; } }); } lastClaimedDay = loadedState.lastClaimedDayPVA || 0; localStorage.setItem('lastClaimedDayPVA', lastClaimedDay); if (Array.isArray(loadedState.activePotions)) { activePotions = loadedState.activePotions.map(pData => { if (!pData || !pData.id) return null; const potionBase = shopItemsData.find(shopItem => shopItem.id === pData.id); if (!potionBase) return null; return { id: pData.id, name: potionBase.name, description: potionBase.description, effect: potionBase.effect, endTime: typeof pData.endTime === 'number' ? pData.endTime : null, adventuresLeft: pData.adventuresLeft !== undefined ? pData.adventuresLeft : null }; }).filter(p => p !== null); activePotions = activePotions.filter(p => (p.endTime && Date.now() < p.endTime) || (p.adventuresLeft !== undefined && p.adventuresLeft > 0) || (!p.endTime && p.adventuresLeft === undefined) ); } updateStatsDisplay(); renderMaterials(); renderActiveAdventuresInSidebar(); renderActivePotions(); renderInventory(); updateAdventureDisplayStates(); if (document.getElementById('quests-page').classList.contains('active')) renderQuests(); if (document.getElementById('daily-rewards-page').classList.contains('active')) renderDailyRewards(); if (document.getElementById('shop-page').classList.contains('active')) { renderShopItems(); renderCraftingItems(); } if (document.getElementById('whitelist-page').classList.contains('active')) renderWhitelistRaffles(); showCustomPopup("Welcome back! Your previous voyage progress has been loaded.", "Progress Loaded"); console.log("Game state applied successfully."); } catch (error) { console.error("Error during applyLoadedGameState:", error); showCustomPopup("Error applying loaded game data. Starting fresh.", "Apply State Error"); currentPvTokens = 0; currentGold = 0; currentDiamonds = 0; activeAdventures = []; totalAvailableAdventurers = MAX_PLAYER_ADVENTURERS; playerInventory = []; playerMaterials = { "Leather": 0, "Wood": 0, "Clover": 0, "Fabric": 0, "Iron": 0, "Gizmo Tail": 0, "Stone": 0, "Obsidian": 0, "Bitcoin": 0, "Bone": 0, "Flame Essence": 0, "Essence of Death": 0, "Rider's Sigil": 0, "Ancient Tablet Fragment": 0, "Shadowgem": 0 }; equippedItems = { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Misc1: null, Misc2: null }; playerAdventurerLevel = 1; secondRingSlotUnlocked = false; activePotions = []; playerRaffleEntries = {}; updateStatsDisplay(); renderMaterials(); generateRandomQuests(); renderInventory(); renderActiveAdventuresInSidebar(); renderActivePotions(); updateAdventureDisplayStates(); renderWhitelistRaffles(); }}
+            
             function initializeTheme() { const savedTheme = localStorage.getItem('theme'); if (savedTheme === 'light') { body.classList.remove('dark-mode'); body.classList.add('light-mode'); if(darkModeToggle) darkModeToggle.checked = false; if (gameContainer && !gameContainer.classList.contains('hidden')) loadTwitterWidget('light'); } else { body.classList.add('dark-mode'); body.classList.remove('light-mode'); if(darkModeToggle) darkModeToggle.checked = true; if (gameContainer && !gameContainer.classList.contains('hidden')) loadTwitterWidget('dark'); } }
             function loadTwitterWidget(theme) { if (twitterWidgetContainer) { twitterWidgetContainer.innerHTML = ''; const twitterLink = document.createElement('a'); twitterLink.className = 'twitter-timeline'; twitterLink.setAttribute('data-dnt', 'true'); twitterLink.href = 'https://twitter.com/nvart_?ref_src=twsrc%5Etfw'; twitterLink.setAttribute('data-theme', theme); twitterLink.setAttribute('data-height', '400'); twitterLink.textContent = 'Tweets by nvart_'; twitterWidgetContainer.appendChild(twitterLink); let twitterScript = document.querySelector('script[src="https://platform.twitter.com/widgets.js"]'); if (twitterScript) { twitterScript.remove(); } twitterScript = document.createElement('script'); twitterScript.async = true; twitterScript.src = 'https://platform.twitter.com/widgets.js'; twitterScript.charset = 'utf-8'; document.body.appendChild(twitterScript); } }
-            initializeTheme(); 
-            if(enterGameButton && nicknameInputElement && welcomeScreen && gameContainer && playerNicknameDisplay){ enterGameButton.addEventListener('click', () => { userNickname = nicknameInputElement.value.trim(); if (userNickname) { playerNicknameDisplay.textContent = userNickname; welcomeScreen.classList.add('hidden'); gameContainer.classList.remove('hidden'); const currentThemeIsDark = body.classList.contains('dark-mode'); loadTwitterWidget(currentThemeIsDark ? 'dark' : 'light'); showPage('adventures-page'); renderMaterials(); renderActiveAdventuresInSidebar(); renderActivePotions(); } else { showCustomPopup("Please enter a nickname to start your voyage!", "Nickname Required"); } }); nicknameInputElement.addEventListener('keypress', (event) => { if (event.key === 'Enter') { enterGameButton.click(); } });}
-            if(darkModeToggle){ darkModeToggle.addEventListener('change', () => { if (darkModeToggle.checked) { body.classList.add('dark-mode'); body.classList.remove('light-mode'); localStorage.setItem('theme', 'dark'); loadTwitterWidget('dark'); } else { body.classList.remove('dark-mode'); body.classList.add('light-mode'); localStorage.setItem('theme', 'light'); loadTwitterWidget('light'); } });}
             
-            function showPage(pageIdToShow) { if(!pageContents) return; pageContents.forEach(page => { if (page.id === pageIdToShow) { page.classList.add('active'); if (pageIdToShow === 'quests-page') renderQuests(); else if (pageIdToShow === 'shop-page') {renderShopItems(); renderCraftingItems();} else if (pageIdToShow === 'inventory-page') renderInventory(); else if (pageIdToShow === 'daily-rewards-page') renderDailyRewards(); } else { page.classList.remove('active'); } }); }
+            if(enterGameButton && nicknameInputElement && welcomeScreen && gameContainer && playerNicknameDisplay){ 
+                enterGameButton.addEventListener('click', async () => { 
+                    console.log("Enter Voyage button clicked.");
+                    userNickname = nicknameInputElement.value.trim();
+                    if (userNickname) {
+                        console.log("Nickname entered:", userNickname);
+                        if (playerNicknameDisplay) playerNicknameDisplay.textContent = userNickname;
+                        if (welcomeScreen) welcomeScreen.classList.add('hidden');
+                        if (gameContainer) gameContainer.classList.remove('hidden');
+                        
+                        if (userNickname.toLowerCase() === 'ati' && adminRafflePanel) {
+                            adminRafflePanel.classList.remove('hidden');
+                        } else if (adminRafflePanel) {
+                            adminRafflePanel.classList.add('hidden');
+                        }
+
+                        const currentThemeIsDark = body.classList.contains('dark-mode');
+                        loadTwitterWidget(currentThemeIsDark ? 'dark' : 'light');
+                        
+                        console.log("Attempting to load game state for:", userNickname);
+                        try {
+                            const loadedState = await loadGameStateFromFirebase(userNickname);
+                            if (loadedState) {
+                                console.log("Game state successfully loaded from Firebase.");
+                                applyLoadedGameState(loadedState);
+                            } else {
+                                console.log("No saved state from Firebase, initializing new game.");
+                                updateStatsDisplay(); renderMaterials(); generateRandomQuests(); 
+                                renderActiveAdventuresInSidebar(); renderActivePotions();
+                                playerAdventurerLevel = 1; 
+                                secondRingSlotUnlocked = false;
+                                renderInventory(); 
+                                updateAdventureDisplayStates(); // Ensure locks are set for new game
+                                renderWhitelistRaffles(); // Render any pre-defined raffles
+                            }
+                        } catch (e) { 
+                            console.error("Error in enterGameButton click after loadGameState attempt:", e);
+                            showCustomPopup("A critical error occurred loading your voyage. Starting fresh.", "Load Failed");
+                            updateStatsDisplay(); renderMaterials(); generateRandomQuests(); 
+                            renderActiveAdventuresInSidebar(); renderActivePotions(); renderInventory();
+                            updateAdventureDisplayStates(); // Ensure locks are set after error
+                            renderWhitelistRaffles();
+                        }
+                        showPage('adventures-page'); 
+                    } else { 
+                        showCustomPopup("Please enter a nickname to start your voyage!", "Nickname Required"); 
+                    }
+                });
+                nicknameInputElement.addEventListener('keypress', async (event) => { 
+                    if (event.key === 'Enter') { enterGameButton.click(); }
+                });
+            } else {
+                console.error("Critical: Welcome screen elements (button or input) not found for binding events.");
+            }
+
+            if(darkModeToggle){ darkModeToggle.addEventListener('change', () => { if (darkModeToggle.checked) { body.classList.add('dark-mode'); body.classList.remove('light-mode'); localStorage.setItem('theme', 'dark'); loadTwitterWidget('dark'); } else { body.classList.remove('dark-mode'); body.classList.add('light-mode'); localStorage.setItem('theme', 'light'); loadTwitterWidget('light'); } });}
+            function showPage(pageIdToShow) { console.log("Switching to page:", pageIdToShow); if(!pageContents || pageContents.length === 0) { console.error("pageContents NodeList is empty or not found in showPage. Ensure HTML elements with class 'page-content' exist and are selected correctly."); return; } pageContents.forEach(page => { page.classList.remove('active'); }); const targetPage = document.getElementById(pageIdToShow); if (targetPage) { targetPage.classList.add('active'); if (pageIdToShow === 'quests-page') renderQuests(); else if (pageIdToShow === 'shop-page') {renderShopItems(); renderCraftingItems();} else if (pageIdToShow === 'inventory-page') renderInventory(); else if (pageIdToShow === 'daily-rewards-page') renderDailyRewards(); else if (pageIdToShow === 'whitelist-page') renderWhitelistRaffles(); } else { console.error("Target page with ID '" + pageIdToShow + "' not found."); showPage('adventures-page'); /* Fallback to default */}}
             if(menuItems){ menuItems.forEach(item => { item.addEventListener('click', () => { const targetPageId = item.dataset.page; if (targetPageId) { showPage(targetPageId); } }); });}
             
-            function updateStatsDisplay() { if(pvCountElement) pvCountElement.textContent = currentPvTokens; if(goldCountElement) goldCountElement.textContent = currentGold; if(availableAdventurersCountElement) availableAdventurersCountElement.textContent = totalAvailableAdventurers; }
-            function formatTimeLeft(milliseconds) { if (milliseconds <= 0) return "Returning!"; let ts = Math.ceil(milliseconds / 1000); let h = Math.floor(ts / 3600); ts %= 3600; let m = Math.floor(ts / 60); let s = ts % 60; return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`; }
-            
+            function updateStatsDisplay() { if(pvCountElement) pvCountElement.textContent = currentPvTokens; if(goldCountElement) goldCountElement.textContent = currentGold; if(diamondCountElement) diamondCountElement.textContent = currentDiamonds; if(availableAdventurersCountElement) availableAdventurersCountElement.textContent = totalAvailableAdventurers; }
+            function formatTimeLeft(milliseconds) { if (milliseconds <= 0) return "Ended"; let ts = Math.ceil(milliseconds / 1000); let h = Math.floor(ts / 3600); ts %= 3600; let m = Math.floor(ts / 60); let s = ts % 60; return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`; }
             function renderActiveAdventuresInSidebar() { if (!sidebarActiveAdventuresList || !sidebarActiveAdventuresContainer) return; sidebarActiveAdventuresList.innerHTML = ''; if (activeAdventures.length === 0) { const p = document.createElement('p'); p.textContent = "No adventurers currently on an adventure."; p.style.textAlign = "center"; sidebarActiveAdventuresList.appendChild(p); } else { activeAdventures.forEach(adv => { const itemDiv = document.createElement('div'); itemDiv.classList.add('active-adventure-item'); itemDiv.dataset.instanceId = adv.id; const timeLeftMs = adv.returnTime - Date.now(); itemDiv.innerHTML = `<p><strong>${adv.name}</strong></p><p>Adventurers: ${adv.adventurers}</p><p>Time Left: <span class="timer">${formatTimeLeft(timeLeftMs)}</span></p>`; sidebarActiveAdventuresList.appendChild(itemDiv); }); } sidebarActiveAdventuresContainer.classList.remove('hidden'); }
-
             function renderActivePotions() { if (!activePotionsList || !activePotionsDisplay) return; activePotionsList.innerHTML = ''; if (activePotions.length === 0) { activePotionsDisplay.classList.add('hidden'); return; } activePotionsDisplay.classList.remove('hidden'); activePotions.forEach(potion => { const itemDiv = document.createElement('div'); itemDiv.classList.add('potion-item'); let details = ''; if (potion.endTime) { const timeLeftMs = potion.endTime - Date.now(); details = `Time Left: <span class="timer">${formatTimeLeft(timeLeftMs)}</span>`; } else if (potion.adventuresLeft !== undefined) { details = `Adventures Left: ${potion.adventuresLeft}`; } itemDiv.innerHTML = `<p><strong>${potion.name}</strong></p><p>${potion.description}</p><p>${details}</p>`; activePotionsList.appendChild(itemDiv); });}
-
-            function renderMaterials() { if(!materialsListDiv) return; materialsListDiv.innerHTML = ''; let materialCount = 0; for (const mat in playerMaterials) { if (playerMaterials.hasOwnProperty(mat)) { materialCount++; const li = document.createElement('li'); li.textContent = `${mat}: ${playerMaterials[mat]}`; materialsListDiv.appendChild(li); } } if (materialCount === 0 && Object.keys(playerMaterials).length > 0) { Object.keys(playerMaterials).forEach(mat => {const li = document.createElement('li'); li.textContent = `${mat}: 0`; materialsListDiv.appendChild(li);});} else if (Object.keys(playerMaterials).length === 0) {const li = document.createElement('li'); li.textContent = "No materials discovered yet."; li.style.fontStyle = "italic"; materialsListDiv.appendChild(li); }}
-            function renderCraftingItems() { if(!craftingItemsContainer) return; craftingItemsContainer.innerHTML = ''; craftableItemsData.forEach(item => { const card = document.createElement('div'); card.className = 'craftable-item-card'; let recipeHtml = 'Requires: '; for(const mat in item.recipe){ recipeHtml += `${item.recipe[mat]} ${mat}, `; } recipeHtml = recipeHtml.slice(0, -2); card.innerHTML = `<div class="item-icon-placeholder" style="background-color: ${item.imgColor || '#555'};">${item.type.substring(0,1)}</div> <div class="item-info"> <p><strong>${item.name}</strong> (${item.type})</p> <small>${item.description}</small> <p class="crafting-cost"><small>${recipeHtml}</small></p> </div> <button class="action-button craft-button" data-item-id="${item.id}">Craft</button>`; craftingItemsContainer.appendChild(card); }); document.querySelectorAll('.craft-button').forEach(b => b.addEventListener('click', e => craftItem(e.target.dataset.itemId))); }
-            function renderInventory() { if (!inventoryItemsContainer || !equipmentSlotsDisplay) return; equipmentSlotsDisplay.innerHTML = ''; const slotTypes = ["Armour", "Helmet", "Boots", "Amulet", "Ring", "Weapon"]; slotTypes.forEach(slotType => { const slotDiv = document.createElement('div'); slotDiv.classList.add('equipment-slot'); let slotContent = `<div class="slot-name">${slotType.toUpperCase()}</div>`; const equippedItemId = equippedItems[slotType]; if (equippedItemId) { const itemData = craftableItemsData.find(i => i.id === equippedItemId); if (itemData) { slotContent += `<div class="item-icon-placeholder" style="background-color: ${itemData.imgColor || '#ccc'};">${itemData.type ? itemData.type.substring(0,1) : '?'}</div> <div class="equipped-item-name">${itemData.name}</div> <button class="unequip-btn action-button" data-item-type="${itemData.type}">Unequip</button>`; } } else { slotContent += `<div class="empty-slot-text">(Empty Slot)</div>`; } slotDiv.innerHTML = slotContent; equipmentSlotsDisplay.appendChild(slotDiv); }); equipmentSlotsDisplay.querySelectorAll('.unequip-btn').forEach(b => b.addEventListener('click', e => unequipItem(e.target.dataset.itemType))); inventoryItemsContainer.innerHTML = ''; if (playerInventory.length === 0) { inventoryItemsContainer.innerHTML = '<p style="text-align:center;">Your bag is empty.</p>'; return; } playerInventory.forEach(itemId => { const itemData = craftableItemsData.find(i => i.id === itemId); if (itemData) { const card = document.createElement('div'); card.className = 'inventory-item-card'; card.innerHTML = `<div class="item-icon-placeholder" style="background-color: ${itemData.imgColor || '#ccc'};">${itemData.type ? itemData.type.substring(0,1) : '?'}</div> <div class="item-info"> <p><strong>${itemData.name}</strong> (${itemData.type || 'Item'})</p <small class="item-perk">${itemData.description}</small> </div> <div class="item-actions"> <button class="equip-btn action-button" data-item-id="${itemId}">Equip</button> </div>`; inventoryItemsContainer.appendChild(card); } }); inventoryItemsContainer.querySelectorAll('.equip-btn').forEach(b => b.addEventListener('click', e => equipItem(e.target.dataset.itemId)));}
-            function renderQuests() { if (!questListDiv) return; questListDiv.innerHTML = ''; quests.forEach(quest => { const qe = document.createElement('div'); qe.classList.add('quest-item'); qe.innerHTML = `<p>${quest.text} (${quest.progress || 0}/${quest.target||'N/A'})</p><div class="quest-details"><span class="quest-reward">Reward: ${quest.reward}</span><button class="action-button claim-quest-btn" data-quest-id="${quest.id}" ${quest.completed && !(quest.claimed) ? '' : 'disabled'}>${quest.claimed ? 'Claimed' : 'Claim'}</button></div>`; questListDiv.appendChild(qe); }); document.querySelectorAll('.claim-quest-btn').forEach(b => { b.addEventListener('click', (e) => { const qId = parseInt(e.target.dataset.questId); const q = quests.find(q => q.id === qId); if(q && q.completed && !q.claimed){ q.claimed = true; e.target.disabled = true; e.target.textContent = 'Claimed'; const rewardAmount = parseInt(q.reward.split(" ")[0]); currentPvTokens += rewardAmount; updateStatsDisplay(); showCustomPopup(`Claimed reward: ${q.reward} for completing quest: "${q.text}"`, "Quest Reward Claimed"); } }); }); }
-            function renderDailyRewards() { if (!dailyRewardsGrid) return; dailyRewardsGrid.innerHTML = ''; let todayForStreak = (localStorage.getItem('currentStreakDayPVA') || 0) * 1; dailyRewardsData.forEach(item => { const dayDiv = document.createElement('div'); dayDiv.classList.add('reward-day'); let rewardText = item.reward; if (item.day === 30) rewardText = `<strong style="color:var(--highlight-color-gold);">${item.reward}</strong>`; const canClaim = (todayForStreak + 1 === item.day) && (lastClaimedDay < item.day); const isClaimed = lastClaimedDay >= item.day; dayDiv.innerHTML = `<h5>Day ${item.day}</h5><p>${rewardText}</p><button class="action-button claim-daily-reward-btn" data-day="${item.day}" ${canClaim ? '' : 'disabled'}>${isClaimed ? 'Claimed' : (canClaim ? 'Claim' : 'Locked')}</button>`; dailyRewardsGrid.appendChild(dayDiv); }); document.querySelectorAll('.claim-daily-reward-btn').forEach(button => { button.addEventListener('click', (e) => { const dayToClaim = parseInt(e.target.dataset.day); const rewardItem = dailyRewardsData.find(d=>d.day===dayToClaim); if (!rewardItem) return; lastClaimedDay = dayToClaim; localStorage.setItem('lastClaimedDayPVA', lastClaimedDay); localStorage.setItem('currentStreakDayPVA', dayToClaim); const rewardInfo = rewardItem.reward; if (rewardInfo.includes("PV")) currentPvTokens += parseInt(rewardInfo.match(/(\d+) PV/)[1]); if (rewardInfo.includes("Gold")) currentGold += parseInt(rewardInfo.match(/(\d+) Gold/)[1]); updateStatsDisplay(); renderDailyRewards(); showCustomPopup(`Claimed reward for Day ${dayToClaim}: ${rewardItem.reward}`, "Daily Reward Claimed"); }); }); }
             
-            function renderShopItems() { if (!shopItemsDiv) return; shopItemsDiv.innerHTML = ''; shopItemsData.forEach(item => { const ie = document.createElement('div'); ie.classList.add('shop-item'); ie.innerHTML = `<div class="item-icon-placeholder" style="background-color: ${item.imgColor || '#777'};">P</div><div><p><strong>${item.name}</strong></p><p><small>${item.description}</small></p></div><div class="shop-details"><span class="shop-price">${item.price} PV</span><button class="action-button buy-item-btn" data-item-id="${item.id}" data-price="${item.price}">Buy</button></div>`; shopItemsDiv.appendChild(ie); }); document.querySelectorAll('.buy-item-btn').forEach(b => { b.addEventListener('click', (e) => { const itemId = e.target.dataset.itemId; const itemPrice = parseInt(e.target.dataset.price); const itemData = shopItemsData.find(it => it.id === itemId); if (!itemData) return; if (currentPvTokens >= itemPrice) { currentPvTokens -= itemPrice; updateStatsDisplay(); showCustomPopup(`Successfully bought ${itemData.name} for ${itemPrice} PV.`, "Purchase Complete"); if (itemData.type === "buff" && itemData.effect) { const existingPotion = activePotions.find(p => p.id === itemData.id && (p.endTime || p.adventuresLeft)); if (existingPotion) { showCustomPopup(`${itemData.name} is already active or you have one of its kind. Finish it first.`, "Potion Active"); currentPvTokens += itemPrice; updateStatsDisplay(); return; } let newPotion = { id: itemData.id, name: itemData.name, description: itemData.description, effect: itemData.effect }; if (itemData.durationSeconds) { newPotion.endTime = Date.now() + itemData.durationSeconds * 1000; newPotion.originalDurationSeconds = itemData.durationSeconds; } else if (itemData.durationAdventures) { newPotion.adventuresLeft = itemData.durationAdventures; } activePotions.push(newPotion); renderActivePotions(); } } else { showCustomPopup("Not enough PV Tokens to buy this item!", "Transaction Failed"); } }); }); }
-
-            function craftItem(itemId) { const itemToCraft = craftableItemsData.find(i => i.id === itemId); if (!itemToCraft) return; let canCraft = true; let missingMat = ""; for (const mat in itemToCraft.recipe) { if ((playerMaterials[mat] || 0) < itemToCraft.recipe[mat]) { canCraft = false; missingMat = mat; break; } } if (canCraft) { for (const mat in itemToCraft.recipe) { playerMaterials[mat] -= itemToCraft.recipe[mat]; } playerInventory.push(itemId); showCustomPopup(`Successfully crafted ${itemToCraft.name}!`, "Item Crafted"); renderMaterials(); renderInventory(); renderCraftingItems(); } else { showCustomPopup(`Not enough ${missingMat}! You need ${itemToCraft.recipe[missingMat]} of ${missingMat} to craft ${itemToCraft.name}.`, "Crafting Failed"); } }
-            function equipItem(itemId) { const itemData = craftableItemsData.find(i => i.id === itemId); if (!itemData || !itemData.type) { console.error("Cannot equip item without a type:", itemData); return; } if (equippedItems.hasOwnProperty(itemData.type)) { if (equippedItems[itemData.type]) { playerInventory.push(equippedItems[itemData.type]); } equippedItems[itemData.type] = itemId; playerInventory = playerInventory.filter(id => id !== itemId); renderInventory(); console.log("Equipped:", equippedItems); } else { console.warn(`Unknown equipment slot type: ${itemData.type} for item ${itemId}`);} }
-            function unequipItem(itemType) { if (equippedItems.hasOwnProperty(itemType) && equippedItems[itemType]) { playerInventory.push(equippedItems[itemType]); equippedItems[itemType] = null; renderInventory(); console.log("Equipped:", equippedItems); } }
-            function generateRandomQuests() { if (quests.length >= 5) return; const templates = [ { baseText: "Collect X PV Tokens", type: "collectPV", min: 100, max: 500, rewardBase: 20 }, { baseText: "Send Y adventurers on any Z quests", type: "sendAdventurers", minA: 3, maxA: 10, minQ: 1, maxQ: 3, rewardBase: 30 }, { baseText: "Earn Z Gold", type: "collectGold", min: 1, max: 5, rewardBase: 50}, ]; while(quests.length < 5) { const t = templates[Math.floor(Math.random() * templates.length)]; let txt = t.baseText; let rA = t.rewardBase; let nq = { id: quests.length + 1, completed: false, progress: 0 }; if (t.type === "collectPV") { const tpv = Math.floor(Math.random()*(t.max-t.min+1)+t.min); txt=txt.replace("X",tpv); rA+=Math.floor(tpv/10); nq.target=tpv; nq.metric="pvCollected"; } else if (t.type === "sendAdventurers") { const ta=Math.floor(Math.random()*(t.maxA-t.minA+1)+t.minA); const tq=Math.floor(Math.random()*(t.maxQ-t.minQ+1)+t.minQ); txt=txt.replace("Y",ta).replace("Z",tq); rA+=ta*2+tq*5; nq.target=ta; nq.metric="adventurersSentOnQuests"; } else if (t.type === "collectGold") { const tg=Math.floor(Math.random()*(t.max-t.min+1)+t.min); txt=txt.replace("Z",tg); rA+=tg*20; nq.target=tg; nq.metric="goldCollected"; } nq.text=txt; nq.reward=`${rA} PV`; quests.push(nq); } }
-            
-            function completeAdventure(instanceId) { const advIdx = activeAdventures.findIndex(adv => adv.id === instanceId); if (advIdx === -1) return; const completedAdv = activeAdventures[advIdx]; 
-                let basePvReward = completedAdv.pvReward; 
-                let pvMultiplierFromPotions = 1;
-                activePotions.forEach(p => { if(p.effect && p.effect.type === "pvMultiplier" && (p.endTime && Date.now() < p.endTime || p.adventuresLeft > 0)) { pvMultiplierFromPotions *= p.effect.value; }});
-                let pvBonusMultiplierFromItems = 1; 
-                if (equippedItems.Rucksack) { const rD = craftableItemsData.find(i=>i.id===equippedItems.Rucksack); if(rD && rD.perk.type==="pvBonus") pvBonusMultiplierFromItems += rD.perk.multiplier; } 
-                let earnedPvThisTrip = Math.floor(basePvReward * completedAdv.adventurers * pvBonusMultiplierFromItems * pvMultiplierFromPotions); 
-                currentPvTokens += earnedPvThisTrip; 
-                
-                let goldChanceMultiplierFromItems = 1; 
-                if (equippedItems.Amulet) { const aD = craftableItemsData.find(i=>i.id===equippedItems.Amulet); if(aD && aD.perk.type==="goldChanceIncrease") goldChanceMultiplierFromItems += aD.perk.multiplier; } 
-                let flatGoldBonusFromPotions = 0;
-                activePotions.forEach(p => { if(p.effect && p.effect.type === "goldChanceBonus" && (p.endTime && Date.now() < p.endTime || p.adventuresLeft > 0)) { flatGoldBonusFromPotions += p.effect.flatValue || 0; }});
-
-                let totalGoldFoundThisTrip = 0; 
-                let materialChanceAdditive = 0; 
-                if (equippedItems.Trinket) { const tD = craftableItemsData.find(i=>i.id===equippedItems.Trinket); if(tD && tD.perk.type==="materialChanceIncrease") materialChanceAdditive = tD.perk.additive; } 
-                let allFoundDrops = {}; 
-                for (let i = 0; i < completedAdv.adventurers; i++) { 
-                    const finalGoldChance = (completedAdv.goldChance * goldChanceMultiplierFromItems) + flatGoldBonusFromPotions;
-                    if (completedAdv.goldChance > 0 && Math.random() < finalGoldChance) { currentGold += 1; totalGoldFoundThisTrip++; } 
-                    const adventureBaseData = adventuresData[completedAdv.originalAdventureId]; 
-                    if (adventureBaseData && adventureBaseData.drops) { adventureBaseData.drops.forEach(drop => { if (Math.random() < (drop.chance + materialChanceAdditive)) { playerMaterials[drop.name] = (playerMaterials[drop.name] || 0) + (drop.qty || 1); allFoundDrops[drop.name] = (allFoundDrops[drop.name] || 0) + (drop.qty || 1); } }); } 
+            function renderMaterials() { 
+                if(!materialsListDiv) return; 
+                materialsListDiv.innerHTML = ''; 
+                for (const mat in playerMaterials) { 
+                    if (playerMaterials.hasOwnProperty(mat)) { 
+                        const li = document.createElement('li'); 
+                        li.textContent = `${mat}: ${playerMaterials[mat]}`; 
+                        materialsListDiv.appendChild(li); 
+                    } 
                 } 
-                
-                activePotions.forEach(p => { if(p.adventuresLeft !== undefined) { p.adventuresLeft--; }});
-                activePotions = activePotions.filter(p => (p.endTime && Date.now() < p.endTime) || (p.adventuresLeft !== undefined && p.adventuresLeft > 0) || (!p.endTime && p.adventuresLeft === undefined) ); 
-                renderActivePotions();
-
-                let popupMessage = `${completedAdv.adventurers} adventurer(s) returned from ${completedAdv.name}!\n\nRewards:\n- ${earnedPvThisTrip} PV Tokens`;
-                if(totalGoldFoundThisTrip > 0) {
-                    popupMessage += `\n- ${totalGoldFoundThisTrip} Gold`;
-                }
-                const foundDropNames = Object.keys(allFoundDrops); 
-                if (foundDropNames.length > 0) { 
-                    popupMessage += `\n\nMaterials Found:`;
-                    foundDropNames.forEach(dropName => { 
-                        popupMessage += `\n  - ${allFoundDrops[dropName]}x ${dropName}`;
-                    });
-                    renderMaterials(); 
-                } 
-                totalAvailableAdventurers += completedAdv.adventurers; 
-                showCustomPopup(popupMessage, "Adventure Complete!"); 
-                activeAdventures.splice(advIdx, 1); 
-                
-                const adventureBlock = document.getElementById(`adventure-${completedAdv.originalAdventureId}-block`); 
-                if (adventureBlock) { const sendBtn = adventureBlock.querySelector('.adventure-send-btn'); const numSelect = adventureBlock.querySelector('.adventure-num-select'); if (sendBtn) sendBtn.disabled = false; if (numSelect) numSelect.disabled = false; } 
-                quests.forEach(quest => { if (!quest.completed && !quest.claimed) { if (quest.adventureName === completedAdv.name) quest.progress = (quest.progress || 0) + completedAdv.adventurers; if (quest.metric === "pvCollected") quest.progress = Math.min(quest.target, (quest.progress || 0) + earnedPvThisTrip); if (quest.metric === "goldCollected") quest.progress = Math.min(quest.target, (quest.progress || 0) + totalGoldFoundThisTrip); if (quest.metric === "adventurersSentOnQuests") quest.progress = (quest.progress || 0) + completedAdv.adventurers; if (quest.progress >= quest.target) { quest.completed = true; showCustomPopup(`Quest Completed: ${quest.text}`, "Quest Complete!"); } } }); 
-                if(document.getElementById('quests-page').classList.contains('active')) { renderQuests(); } 
-                updateStatsDisplay(); renderActiveAdventuresInSidebar(); 
             }
-            
-            function updateTimers() { 
-                let adventureCompletedThisTick = false;
-                activeAdventures.forEach(adv => { 
-                    const timeLeftMs = adv.returnTime - Date.now(); 
-                    document.querySelectorAll(`.active-adventure-item[data-instance-id="${adv.id}"] .timer`).forEach(timerSpan => { if(timerSpan) timerSpan.textContent = formatTimeLeft(timeLeftMs); }); 
-                    if (timeLeftMs <= 0) { completeAdventure(adv.id); adventureCompletedThisTick = true; } 
-                }); 
-                if (adventureCompletedThisTick && activeAdventures.length === 0 && sidebarActiveAdventuresList) {
-                    renderActiveAdventuresInSidebar(); 
-                }
 
-                let potionsChanged = false;
-                const now = Date.now();
-                activePotions.forEach(potion => {
-                    if (potion.endTime) {
-                        if (now >= potion.endTime) potionsChanged = true;
-                        const potionItemDiv = Array.from(activePotionsList.children).find(child => child.innerHTML.includes(`<strong>${potion.name}</strong>`));
-                        if (potionItemDiv) {
-                            const timerSpan = potionItemDiv.querySelector('.timer');
-                            if (timerSpan) timerSpan.textContent = formatTimeLeft(potion.endTime - now);
+            function renderCraftingItems() { if(!craftingItemsContainer) return; craftingItemsContainer.innerHTML = ''; craftableItemsData.forEach(item => { const alreadyOwned = playerInventory.some(invItem => (typeof invItem === 'string' ? invItem : invItem.id) === item.id) || Object.values(equippedItems).includes(item.id); const card = document.createElement('div'); card.className = 'craftable-item-card'; let recipeHtml = 'Requires: '; for(const mat in item.recipe){ recipeHtml += `${item.recipe[mat]} ${mat}, `; } recipeHtml = recipeHtml.slice(0, -2); card.innerHTML = `<div class="item-icon-placeholder" style="background-color: ${item.imgColor || '#555'};">${item.type.substring(0,1)}</div> <div class="item-info"> <p><strong>${item.name}</strong> (${item.type})</p> <small>${item.description}</small> <p class="crafting-cost"><small>${recipeHtml}</small></p> </div> <button class="action-button craft-button" data-item-id="${item.id}" ${alreadyOwned ? 'disabled title="You already own this item"' : ''}>${alreadyOwned ? 'Owned' : 'Craft'}</button>`; craftingItemsContainer.appendChild(card); }); document.querySelectorAll('.craft-button:not([disabled])').forEach(b => b.addEventListener('click', e => craftItem(e.target.dataset.itemId))); }
+            function renderInventory() { if (!inventoryItemsContainer || !equipmentSlotsDisplay) return; equipmentSlotsDisplay.innerHTML = ''; const slotTypes = [ { name: "Armour", id: "Armour" }, { name: "Helmet", id: "Helmet" }, { name: "Boots", id: "Boots" }, { name: "Amulet", id: "Amulet" }, { name: "Ring 1", id: "Ring1" }, { name: "Ring 2", id: "Ring2", locked: !secondRingSlotUnlocked }, { name: "Weapon", id: "Weapon" }, { name: "Misc 1", id: "Misc1" }, { name: "Misc 2", id: "Misc2" } ]; slotTypes.forEach(slot => { const slotDiv = document.createElement('div'); slotDiv.classList.add('equipment-slot'); if (slot.locked) { slotDiv.classList.add('locked'); } let slotContent = `<div class="slot-name">${slot.name.toUpperCase()}</div>`; const equippedItemId = equippedItems[slot.id]; if (equippedItemId) { let itemData = craftableItemsData.find(i => i.id === equippedItemId) || playerInventory.find(invItem => invItem && invItem.id === equippedItemId); if (!itemData && equippedItemId === "cursedBand") itemData = { id: "cursedBand", name: "Cursed Band", type: "Ring", description: "A ring pulsing with dark energy. (+1 Dark Power)", perk: { type: "darkPower", value: 1 }, imgColor: "var(--item-placeholder-ring)" }; if (itemData) { slotContent += `<div class="item-icon-placeholder" style="background-color: ${itemData.imgColor || '#ccc'};">${itemData.type ? itemData.type.substring(0,1) : (itemData.name ? itemData.name.substring(0,1) : '?')}</div> <div class="equipped-item-name">${itemData.name}</div> <button class="unequip-btn action-button" data-item-slot-id="${slot.id}">Unequip</button>`; } else { slotContent += `<div class="empty-slot-text">(Error: Item data not found for ${equippedItemId})</div>`; } } else if (!slot.locked) { slotContent += `<div class="empty-slot-text">(Empty Slot)</div>`; } else { slotContent += `<div class="empty-slot-text" style="font-size:0.8em;">Unlock with Rider Scroll</div>`; } slotDiv.innerHTML = slotContent; equipmentSlotsDisplay.appendChild(slotDiv); }); equipmentSlotsDisplay.querySelectorAll('.unequip-btn').forEach(b => b.addEventListener('click', e => { const itemSlotId = e.target.dataset.itemSlotId; unequipItem(itemSlotId); })); inventoryItemsContainer.innerHTML = ''; if (playerInventory.length === 0) { inventoryItemsContainer.innerHTML = '<p style="text-align:center;">Your bag is empty.</p>'; return; } playerInventory.forEach(item => { let itemData; if (typeof item === 'string') { itemData = craftableItemsData.find(i => i.id === item); if (!itemData && item === "riderScroll") { itemData = { id: "riderScroll", name: "Rider Scroll", type: "Consumable", description: "Unlocks a second ring slot.", imgColor: "var(--item-placeholder-scroll)" }; } if (!itemData && item === "cursedBand") { itemData = { id: "cursedBand", name: "Cursed Band", type: "Ring", description: "A ring pulsing with dark energy. (+1 Dark Power)", perk: { type: "darkPower", value: 1 }, imgColor: "var(--item-placeholder-ring)" }; } } else { itemData = item; } if (itemData) { const card = document.createElement('div'); card.className = 'inventory-item-card'; let actionsHtml = ''; if (itemData.type !== "Consumable" && !Object.values(equippedItems).includes(itemData.id) ) { actionsHtml += `<button class="equip-btn action-button" data-item-id="${itemData.id}">Equip</button>`; } if (itemData.id === "riderScroll" && !secondRingSlotUnlocked) { actionsHtml += `<button class="use-btn action-button" data-item-id="${itemData.id}">Use</button>`; } card.innerHTML = ` <div class="item-icon-placeholder" style="background-color: ${itemData.imgColor || '#ccc'};">${itemData.type ? itemData.type.substring(0,1) : (itemData.name ? itemData.name.substring(0,1) : '?')}</div> <div class="item-info"> <p><strong>${itemData.name}</strong> (${itemData.type || 'Item'})</p> <small class="item-perk">${itemData.description || ''}</small> </div> <div class="item-actions">${actionsHtml}</div>`; inventoryItemsContainer.appendChild(card); } }); inventoryItemsContainer.querySelectorAll('.equip-btn').forEach(b => b.addEventListener('click', e => equipItem(e.target.dataset.itemId))); inventoryItemsContainer.querySelectorAll('.use-btn').forEach(b => b.addEventListener('click', e => useConsumableItem(e.target.dataset.itemId)));}
+            function renderQuests() { if (!questListDiv) return; questListDiv.innerHTML = ''; quests.forEach(quest => { const qe = document.createElement('div'); qe.classList.add('quest-item'); qe.innerHTML = `<p>${quest.text} (${quest.progress || 0}/${quest.target||'N/A'})</p><div class="quest-details"><span class="quest-reward">Reward: ${quest.reward}</span><button class="action-button claim-quest-btn" data-quest-id="${quest.id}" ${quest.completed && !(quest.claimed) ? '' : 'disabled'}>${quest.claimed ? 'Claimed' : 'Claim'}</button></div>`; questListDiv.appendChild(qe); }); document.querySelectorAll('.claim-quest-btn').forEach(b => { b.addEventListener('click', (e) => { const qId = parseInt(e.target.dataset.questId); const q = quests.find(q => q.id === qId); if(q && q.completed && !q.claimed){ q.claimed = true; e.target.disabled = true; e.target.textContent = 'Claimed'; const rewardParts = q.reward.split(','); let pvReward = 0; let diamondReward = 0; rewardParts.forEach(part => { if (part.includes("PV")) pvReward = parseInt(part.match(/(\d+) PV/)[1]); if (part.includes("Diamond")) diamondReward = parseInt(part.match(/(\d+) Diamond/)[1]); }); currentPvTokens += pvReward; currentDiamonds += diamondReward; updateStatsDisplay(); showCustomPopup(`Claimed reward: ${q.reward} for completing quest: "${q.text}"`, "Quest Reward Claimed"); if (userNickname) saveGameStateToFirebase(userNickname, getCurrentGameState()); if ([1, 2, 3].includes(q.id)) { updateAdventureDisplayStates(); } } }); }); }
+            function renderDailyRewards() { if (!dailyRewardsGrid) return; dailyRewardsGrid.innerHTML = ''; let todayForStreak = (localStorage.getItem('currentStreakDayPVA') || 0) * 1; dailyRewardsData.forEach(item => { const dayDiv = document.createElement('div'); dayDiv.classList.add('reward-day'); let rewardText = item.reward; if (item.day === 30) rewardText = `<strong style="color:var(--highlight-color-gold);">${item.reward}</strong>`; const canClaim = (todayForStreak + 1 === item.day) && (lastClaimedDay < item.day); const isClaimed = lastClaimedDay >= item.day; dayDiv.innerHTML = `<h5>Day ${item.day}</h5><p>${rewardText}</p><button class="action-button claim-daily-reward-btn" data-day="${item.day}" ${canClaim ? '' : 'disabled'}>${isClaimed ? 'Claimed' : (canClaim ? 'Claim' : 'Locked')}</button>`; dailyRewardsGrid.appendChild(dayDiv); }); document.querySelectorAll('.claim-daily-reward-btn').forEach(button => { button.addEventListener('click', (e) => { const dayToClaim = parseInt(e.target.dataset.day); const rewardItem = dailyRewardsData.find(d=>d.day===dayToClaim); if (!rewardItem) return; lastClaimedDay = dayToClaim; localStorage.setItem('lastClaimedDayPVA', lastClaimedDay); localStorage.setItem('currentStreakDayPVA', dayToClaim); const rewardInfo = rewardItem.reward; if (rewardInfo.includes("PV")) currentPvTokens += parseInt(rewardInfo.match(/(\d+) PV/)[1]); if (rewardInfo.includes("Gold")) currentGold += parseInt(rewardInfo.match(/(\d+) Gold/)[1]); if (rewardInfo.includes("Diamond")) currentDiamonds += parseInt(rewardInfo.match(/(\d+) Diamond/)[1]); updateStatsDisplay(); renderDailyRewards(); showCustomPopup(`Claimed reward for Day ${dayToClaim}: ${rewardItem.reward}`, "Daily Reward Claimed"); if (userNickname) saveGameStateToFirebase(userNickname, getCurrentGameState()); }); }); }
+            function renderShopItems() { if (!shopItemsDiv) return; shopItemsDiv.innerHTML = ''; shopItemsData.forEach(item => { const ie = document.createElement('div'); ie.classList.add('shop-item'); ie.innerHTML = `<div class="item-icon-placeholder" style="background-color: ${item.imgColor || '#777'};">P</div><div><p><strong>${item.name}</strong></p><p><small>${item.description}</small></p></div><div class="shop-details"><span class="shop-price">${item.price} PV</span><button class="action-button buy-item-btn" data-item-id="${item.id}" data-price="${item.price}">Buy</button></div>`; shopItemsDiv.appendChild(ie); }); document.querySelectorAll('.buy-item-btn').forEach(b => { b.addEventListener('click', (e) => { const itemId = e.target.dataset.itemId; const itemPrice = parseInt(e.target.dataset.price); const itemData = shopItemsData.find(it => it.id === itemId); if (!itemData) return; if (currentPvTokens >= itemPrice) { currentPvTokens -= itemPrice; updateStatsDisplay(); showCustomPopup(`Successfully bought ${itemData.name} for ${itemPrice} PV.`, "Purchase Complete"); if (itemData.type === "buff" && itemData.effect) { const existingPotion = activePotions.find(p => p.id === itemData.id && (p.endTime || p.adventuresLeft)); if (existingPotion) { showCustomPopup(`${itemData.name} is already active or you have one of its kind. Finish it first.`, "Potion Active"); currentPvTokens += itemPrice; updateStatsDisplay(); return; } let newPotion = { id: itemData.id, name: itemData.name, description: itemData.description, effect: itemData.effect }; if (itemData.durationSeconds) { newPotion.endTime = Date.now() + itemData.durationSeconds * 1000; newPotion.originalDurationSeconds = itemData.durationSeconds; } else if (itemData.durationAdventures) { newPotion.adventuresLeft = itemData.durationAdventures; } activePotions.push(newPotion); renderActivePotions(); } if (userNickname) saveGameStateToFirebase(userNickname, getCurrentGameState()); } else { showCustomPopup("Not enough PV Tokens to buy this item!", "Transaction Failed"); } }); }); }
+            function craftItem(itemId) { const itemToCraft = craftableItemsData.find(i => i.id === itemId); if (!itemToCraft) return; const alreadyOwned = playerInventory.some(invItem => (typeof invItem === 'string' ? invItem : invItem.id) === itemToCraft.id) || Object.values(equippedItems).includes(itemToCraft.id); if (alreadyOwned) { showCustomPopup(`You already own a ${itemToCraft.name}. You cannot craft another.`, "Crafting Failed"); return; } let canCraft = true; let missingMat = ""; for (const mat in itemToCraft.recipe) { if ((playerMaterials[mat] || 0) < itemToCraft.recipe[mat]) { canCraft = false; missingMat = mat; break; } } if (canCraft) { for (const mat in itemToCraft.recipe) { playerMaterials[mat] -= itemToCraft.recipe[mat]; } playerInventory.push(itemToCraft.id); showCustomPopup(`Successfully crafted ${itemToCraft.name}!`, "Item Crafted"); renderMaterials(); renderInventory(); renderCraftingItems(); if (userNickname) saveGameStateToFirebase(userNickname, getCurrentGameState());} else { showCustomPopup(`Not enough ${missingMat}! You need ${itemToCraft.recipe[missingMat]} of ${missingMat} to craft ${itemToCraft.name}.`, "Crafting Failed"); } }
+            function equipItem(itemId) { const itemData = craftableItemsData.find(i => i.id === itemId) || (itemId === "cursedBand" ? { id: "cursedBand", name: "Cursed Band", type: "Ring", description: "A ring pulsing with dark energy. (+1 Dark Power)", perk: { type: "darkPower", value: 1 }, imgColor: "var(--item-placeholder-ring)" } : null) ; if (!itemData || !itemData.type) { console.error("Cannot equip item without a type:", itemData); return; } let targetSlotId = null; if (itemData.type === "Ring") { if (!equippedItems.Ring1) targetSlotId = "Ring1"; else if (secondRingSlotUnlocked && !equippedItems.Ring2) targetSlotId = "Ring2"; else showCustomPopup("Both ring slots are full or second slot is locked.", "Equip Failed"); } else if (itemData.type === "Trinket" || itemData.type === "Rucksack") { if (!equippedItems.Misc1) targetSlotId = "Misc1"; else if (!equippedItems.Misc2) targetSlotId = "Misc2"; else showCustomPopup("Both miscellaneous slots are full.", "Equip Failed"); } else if (equippedItems.hasOwnProperty(itemData.type)) { targetSlotId = itemData.type; } if (targetSlotId) { if (equippedItems[targetSlotId]) { playerInventory.push(equippedItems[targetSlotId]); } equippedItems[targetSlotId] = itemId; playerInventory = playerInventory.filter(invId => (typeof invId === 'string' ? invId : invId.id) !== itemId); renderInventory(); console.log("Equipped:", equippedItems); if (userNickname) saveGameStateToFirebase(userNickname, getCurrentGameState()); } else if (!equippedItems.hasOwnProperty(itemData.type) && itemData.type !== "Ring" && itemData.type !== "Trinket" && itemData.type !== "Rucksack") { showCustomPopup(`No available slot for item type: ${itemData.type}`, "Equip Failed"); }}
+            function unequipItem(itemSlotId) { if (equippedItems.hasOwnProperty(itemSlotId) && equippedItems[itemSlotId]) { playerInventory.push(equippedItems[itemSlotId]); equippedItems[itemSlotId] = null; renderInventory(); console.log("Equipped:", equippedItems); if (userNickname) saveGameStateToFirebase(userNickname, getCurrentGameState());} }
+            function useConsumableItem(itemId) { if (itemId === "riderScroll") { if (secondRingSlotUnlocked) { showCustomPopup("Second ring slot is already unlocked!", "Already Unlocked"); return; } const scrollIndex = playerInventory.findIndex(item => (typeof item === 'string' ? item : item.id) === "riderScroll"); if (scrollIndex > -1) { playerInventory.splice(scrollIndex, 1); secondRingSlotUnlocked = true; showCustomPopup("Rider Scroll used! Second ring slot unlocked.", "Slot Unlocked!"); renderInventory(); if (userNickname) saveGameStateToFirebase(userNickname, getCurrentGameState()); } else { showCustomPopup("Rider Scroll not found in inventory.", "Item Not Found"); } } }
+            function generateRandomQuests() { if (quests.length >= 5) return; const templates = [ { baseText: "Collect X PV Tokens", type: "collectPV", min: 100, max: 500, rewardBase: 20 }, { baseText: "Send Y adventurers on any Z quests", type: "sendAdventurers", minA: 3, maxA: 10, minQ: 1, maxQ: 3, rewardBase: 30 }, { baseText: "Earn Z Gold", type: "collectGold", min: 1, max: 5, rewardBase: 50}, ]; while(quests.length < 5) { const t = templates[Math.floor(Math.random() * templates.length)]; let txt = t.baseText; let rA = t.rewardBase; let nq = { id: quests.length + 1, completed: false, progress: 0 }; if (t.type === "collectPV") { const tpv = Math.floor(Math.random()*(t.max-t.min+1)+t.min); txt=txt.replace("X",tpv); rA+=Math.floor(tpv/10); nq.target=tpv; nq.metric="pvCollected"; } else if (t.type === "sendAdventurers") { const ta=Math.floor(Math.random()*(t.maxA-t.minA+1)+t.minA); const tq=Math.floor(Math.random()*(t.maxQ-t.minQ+1)+t.minQ); txt=txt.replace("Y",ta).replace("Z",tq); rA+=ta*2+tq*5; nq.target=ta; nq.metric="adventurersSentOnQuests"; } else if (t.type === "collectGold") { const tg=Math.floor(Math.random()*(t.max-t.min+1)+t.min); txt=txt.replace("Z",tg); rA+=tg*20; nq.target=tg; nq.metric="goldCollected"; } nq.text=txt; nq.reward=`${rA} PV`; quests.push(nq); } }
+            function completeAdventure(instanceId) { const advIdx = activeAdventures.findIndex(adv => adv.id === instanceId); if (advIdx === -1) return; const completedAdv = activeAdventures[advIdx]; let basePvReward = completedAdv.pvReward; let pvMultiplierFromPotions = 1; activePotions.forEach(p => { if(p.effect && p.effect.type === "pvMultiplier" && (p.endTime && Date.now() < p.endTime || p.adventuresLeft > 0)) { pvMultiplierFromPotions *= p.effect.value; }}); let pvBonusMultiplierFromItems = 1; if (equippedItems.Rucksack) { const rD = craftableItemsData.find(i=>i.id===equippedItems.Rucksack); if(rD && rD.perk.type==="pvBonus") pvBonusMultiplierFromItems += rD.perk.multiplier; } let earnedPvThisTrip = Math.floor(basePvReward * completedAdv.adventurers * pvBonusMultiplierFromItems * pvMultiplierFromPotions); currentPvTokens += earnedPvThisTrip; let goldChanceMultiplierFromItems = 1; if (equippedItems.Amulet) { const aD = craftableItemsData.find(i=>i.id===equippedItems.Amulet); if(aD && aD.perk.type==="goldChanceIncrease") goldChanceMultiplierFromItems += aD.perk.multiplier; } let flatGoldBonusFromPotions = 0; activePotions.forEach(p => { if(p.effect && p.effect.type === "goldChanceBonus" && (p.endTime && Date.now() < p.endTime || p.adventuresLeft > 0)) { flatGoldBonusFromPotions += p.effect.flatValue || 0; }}); let totalGoldFoundThisTrip = 0; let totalDiamondsFoundThisTrip = 0; let materialChanceAdditive = 0; if (equippedItems.Trinket) { const tD = craftableItemsData.find(i=>i.id===equippedItems.Trinket); if(tD && tD.perk.type==="materialChanceIncrease") materialChanceAdditive = tD.perk.additive; } let allFoundDrops = {}; for (let i = 0; i < completedAdv.adventurers; i++) { const finalGoldChance = (completedAdv.goldChance * goldChanceMultiplierFromItems) + flatGoldBonusFromPotions; if (completedAdv.goldChance > 0 && Math.random() < finalGoldChance) { currentGold += 1; totalGoldFoundThisTrip++; } if (completedAdv.diamondChance > 0 && Math.random() < completedAdv.diamondChance) { currentDiamonds += 1; totalDiamondsFoundThisTrip++; } const adventureBaseData = adventuresData[completedAdv.originalAdventureId]; if (adventureBaseData && adventureBaseData.drops) { adventureBaseData.drops.forEach(drop => { if (Math.random() < (drop.chance + materialChanceAdditive)) { if (drop.name === "Rider Scroll") { playerInventory.push({id: "riderScroll", name: "Rider Scroll", type: "Consumable", description: "Unlocks a second ring slot.", imgColor: "var(--item-placeholder-scroll)" }); allFoundDrops[drop.name] = (allFoundDrops[drop.name] || 0) + (drop.qty || 1); } else if (drop.name === "Cursed Band") { playerInventory.push({id: "cursedBand", name: "Cursed Band", type: "Ring", description: "A ring pulsing with dark energy. (+1 Dark Power)", perk: { type: "darkPower", value: 1 }, imgColor: "var(--item-placeholder-ring)"}); allFoundDrops[drop.name] = (allFoundDrops[drop.name] || 0) + (drop.qty || 1); } else { playerMaterials[drop.name] = (playerMaterials[drop.name] || 0) + (drop.qty || 1); allFoundDrops[drop.name] = (allFoundDrops[drop.name] || 0) + (drop.qty || 1); } } }); } } activePotions.forEach(p => { if(p.adventuresLeft !== undefined) { p.adventuresLeft--; }}); activePotions = activePotions.filter(p => (p.endTime && Date.now() < p.endTime) || (p.adventuresLeft !== undefined && p.adventuresLeft > 0) || (!p.endTime && p.adventuresLeft === undefined) ); renderActivePotions(); let popupMessage = `${completedAdv.adventurers} adventurer(s) returned from ${completedAdv.name}!\n\nRewards:\n- ${earnedPvThisTrip} PV Tokens`; if(totalGoldFoundThisTrip > 0) { popupMessage += `\n- ${totalGoldFoundThisTrip} Gold`; } if(totalDiamondsFoundThisTrip > 0) { popupMessage += `\n- ${totalDiamondsFoundThisTrip} Diamond(s)`;} const foundDropNames = Object.keys(allFoundDrops); if (foundDropNames.length > 0) { popupMessage += `\n\nMaterials Found:`; foundDropNames.forEach(dropName => { popupMessage += `\n  - ${allFoundDrops[dropName]}x ${dropName}`; }); renderMaterials(); if (foundDropNames.includes("Rider Scroll") || foundDropNames.includes("Cursed Band")) renderInventory(); } totalAvailableAdventurers += completedAdv.adventurers; showCustomPopup(popupMessage, "Adventure Complete!"); activeAdventures.splice(advIdx, 1); 
+                updateAdventureDisplayStates(); // Update locks as an adventure finished (might change active state)
+                quests.forEach(quest => { if (!quest.completed && !quest.claimed) { if (quest.adventureName === completedAdv.name) quest.progress = (quest.progress || 0) + completedAdv.adventurers; if (quest.metric === "pvCollected") quest.progress = Math.min(quest.target, (quest.progress || 0) + earnedPvThisTrip); if (quest.metric === "goldCollected") quest.progress = Math.min(quest.target, (quest.progress || 0) + totalGoldFoundThisTrip); if (quest.metric === "adventurersSentOnQuests") quest.progress = (quest.progress || 0) + completedAdv.adventurers; if (quest.progress >= quest.target) { quest.completed = true; showCustomPopup(`Quest Completed: ${quest.text}`, "Quest Complete!"); if ([1,2,3].includes(quest.id)) { updateAdventureDisplayStates(); } } } }); if(document.getElementById('quests-page').classList.contains('active')) { renderQuests(); } updateStatsDisplay(); renderActiveAdventuresInSidebar(); if (userNickname) saveGameStateToFirebase(userNickname, getCurrentGameState());}
+            
+            function updateAdventureDisplayStates() {
+                adventureProgressionConfig.forEach(advConfig => {
+                    const adventureBlock = document.getElementById(advConfig.blockId);
+                    if (!adventureBlock) return;
+
+                    const sendBtn = adventureBlock.querySelector('.adventure-send-btn');
+                    const numSelect = adventureBlock.querySelector('.adventure-num-select');
+                    const lockOverlay = adventureBlock.querySelector('.adventure-lock-overlay');
+
+                    let isLockedByProgression = false;
+                    if (advConfig.unlockQuestId) {
+                        const unlockingQuest = quests.find(q => q.id === advConfig.unlockQuestId);
+                        if (!unlockingQuest || !unlockingQuest.completed) {
+                            isLockedByProgression = true;
+                        }
+                    }
+                    const isCurrentlyActive = activeAdventures.some(adv => adv.originalAdventureId === advConfig.id);
+
+                    if (sendBtn) sendBtn.disabled = isLockedByProgression || isCurrentlyActive;
+                    if (numSelect) numSelect.disabled = isLockedByProgression || isCurrentlyActive;
+                    
+                    adventureBlock.classList.toggle('locked-by-progression', isLockedByProgression && !isCurrentlyActive);
+
+                    if (lockOverlay) {
+                        if (isLockedByProgression && !isCurrentlyActive) {
+                            lockOverlay.textContent = advConfig.unlockMessage;
+                            lockOverlay.classList.remove('hidden');
+                        } else {
+                            lockOverlay.classList.add('hidden');
                         }
                     }
                 });
-                if (potionsChanged) {
-                    activePotions = activePotions.filter(p => p.endTime ? p.endTime > now : true);
-                    renderActivePotions();
-                }
             }
 
-            adventureSendButtons.forEach(button => { button.addEventListener('click', () => { 
-                const adventureIdBase = button.dataset.adventureId; 
-                const adventureName = button.dataset.adventureName; 
-                const durationHoursAsSeconds = parseInt(button.dataset.durationHours); 
-                const pvReward = parseInt(button.dataset.pvReward); 
-                const goldChance = parseFloat(button.dataset.goldChance); 
-                const selectElement = document.getElementById(`num-adventurers-${adventureIdBase}`); 
-                const numAdventurersToSend = parseInt(selectElement.value); 
-                if (numAdventurersToSend <= 0) { showCustomPopup("Please select at least one adventurer.", "Action Needed"); return; } 
-                if (numAdventurersToSend > totalAvailableAdventurers) { showCustomPopup(`Not enough adventurers available! You only have ${totalAvailableAdventurers}.`, "Adventurers Needed"); return; } 
-                totalAvailableAdventurers -= numAdventurersToSend; 
+            function updateTimers() { 
+                let adventureCompletedThisTick = false; 
+                activeAdventures.forEach(adv => { 
+                    const timeLeftMs = adv.returnTime - Date.now(); 
+                    document.querySelectorAll(`.active-adventure-item[data-instance-id="${adv.id}"] .timer`).forEach(timerSpan => { 
+                        if(timerSpan) timerSpan.textContent = formatTimeLeft(timeLeftMs); 
+                    }); 
+                    if (timeLeftMs <= 0) { 
+                        completeAdventure(adv.id); 
+                        adventureCompletedThisTick = true; 
+                    } 
+                }); 
+                if (adventureCompletedThisTick && activeAdventures.length === 0 && sidebarActiveAdventuresList) { 
+                    renderActiveAdventuresInSidebar(); 
+                } 
                 
-                let baseDurationSeconds = durationHoursAsSeconds; 
-                if(equippedItems.Boots){ 
-                    const bootsData = craftableItemsData.find(item => item.id === equippedItems.Boots); 
-                    if(bootsData && bootsData.perk.type === "timeReduction") { 
-                        baseDurationSeconds = Math.max(1, baseDurationSeconds - bootsData.perk.value); 
-                    }
+                let potionsChanged = false; 
+                const now = Date.now(); 
+                activePotions.forEach(potion => { 
+                    if (potion.endTime) { 
+                        if (now >= potion.endTime) potionsChanged = true; 
+                        const potionItemDiv = Array.from(activePotionsList.children).find(child => child.innerHTML.includes(`<strong>${potion.name}</strong>`)); 
+                        if (potionItemDiv) { 
+                            const timerSpan = potionItemDiv.querySelector('.timer'); 
+                            if (timerSpan) timerSpan.textContent = formatTimeLeft(potion.endTime - now); 
+                        } 
+                    } 
+                }); 
+                if (potionsChanged) { 
+                    activePotions = activePotions.filter(p => p.endTime ? p.endTime > now : true); 
+                    renderActivePotions(); 
                 }
-                const returnTime = Date.now() + baseDurationSeconds * 1000;
-
-                const newActiveAdventure = { id: nextActiveAdventureId++, originalAdventureId: adventureIdBase, name: adventureName, adventurers: numAdventurersToSend, returnTime: returnTime, pvReward: pvReward, goldChance: goldChance }; 
-                activeAdventures.push(newActiveAdventure); 
-                updateStatsDisplay(); 
-                renderActiveAdventuresInSidebar(); 
-                button.disabled = true; if(selectElement) selectElement.disabled = true; 
-            }); });
-
-            adventureDropButtons.forEach(button => {
-                button.addEventListener('mouseenter', (event) => {
-                    const adventureId = event.target.dataset.adventureId;
-                    const popover = document.getElementById(`drops-popover-${adventureId}`);
-                    const adventureInfo = adventuresData[adventureId];
-                    if (popover && adventureInfo && adventureInfo.drops) {
-                        let dropsHtml = '<h5>Possible Drops:</h5><ul>';
-                        adventureInfo.drops.forEach(drop => {
-                            dropsHtml += `<li>${drop.qty}x ${drop.name} (${(drop.chance * 100).toFixed(2)}%)</li>`;
-                        });
-                        dropsHtml += '</ul>';
-                        popover.innerHTML = dropsHtml;
-                        popover.style.display = 'block';
+                
+                // Update raffle timers
+                let rafflesUpdated = false;
+                allRaffles.forEach(raffle => {
+                    if (raffle.status === 'active') {
+                        const timeLeftMs = raffle.endTime - Date.now();
+                        const timerSpan = document.querySelector(`.raffle-card[data-raffle-id="${raffle.id}"] .raffle-timer`);
+                        if (timerSpan) {
+                            timerSpan.textContent = formatTimeLeft(timeLeftMs);
+                        }
+                        if (timeLeftMs <= 0) {
+                            raffle.status = 'ended';
+                            rafflesUpdated = true;
+                        }
                     }
                 });
-                button.addEventListener('mouseleave', (event) => {
-                    const adventureId = event.target.dataset.adventureId;
-                    const popover = document.getElementById(`drops-popover-${adventureId}`);
-                    if (popover) {
-                        popover.style.display = 'none';
-                    }
-                });
-            });
+                if (rafflesUpdated && document.getElementById('whitelist-page').classList.contains('active')) {
+                    renderWhitelistRaffles();
+                }
+            }
             
-            updateStatsDisplay(); renderMaterials(); generateRandomQuests(); renderActiveAdventuresInSidebar(); renderActivePotions();
+            adventureSendButtons.forEach(button => { 
+                button.addEventListener('click', () => { 
+                    const adventureIdBase = button.dataset.adventureId; 
+                    
+                    const advConfig = adventureProgressionConfig.find(ac => ac.id === adventureIdBase);
+                    if (advConfig && advConfig.unlockQuestId) {
+                        const unlockingQuest = quests.find(q => q.id === advConfig.unlockQuestId);
+                        if (!unlockingQuest || !unlockingQuest.completed) {
+                            showCustomPopup(advConfig.unlockMessage, "Adventure Locked");
+                            return;
+                        }
+                    }
+
+                    const adventureName = button.dataset.adventureName; 
+                    const durationHours = parseInt(button.dataset.durationHours); 
+                    const pvReward = parseInt(button.dataset.pvReward); 
+                    const goldChance = parseFloat(button.dataset.goldChance); 
+                    const diamondChance = parseFloat(button.dataset.diamondChance) || 0; 
+                    const selectElement = document.getElementById(`num-adventurers-${adventureIdBase}`); 
+                    const numAdventurersToSend = parseInt(selectElement.value); 
+                    
+                    if (numAdventurersToSend <= 0) { showCustomPopup("Please select at least one adventurer.", "Action Needed"); return; } 
+                    if (numAdventurersToSend > totalAvailableAdventurers) { showCustomPopup(`Not enough adventurers available! You only have ${totalAvailableAdventurers}.`, "Adventurers Needed"); return; } 
+                    
+                    totalAvailableAdventurers -= numAdventurersToSend; 
+                    // TIME COMPRESSION: 1 game hour = 1 real second
+                    let baseDurationSeconds = durationHours; // Directly use hours as seconds
+                    if(equippedItems.Boots){ const bootsData = craftableItemsData.find(item => item.id === equippedItems.Boots); if(bootsData && bootsData.perk.type === "timeReduction") { baseDurationSeconds = Math.max(1, baseDurationSeconds - (bootsData.perk.value / 3600) ); /* Adjust perk value for compressed time */}}
+                    
+                    const returnTime = Date.now() + baseDurationSeconds * 1000; 
+                    const newActiveAdventure = { id: nextActiveAdventureId++, originalAdventureId: adventureIdBase, name: adventureName, adventurers: numAdventurersToSend, returnTime: returnTime, pvReward: pvReward, goldChance: goldChance, diamondChance: diamondChance }; 
+                    activeAdventures.push(newActiveAdventure); 
+                    updateStatsDisplay(); 
+                    renderActiveAdventuresInSidebar(); 
+                    updateAdventureDisplayStates(); 
+                    if (userNickname) saveGameStateToFirebase(userNickname, getCurrentGameState());
+                }); 
+            });
+            adventureDropButtons.forEach(button => { button.addEventListener('mouseenter', (event) => { const adventureId = event.target.dataset.adventureId; const popover = document.getElementById(`drops-popover-${adventureId}`); const adventureInfo = adventuresData[adventureId]; if (popover && adventureInfo && adventureInfo.drops) { let dropsHtml = '<h5>Possible Drops:</h5><ul>'; adventureInfo.drops.forEach(drop => { dropsHtml += `<li>${drop.qty}x ${drop.name} (${(drop.chance * 100).toFixed(3)}%)</li>`; }); dropsHtml += '</ul>'; popover.innerHTML = dropsHtml; popover.style.display = 'block'; } }); button.addEventListener('mouseleave', (event) => { const adventureId = event.target.dataset.adventureId; const popover = document.getElementById(`drops-popover-${adventureId}`); if (popover) { popover.style.display = 'none'; } }); });
+            if(swapGoldToDiamondBtn) { swapGoldToDiamondBtn.addEventListener('click', () => { const goldCost = 50; if (currentGold >= goldCost) { currentGold -= goldCost; currentDiamonds += 1; updateStatsDisplay(); showCustomPopup(`Swapped 50 Gold for 1 Diamond!`, "Swap Successful"); if (userNickname) saveGameStateToFirebase(userNickname, getCurrentGameState()); } else { showCustomPopup(`Not enough Gold! You need 50 Gold to swap for a Diamond.`, "Swap Failed"); } });}
+            
+            // --- Whitelist Raffle Logic ---
+            if (createRaffleForm) {
+                createRaffleForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const newRaffle = {
+                        id: 'raffle_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                        name: document.getElementById('raffleName').value,
+                        description: document.getElementById('raffleDescription').value,
+                        imageUrl: document.getElementById('raffleImageUrl').value || '',
+                        socials: {
+                            x: document.getElementById('raffleSocialX').value,
+                            discord: document.getElementById('raffleSocialDiscord').value
+                        },
+                        entryCost: {
+                            pv: parseInt(document.getElementById('raffleCostPV').value) || 0,
+                            gold: parseInt(document.getElementById('raffleCostGold').value) || 0,
+                            diamonds: parseInt(document.getElementById('raffleCostDiamonds').value) || 0
+                        },
+                        durationHours: parseInt(document.getElementById('raffleDurationHours').value) || 24,
+                        maxWinners: parseInt(document.getElementById('raffleMaxWinners').value) || 1,
+                        startTime: Date.now(),
+                        status: 'active', // active, ended, drawing, winners_announced
+                        entries: [],
+                        winners: []
+                    };
+                    // For demo: 1 game hour = 1 real second for raffle duration too
+                    newRaffle.endTime = newRaffle.startTime + newRaffle.durationHours * 1000; 
+
+                    allRaffles.push(newRaffle);
+                    renderWhitelistRaffles();
+                    showCustomPopup(`Raffle "${newRaffle.name}" created!`, "Admin Action");
+                    createRaffleForm.reset();
+                    // In a real app, save `allRaffles` to a central DB (Firestore `raffles` collection)
+                });
+            }
+
+            function renderWhitelistRaffles() {
+                if (!whitelistRafflesContainer) return;
+                whitelistRafflesContainer.innerHTML = '';
+
+                if (allRaffles.length === 0) {
+                    whitelistRafflesContainer.innerHTML = '<p style="text-align:center;">No active raffles at the moment. Check back soon!</p>';
+                    return;
+                }
+
+                allRaffles.sort((a, b) => b.startTime - a.startTime); // Show newest first
+
+                allRaffles.forEach(raffle => {
+                    const card = document.createElement('div');
+                    card.className = 'raffle-card';
+                    card.dataset.raffleId = raffle.id;
+
+                    const timeLeftMs = raffle.endTime - Date.now();
+                    let costHtml = '';
+                    if (raffle.entryCost.pv > 0) costHtml += `${raffle.entryCost.pv} <span class="pv">PV</span> `;
+                    if (raffle.entryCost.gold > 0) costHtml += `${raffle.entryCost.gold} <span class="gold">GOLD</span> `;
+                    if (raffle.entryCost.diamonds > 0) costHtml += `${raffle.entryCost.diamonds} <span class="diamond">DIAMONDS</span>`;
+                    if (costHtml === '') costHtml = 'Free Entry'; else costHtml = 'Cost: ' + costHtml;
+                    
+                    const alreadyEntered = playerRaffleEntries[raffle.id];
+
+                    card.innerHTML = `
+                        <div class="raffle-card-image ${raffle.imageUrl ? '' : 'placeholder'}" style="${raffle.imageUrl ? 'background-image: url('+raffle.imageUrl+');' : ''}">
+                           ${!raffle.imageUrl ? 'No Image' : ''}
+                        </div>
+                        <div class="raffle-card-content">
+                            <h4>${raffle.name}</h4>
+                            <p class="raffle-card-description">${raffle.description}</p>
+                            <div class="raffle-card-socials">
+                                ${raffle.socials.x ? `<a href="${raffle.socials.x}" target="_blank">Project X</a>` : ''}
+                                ${raffle.socials.discord ? `<a href="${raffle.socials.discord}" target="_blank">Project Discord</a>` : ''}
+                            </div>
+                            <p class="raffle-card-cost">${costHtml}</p>
+                            <p class="raffle-card-status">Status: ${raffle.status.replace('_', ' ')}</p>
+                            <p>Time Left: <span class="raffle-timer">${formatTimeLeft(timeLeftMs)}</span></p>
+                            <p>Entries: ${raffle.entries.length}</p>
+                            ${raffle.status === 'active' && !alreadyEntered ? `<button class="action-button enter-raffle-btn" data-raffle-id="${raffle.id}">Enter Raffle</button>` : ''}
+                            ${alreadyEntered ? '<p><strong>You have entered this raffle!</strong></p>' : ''}
+                            ${raffle.status === 'ended' && userNickname.toLowerCase() === 'ati' && raffle.winners.length === 0 ? `<button class="action-button draw-winners-btn" data-raffle-id="${raffle.id}">Draw Winners</button>` : ''}
+                            ${raffle.winners.length > 0 ? `<div><strong>Winners (${raffle.winners.length}/${raffle.maxWinners}):</strong><ul>${raffle.winners.map(w => `<li>${w}</li>`).join('')}</ul></div>` : ''}
+                        </div>
+                    `;
+                    whitelistRafflesContainer.appendChild(card);
+                });
+
+                whitelistRafflesContainer.querySelectorAll('.enter-raffle-btn').forEach(btn => {
+                    btn.addEventListener('click', handleEnterRaffle);
+                });
+                whitelistRafflesContainer.querySelectorAll('.draw-winners-btn').forEach(btn => {
+                    btn.addEventListener('click', handleDrawWinners);
+                });
+            }
+            
+            function handleEnterRaffle(event) {
+                const raffleId = event.target.dataset.raffleId;
+                const raffle = allRaffles.find(r => r.id === raffleId);
+                if (!raffle || raffle.status !== 'active' || playerRaffleEntries[raffle.id]) {
+                    showCustomPopup("Cannot enter this raffle. It might have ended, or you've already entered.", "Entry Failed");
+                    return;
+                }
+
+                // Check currency
+                if (currentPvTokens < raffle.entryCost.pv || currentGold < raffle.entryCost.gold || currentDiamonds < raffle.entryCost.diamonds) {
+                    showCustomPopup("Not enough currency to enter this raffle.", "Entry Failed");
+                    return;
+                }
+
+                // Deduct currency
+                currentPvTokens -= raffle.entryCost.pv;
+                currentGold -= raffle.entryCost.gold;
+                currentDiamonds -= raffle.entryCost.diamonds;
+                
+                raffle.entries.push(userNickname);
+                playerRaffleEntries[raffle.id] = true; // Mark as entered for this player
+
+                updateStatsDisplay();
+                renderWhitelistRaffles(); // Re-render to update button and entry count
+                showCustomPopup(`Successfully entered raffle: ${raffle.name}!`, "Raffle Entry");
+                if (userNickname) saveGameStateToFirebase(userNickname, getCurrentGameState()); // Save player's updated currency and entry status
+            }
+
+            function handleDrawWinners(event) {
+                if (userNickname.toLowerCase() !== 'ati') return;
+                const raffleId = event.target.dataset.raffleId;
+                const raffle = allRaffles.find(r => r.id === raffleId);
+
+                if (!raffle || raffle.status !== 'ended' || raffle.winners.length > 0) {
+                    showCustomPopup("Cannot draw winners. Raffle not ended or winners already drawn.", "Admin Action Failed");
+                    return;
+                }
+                
+                raffle.status = 'drawing';
+                renderWhitelistRaffles(); // Show "drawing" status
+
+                setTimeout(() => { // Simulate drawing delay
+                    if (raffle.entries.length === 0) {
+                        raffle.status = 'winners_announced'; // Or 'no_entries'
+                        showCustomPopup(`No entries for raffle: ${raffle.name}. No winners drawn.`, "Raffle Result");
+                        renderWhitelistRaffles();
+                        return;
+                    }
+
+                    let potentialWinners = [...new Set(raffle.entries)]; // Unique entries
+                    for (let i = 0; i < raffle.maxWinners && potentialWinners.length > 0; i++) {
+                        const winnerIndex = Math.floor(Math.random() * potentialWinners.length);
+                        raffle.winners.push(potentialWinners.splice(winnerIndex, 1)[0]);
+                    }
+                    raffle.status = 'winners_announced';
+                    showCustomPopup(`Winners drawn for raffle: ${raffle.name}! Check the list.`, "Raffle Result");
+                    renderWhitelistRaffles();
+                     // In a real app, raffle data (winners, status) would be updated in the central DB
+                }, 1000);
+            }
+
+
+            initializeTheme(); 
+            if (!localStorage.getItem('hasLoadedOncePVA')) { 
+                playerAdventurerLevel = 1; 
+                generateRandomQuests(); 
+                localStorage.setItem('hasLoadedOncePVA', 'true');
+            }
+            
+            renderQuests(); 
+            renderDailyRewards(); 
+            renderInventory();
+            updateAdventureDisplayStates(); // Initial call to set adventure lock states
+            
             setInterval(updateTimers, 1000);
             document.querySelectorAll('.adventure-num-select').forEach(select => { select.value = "5"; });
-            if(!gameContainer.classList.contains('hidden')) { showPage('adventures-page'); }
-
+            
             const connectWalletBtn = document.getElementById('connectWalletBtn'); const walletDropdown = document.getElementById('walletDropdown'); const walletOptions = walletDropdown.querySelectorAll('li'); const walletAddressDisplay = document.getElementById('walletAddressDisplay');
             let connectedAccount = null; let connectedWalletName = null;
             function updateWalletDisplay(account, walletName = '') { if (account) { const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`; if(connectWalletBtn) { connectWalletBtn.textContent = `${walletName}: ${shortAddress}`; connectWalletBtn.classList.add('connected'); } if(walletAddressDisplay) walletAddressDisplay.textContent = `Wallet: ${account}`; } else { if(connectWalletBtn) { connectWalletBtn.textContent = 'CONNECT WALLET'; connectWalletBtn.classList.remove('connected'); } if(walletAddressDisplay) walletAddressDisplay.textContent = ''; } }
@@ -574,7 +1186,8 @@
             async function connectUnisat() { try { if (typeof window.unisat !== 'undefined') { const accounts = await window.unisat.requestAccounts(); if (accounts && accounts.length > 0) { connectedAccount = accounts[0]; connectedWalletName = 'UniSat'; updateWalletDisplay(connectedAccount, 'UniSat'); window.unisat.on('accountsChanged', (newAccs) => { if (connectedWalletName === 'UniSat') { connectedAccount = (newAccs && newAccs.length > 0) ? newAccs[0] : null; if (!connectedAccount) connectedWalletName = null; updateWalletDisplay(connectedAccount, connectedAccount ? 'UniSat' : ''); } }); } } else { window.open('https://unisat.io/', '_blank'); } } catch (e) { console.error('UniSat error:', e); showCustomPopup('An error occurred with UniSat Wallet.', 'Wallet Error'); } }
             if (walletOptions) { walletOptions.forEach(option => { option.addEventListener('click', async (event) => { const walletType = event.target.dataset.wallet; if(walletDropdown) walletDropdown.style.display = 'none'; connectedAccount = null; connectedWalletName = null; updateWalletDisplay(null); if (walletType === 'unisat') await connectUnisat(); else if (walletType && walletType.startsWith('satsconnect_')) { await connectWithSatsConnect(walletType.split('_')[1]); } }); }); }
 
-        });
+        }); // End of 'firebaseReady' event listener
     </script>
 </body>
 </html>
+```
