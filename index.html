@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -148,10 +147,22 @@
             font-size: 1.2em; padding: 10px 20px; min-width: 100px;
         }
 
-        .game-container { width: 95%; max-width: 1600px; margin: 20px auto; border: 3px solid var(--border-color); padding: 15px; background-color: var(--game-container-bg); box-shadow: 0px 0px 15px rgba(0,0,0,0.5); box-sizing: border-box; display: flex; flex-direction: column; transition: background-color 0.3s, border-color 0.3s; }
+        .game-container { 
+            width: 98%; /* EXPANDED */
+            max-width: none; /* EXPANDED */
+            margin: 10px auto; /* Adjusted margin */
+            border: 3px solid var(--border-color); 
+            padding: 15px; 
+            background-color: var(--game-container-bg); 
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.5); 
+            box-sizing: border-box; 
+            display: flex; 
+            flex-direction: column; 
+            transition: background-color 0.3s, border-color 0.3s; 
+        }
         header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 2px solid var(--border-color); margin-bottom: 15px; width: 100%; transition: border-color 0.3s; }
-        header h1 { font-size: 2.5em; margin: 0; letter-spacing: 2px; color: var(--header-text-color); transition: color 0.3s; flex-shrink: 0; margin-right: auto; /* Pushes other controls to the right */}
-        .header-controls { display: flex; align-items: center; gap: 25px; /* Increased gap */ }
+        header h1 { font-size: 2.5em; margin: 0; letter-spacing: 2px; color: var(--header-text-color); transition: color 0.3s; flex-shrink: 0; margin-right: auto; }
+        .header-controls { display: flex; align-items: center; gap: 20px; }
         .player-info-wallet { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
         .player-stats { text-align: right; font-size: 1em; } 
         .player-stats .pv { color: var(--highlight-color-pv); font-weight: bold; } 
@@ -159,50 +170,59 @@
         .player-stats .diamond { color: var(--highlight-color-diamond); font-weight: bold; }
         .player-stats .wallet-address { font-size: 0.9em; color: var(--highlight-color-connected); word-break: break-all; }
         .wallet-connector { position: relative; }
-        .connect-wallet-btn, .menu-button, .social-btn-link button, .adventure-send-btn, .action-button, .craft-button, .equip-btn, .unequip-btn, .swap-btn { background-color: var(--button-bg); border: 2px solid var(--button-border); padding: 6px 12px; color: var(--button-text-color); cursor: pointer; font-family: 'VT323', monospace; font-size: 1em; text-align: center; transition: background-color 0.3s, border-color 0.3s, color 0.3s; }
+        .connect-wallet-btn, .menu-button, .social-btn-link button, .adventure-send-btn, .action-button, .craft-button, .equip-btn, .unequip-btn, .swap-btn, .raffle-action-btn { background-color: var(--button-bg); border: 2px solid var(--button-border); padding: 6px 12px; color: var(--button-text-color); cursor: pointer; font-family: 'VT323', monospace; font-size: 1em; text-align: center; transition: background-color 0.3s, border-color 0.3s, color 0.3s; }
         .connect-wallet-btn, .menu-button { min-width: 160px; }
-        .header-controls .socials-nav { /* Styles for socials in header */
-            padding: 0; /* Remove padding */
-            border: none; /* Remove border */
-            background-color: transparent; /* Remove background */
-            display: flex; /* To align title and buttons */
+        .header-controls .socials-nav { 
+            padding: 0; 
+            border: none; 
+            background-color: transparent; 
+            display: flex; 
             align-items: center;
             gap: 10px;
         }
         .header-controls .socials-nav .social-title {
-            font-size: 1.1em; /* Adjusted size for header */
-            margin-bottom: 0; /* Remove bottom margin */
+            font-size: 1.1em; 
+            margin-bottom: 0; 
         }
         .header-controls .socials-nav .social-buttons {
-             /* display: flex; already set on parent */
-            gap: 8px; /* Spacing between X and Discord */
+            gap: 10px; /* Increased gap for icons */
+            display: flex; 
+            align-items: center; 
         }
-         .header-controls .socials-nav .social-btn-link button {
-            min-width: 60px; /* Adjust button width if needed */
-            padding: 5px 8px;
+        .social-icon-link img {
+            height: 30px; /* Adjust size as needed */
+            width: auto;
+            vertical-align: middle; 
+            border: 1px solid var(--button-border); 
+            padding: 3px;
+            background-color: var(--button-bg);
+            border-radius: 4px;
+            transition: filter 0.2s;
         }
+         .social-icon-link img:hover {
+            filter: brightness(0.85);
+         }
 
-        body:not(.dark-mode) .connect-wallet-btn:hover, body:not(.dark-mode) .menu-button:hover, body:not(.dark-mode) .social-btn-link button:hover, body:not(.dark-mode) .adventure-send-btn:hover, body:not(.dark-mode) .action-button:hover, body:not(.dark-mode) .craft-button:hover, body:not(.dark-mode) .equip-btn:hover, body:not(.dark-mode) .unequip-btn:hover, body:not(.dark-mode) .swap-btn:hover { background-color: #cccccc; }
-        body.dark-mode .connect-wallet-btn:hover, body.dark-mode .menu-button:hover, body.dark-mode .social-btn-link button:hover, body.dark-mode .adventure-send-btn:hover, body.dark-mode .action-button:hover, body.dark-mode .craft-button:hover, body.dark-mode .equip-btn:hover, body.dark-mode .unequip-btn:hover, body.dark-mode .swap-btn:hover { background-color: #555555;}
+
+        body:not(.dark-mode) .connect-wallet-btn:hover, body:not(.dark-mode) .menu-button:hover, body:not(.dark-mode) .social-btn-link button:hover, body:not(.dark-mode) .adventure-send-btn:hover, body:not(.dark-mode) .action-button:hover, body:not(.dark-mode) .craft-button:hover, body:not(.dark-mode) .equip-btn:hover, body:not(.dark-mode) .unequip-btn:hover, body:not(.dark-mode) .swap-btn:hover, body:not(.dark-mode) .raffle-action-btn:hover { background-color: #cccccc; }
+        body.dark-mode .connect-wallet-btn:hover, body.dark-mode .menu-button:hover, body.dark-mode .social-btn-link button:hover, body.dark-mode .adventure-send-btn:hover, body.dark-mode .action-button:hover, body.dark-mode .craft-button:hover, body.dark-mode .equip-btn:hover, body.dark-mode .unequip-btn:hover, body.dark-mode .swap-btn:hover, body.dark-mode .raffle-action-btn:hover { background-color: #555555;}
         .connect-wallet-btn.connected { background-color: var(--highlight-color-connected); color: white; border-color: var(--highlight-color-connected); }
         .wallet-dropdown { display: none; position: absolute; top: 100%; right: 0; background-color: var(--dropdown-bg); color: var(--text-color); border: 2px solid var(--border-color); list-style: none; padding: 0; margin: 5px 0 0 0; width: 100%; z-index: 10; box-shadow: 0px 3px 7px rgba(0,0,0,0.2); transition: background-color 0.3s, border-color 0.3s, color 0.3s; }
         .wallet-dropdown li { padding: 8px 12px; cursor: pointer; border-bottom: 1px solid var(--border-color); text-align: center; transition: background-color 0.3s, border-color 0.3s; } .wallet-dropdown li:last-child { border-bottom: none; }
         body:not(.dark-mode) .wallet-dropdown li:hover { background-color: #f0f0f0; } body.dark-mode .wallet-dropdown li:hover { background-color: #4a4a4a; }
         .main-content { display: flex; gap: 20px; width: 100%; flex-grow: 1; }
         .left-sidebar { width: 300px; display: flex; flex-direction: column; gap: 20px; flex-shrink: 0; }
-        .twitter-feed-container { border: 2px solid var(--border-color); padding: 10px; background-color: var(--twitter-feed-bg); height: 400px; min-height: 300px; overflow-y: auto; display: flex; flex-direction: column; transition: background-color 0.3s, border-color 0.3s; }
+        .twitter-feed-container { border: 2px solid var(--border-color); padding: 10px; background-color: var(--twitter-feed-bg); height: auto; min-height: 250px; /* Adjusted */ overflow-y: auto; display: flex; flex-direction: column; transition: background-color 0.3s, border-color 0.3s; margin-top: 20px; /* Added margin */ }
         .twitter-feed-container .twitter-timeline { width: 100% !important; }
-        #availableAdventurersDisplay, .left-sidebar .socials-nav, .materials-display { /* socials-nav in sidebar specific styling */
+        #availableAdventurersDisplay, .materials-display { 
             border: 2px solid var(--border-color); padding: 10px; background-color: var(--section-bg); transition: background-color 0.3s, border-color 0.3s;
         }
-        #availableAdventurersDisplay { text-align:center; font-size: 1.2em; margin-top: 10px;}
+        #availableAdventurersDisplay { text-align:center; font-size: 1.2em; } /* Removed margin-top */
         .socials-nav .social-title, .adventure-controls label, .page-title, .materials-display h4, .adventures-label, #activeAdventuresDisplay_page h3, 
         .equipment-slots-container h4, #inventory-page > h4, .shop-section-wrapper h3, .crafting-section-wrapper h3, .swap-section h3, #whitelist-page h3, #adminRafflePanel h3 { 
             color: var(--label-color); font-weight: bold; transition: color 0.3s; 
         }
-        .left-sidebar .socials-nav .social-title { font-size: 1.2em; } /* Specific to sidebar socials */
         .materials-display h4 {font-size: 1.2em; margin-top:0; margin-bottom: 8px;} .materials-display ul { list-style: none; padding: 0; margin: 5px 0 0 0; font-size: 1em; } .materials-display li { margin-bottom: 3px; }
-        .socials-nav .social-buttons { display: flex; justify-content: space-around; } .social-btn-link { text-decoration: none; width: 45%; } .social-btn-link button { width: 100%; min-width: auto; padding: 5px;}
         .main-content-area { flex-grow: 1; display: flex; }
         .page-content { display: none; width: 100%; flex-direction: column; padding: 0 15px; box-sizing: border-box; overflow-y: auto; flex-grow: 1;} 
         .page-content.active { display: flex; }
@@ -216,28 +236,27 @@
         .adventure-lock-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(30, 30, 30, 0.85); /* Darker overlay for better text visibility */
+            background-color: rgba(30, 30, 30, 0.85); 
             color: var(--highlight-color-danger);
             display: flex;
             justify-content: center;
             align-items: center;
             text-align: center;
-            font-size: 1.1em; /* Adjusted for clarity */
+            font-size: 1.1em; 
             font-weight: bold;
             padding: 15px;
             box-sizing: border-box;
-            border-radius: 8px; /* Match adventure block */
+            border-radius: 8px; 
             z-index: 5; 
             line-height: 1.4;
         }
         .adventure-lock-overlay.hidden {
             display: none;
         }
-        /* Styling for when adventure is locked by progression */
         .adventure.locked-by-progression .adventure-send-btn,
         .adventure.locked-by-progression .adventure-num-select {
             filter: grayscale(100%) opacity(0.7);
-            cursor: not-allowed !important; /* Ensure cursor shows not-allowed */
+            cursor: not-allowed !important; 
         }
 
 
@@ -245,7 +264,7 @@
         .adventure-icon.tree { background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblzgkncylseo57qr7kyhsxdgb3bq2aghcmj6gdf2ihhagpxp3uoy/adventure1.png'); } 
         .adventure-icon.mountain { background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblzgkncylseo57qr7kyhsxdgb3bq2aghcmj6gdf2ihhagpxp3uoy/adventure2.png'); } 
         .adventure-icon.fire-fields { background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblzgkncylseo57qr7kyhsxdgb3bq2aghcmj6gdf2ihhagpxp3uoy/adventure3.png'); }
-        .adventure-icon.tomb { background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeign5woq5hi2ze3353d7a6fditxbrpexu4x2eidyxs3lvlhpwdnw6y'); }
+        .adventure-icon.tomb { background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeignh3fvjn5cxire5d52foozgud23boulezgssmw6egepvoty5vk3q'); }
         .adventure-main-info { flex-grow: 1; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; } 
         .adventure-content { display: flex; flex-direction: column; gap: 10px; } 
         .adventure-details { font-size: 1.1em; line-height: 1.5; } 
@@ -357,7 +376,7 @@
         .swap-btn { padding: 8px 15px; font-size: 1.1em; }
 
         /* Whitelist Page Styles */
-        #whitelist-page { align-items: center; } /* Corrected: Removed display:flex and flex-direction */
+        #whitelist-page { align-items: center; } 
         #adminRafflePanel {
             background-color: var(--section-bg);
             padding: 20px;
@@ -430,6 +449,7 @@
         .raffle-card-cost .diamond { color: var(--highlight-color-diamond); }
         .raffle-card-status { margin-top: 10px; font-weight: bold; }
         .raffle-card-winners ul { list-style: disc; padding-left: 20px; margin-top: 5px;}
+        .raffle-admin-actions button { margin-right: 10px; margin-top:5px; }
 
     </style>
 </head>
@@ -457,8 +477,15 @@
                 <nav class="socials-nav" id="headerSocialsNav"> 
                     <div class="social-title">SOCIALS</div> 
                     <div class="social-buttons"> 
-                        <a href="https://x.com/nvart_" target="_blank" class="social-btn-link"><button>X</button></a> 
-                        <a href="https://discord.com/invite/4CEtXAFf3x" target="_blank" class="social-btn-link"><button>DISCORD</button></a> 
+                        <a href="https://x.com/nvart_" target="_blank" class="social-icon-link">
+                            <img src="https://beige-managing-snail-510.mypinata.cloud/ipfs/bafkreic6eqw6jyae55x3uhqtvrbt2woamgifhtck5vquluwlwvl2yhjj7q" alt="X/Twitter">
+                        </a> 
+                        <a href="https://discord.com/invite/4CEtXAFf3x" target="_blank" class="social-icon-link">
+                            <img src="https://beige-managing-snail-510.mypinata.cloud/ipfs/bafkreidjwxzcb5qeb76qjgo4ft5ha3fuskaxkeho7ppv7umoc5ihm5ohwq" alt="Discord">
+                        </a> 
+                        <a href="https://magiceden.io/tr/ordinals/marketplace/punkvoyage" target="_blank" title="Punk Voyage on Magic Eden" class="social-icon-link">
+                            <img src="https://beige-managing-snail-510.mypinata.cloud/ipfs/bafkreihixbhp2x6w7w5odpo5zyt2dbqdd54f3eepgvmt3zsfg7ax6jnftu" alt="Magic Eden">
+                        </a>
                     </div> 
                 </nav>
                 <div class="dark-mode-switch"> 
@@ -469,9 +496,9 @@
         </header>
         <main class="main-content">
             <aside class="left-sidebar"> 
-                <div class="twitter-feed-container" id="twitter-widget-container"> <a class="twitter-timeline" data-dnt="true" href="https://twitter.com/nvart_?ref_src=twsrc%5Etfw">Tweets by nvart_</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> </div> 
                 <div id="availableAdventurersDisplay"> Available Adventurers: <span id="availableAdventurersCount">5</span> </div> 
                 <div class="materials-display" id="materialsDisplay"> <h4>MY MATERIALS</h4> <ul id="materialsList"></ul> </div> 
+                <div class="twitter-feed-container" id="twitter-widget-container"> <a class="twitter-timeline" data-dnt="true" href="https://twitter.com/nvart_?ref_src=twsrc%5Etfw">Tweets by nvart_</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> </div> 
             </aside>
             <div class="main-content-area">
                 <section id="adventures-page" class="page-content active"> 
@@ -546,7 +573,7 @@
                                 <input type="number" id="raffleCostDiamonds" value="0" min="0">
                             </div>
                              <div class="admin-form-group">
-                                <label for="raffleDurationHours">Duration (Hours):</label>
+                                <label for="raffleDurationHours">Duration (Hours - game time):</label>
                                 <input type="number" id="raffleDurationHours" value="24" min="1" required>
                             </div>
                             <div class="admin-form-group">
@@ -575,7 +602,7 @@
 
     <script type="module" id="firebaseModule">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, Timestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, Timestamp, query, where, orderBy, getDocs, addDoc, runTransaction, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js"; 
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-analytics.js";
 
         const firebaseConfig = {
@@ -587,36 +614,34 @@
             appId: "1:929081617432:web:1603e242f9cceb79ee676d",
             measurementId: "G-R5ESCD03L9"
         };
+        
 
         try {
             const app = initializeApp(firebaseConfig);
             const db = getFirestore(app);
-            const analytics = getAnalytics(app);
+            const analytics = getAnalytics(app); 
 
             window.firebaseApp = app;
             window.firebaseDb = db;
-            window.firebaseFirestore = { doc, getDoc, setDoc, collection, Timestamp };
+            window.firebaseFirestore = { doc, getDoc, setDoc, collection, Timestamp, query, where, orderBy, getDocs, addDoc, runTransaction, updateDoc, deleteDoc }; 
             
             document.dispatchEvent(new CustomEvent('firebaseReady'));
             console.log("Firebase Initialized Successfully and 'firebaseReady' event dispatched.");
 
         } catch (error) {
             console.error("Firebase initialization failed:", error);
-            // Attempt to show popup even if DOMContentLoaded hasn't fully run for main script
-            // This is a best-effort for critical Firebase init errors.
-            // Ensure these elements exist if this code runs before main DOMContentLoaded
-            setTimeout(() => { // Delay slightly to give DOM a chance
+            setTimeout(() => { 
                 const popupTitle = document.getElementById('customPopupTitle');
                 const popupMessage = document.getElementById('customPopupMessage');
                 const popupOverlay = document.getElementById('customPopupOverlay');
                 const popupItself = document.getElementById('customPopup');
                 if (popupTitle && popupMessage && popupOverlay && popupItself) {
                      popupTitle.textContent = "Critical Error";
-                     popupMessage.textContent = "Failed to connect to game services. Please try refreshing. Error: " + error.message;
+                     popupMessage.textContent = "Failed to connect to game services. Please ensure your Firebase configuration is correct and you are online. Error: " + error.message;
                      popupOverlay.classList.remove('hidden');
                      popupItself.classList.remove('hidden');
                 } else {
-                    alert("CRITICAL FIREBASE ERROR: " + error.message); // Fallback alert
+                    alert("CRITICAL FIREBASE ERROR: " + error.message + "\nCheck Firebase config and internet connection."); 
                 }
             }, 100);
         }
@@ -627,7 +652,7 @@
             console.log("'firebaseReady' event received by main script. Initializing game logic.");
             
             const db = window.firebaseDb;
-            const { doc, getDoc, setDoc, collection, Timestamp } = window.firebaseFirestore;
+            const { doc, getDoc, setDoc, collection, Timestamp, query, where, orderBy, getDocs, addDoc, runTransaction, updateDoc, deleteDoc } = window.firebaseFirestore;
 
             // Define ALL HTML element consts here
             const welcomeScreen = document.getElementById('welcomeScreen');
@@ -650,7 +675,7 @@
             const activePotionsList = document.getElementById('activePotionsList');
             const availableAdventurersCountElement = document.getElementById('availableAdventurersCount');
             const menuItems = document.querySelectorAll('.right-sidebar-menu .main-menu-nav-list li');
-            const pageContents = document.querySelectorAll('.main-content-area .page-content'); // CRITICAL for showPage
+            const pageContents = document.querySelectorAll('.main-content-area .page-content'); 
             const questListDiv = document.getElementById('questList');
             const shopItemsDiv = document.getElementById('shopItems');
             const materialsListDiv = document.getElementById('materialsList');
@@ -690,90 +715,14 @@
             let allRaffles = []; 
             let playerRaffleEntries = {}; 
             
-            // Pre-populate with a sample raffle for demo purposes
-            const DEMO_RAFFLE_DURATION_HOURS = 1; // Game hours for demo raffle
-            const DEMO_RAFFLE_REAL_DURATION_SECONDS = DEMO_RAFFLE_DURATION_HOURS; // 1 game hour = 1 real second
-            allRaffles.push({
-                id: 'raffle_demo_001',
-                name: "Exclusive Early Access WL",
-                description: "Get a chance to be whitelisted for the upcoming ultra-secret Project X mint! Limited spots available for our dedicated voyagers.",
-                imageUrl: "https://beige-managing-snail-510.mypinata.cloud/ipfs/bafkreihdhsuoqpvhyzbugxixxay3sivq7xdqnsfn5qwaxv5nmvyifxb7ai", 
-                socials: { x: "https://x.com/nvart_", discord: "https://discord.com/invite/4CEtXAFf3x" },
-                entryCost: { pv: 50, gold: 5, diamonds: 0 },
-                durationHours: DEMO_RAFFLE_DURATION_HOURS, 
-                maxWinners: 3,
-                startTime: Date.now() - (DEMO_RAFFLE_REAL_DURATION_SECONDS * 1000 / 2), // Start it as if it's halfway through
-                endTime: Date.now() + (DEMO_RAFFLE_REAL_DURATION_SECONDS * 1000 / 2),
-                status: 'active',
-                entries: [], 
-                winners: []  
-            });
-             allRaffles.push({
-                id: 'raffle_demo_002',
-                name: "Super Rare Item Drop Preview",
-                description: "Be one of the first to see and potentially win a super rare upcoming in-game item!",
-                imageUrl: "https://beige-managing-snail-510.mypinata.cloud/ipfs/bafkreicq5b3n77sdlekqcmd3y6x7vwmcw3odxzahrunxfifc7wk3y2dane", 
-                socials: { x: "https://x.com/nvart_", discord: "https://discord.com/invite/4CEtXAFf3x" },
-                entryCost: { pv: 10, gold: 1, diamonds: 1 },
-                durationHours: 2, 
-                maxWinners: 1,
-                startTime: Date.now() - (2 * 1000 * 2), // Start this one further in the past so it might be ended
-                endTime: Date.now() - (2 * 1000),      // End it sooner
-                status: 'active', // Will be updated by timer if endTime is past
-                entries: [], 
-                winners: []  
-            });
-
-
-            // Game Data
-            const adventuresData = { 
-                "1": { name: "Spirit Forest", drops: [ { name: "Leather", chance: 0.05, qty: 1}, { name: "Wood", chance: 0.10, qty: 1}, { name: "Clover", chance: 0.01, qty: 1}, { name: "Fabric", chance: 0.03, qty: 1} ] }, 
-                "2": { name: "Mountain of the Marowan", drops: [ { name: "Iron", chance: 0.05, qty: 1}, { name: "Gizmo Tail", chance: 0.01, qty: 1}, { name: "Stone", chance: 0.10, qty: 1} ] }, 
-                "3": { name: "Fire Fields of Flyinals", adventurerRequirement: 2, 
-                       drops: [ { name: "Obsidian", chance: 0.01, qty: 1}, { name: "Bitcoin", chance: 0.00001, qty: 1}, { name: "Flame Essence", chance: 0.05, qty: 1} ] },
-                "4": { 
-                    name: "Tomb of the Death Riders", 
-                    adventurerRequirement: 5, 
-                    drops: [ 
-                        { name: "Bone", chance: 0.15, qty: 1}, 
-                        { name: "Essence of Death", chance: 0.10, qty: 1}, 
-                        { name: "Bitcoin", chance: 0.0001, qty: 1}, 
-                        { name: "Rider's Sigil", chance: 0.05, qty: 1},
-                        { name: "Rider Scroll", chance: 0.005, qty: 1}, 
-                        { name: "Ancient Tablet Fragment", chance: 0.02, qty: 1},
-                        { name: "Shadowgem", chance: 0.008, qty: 1},
-                        { name: "Cursed Band", chance: 0.002, qty: 1} 
-                    ] 
-                } 
-            };
-            const craftableItemsData = [ 
-                { id: "boots1", name: "Warped Boots", type: "Boots", description: "Reduces adventure time by 5 minutes.", perk: { type: "timeReduction", value: 300 }, recipe: { "Leather": 5, "Fabric": 3 }, imgColor: "var(--item-placeholder-boots)" }, 
-                { id: "amulet1", name: "Amulet of Greed", type: "Amulet", description: "Increases Gold find chance by +50% of current chance.", perk: { type: "goldChanceIncrease", multiplier: 0.5 }, recipe: { "Iron": 3, "Gizmo Tail": 1 }, imgColor: "var(--item-placeholder-amulet)" }, 
-                { id: "rucksack1", name: "Efficient Rucksack", type: "Rucksack", description: "+5% PV tokens from adventures.", perk: { type: "pvBonus", multiplier: 0.05 }, recipe: { "Fabric": 5, "Leather": 2 }, imgColor: "var(--item-placeholder-rucksack)" }, 
-                { id: "trinket1", name: "Lucky Rabbit's Foot", type: "Trinket", description: "Increases material find chance by +30% (additive).", perk: { type: "materialChanceIncrease", additive: 0.30 }, recipe: { "Clover": 3, "Bone": 2 }, imgColor: "var(--item-placeholder-trinket)" },
-                { id: "weapon1", name: "Rider's Blade", type: "Weapon", description: "A blade echoing with the cries of the fallen. (+5 Combat)", perk: {type: "combatBoost", value: 5}, recipe: { "Rider's Sigil": 2, "Essence of Death": 3, "Iron": 5}, imgColor: "var(--item-placeholder-weapon)"},
-                { id: "armour1", name: "Shadow-Woven Hauberk", type: "Armour", description: "Provides moderate protection. (+10 Defense)", perk: {type: "defenseBoost", value: 10}, recipe: {"Obsidian": 5, "Essence of Death": 2, "Shadowgem": 1}, imgColor: "var(--item-placeholder-armour)"},
-                { id: "helmet1", name: "Helm of the Silent Watcher", type: "Helmet", description: "Offers a gaze that pierces the veil. (+3 Perception)", perk: {type: "perceptionBoost", value: 3}, recipe: {"Iron": 4, "Rider's Sigil": 1, "Shadowgem": 1}, imgColor: "var(--item-placeholder-helmet)"},
-                { id: "ring_warding", name: "Ring of Minor Warding", type: "Ring", description: "Offers slight protection against mishaps. (+1 Luck)", perk: {type: "luck", value: 1}, recipe: {"Stone": 10, "Clover": 5}, imgColor: "var(--item-placeholder-ring)"},
-                { id: "ring_swiftness", name: "Band of Swiftness", type: "Ring", description: "Slightly reduces adventure times. (-1 min)", perk: {type: "timeReduction", value: 60}, recipe: {"Leather": 8, "Gizmo Tail": 3}, imgColor: "var(--item-placeholder-ring)"},
-                { id: "ring_cursedpower", name: "Cursed Band of Power", type: "Ring", description: "Grants power, but at a cost. (+2 Power)", perk: {type: "powerBoost", value: 2}, recipe: {"Rider's Sigil": 3, "Shadowgem": 2, "Essence of Death": 1}, imgColor: "var(--item-placeholder-ring)"}
-            ];
+            // Game Data (Adventure, Crafting, Shop, Quests, Daily Rewards)
+            const adventuresData = { "1": { name: "Spirit Forest", drops: [ { name: "Leather", chance: 0.05, qty: 1}, { name: "Wood", chance: 0.10, qty: 1}, { name: "Clover", chance: 0.01, qty: 1}, { name: "Fabric", chance: 0.03, qty: 1} ] }, "2": { name: "Mountain of the Marowan", drops: [ { name: "Iron", chance: 0.05, qty: 1}, { name: "Gizmo Tail", chance: 0.01, qty: 1}, { name: "Stone", chance: 0.10, qty: 1} ] }, "3": { name: "Fire Fields of Flyinals", adventurerRequirement: 2, drops: [ { name: "Obsidian", chance: 0.01, qty: 1}, { name: "Bitcoin", chance: 0.00001, qty: 1}, { name: "Flame Essence", chance: 0.05, qty: 1} ] }, "4": { name: "Tomb of the Death Riders", adventurerRequirement: 5, drops: [ { name: "Bone", chance: 0.15, qty: 1}, { name: "Essence of Death", chance: 0.10, qty: 1}, { name: "Bitcoin", chance: 0.0001, qty: 1},  { name: "Rider's Sigil", chance: 0.05, qty: 1}, { name: "Rider Scroll", chance: 0.005, qty: 1}, { name: "Ancient Tablet Fragment", chance: 0.02, qty: 1}, { name: "Shadowgem", chance: 0.008, qty: 1}, { name: "Cursed Band", chance: 0.002, qty: 1} ] } };
+            const craftableItemsData = [ { id: "boots1", name: "Warped Boots", type: "Boots", description: "Reduces adventure time by 5 minutes.", perk: { type: "timeReduction", value: 300 }, recipe: { "Leather": 5, "Fabric": 3 }, imgColor: "var(--item-placeholder-boots)" }, { id: "amulet1", name: "Amulet of Greed", type: "Amulet", description: "Increases Gold find chance by +50% of current chance.", perk: { type: "goldChanceIncrease", multiplier: 0.5 }, recipe: { "Iron": 3, "Gizmo Tail": 1 }, imgColor: "var(--item-placeholder-amulet)" }, { id: "rucksack1", name: "Efficient Rucksack", type: "Rucksack", description: "+5% PV tokens from adventures.", perk: { type: "pvBonus", multiplier: 0.05 }, recipe: { "Fabric": 5, "Leather": 2 }, imgColor: "var(--item-placeholder-rucksack)" }, { id: "trinket1", name: "Lucky Rabbit's Foot", type: "Trinket", description: "Increases material find chance by +30% (additive).", perk: { type: "materialChanceIncrease", additive: 0.30 }, recipe: { "Clover": 3, "Bone": 2 }, imgColor: "var(--item-placeholder-trinket)" }, { id: "weapon1", name: "Rider's Blade", type: "Weapon", description: "A blade echoing with the cries of the fallen. (+5 Combat)", perk: {type: "combatBoost", value: 5}, recipe: { "Rider's Sigil": 2, "Essence of Death": 3, "Iron": 5}, imgColor: "var(--item-placeholder-weapon)"}, { id: "armour1", name: "Shadow-Woven Hauberk", type: "Armour", description: "Provides moderate protection. (+10 Defense)", perk: {type: "defenseBoost", value: 10}, recipe: {"Obsidian": 5, "Essence of Death": 2, "Shadowgem": 1}, imgColor: "var(--item-placeholder-armour)"}, { id: "helmet1", name: "Helm of the Silent Watcher", type: "Helmet", description: "Offers a gaze that pierces the veil. (+3 Perception)", perk: {type: "perceptionBoost", value: 3}, recipe: {"Iron": 4, "Rider's Sigil": 1, "Shadowgem": 1}, imgColor: "var(--item-placeholder-helmet)"}, { id: "ring_warding", name: "Ring of Minor Warding", type: "Ring", description: "Offers slight protection against mishaps. (+1 Luck)", perk: {type: "luck", value: 1}, recipe: {"Stone": 10, "Clover": 5}, imgColor: "var(--item-placeholder-ring)"}, { id: "ring_swiftness", name: "Band of Swiftness", type: "Ring", description: "Slightly reduces adventure times. (-1 min)", perk: {type: "timeReduction", value: 60}, recipe: {"Leather": 8, "Gizmo Tail": 3}, imgColor: "var(--item-placeholder-ring)"}, { id: "ring_cursedpower", name: "Cursed Band of Power", type: "Ring", description: "Grants power, but at a cost. (+2 Power)", perk: {type: "powerBoost", value: 2}, recipe: {"Rider's Sigil": 3, "Shadowgem": 2, "Essence of Death": 1}, imgColor: "var(--item-placeholder-ring)"}];
             const shopItemsData = [ { id: "potion2", name: "PV Doubler (1 Hour)", description: "Doubles PV rewards from adventures for 1 hour.", price: 200, imgColor: "var(--item-placeholder-potion2)", type: "buff", durationSeconds: 3600, effect: { type: "pvMultiplier", value: 2 } }, { id: "potion3", name: "Gold Magnet (3 Adventures)", description: "Adds +5% flat chance of finding gold on next 3 adventures.", price: 150, imgColor: "var(--item-placeholder-potion3)", type: "buff", durationAdventures: 3, effect: { type: "goldChanceBonus", flatValue: 0.05 } }, ];
-            const quests = [ 
-                { id: 1, text: "Complete Spirit Forest 5 times", reward: "50 PV", completed: false, progress: 0, target: 5, adventureName: "Spirit Forest" }, 
-                { id: 2, text: "Complete Mountain of the Marowan 5 times", reward: "75 PV", completed: false, progress: 0, target: 5, adventureName: "Mountain of the Marowan"}, 
-                { id: 3, text: "Complete Fire Fields of Flyinals 5 times", reward: "150 PV", completed: false, progress: 0, target: 5, adventureName: "Fire Fields of Flyinals"}, 
-                { id: 4, text: "Venture into the Tomb of the Death Riders", reward: "250 PV, 1 Diamond", completed: false, progress: 0, target: 1, adventureName: "Tomb of the Death Riders"} 
-            ];
+            const quests = [ { id: 1, text: "Complete Spirit Forest 5 times", reward: "50 PV", completed: false, progress: 0, target: 5, adventureName: "Spirit Forest" }, { id: 2, text: "Complete Mountain of the Marowan 5 times", reward: "75 PV", completed: false, progress: 0, target: 5, adventureName: "Mountain of the Marowan"}, { id: 3, text: "Complete Fire Fields of Flyinals 5 times", reward: "150 PV", completed: false, progress: 0, target: 5, adventureName: "Fire Fields of Flyinals"}, { id: 4, text: "Venture into the Tomb of the Death Riders", reward: "250 PV, 1 Diamond", completed: false, progress: 0, target: 1, adventureName: "Tomb of the Death Riders"} ];
             const dailyRewardsData = []; for (let i = 1; i <= 30; i++) { let reward = `${50 + (i * 5)} PV`; if (i % 7 === 0 && Object.keys(playerMaterials).length > 0) reward += `, 1 ${Object.keys(playerMaterials)[i % Object.keys(playerMaterials).length]}`; if (i === 30) reward = "1 Gold, 300 PV, 1 Diamond"; dailyRewardsData.push({ day: i, reward: reward });}
             let lastClaimedDay = parseInt(localStorage.getItem('lastClaimedDayPVA')) || 0;
-            
-            const adventureProgressionConfig = [
-                { id: "1", blockId: "adventure-1-block", unlockQuestId: null, unlockMessage: "" },
-                { id: "2", blockId: "adventure-2-block", unlockQuestId: 1, unlockMessage: "Complete 'Spirit Forest' 5 times to unlock." },
-                { id: "3", blockId: "adventure-3-block", unlockQuestId: 2, unlockMessage: "Complete 'Mountain of the Marowan' 5 times to unlock." },
-                { id: "4", blockId: "adventure-4-block", unlockQuestId: 3, unlockMessage: "Complete 'Fire Fields of Flyinals' 5 times to unlock." }
-            ];
+            const adventureProgressionConfig = [ { id: "1", blockId: "adventure-1-block", unlockQuestId: null, unlockMessage: "" }, { id: "2", blockId: "adventure-2-block", unlockQuestId: 1, unlockMessage: "Complete 'Spirit Forest' 5 times to unlock." }, { id: "3", blockId: "adventure-3-block", unlockQuestId: 2, unlockMessage: "Complete 'Mountain of the Marowan' 5 times to unlock." }, { id: "4", blockId: "adventure-4-block", unlockQuestId: 3, unlockMessage: "Complete 'Fire Fields of Flyinals' 5 times to unlock." } ];
 
             // --- Popup Functions ---
             function showCustomPopup(message, title = "Notification") { if (customPopupTitleEl) customPopupTitleEl.textContent = title; if (customPopupMessageEl) customPopupMessageEl.textContent = message; if (customPopupOverlay) customPopupOverlay.classList.remove('hidden'); if (customPopup) customPopup.classList.remove('hidden'); if (customPopupCloseBtn) customPopupCloseBtn.focus(); }
@@ -784,8 +733,33 @@
             // --- Firebase Save/Load ---
             async function saveGameStateToFirebase(nickname, gameState) { if (!nickname) { console.error("Cannot save game: Nickname is missing."); showCustomPopup("Error: Nickname is missing. Cannot save progress.", "Save Error"); return; } if (!db) { console.error("Firestore not initialized!"); showCustomPopup("Error: Database connection failed. Cannot save progress.", "Save Error"); return; } try { const savableGameState = { ...gameState }; if (savableGameState.activeAdventures) { savableGameState.activeAdventures = savableGameState.activeAdventures.map(adv => ({ ...adv, returnTime: typeof adv.returnTime === 'number' ? adv.returnTime : (adv.returnTime instanceof Date ? Timestamp.fromDate(adv.returnTime) : Timestamp.now()) })); } if (savableGameState.activePotions) { savableGameState.activePotions = savableGameState.activePotions.map(p => ({ ...p, endTime: typeof p.endTime === 'number' ? p.endTime : (p.endTime instanceof Date ? Timestamp.fromDate(p.endTime) : null) })); } const playerDocRef = doc(collection(db, 'playerProgress'), nickname); await setDoc(playerDocRef, savableGameState); console.log("Game state saved for", nickname); } catch (error) { console.error("Error saving game state: ", error); showCustomPopup(`Failed to save game progress: ${error.message}`, "Save Error");}}
             async function loadGameStateFromFirebase(nickname) { if (!nickname) { console.error("Cannot load game: Nickname is missing."); return null; } if (!db) { console.error("Firestore not initialized!"); return null;} try { const playerDocRef = doc(collection(db, 'playerProgress'), nickname); const docSnap = await getDoc(playerDocRef); if (docSnap.exists()) { const loadedData = docSnap.data(); console.log("Raw loaded data from Firebase for", nickname, JSON.parse(JSON.stringify(loadedData))); if (loadedData.activeAdventures) { loadedData.activeAdventures = loadedData.activeAdventures.map(adv => ({ ...adv, returnTime: adv.returnTime && typeof adv.returnTime.toDate === 'function' ? adv.returnTime.toDate().getTime() : (typeof adv.returnTime === 'number' ? adv.returnTime : Date.now()) })); } if (loadedData.activePotions) { loadedData.activePotions = loadedData.activePotions.map(p => ({ ...p, endTime: p.endTime && typeof p.endTime.toDate === 'function' ? p.endTime.toDate().getTime() : (typeof p.endTime === 'number' ? p.endTime : null) })); } console.log("Processed loaded data before apply:", JSON.parse(JSON.stringify(loadedData))); return loadedData; } else { console.log("No saved game state found for", nickname); showCustomPopup(`No saved game found for ${nickname}. Starting a new voyage!`, "New Game"); return null; } } catch (error) { console.error("Error directly within loadGameStateFromFirebase:", error); showCustomPopup(`Failed to load game progress from Firebase: ${error.message}`, "DB Load Error"); return null;}}
-            function getCurrentGameState() { return { pvTokens: currentPvTokens || 0, gold: currentGold || 0, diamonds: currentDiamonds || 0, activeAdventures: Array.isArray(activeAdventures) ? activeAdventures.map(adv => ({ id: adv.id, originalAdventureId: adv.originalAdventureId, name: adv.name || "Unknown Adventure", adventurers: adv.adventurers || 0, returnTime: adv.returnTime || Date.now(), pvReward: adv.pvReward || 0, goldChance: adv.goldChance || 0, diamondChance: adv.diamondChance || 0 })) : [], totalAvailableAdventurers: totalAvailableAdventurers !== undefined ? totalAvailableAdventurers : MAX_PLAYER_ADVENTURERS, playerInventory: Array.isArray(playerInventory) ? playerInventory.map(item => typeof item === 'string' ? item : item.id) : [], playerMaterials: playerMaterials || {}, equippedItems: equippedItems || { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Misc1: null, Misc2: null }, quests: Array.isArray(quests) ? quests.map(q => ({ id: q.id, text: q.text || "UKN", reward: q.reward || "0", completed: q.completed || false, progress: q.progress || 0, target: q.target || 0, adventureName: q.adventureName || null, metric: q.metric || null, claimed: q.claimed || false })) : [], lastClaimedDayPVA: lastClaimedDay || 0, activePotions: Array.isArray(activePotions) ? activePotions.map(p => ({ id: p.id, endTime: p.endTime || null, adventuresLeft: p.adventuresLeft !== undefined ? p.adventuresLeft : null })).filter(p => p.id) : [], playerAdventurerLevel: playerAdventurerLevel || 1, secondRingSlotUnlocked: secondRingSlotUnlocked || false, playerRaffleEntries: playerRaffleEntries || {} };}
-            function applyLoadedGameState(loadedState) { console.log("Applying loaded game state:", JSON.parse(JSON.stringify(loadedState))); if (!loadedState) { console.error("applyLoadedGameState called with null or undefined state."); return; } try { currentPvTokens = loadedState.pvTokens || 0; currentGold = loadedState.gold || 0; currentDiamonds = loadedState.diamonds || 0; activeAdventures = Array.isArray(loadedState.activeAdventures) ? loadedState.activeAdventures.map(advData => { return { id: advData.id || nextActiveAdventureId++, originalAdventureId: advData.originalAdventureId || "1", name: advData.name || "Unknown Adventure", adventurers: advData.adventurers || 0, returnTime: typeof advData.returnTime === 'number' ? advData.returnTime : Date.now(), pvReward: advData.pvReward || 0, goldChance: advData.goldChance || 0, diamondChance: advData.diamondChance || 0 }; }) : []; nextActiveAdventureId = activeAdventures.length > 0 ? Math.max(0, ...activeAdventures.map(a => a.id)) + 1 : 0; totalAvailableAdventurers = loadedState.totalAvailableAdventurers !== undefined ? loadedState.totalAvailableAdventurers : MAX_PLAYER_ADVENTURERS; playerInventory = Array.isArray(loadedState.playerInventory) ? loadedState.playerInventory.map(itemSource => { if (typeof itemSource === 'string') { let itemData = craftableItemsData.find(i => i.id === itemSource); if (!itemData && itemSource === "riderScroll") itemData = { id: "riderScroll", name: "Rider Scroll", type: "Consumable", description: "Unlocks a second ring slot.", imgColor: "var(--item-placeholder-scroll)" }; if (!itemData && itemSource === "cursedBand") itemData = { id: "cursedBand", name: "Cursed Band", type: "Ring", description: "A ring pulsing with dark energy. (+1 Dark Power)", perk: { type: "darkPower", value: 1 }, imgColor: "var(--item-placeholder-ring)" }; return itemData || { id: itemSource, name: "Unknown Item ID", type: "Unknown" }; } return itemSource || { id: "unknownObjectInInventory", name: "Unknown Item Obj", type: "Unknown" }; }).filter(item => item && item.id) : []; playerMaterials = loadedState.playerMaterials || { "Leather": 0, "Wood": 0, "Clover": 0, "Fabric": 0, "Iron": 0, "Gizmo Tail": 0, "Stone": 0, "Obsidian": 0, "Bitcoin": 0, "Bone": 0, "Flame Essence": 0, "Essence of Death": 0, "Rider's Sigil": 0, "Ancient Tablet Fragment": 0, "Shadowgem": 0 }; equippedItems = loadedState.equippedItems || { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Misc1: null, Misc2: null }; playerAdventurerLevel = loadedState.playerAdventurerLevel || 1; secondRingSlotUnlocked = loadedState.secondRingSlotUnlocked || false; playerRaffleEntries = loadedState.playerRaffleEntries || {}; if (Array.isArray(loadedState.quests)) { quests.forEach(q_default => { const loaded_q = loadedState.quests.find(lq => lq && lq.id === q_default.id); if (loaded_q) { q_default.completed = loaded_q.completed || false; q_default.progress = loaded_q.progress || 0; q_default.claimed = loaded_q.claimed || false; } }); } lastClaimedDay = loadedState.lastClaimedDayPVA || 0; localStorage.setItem('lastClaimedDayPVA', lastClaimedDay); if (Array.isArray(loadedState.activePotions)) { activePotions = loadedState.activePotions.map(pData => { if (!pData || !pData.id) return null; const potionBase = shopItemsData.find(shopItem => shopItem.id === pData.id); if (!potionBase) return null; return { id: pData.id, name: potionBase.name, description: potionBase.description, effect: potionBase.effect, endTime: typeof pData.endTime === 'number' ? pData.endTime : null, adventuresLeft: pData.adventuresLeft !== undefined ? pData.adventuresLeft : null }; }).filter(p => p !== null); activePotions = activePotions.filter(p => (p.endTime && Date.now() < p.endTime) || (p.adventuresLeft !== undefined && p.adventuresLeft > 0) || (!p.endTime && p.adventuresLeft === undefined) ); } updateStatsDisplay(); renderMaterials(); renderActiveAdventuresInSidebar(); renderActivePotions(); renderInventory(); updateAdventureDisplayStates(); if (document.getElementById('quests-page').classList.contains('active')) renderQuests(); if (document.getElementById('daily-rewards-page').classList.contains('active')) renderDailyRewards(); if (document.getElementById('shop-page').classList.contains('active')) { renderShopItems(); renderCraftingItems(); } if (document.getElementById('whitelist-page').classList.contains('active')) renderWhitelistRaffles(); showCustomPopup("Welcome back! Your previous voyage progress has been loaded.", "Progress Loaded"); console.log("Game state applied successfully."); } catch (error) { console.error("Error during applyLoadedGameState:", error); showCustomPopup("Error applying loaded game data. Starting fresh.", "Apply State Error"); currentPvTokens = 0; currentGold = 0; currentDiamonds = 0; activeAdventures = []; totalAvailableAdventurers = MAX_PLAYER_ADVENTURERS; playerInventory = []; playerMaterials = { "Leather": 0, "Wood": 0, "Clover": 0, "Fabric": 0, "Iron": 0, "Gizmo Tail": 0, "Stone": 0, "Obsidian": 0, "Bitcoin": 0, "Bone": 0, "Flame Essence": 0, "Essence of Death": 0, "Rider's Sigil": 0, "Ancient Tablet Fragment": 0, "Shadowgem": 0 }; equippedItems = { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Misc1: null, Misc2: null }; playerAdventurerLevel = 1; secondRingSlotUnlocked = false; activePotions = []; playerRaffleEntries = {}; updateStatsDisplay(); renderMaterials(); generateRandomQuests(); renderInventory(); renderActiveAdventuresInSidebar(); renderActivePotions(); updateAdventureDisplayStates(); renderWhitelistRaffles(); }}
+            
+            function getCurrentGameState() { 
+                return { 
+                    userNickname: userNickname,
+                    pvTokens: currentPvTokens || 0, 
+                    gold: currentGold || 0, 
+                    diamonds: currentDiamonds || 0, 
+                    activeAdventures: Array.isArray(activeAdventures) ? activeAdventures.map(adv => ({ id: adv.id, originalAdventureId: adv.originalAdventureId, name: adv.name || "Unknown Adventure", adventurers: adv.adventurers || 0, returnTime: adv.returnTime || Date.now(), pvReward: adv.pvReward || 0, goldChance: adv.goldChance || 0, diamondChance: adv.diamondChance || 0 })) : [], 
+                    totalAvailableAdventurers: totalAvailableAdventurers !== undefined ? totalAvailableAdventurers : MAX_PLAYER_ADVENTURERS, 
+                    playerInventory: Array.isArray(playerInventory) ? playerInventory.map(item => typeof item === 'string' ? item : item.id) : [], 
+                    playerMaterials: playerMaterials || {}, 
+                    equippedItems: equippedItems || { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Misc1: null, Misc2: null }, 
+                    quests: Array.isArray(quests) ? quests.map(q => ({ id: q.id, text: q.text || "UKN", reward: q.reward || "0", completed: q.completed || false, progress: q.progress || 0, target: q.target || 0, adventureName: q.adventureName || null, metric: q.metric || null, claimed: q.claimed || false })) : [], 
+                    lastClaimedDayPVA: lastClaimedDay || 0, 
+                    activePotions: Array.isArray(activePotions) ? activePotions.map(p => ({ id: p.id, endTime: p.endTime || null, adventuresLeft: p.adventuresLeft !== undefined ? p.adventuresLeft : null })).filter(p => p.id) : [], 
+                    playerAdventurerLevel: playerAdventurerLevel || 1, 
+                    secondRingSlotUnlocked: secondRingSlotUnlocked || false, 
+                    playerRaffleEntries: playerRaffleEntries || {} 
+                };
+            }
+            function applyLoadedGameState(loadedState) { 
+                console.log("Applying loaded game state:", JSON.parse(JSON.stringify(loadedState))); 
+                if (!loadedState) { console.error("applyLoadedGameState called with null or undefined state."); return; } 
+                try { 
+                    userNickname = loadedState.userNickname || userNickname; 
+                    if (playerNicknameDisplay && userNickname) playerNicknameDisplay.textContent = userNickname; 
+                    currentPvTokens = loadedState.pvTokens || 0; currentGold = loadedState.gold || 0; currentDiamonds = loadedState.diamonds || 0; activeAdventures = Array.isArray(loadedState.activeAdventures) ? loadedState.activeAdventures.map(advData => { return { id: advData.id || nextActiveAdventureId++, originalAdventureId: advData.originalAdventureId || "1", name: advData.name || "Unknown Adventure", adventurers: advData.adventurers || 0, returnTime: typeof advData.returnTime === 'number' ? advData.returnTime : Date.now(), pvReward: advData.pvReward || 0, goldChance: advData.goldChance || 0, diamondChance: advData.diamondChance || 0 }; }) : []; nextActiveAdventureId = activeAdventures.length > 0 ? Math.max(0, ...activeAdventures.map(a => a.id)) + 1 : 0; totalAvailableAdventurers = loadedState.totalAvailableAdventurers !== undefined ? loadedState.totalAvailableAdventurers : MAX_PLAYER_ADVENTURERS; playerInventory = Array.isArray(loadedState.playerInventory) ? loadedState.playerInventory.map(itemSource => { if (typeof itemSource === 'string') { let itemData = craftableItemsData.find(i => i.id === itemSource); if (!itemData && itemSource === "riderScroll") itemData = { id: "riderScroll", name: "Rider Scroll", type: "Consumable", description: "Unlocks a second ring slot.", imgColor: "var(--item-placeholder-scroll)" }; if (!itemData && itemSource === "cursedBand") itemData = { id: "cursedBand", name: "Cursed Band", type: "Ring", description: "A ring pulsing with dark energy. (+1 Dark Power)", perk: { type: "darkPower", value: 1 }, imgColor: "var(--item-placeholder-ring)" }; return itemData || { id: itemSource, name: "Unknown Item ID", type: "Unknown" }; } return itemSource || { id: "unknownObjectInInventory", name: "Unknown Item Obj", type: "Unknown" }; }).filter(item => item && item.id) : []; playerMaterials = loadedState.playerMaterials || { "Leather": 0, "Wood": 0, "Clover": 0, "Fabric": 0, "Iron": 0, "Gizmo Tail": 0, "Stone": 0, "Obsidian": 0, "Bitcoin": 0, "Bone": 0, "Flame Essence": 0, "Essence of Death": 0, "Rider's Sigil": 0, "Ancient Tablet Fragment": 0, "Shadowgem": 0 }; equippedItems = loadedState.equippedItems || { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Misc1: null, Misc2: null }; playerAdventurerLevel = loadedState.playerAdventurerLevel || 1; secondRingSlotUnlocked = loadedState.secondRingSlotUnlocked || false; playerRaffleEntries = loadedState.playerRaffleEntries || {}; if (Array.isArray(loadedState.quests)) { quests.forEach(q_default => { const loaded_q = loadedState.quests.find(lq => lq && lq.id === q_default.id); if (loaded_q) { q_default.completed = loaded_q.completed || false; q_default.progress = loaded_q.progress || 0; q_default.claimed = loaded_q.claimed || false; } }); } lastClaimedDay = loadedState.lastClaimedDayPVA || 0; localStorage.setItem('lastClaimedDayPVA', lastClaimedDay); if (Array.isArray(loadedState.activePotions)) { activePotions = loadedState.activePotions.map(pData => { if (!pData || !pData.id) return null; const potionBase = shopItemsData.find(shopItem => shopItem.id === pData.id); if (!potionBase) return null; return { id: pData.id, name: potionBase.name, description: potionBase.description, effect: potionBase.effect, endTime: typeof pData.endTime === 'number' ? pData.endTime : null, adventuresLeft: pData.adventuresLeft !== undefined ? pData.adventuresLeft : null }; }).filter(p => p !== null); activePotions = activePotions.filter(p => (p.endTime && Date.now() < p.endTime) || (p.adventuresLeft !== undefined && p.adventuresLeft > 0) || (!p.endTime && p.adventuresLeft === undefined) ); } updateStatsDisplay(); renderMaterials(); renderActiveAdventuresInSidebar(); renderActivePotions(); renderInventory(); updateAdventureDisplayStates(); if (document.getElementById('quests-page').classList.contains('active')) renderQuests(); if (document.getElementById('daily-rewards-page').classList.contains('active')) renderDailyRewards(); if (document.getElementById('shop-page').classList.contains('active')) { renderShopItems(); renderCraftingItems(); } if (document.getElementById('whitelist-page').classList.contains('active')) fetchAndDisplayRaffles(); showCustomPopup("Welcome back! Your previous voyage progress has been loaded.", "Progress Loaded"); console.log("Game state applied successfully."); } catch (error) { console.error("Error during applyLoadedGameState:", error); showCustomPopup("Error applying loaded game data. Starting fresh.", "Apply State Error"); userNickname = nicknameInputElement.value.trim() || "Voyager"; currentPvTokens = 0; currentGold = 0; currentDiamonds = 0; activeAdventures = []; totalAvailableAdventurers = MAX_PLAYER_ADVENTURERS; playerInventory = []; playerMaterials = { "Leather": 0, "Wood": 0, "Clover": 0, "Fabric": 0, "Iron": 0, "Gizmo Tail": 0, "Stone": 0, "Obsidian": 0, "Bitcoin": 0, "Bone": 0, "Flame Essence": 0, "Essence of Death": 0, "Rider's Sigil": 0, "Ancient Tablet Fragment": 0, "Shadowgem": 0 }; equippedItems = { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Misc1: null, Misc2: null }; playerAdventurerLevel = 1; secondRingSlotUnlocked = false; activePotions = []; playerRaffleEntries = {}; updateStatsDisplay(); renderMaterials(); generateRandomQuests(); renderInventory(); renderActiveAdventuresInSidebar(); renderActivePotions(); updateAdventureDisplayStates(); fetchAndDisplayRaffles(); }}
             
             function initializeTheme() { const savedTheme = localStorage.getItem('theme'); if (savedTheme === 'light') { body.classList.remove('dark-mode'); body.classList.add('light-mode'); if(darkModeToggle) darkModeToggle.checked = false; if (gameContainer && !gameContainer.classList.contains('hidden')) loadTwitterWidget('light'); } else { body.classList.add('dark-mode'); body.classList.remove('light-mode'); if(darkModeToggle) darkModeToggle.checked = true; if (gameContainer && !gameContainer.classList.contains('hidden')) loadTwitterWidget('dark'); } }
             function loadTwitterWidget(theme) { if (twitterWidgetContainer) { twitterWidgetContainer.innerHTML = ''; const twitterLink = document.createElement('a'); twitterLink.className = 'twitter-timeline'; twitterLink.setAttribute('data-dnt', 'true'); twitterLink.href = 'https://twitter.com/nvart_?ref_src=twsrc%5Etfw'; twitterLink.setAttribute('data-theme', theme); twitterLink.setAttribute('data-height', '400'); twitterLink.textContent = 'Tweets by nvart_'; twitterWidgetContainer.appendChild(twitterLink); let twitterScript = document.querySelector('script[src="https://platform.twitter.com/widgets.js"]'); if (twitterScript) { twitterScript.remove(); } twitterScript = document.createElement('script'); twitterScript.async = true; twitterScript.src = 'https://platform.twitter.com/widgets.js'; twitterScript.charset = 'utf-8'; document.body.appendChild(twitterScript); } }
@@ -793,7 +767,7 @@
             if(enterGameButton && nicknameInputElement && welcomeScreen && gameContainer && playerNicknameDisplay){ 
                 enterGameButton.addEventListener('click', async () => { 
                     console.log("Enter Voyage button clicked.");
-                    userNickname = nicknameInputElement.value.trim();
+                    userNickname = nicknameInputElement.value.trim(); 
                     if (userNickname) {
                         console.log("Nickname entered:", userNickname);
                         if (playerNicknameDisplay) playerNicknameDisplay.textContent = userNickname;
@@ -814,24 +788,33 @@
                             const loadedState = await loadGameStateFromFirebase(userNickname);
                             if (loadedState) {
                                 console.log("Game state successfully loaded from Firebase.");
-                                applyLoadedGameState(loadedState);
+                                applyLoadedGameState(loadedState); 
                             } else {
                                 console.log("No saved state from Firebase, initializing new game.");
+                                currentPvTokens = 0; currentGold = 0; currentDiamonds = 0;
+                                activeAdventures = []; totalAvailableAdventurers = MAX_PLAYER_ADVENTURERS;
+                                playerInventory = [];
+                                playerMaterials = { "Leather": 0, "Wood": 0, "Clover": 0, "Fabric": 0, "Iron": 0, "Gizmo Tail": 0, "Stone": 0, "Obsidian": 0, "Bitcoin": 0, "Bone": 0, "Flame Essence": 0, "Essence of Death": 0, "Rider's Sigil": 0, "Ancient Tablet Fragment": 0, "Shadowgem": 0 };
+                                equippedItems = { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Misc1: null, Misc2: null };
+                                playerAdventurerLevel = 1; secondRingSlotUnlocked = false; activePotions = []; playerRaffleEntries = {};
+                                
                                 updateStatsDisplay(); renderMaterials(); generateRandomQuests(); 
                                 renderActiveAdventuresInSidebar(); renderActivePotions();
-                                playerAdventurerLevel = 1; 
-                                secondRingSlotUnlocked = false;
                                 renderInventory(); 
-                                updateAdventureDisplayStates(); // Ensure locks are set for new game
-                                renderWhitelistRaffles(); // Render any pre-defined raffles
+                                updateAdventureDisplayStates(); 
+                                await fetchAndDisplayRaffles(); 
                             }
                         } catch (e) { 
                             console.error("Error in enterGameButton click after loadGameState attempt:", e);
                             showCustomPopup("A critical error occurred loading your voyage. Starting fresh.", "Load Failed");
+                            currentPvTokens = 0; currentGold = 0; currentDiamonds = 0;
+                            activeAdventures = []; totalAvailableAdventurers = MAX_PLAYER_ADVENTURERS;
+                            playerInventory = []; playerMaterials = { "Leather": 0, "Wood": 0, "Clover": 0, "Fabric": 0, "Iron": 0, "Gizmo Tail": 0, "Stone": 0, "Obsidian": 0, "Bitcoin": 0, "Bone": 0, "Flame Essence": 0, "Essence of Death": 0, "Rider's Sigil": 0, "Ancient Tablet Fragment": 0, "Shadowgem": 0 }; equippedItems = { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Misc1: null, Misc2: null }; playerAdventurerLevel = 1; secondRingSlotUnlocked = false; activePotions = []; playerRaffleEntries = {};
+
                             updateStatsDisplay(); renderMaterials(); generateRandomQuests(); 
                             renderActiveAdventuresInSidebar(); renderActivePotions(); renderInventory();
-                            updateAdventureDisplayStates(); // Ensure locks are set after error
-                            renderWhitelistRaffles();
+                            updateAdventureDisplayStates(); 
+                            await fetchAndDisplayRaffles();
                         }
                         showPage('adventures-page'); 
                     } else { 
@@ -846,7 +829,7 @@
             }
 
             if(darkModeToggle){ darkModeToggle.addEventListener('change', () => { if (darkModeToggle.checked) { body.classList.add('dark-mode'); body.classList.remove('light-mode'); localStorage.setItem('theme', 'dark'); loadTwitterWidget('dark'); } else { body.classList.remove('dark-mode'); body.classList.add('light-mode'); localStorage.setItem('theme', 'light'); loadTwitterWidget('light'); } });}
-            function showPage(pageIdToShow) { console.log("Switching to page:", pageIdToShow); if(!pageContents || pageContents.length === 0) { console.error("pageContents NodeList is empty or not found in showPage. Ensure HTML elements with class 'page-content' exist and are selected correctly."); return; } pageContents.forEach(page => { page.classList.remove('active'); }); const targetPage = document.getElementById(pageIdToShow); if (targetPage) { targetPage.classList.add('active'); if (pageIdToShow === 'quests-page') renderQuests(); else if (pageIdToShow === 'shop-page') {renderShopItems(); renderCraftingItems();} else if (pageIdToShow === 'inventory-page') renderInventory(); else if (pageIdToShow === 'daily-rewards-page') renderDailyRewards(); else if (pageIdToShow === 'whitelist-page') renderWhitelistRaffles(); } else { console.error("Target page with ID '" + pageIdToShow + "' not found."); showPage('adventures-page'); /* Fallback to default */}}
+            async function showPage(pageIdToShow) { console.log("Switching to page:", pageIdToShow); if(!pageContents || pageContents.length === 0) { console.error("pageContents NodeList is empty or not found in showPage. Ensure HTML elements with class 'page-content' exist and are selected correctly."); return; } pageContents.forEach(page => { page.classList.remove('active'); }); const targetPage = document.getElementById(pageIdToShow); if (targetPage) { targetPage.classList.add('active'); if (pageIdToShow === 'quests-page') renderQuests(); else if (pageIdToShow === 'shop-page') {renderShopItems(); renderCraftingItems();} else if (pageIdToShow === 'inventory-page') renderInventory(); else if (pageIdToShow === 'daily-rewards-page') renderDailyRewards(); else if (pageIdToShow === 'whitelist-page') await fetchAndDisplayRaffles(); } else { console.error("Target page with ID '" + pageIdToShow + "' not found."); showPage('adventures-page'); }}
             if(menuItems){ menuItems.forEach(item => { item.addEventListener('click', () => { const targetPageId = item.dataset.page; if (targetPageId) { showPage(targetPageId); } }); });}
             
             function updateStatsDisplay() { if(pvCountElement) pvCountElement.textContent = currentPvTokens; if(goldCountElement) goldCountElement.textContent = currentGold; if(diamondCountElement) diamondCountElement.textContent = currentDiamonds; if(availableAdventurersCountElement) availableAdventurersCountElement.textContent = totalAvailableAdventurers; }
@@ -877,7 +860,7 @@
             function useConsumableItem(itemId) { if (itemId === "riderScroll") { if (secondRingSlotUnlocked) { showCustomPopup("Second ring slot is already unlocked!", "Already Unlocked"); return; } const scrollIndex = playerInventory.findIndex(item => (typeof item === 'string' ? item : item.id) === "riderScroll"); if (scrollIndex > -1) { playerInventory.splice(scrollIndex, 1); secondRingSlotUnlocked = true; showCustomPopup("Rider Scroll used! Second ring slot unlocked.", "Slot Unlocked!"); renderInventory(); if (userNickname) saveGameStateToFirebase(userNickname, getCurrentGameState()); } else { showCustomPopup("Rider Scroll not found in inventory.", "Item Not Found"); } } }
             function generateRandomQuests() { if (quests.length >= 5) return; const templates = [ { baseText: "Collect X PV Tokens", type: "collectPV", min: 100, max: 500, rewardBase: 20 }, { baseText: "Send Y adventurers on any Z quests", type: "sendAdventurers", minA: 3, maxA: 10, minQ: 1, maxQ: 3, rewardBase: 30 }, { baseText: "Earn Z Gold", type: "collectGold", min: 1, max: 5, rewardBase: 50}, ]; while(quests.length < 5) { const t = templates[Math.floor(Math.random() * templates.length)]; let txt = t.baseText; let rA = t.rewardBase; let nq = { id: quests.length + 1, completed: false, progress: 0 }; if (t.type === "collectPV") { const tpv = Math.floor(Math.random()*(t.max-t.min+1)+t.min); txt=txt.replace("X",tpv); rA+=Math.floor(tpv/10); nq.target=tpv; nq.metric="pvCollected"; } else if (t.type === "sendAdventurers") { const ta=Math.floor(Math.random()*(t.maxA-t.minA+1)+t.minA); const tq=Math.floor(Math.random()*(t.maxQ-t.minQ+1)+t.minQ); txt=txt.replace("Y",ta).replace("Z",tq); rA+=ta*2+tq*5; nq.target=ta; nq.metric="adventurersSentOnQuests"; } else if (t.type === "collectGold") { const tg=Math.floor(Math.random()*(t.max-t.min+1)+t.min); txt=txt.replace("Z",tg); rA+=tg*20; nq.target=tg; nq.metric="goldCollected"; } nq.text=txt; nq.reward=`${rA} PV`; quests.push(nq); } }
             function completeAdventure(instanceId) { const advIdx = activeAdventures.findIndex(adv => adv.id === instanceId); if (advIdx === -1) return; const completedAdv = activeAdventures[advIdx]; let basePvReward = completedAdv.pvReward; let pvMultiplierFromPotions = 1; activePotions.forEach(p => { if(p.effect && p.effect.type === "pvMultiplier" && (p.endTime && Date.now() < p.endTime || p.adventuresLeft > 0)) { pvMultiplierFromPotions *= p.effect.value; }}); let pvBonusMultiplierFromItems = 1; if (equippedItems.Rucksack) { const rD = craftableItemsData.find(i=>i.id===equippedItems.Rucksack); if(rD && rD.perk.type==="pvBonus") pvBonusMultiplierFromItems += rD.perk.multiplier; } let earnedPvThisTrip = Math.floor(basePvReward * completedAdv.adventurers * pvBonusMultiplierFromItems * pvMultiplierFromPotions); currentPvTokens += earnedPvThisTrip; let goldChanceMultiplierFromItems = 1; if (equippedItems.Amulet) { const aD = craftableItemsData.find(i=>i.id===equippedItems.Amulet); if(aD && aD.perk.type==="goldChanceIncrease") goldChanceMultiplierFromItems += aD.perk.multiplier; } let flatGoldBonusFromPotions = 0; activePotions.forEach(p => { if(p.effect && p.effect.type === "goldChanceBonus" && (p.endTime && Date.now() < p.endTime || p.adventuresLeft > 0)) { flatGoldBonusFromPotions += p.effect.flatValue || 0; }}); let totalGoldFoundThisTrip = 0; let totalDiamondsFoundThisTrip = 0; let materialChanceAdditive = 0; if (equippedItems.Trinket) { const tD = craftableItemsData.find(i=>i.id===equippedItems.Trinket); if(tD && tD.perk.type==="materialChanceIncrease") materialChanceAdditive = tD.perk.additive; } let allFoundDrops = {}; for (let i = 0; i < completedAdv.adventurers; i++) { const finalGoldChance = (completedAdv.goldChance * goldChanceMultiplierFromItems) + flatGoldBonusFromPotions; if (completedAdv.goldChance > 0 && Math.random() < finalGoldChance) { currentGold += 1; totalGoldFoundThisTrip++; } if (completedAdv.diamondChance > 0 && Math.random() < completedAdv.diamondChance) { currentDiamonds += 1; totalDiamondsFoundThisTrip++; } const adventureBaseData = adventuresData[completedAdv.originalAdventureId]; if (adventureBaseData && adventureBaseData.drops) { adventureBaseData.drops.forEach(drop => { if (Math.random() < (drop.chance + materialChanceAdditive)) { if (drop.name === "Rider Scroll") { playerInventory.push({id: "riderScroll", name: "Rider Scroll", type: "Consumable", description: "Unlocks a second ring slot.", imgColor: "var(--item-placeholder-scroll)" }); allFoundDrops[drop.name] = (allFoundDrops[drop.name] || 0) + (drop.qty || 1); } else if (drop.name === "Cursed Band") { playerInventory.push({id: "cursedBand", name: "Cursed Band", type: "Ring", description: "A ring pulsing with dark energy. (+1 Dark Power)", perk: { type: "darkPower", value: 1 }, imgColor: "var(--item-placeholder-ring)"}); allFoundDrops[drop.name] = (allFoundDrops[drop.name] || 0) + (drop.qty || 1); } else { playerMaterials[drop.name] = (playerMaterials[drop.name] || 0) + (drop.qty || 1); allFoundDrops[drop.name] = (allFoundDrops[drop.name] || 0) + (drop.qty || 1); } } }); } } activePotions.forEach(p => { if(p.adventuresLeft !== undefined) { p.adventuresLeft--; }}); activePotions = activePotions.filter(p => (p.endTime && Date.now() < p.endTime) || (p.adventuresLeft !== undefined && p.adventuresLeft > 0) || (!p.endTime && p.adventuresLeft === undefined) ); renderActivePotions(); let popupMessage = `${completedAdv.adventurers} adventurer(s) returned from ${completedAdv.name}!\n\nRewards:\n- ${earnedPvThisTrip} PV Tokens`; if(totalGoldFoundThisTrip > 0) { popupMessage += `\n- ${totalGoldFoundThisTrip} Gold`; } if(totalDiamondsFoundThisTrip > 0) { popupMessage += `\n- ${totalDiamondsFoundThisTrip} Diamond(s)`;} const foundDropNames = Object.keys(allFoundDrops); if (foundDropNames.length > 0) { popupMessage += `\n\nMaterials Found:`; foundDropNames.forEach(dropName => { popupMessage += `\n  - ${allFoundDrops[dropName]}x ${dropName}`; }); renderMaterials(); if (foundDropNames.includes("Rider Scroll") || foundDropNames.includes("Cursed Band")) renderInventory(); } totalAvailableAdventurers += completedAdv.adventurers; showCustomPopup(popupMessage, "Adventure Complete!"); activeAdventures.splice(advIdx, 1); 
-                updateAdventureDisplayStates(); // Update locks as an adventure finished (might change active state)
+                updateAdventureDisplayStates(); 
                 quests.forEach(quest => { if (!quest.completed && !quest.claimed) { if (quest.adventureName === completedAdv.name) quest.progress = (quest.progress || 0) + completedAdv.adventurers; if (quest.metric === "pvCollected") quest.progress = Math.min(quest.target, (quest.progress || 0) + earnedPvThisTrip); if (quest.metric === "goldCollected") quest.progress = Math.min(quest.target, (quest.progress || 0) + totalGoldFoundThisTrip); if (quest.metric === "adventurersSentOnQuests") quest.progress = (quest.progress || 0) + completedAdv.adventurers; if (quest.progress >= quest.target) { quest.completed = true; showCustomPopup(`Quest Completed: ${quest.text}`, "Quest Complete!"); if ([1,2,3].includes(quest.id)) { updateAdventureDisplayStates(); } } } }); if(document.getElementById('quests-page').classList.contains('active')) { renderQuests(); } updateStatsDisplay(); renderActiveAdventuresInSidebar(); if (userNickname) saveGameStateToFirebase(userNickname, getCurrentGameState());}
             
             function updateAdventureDisplayStates() {
@@ -947,8 +930,7 @@
                     renderActivePotions(); 
                 }
                 
-                // Update raffle timers
-                let rafflesUpdated = false;
+                let rafflesUpdatedByTimer = false;
                 allRaffles.forEach(raffle => {
                     if (raffle.status === 'active') {
                         const timeLeftMs = raffle.endTime - Date.now();
@@ -957,12 +939,12 @@
                             timerSpan.textContent = formatTimeLeft(timeLeftMs);
                         }
                         if (timeLeftMs <= 0) {
-                            raffle.status = 'ended';
-                            rafflesUpdated = true;
+                            raffle.status = 'ended'; 
+                            rafflesUpdatedByTimer = true; 
                         }
                     }
                 });
-                if (rafflesUpdated && document.getElementById('whitelist-page').classList.contains('active')) {
+                if (rafflesUpdatedByTimer && document.getElementById('whitelist-page').classList.contains('active')) {
                     renderWhitelistRaffles();
                 }
             }
@@ -992,9 +974,8 @@
                     if (numAdventurersToSend > totalAvailableAdventurers) { showCustomPopup(`Not enough adventurers available! You only have ${totalAvailableAdventurers}.`, "Adventurers Needed"); return; } 
                     
                     totalAvailableAdventurers -= numAdventurersToSend; 
-                    // TIME COMPRESSION: 1 game hour = 1 real second
-                    let baseDurationSeconds = durationHours; // Directly use hours as seconds
-                    if(equippedItems.Boots){ const bootsData = craftableItemsData.find(item => item.id === equippedItems.Boots); if(bootsData && bootsData.perk.type === "timeReduction") { baseDurationSeconds = Math.max(1, baseDurationSeconds - (bootsData.perk.value / 3600) ); /* Adjust perk value for compressed time */}}
+                    let baseDurationSeconds = durationHours; 
+                    if(equippedItems.Boots){ const bootsData = craftableItemsData.find(item => item.id === equippedItems.Boots); if(bootsData && bootsData.perk.type === "timeReduction") { baseDurationSeconds = Math.max(1, baseDurationSeconds - (bootsData.perk.value / 3600) ); }}
                     
                     const returnTime = Date.now() + baseDurationSeconds * 1000; 
                     const newActiveAdventure = { id: nextActiveAdventureId++, originalAdventureId: adventureIdBase, name: adventureName, adventurers: numAdventurersToSend, returnTime: returnTime, pvReward: pvReward, goldChance: goldChance, diamondChance: diamondChance }; 
@@ -1009,42 +990,104 @@
             if(swapGoldToDiamondBtn) { swapGoldToDiamondBtn.addEventListener('click', () => { const goldCost = 50; if (currentGold >= goldCost) { currentGold -= goldCost; currentDiamonds += 1; updateStatsDisplay(); showCustomPopup(`Swapped 50 Gold for 1 Diamond!`, "Swap Successful"); if (userNickname) saveGameStateToFirebase(userNickname, getCurrentGameState()); } else { showCustomPopup(`Not enough Gold! You need 50 Gold to swap for a Diamond.`, "Swap Failed"); } });}
             
             // --- Whitelist Raffle Logic ---
-            if (createRaffleForm) {
-                createRaffleForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const newRaffle = {
-                        id: 'raffle_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-                        name: document.getElementById('raffleName').value,
-                        description: document.getElementById('raffleDescription').value,
-                        imageUrl: document.getElementById('raffleImageUrl').value || '',
-                        socials: {
-                            x: document.getElementById('raffleSocialX').value,
-                            discord: document.getElementById('raffleSocialDiscord').value
-                        },
-                        entryCost: {
-                            pv: parseInt(document.getElementById('raffleCostPV').value) || 0,
-                            gold: parseInt(document.getElementById('raffleCostGold').value) || 0,
-                            diamonds: parseInt(document.getElementById('raffleCostDiamonds').value) || 0
-                        },
-                        durationHours: parseInt(document.getElementById('raffleDurationHours').value) || 24,
-                        maxWinners: parseInt(document.getElementById('raffleMaxWinners').value) || 1,
-                        startTime: Date.now(),
-                        status: 'active', // active, ended, drawing, winners_announced
-                        entries: [],
-                        winners: []
-                    };
-                    // For demo: 1 game hour = 1 real second for raffle duration too
-                    newRaffle.endTime = newRaffle.startTime + newRaffle.durationHours * 1000; 
+            async function fetchAndDisplayRaffles() {
+                if (!db) {
+                    console.error("Firestore not initialized for fetching raffles.");
+                    allRaffles = []; 
+                    renderWhitelistRaffles(); 
+                    return;
+                }
+                const rafflesCol = collection(db, "raffles");
+                const q_raffles = query(rafflesCol, where("status", "in", ["active", "ended", "drawing_winners", "winners_announced"]), orderBy("endTime", "desc"));
 
-                    allRaffles.push(newRaffle);
+                try {
+                    const querySnapshot = await getDocs(q_raffles);
+                    const fetchedRaffles = [];
+                    for (const docSnap of querySnapshot.docs) { 
+                        const raffleData = docSnap.data();
+                        let displayEntryCount = raffleData.entryCount || 0;
+                        
+                        fetchedRaffles.push({
+                            id: docSnap.id,
+                            name: raffleData.name,
+                            description: raffleData.description,
+                            imageUrl: raffleData.imageUrl || '',
+                            socials: raffleData.socials || { x: '', discord: '' },
+                            entryCost: raffleData.entryCost || { pv: 0, gold: 0, diamonds: 0 },
+                            maxWinners: raffleData.maxWinners || 1,
+                            startTime: raffleData.startTime.toDate().getTime(), 
+                            endTime: raffleData.endTime.toDate().getTime(),   
+                            status: raffleData.status,
+                            entryCount: displayEntryCount, 
+                            winners: raffleData.winners || [] 
+                        });
+                    }
+                    allRaffles = fetchedRaffles;
                     renderWhitelistRaffles();
-                    showCustomPopup(`Raffle "${newRaffle.name}" created!`, "Admin Action");
-                    createRaffleForm.reset();
-                    // In a real app, save `allRaffles` to a central DB (Firestore `raffles` collection)
+                    console.log("Fetched raffles from Firestore:", allRaffles);
+                } catch (error) {
+                    console.error("Error fetching raffles: ", error);
+                    showCustomPopup("Could not load raffles from the server. Check console for details (e.g., missing index).", "Raffle Error");
+                    allRaffles = []; 
+                    renderWhitelistRaffles();
+                }
+            }
+
+            if (createRaffleForm) {
+                createRaffleForm.addEventListener('submit', async (e) => { 
+                    e.preventDefault();
+                    if (!db || userNickname.toLowerCase() !== 'ati') {
+                        showCustomPopup("Admin action failed. Not logged in as admin or DB error.", "Admin Error");
+                        return;
+                    }
+
+                    const name = document.getElementById('raffleName').value;
+                    const description = document.getElementById('raffleDescription').value;
+                    const imageUrl = document.getElementById('raffleImageUrl').value || '';
+                    const socialX = document.getElementById('raffleSocialX').value;
+                    const socialDiscord = document.getElementById('raffleSocialDiscord').value;
+                    const costPV = parseInt(document.getElementById('raffleCostPV').value) || 0;
+                    const costGold = parseInt(document.getElementById('raffleCostGold').value) || 0;
+                    const costDiamonds = parseInt(document.getElementById('raffleCostDiamonds').value) || 0;
+                    const durationHours = parseInt(document.getElementById('raffleDurationHours').value) || 24;
+                    const maxWinners = parseInt(document.getElementById('raffleMaxWinners').value) || 1;
+                    
+                    const nowMs = Date.now();
+                    const startTime = Timestamp.fromDate(new Date(nowMs));
+                    const endTime = Timestamp.fromDate(new Date(nowMs + durationHours * 1000)); 
+
+
+                    const newRaffleData = {
+                        name: name,
+                        description: description,
+                        imageUrl: imageUrl,
+                        socials: { x: socialX, discord: socialDiscord },
+                        entryCost: { pv: costPV, gold: costGold, diamonds: costDiamonds },
+                        durationHours: durationHours, 
+                        maxWinners: maxWinners,
+                        startTime: startTime,
+                        endTime: endTime,
+                        status: 'active',
+                        createdBy: userNickname, 
+                        createdAt: Timestamp.now(),
+                        winners: [], 
+                        entryCount: 0 
+                    };
+
+                    try {
+                        const newRaffleRef = await addDoc(collection(db, "raffles"), newRaffleData);
+                        console.log("Raffle created in Firestore with ID: ", newRaffleRef.id);
+                        showCustomPopup(`Raffle "${name}" created successfully in Firebase!`, "Admin Action");
+                        createRaffleForm.reset();
+                        await fetchAndDisplayRaffles(); 
+                    } catch (error) {
+                        console.error("Error creating raffle in Firestore: ", error);
+                        showCustomPopup("Failed to create raffle in database.", "Admin Error");
+                    }
                 });
             }
 
-            function renderWhitelistRaffles() {
+            async function renderWhitelistRaffles() { 
                 if (!whitelistRafflesContainer) return;
                 whitelistRafflesContainer.innerHTML = '';
 
@@ -1053,9 +1096,9 @@
                     return;
                 }
 
-                allRaffles.sort((a, b) => b.startTime - a.startTime); // Show newest first
+                allRaffles.sort((a, b) => b.startTime - a.startTime); 
 
-                allRaffles.forEach(raffle => {
+                for (const raffle of allRaffles) { 
                     const card = document.createElement('div');
                     card.className = 'raffle-card';
                     card.dataset.raffleId = raffle.id;
@@ -1068,6 +1111,17 @@
                     if (costHtml === '') costHtml = 'Free Entry'; else costHtml = 'Cost: ' + costHtml;
                     
                     const alreadyEntered = playerRaffleEntries[raffle.id];
+                    
+                    let adminActionsHtml = '';
+                    if (userNickname.toLowerCase() === 'ati') {
+                        adminActionsHtml += `<button class="action-button raffle-action-btn delete-raffle-btn" data-raffle-id="${raffle.id}">Delete</button>`;
+                        if (raffle.status === 'active') {
+                             adminActionsHtml += `<button class="action-button raffle-action-btn draw-now-btn" data-raffle-id="${raffle.id}">Draw Now</button>`;
+                        } else if (raffle.status === 'ended' && (!raffle.winners || raffle.winners.length === 0)) {
+                            adminActionsHtml += `<button class="action-button raffle-action-btn draw-winners-btn" data-raffle-id="${raffle.id}">Draw Winners</button>`;
+                        }
+                    }
+
 
                     card.innerHTML = `
                         <div class="raffle-card-image ${raffle.imageUrl ? '' : 'placeholder'}" style="${raffle.imageUrl ? 'background-image: url('+raffle.imageUrl+');' : ''}">
@@ -1083,15 +1137,15 @@
                             <p class="raffle-card-cost">${costHtml}</p>
                             <p class="raffle-card-status">Status: ${raffle.status.replace('_', ' ')}</p>
                             <p>Time Left: <span class="raffle-timer">${formatTimeLeft(timeLeftMs)}</span></p>
-                            <p>Entries: ${raffle.entries.length}</p>
-                            ${raffle.status === 'active' && !alreadyEntered ? `<button class="action-button enter-raffle-btn" data-raffle-id="${raffle.id}">Enter Raffle</button>` : ''}
+                            <p>Entries: ${raffle.entryCount || 0}</p>
+                            ${raffle.status === 'active' && !alreadyEntered ? `<button class="action-button enter-raffle-btn raffle-action-btn" data-raffle-id="${raffle.id}">Enter Raffle</button>` : ''}
                             ${alreadyEntered ? '<p><strong>You have entered this raffle!</strong></p>' : ''}
-                            ${raffle.status === 'ended' && userNickname.toLowerCase() === 'ati' && raffle.winners.length === 0 ? `<button class="action-button draw-winners-btn" data-raffle-id="${raffle.id}">Draw Winners</button>` : ''}
-                            ${raffle.winners.length > 0 ? `<div><strong>Winners (${raffle.winners.length}/${raffle.maxWinners}):</strong><ul>${raffle.winners.map(w => `<li>${w}</li>`).join('')}</ul></div>` : ''}
+                            <div class="raffle-admin-actions">${adminActionsHtml}</div>
+                            ${raffle.winners && raffle.winners.length > 0 ? `<div><strong>Winners (${raffle.winners.length}/${raffle.maxWinners}):</strong><ul>${raffle.winners.map(w => `<li>${w}</li>`).join('')}</ul></div>` : ''}
                         </div>
                     `;
                     whitelistRafflesContainer.appendChild(card);
-                });
+                }
 
                 whitelistRafflesContainer.querySelectorAll('.enter-raffle-btn').forEach(btn => {
                     btn.addEventListener('click', handleEnterRaffle);
@@ -1099,67 +1153,189 @@
                 whitelistRafflesContainer.querySelectorAll('.draw-winners-btn').forEach(btn => {
                     btn.addEventListener('click', handleDrawWinners);
                 });
+                 whitelistRafflesContainer.querySelectorAll('.draw-now-btn').forEach(btn => {
+                    btn.addEventListener('click', handleDrawNow);
+                });
+                whitelistRafflesContainer.querySelectorAll('.delete-raffle-btn').forEach(btn => {
+                    btn.addEventListener('click', handleDeleteRaffle);
+                });
             }
             
-            function handleEnterRaffle(event) {
+            async function handleEnterRaffle(event) { 
                 const raffleId = event.target.dataset.raffleId;
-                const raffle = allRaffles.find(r => r.id === raffleId);
-                if (!raffle || raffle.status !== 'active' || playerRaffleEntries[raffle.id]) {
-                    showCustomPopup("Cannot enter this raffle. It might have ended, or you've already entered.", "Entry Failed");
+                const raffle = allRaffles.find(r => r.id === raffleId); 
+                
+                if (!raffle || raffle.status !== 'active') {
+                    showCustomPopup("Raffle is not active or not found.", "Entry Failed");
+                    return;
+                }
+                 if (playerRaffleEntries[raffle.id]) { 
+                    showCustomPopup("You have already entered this raffle.", "Entry Failed");
                     return;
                 }
 
-                // Check currency
                 if (currentPvTokens < raffle.entryCost.pv || currentGold < raffle.entryCost.gold || currentDiamonds < raffle.entryCost.diamonds) {
                     showCustomPopup("Not enough currency to enter this raffle.", "Entry Failed");
                     return;
                 }
 
-                // Deduct currency
-                currentPvTokens -= raffle.entryCost.pv;
-                currentGold -= raffle.entryCost.gold;
-                currentDiamonds -= raffle.entryCost.diamonds;
-                
-                raffle.entries.push(userNickname);
-                playerRaffleEntries[raffle.id] = true; // Mark as entered for this player
+                const playerProgressRef = doc(db, "playerProgress", userNickname);
+                const raffleEntryRef = doc(db, "raffles", raffleId, "entries", userNickname); 
+                const mainRaffleDocRef = doc(db, "raffles", raffleId);
 
-                updateStatsDisplay();
-                renderWhitelistRaffles(); // Re-render to update button and entry count
-                showCustomPopup(`Successfully entered raffle: ${raffle.name}!`, "Raffle Entry");
-                if (userNickname) saveGameStateToFirebase(userNickname, getCurrentGameState()); // Save player's updated currency and entry status
+
+                try {
+                    await runTransaction(db, async (transaction) => {
+                        const playerDoc = await transaction.get(playerProgressRef);
+                        if (!playerDoc.exists()) {
+                            throw "Player document does not exist!";
+                        }
+                        const mainRaffleSnap = await transaction.get(mainRaffleDocRef);
+                        if (!mainRaffleSnap.exists()) {
+                            throw "Raffle document does not exist!";
+                        }
+
+                        const currentPlayerData = playerDoc.data();
+                        const currentRaffleData = mainRaffleSnap.data();
+
+                        const newPv = (currentPlayerData.pvTokens || 0) - raffle.entryCost.pv;
+                        const newGold = (currentPlayerData.gold || 0) - raffle.entryCost.gold;
+                        const newDiamonds = (currentPlayerData.diamonds || 0) - raffle.entryCost.diamonds;
+
+                        if (newPv < 0 || newGold < 0 || newDiamonds < 0) {
+                            throw "Insufficient funds (checked again in transaction).";
+                        }
+                        
+                        const entryDoc = await transaction.get(raffleEntryRef);
+                        if (entryDoc.exists()) {
+                            throw "Player already entered this raffle (server check).";
+                        }
+                        
+                        let updatedPlayerRaffleEntries = { ... (currentPlayerData.playerRaffleEntries || {}), [raffleId]: true };
+
+                        transaction.update(playerProgressRef, { 
+                            pvTokens: newPv, 
+                            gold: newGold, 
+                            diamonds: newDiamonds,
+                            playerRaffleEntries: updatedPlayerRaffleEntries,
+                            userNickname: userNickname 
+                        });
+                        transaction.set(raffleEntryRef, { timestamp: Timestamp.now(), nickname: userNickname });
+                        transaction.update(mainRaffleDocRef, { entryCount: (currentRaffleData.entryCount || 0) + 1 });
+                    });
+
+                    currentPvTokens -= raffle.entryCost.pv;
+                    currentGold -= raffle.entryCost.gold;
+                    currentDiamonds -= raffle.entryCost.diamonds;
+                    playerRaffleEntries[raffle.id] = true; 
+                    
+                    const raffleInClientArray = allRaffles.find(r => r.id === raffleId);
+                    if (raffleInClientArray) raffleInClientArray.entryCount = (raffleInClientArray.entryCount || 0) + 1;
+
+
+                    updateStatsDisplay();
+                    renderWhitelistRaffles(); 
+                    showCustomPopup(`Successfully entered raffle: ${raffle.name}!`, "Raffle Entry");
+                } catch (error) {
+                    console.error("Raffle entry transaction failed: ", error);
+                    showCustomPopup(`Raffle entry failed: ${error.toString()}`, "Entry Error");
+                }
             }
 
-            function handleDrawWinners(event) {
-                if (userNickname.toLowerCase() !== 'ati') return;
-                const raffleId = event.target.dataset.raffleId;
-                const raffle = allRaffles.find(r => r.id === raffleId);
+            async function drawRaffleWinners(raffleId, isDrawingNow = false) {
+                if (userNickname.toLowerCase() !== 'ati' || !db) return;
+                const raffleDocRef = doc(db, "raffles", raffleId);
 
-                if (!raffle || raffle.status !== 'ended' || raffle.winners.length > 0) {
-                    showCustomPopup("Cannot draw winners. Raffle not ended or winners already drawn.", "Admin Action Failed");
-                    return;
-                }
-                
-                raffle.status = 'drawing';
-                renderWhitelistRaffles(); // Show "drawing" status
-
-                setTimeout(() => { // Simulate drawing delay
-                    if (raffle.entries.length === 0) {
-                        raffle.status = 'winners_announced'; // Or 'no_entries'
-                        showCustomPopup(`No entries for raffle: ${raffle.name}. No winners drawn.`, "Raffle Result");
-                        renderWhitelistRaffles();
-                        return;
+                try {
+                    const raffleDocSnap = await getDoc(raffleDocRef);
+                    if (!raffleDocSnap.exists()) {
+                        showCustomPopup("Raffle document not found in Firestore.", "Admin Error");
+                        return false;
                     }
+                    const raffleData = raffleDocSnap.data();
 
-                    let potentialWinners = [...new Set(raffle.entries)]; // Unique entries
-                    for (let i = 0; i < raffle.maxWinners && potentialWinners.length > 0; i++) {
-                        const winnerIndex = Math.floor(Math.random() * potentialWinners.length);
-                        raffle.winners.push(potentialWinners.splice(winnerIndex, 1)[0]);
+                    if (!isDrawingNow && raffleData.status !== 'ended') {
+                         showCustomPopup("Cannot draw winners. Raffle not ended yet.", "Admin Action Failed");
+                         return false;
                     }
-                    raffle.status = 'winners_announced';
-                    showCustomPopup(`Winners drawn for raffle: ${raffle.name}! Check the list.`, "Raffle Result");
+                    if (raffleData.winners && raffleData.winners.length > 0) {
+                        showCustomPopup("Winners already drawn for this raffle.", "Admin Info");
+                        return false;
+                    }
+                    
+                    await updateDoc(raffleDocRef, { status: 'drawing_winners', endTime: Timestamp.now() }); // Also update endTime if drawing now
+                    const localRaffle = allRaffles.find(r => r.id === raffleId);
+                    if(localRaffle) localRaffle.status = 'drawing_winners';
                     renderWhitelistRaffles();
-                     // In a real app, raffle data (winners, status) would be updated in the central DB
-                }, 1000);
+
+                    const entriesColRef = collection(db, "raffles", raffleId, "entries");
+                    const entriesSnapshot = await getDocs(entriesColRef);
+                    const allEntryNicknames = [];
+                    entriesSnapshot.forEach(entryDoc => {
+                        allEntryNicknames.push(entryDoc.id); 
+                    });
+
+                    if (allEntryNicknames.length === 0) {
+                        await updateDoc(raffleDocRef, { status: 'winners_announced', winners: [] });
+                        if(localRaffle) { localRaffle.status = 'winners_announced'; localRaffle.winners = [];}
+                        showCustomPopup(`No entries for raffle: ${raffleData.name}. No winners drawn.`, "Raffle Result");
+                        renderWhitelistRaffles();
+                        return true;
+                    }
+
+                    let potentialWinners = [...new Set(allEntryNicknames)]; 
+                    const drawnWinners = [];
+                    for (let i = 0; i < raffleData.maxWinners && potentialWinners.length > 0; i++) {
+                        const winnerIndex = Math.floor(Math.random() * potentialWinners.length);
+                        drawnWinners.push(potentialWinners.splice(winnerIndex, 1)[0]);
+                    }
+
+                    await updateDoc(raffleDocRef, { 
+                        winners: drawnWinners, 
+                        status: 'winners_announced' 
+                    });
+                    
+                    if(localRaffle) { localRaffle.winners = drawnWinners; localRaffle.status = 'winners_announced'; }
+                    showCustomPopup(`Winners drawn for raffle: ${raffleData.name}! Check the list.`, "Raffle Result");
+                    renderWhitelistRaffles();
+                    return true;
+
+                } catch (error) {
+                    console.error("Error drawing winners: ", error);
+                    showCustomPopup("Failed to draw winners.", "Admin Error");
+                    const localRaffle = allRaffles.find(r => r.id === raffleId);
+                    if(localRaffle && localRaffle.status === 'drawing_winners') localRaffle.status = 'ended'; 
+                    renderWhitelistRaffles();
+                    return false;
+                }
+            }
+
+            async function handleDrawWinners(event) {
+                await drawRaffleWinners(event.target.dataset.raffleId, false);
+            }
+            async function handleDrawNow(event) {
+                await drawRaffleWinners(event.target.dataset.raffleId, true);
+            }
+
+            async function handleDeleteRaffle(event) {
+                if (userNickname.toLowerCase() !== 'ati' || !db) return;
+                const raffleId = event.target.dataset.raffleId;
+                const raffleName = allRaffles.find(r => r.id === raffleId)?.name || "this raffle";
+
+                if (confirm(`Are you sure you want to delete "${raffleName}"? This cannot be undone.`)) {
+                    const raffleDocRef = doc(db, "raffles", raffleId);
+                    try {
+                        // Note: Deleting subcollections (entries) programmatically from client-side is complex.
+                        // For this demo, we'll just delete the main raffle doc.
+                        // In production, use a Cloud Function to delete subcollections.
+                        await deleteDoc(raffleDocRef);
+                        showCustomPopup(`Raffle "${raffleName}" deleted.`, "Admin Action");
+                        await fetchAndDisplayRaffles(); // Refresh list
+                    } catch (error) {
+                        console.error("Error deleting raffle:", error);
+                        showCustomPopup("Failed to delete raffle.", "Admin Error");
+                    }
+                }
             }
 
 
@@ -1173,7 +1349,7 @@
             renderQuests(); 
             renderDailyRewards(); 
             renderInventory();
-            updateAdventureDisplayStates(); // Initial call to set adventure lock states
+            updateAdventureDisplayStates(); 
             
             setInterval(updateTimers, 1000);
             document.querySelectorAll('.adventure-num-select').forEach(select => { select.value = "5"; });
@@ -1190,4 +1366,3 @@
     </script>
 </body>
 </html>
-```
