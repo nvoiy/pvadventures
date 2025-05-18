@@ -688,13 +688,13 @@
             const customPopupTitleEl = document.getElementById('customPopupTitle');
             const customPopupMessageEl = document.getElementById('customPopupMessage');
             const customPopupCloseBtn = document.getElementById('customPopupCloseBtn');
-            const welcomeConnectWalletBtn = document.getElementById('welcomeConnectWalletBtn'); // Added
+            const welcomeConnectWalletBtn = document.getElementById('welcomeConnectWalletBtn'); 
 
 
             // Game State Variables
             let userWalletAddress = null; 
             let userDisplayName = 'Voyager'; 
-            const ADMIN_WALLET_ADDRESS = "YOUR_ADMIN_WALLET_ADDRESS_HERE"; // <<< IMPORTANT: SET YOUR ADMIN WALLET ADDRESS HERE
+            const ADMIN_WALLET_ADDRESS = "YOUR_ADMIN_WALLET_ADDRESS_HERE"; // <<< SET YOUR ADMIN ORDINAL ADDRESS
 
             const MAX_PLAYER_ADVENTURERS = 5;
             let currentPvTokens = 0; let currentGold = 0; let currentDiamonds = 0;
@@ -835,7 +835,7 @@
                 
                 const shortAddress = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
                 userDisplayName = shortAddress; 
-                if (playerNicknameDisplay) playerNicknameDisplay.textContent = userDisplayName; // Update header
+                if (playerNicknameDisplay) playerNicknameDisplay.textContent = userDisplayName; 
                 
                 welcomeScreen.classList.add('hidden');
                 gameContainer.classList.remove('hidden');
@@ -853,7 +853,7 @@
                 const loadedState = await loadGameStateFromFirebase(userWalletAddress);
                 if (loadedState) {
                     applyLoadedGameState(loadedState);
-                    userDisplayName = loadedState.displayName || shortAddress; // Prefer stored displayName
+                    userDisplayName = loadedState.displayName || shortAddress; 
                     if (playerNicknameDisplay) playerNicknameDisplay.textContent = userDisplayName;
                      showCustomPopup(`Welcome back, ${userDisplayName}! Your voyage continues.`, "Voyage Resumed");
                 } else {
@@ -864,7 +864,6 @@
                 showPage('adventures-page');
                 await fetchAndDisplayRaffles();
             }
-
 
             initializeTheme(); 
             if (!localStorage.getItem('hasLoadedOncePVA')) { 
@@ -888,47 +887,55 @@
                 });
             }
             
-            if (welcomeConnectWalletBtn && connectWalletBtn) { // connectWalletBtn is the header one
+            const connectWalletBtn = document.getElementById('connectWalletBtn'); 
+            const walletDropdown = document.getElementById('walletDropdown');   
+            const walletOptions = walletDropdown.querySelectorAll('li'); 
+            const walletAddressDisplay = document.getElementById('walletAddressDisplay');
+            let connectedAccount = null; 
+            let connectedWalletName = null; 
+            
+            if (welcomeConnectWalletBtn && connectWalletBtn && walletDropdown) {
                  welcomeConnectWalletBtn.addEventListener('click', () => {
-                    connectWalletBtn.click(); 
-                });
+                    walletDropdown.style.display = 'block';
+                    // You might want to also briefly highlight or focus the header connect button or dropdown
+                 });
             }
 
-            setInterval(updateTimers, 1000);
-            document.querySelectorAll('.adventure-num-select').forEach(select => { select.value = "5"; });
-            
-            const connectWalletBtn = document.getElementById('connectWalletBtn'); const walletDropdown = document.getElementById('walletDropdown'); const walletOptions = walletDropdown.querySelectorAll('li'); const walletAddressDisplay = document.getElementById('walletAddressDisplay');
-            // let connectedAccount = null; // Already defined
-            // let connectedWalletName = null; // Already defined
 
             function updateWalletDisplay(account, walletName = '') { 
-                const headerConnectWalletBtn = document.getElementById('connectWalletBtn'); // Ensure we target header button
+                const headerConnectWalletBtn = document.getElementById('connectWalletBtn'); 
                 if (account) { 
                     const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`; 
                     if(headerConnectWalletBtn) { headerConnectWalletBtn.textContent = `${walletName}: ${shortAddress}`; headerConnectWalletBtn.classList.add('connected'); } 
                     if(walletAddressDisplay) walletAddressDisplay.textContent = `Wallet: ${account}`; 
-                    if (!gameContainer.classList.contains('hidden')) { // Already in game, perhaps a wallet switch
-                         if (userWalletAddress !== account) { // Wallet changed
+                    if (!gameContainer.classList.contains('hidden')) { 
+                         if (userWalletAddress !== account) { 
                             showCustomPopup(`Wallet changed to ${shortAddress}. Reloading your progress for this wallet.`, "Wallet Changed");
-                            resetLocalGameState(); // Reset before loading new wallet's data
+                            resetLocalGameState(); 
                             handleSuccessfulWalletConnection(account, walletName);
                          }
-                    } else { // Initial connection from welcome screen
+                    } else { 
                         handleSuccessfulWalletConnection(account, walletName);
                     }
-                } else { // Disconnecting
+                } else { 
                     if(headerConnectWalletBtn) { headerConnectWalletBtn.textContent = 'CONNECT WALLET'; headerConnectWalletBtn.classList.remove('connected'); } 
                     if(walletAddressDisplay) walletAddressDisplay.textContent = ''; 
-                    // Logout logic will handle showing welcome screen
                 } 
             }
             if(connectWalletBtn && walletDropdown) { connectWalletBtn.addEventListener('click', (event) => { event.stopPropagation(); walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block'; }); document.addEventListener('click', (event) => { if (walletDropdown && connectWalletBtn && !connectWalletBtn.contains(event.target) && !walletDropdown.contains(event.target)) { walletDropdown.style.display = 'none'; } }); }
             async function connectWithSatsConnect(walletTypeHint = null) { if (typeof SatsConnect === 'undefined' || typeof SatsConnect.getAddresses === 'undefined') { showCustomPopup('Sats Connect library not loaded or not ready.', "Wallet Error"); return; } try { SatsConnect.getAddresses({ payload: { purposes: ['ordinals', 'payment'], message: 'Connect to Punk Voyage Adventures', network: { type: 'Mainnet' }, }, onFinish: (response) => { const ordAddress = response.addresses.find(a => a.purpose === 'ordinals'); const payAddress = response.addresses.find(a => a.purpose === 'payment'); let addr = ordAddress ? ordAddress.address : (payAddress ? payAddress.address : null); if (addr) { let name = walletTypeHint ? walletTypeHint.replace('satsconnect_', '').toUpperCase() : "BTC"; if (name === "GENERAL") name = "BTC"; updateWalletDisplay(addr, name); } }, onCancel: () => console.log('SatsConnect canceled.'), }); } catch (e) { console.error('SatsConnect error:', e); showCustomPopup('An error occurred with SatsConnect.', 'Wallet Error');} }
             async function connectUnisat() { try { if (typeof window.unisat !== 'undefined') { const accounts = await window.unisat.requestAccounts(); if (accounts && accounts.length > 0) { updateWalletDisplay(accounts[0], 'UniSat'); window.unisat.on('accountsChanged', (newAccs) => { if (connectedWalletName === 'UniSat') { const newAccount = (newAccs && newAccs.length > 0) ? newAccs[0] : null; if (newAccount !== connectedAccount) { if(newAccount) { updateWalletDisplay(newAccount, 'UniSat'); } else { if(logoutButton) logoutButton.click();}} } }); } } else { window.open('https://unisat.io/', '_blank'); } } catch (e) { console.error('UniSat error:', e); showCustomPopup('An error occurred with UniSat Wallet.', 'Wallet Error'); } }
             if (walletOptions) { walletOptions.forEach(option => { option.addEventListener('click', async (event) => { const walletType = event.target.dataset.wallet; if(walletDropdown) walletDropdown.style.display = 'none'; if (walletType === 'unisat') await connectUnisat(); else if (walletType && walletType.startsWith('satsconnect_')) { await connectWithSatsConnect(walletType.split('_')[1]); } }); }); }
+            
+            async function showPage(pageIdToShow) { console.log("Switching to page:", pageIdToShow); if(!pageContents || pageContents.length === 0) { console.error("pageContents NodeList is empty or not found in showPage."); return; } pageContents.forEach(page => { page.classList.remove('active'); }); const targetPage = document.getElementById(pageIdToShow); if (targetPage) { targetPage.classList.add('active'); if (pageIdToShow === 'quests-page') renderQuests(); else if (pageIdToShow === 'shop-page') {renderShopItems(); renderCraftingItems();} else if (pageIdToShow === 'inventory-page') renderInventory(); else if (pageIdToShow === 'daily-rewards-page') renderDailyRewards(); else if (pageIdToShow === 'whitelist-page') await fetchAndDisplayRaffles(); } else { console.error("Target page with ID '" + pageIdToShow + "' not found."); showPage('adventures-page'); }}
+            if(menuItems){ menuItems.forEach(item => { item.addEventListener('click', () => { const targetPageId = item.dataset.page; if (targetPageId) { showPage(targetPageId); } }); });}
+
+            setInterval(updateTimers, 1000);
+            document.querySelectorAll('.adventure-num-select').forEach(select => { select.value = "5"; });
+
 
             // Raffle functions (fetchAndDisplayRaffles, admin panel submit, enter, draw, delete)
-            async function fetchAndDisplayRaffles() {
+             async function fetchAndDisplayRaffles() {
                 if (!db) { console.error("Firestore not initialized for fetching raffles."); allRaffles = []; renderWhitelistRaffles(); return; }
                 const rafflesCol = collection(db, "raffles");
                 const q_raffles = query(rafflesCol, where("status", "in", ["active", "ended", "drawing_winners", "winners_announced"]), orderBy("endTime", "desc"));
@@ -950,7 +957,7 @@
                 createRaffleForm.addEventListener('submit', async (e) => { 
                     e.preventDefault();
                     if (!db || !userWalletAddress || userWalletAddress.toLowerCase() !== ADMIN_WALLET_ADDRESS.toLowerCase()) {
-                        showCustomPopup("Admin action failed. Not logged in as admin or DB error.", "Admin Error");
+                        showCustomPopup("Admin action failed. Not admin or DB error.", "Admin Error");
                         return;
                     }
                     const name = document.getElementById('raffleName').value;
@@ -1126,24 +1133,16 @@
                 localStorage.setItem('hasLoadedOncePVA', 'true');
             }
             
+            // Initial check to see if a wallet is already connected (e.g. from a previous session if using wallet's built-in persistence)
+            // This part is tricky without a dedicated "check if connected" function from the wallet libraries that doesn't trigger UI.
+            // For now, user always starts at welcome screen and must connect.
+            // If you had a way to silently check, you could call handleSuccessfulWalletConnection here.
+
             setInterval(updateTimers, 1000);
             document.querySelectorAll('.adventure-num-select').forEach(select => { select.value = "5"; });
             
-            const connectWalletBtn = document.getElementById('connectWalletBtn'); 
-            const walletDropdown = document.getElementById('walletDropdown'); 
-            const walletOptions = walletDropdown.querySelectorAll('li'); 
-            const walletAddressDisplay = document.getElementById('walletAddressDisplay');
-            let connectedAccount = null; 
-            let connectedWalletName = null; 
-
-            if(connectWalletBtn && walletDropdown) { connectWalletBtn.addEventListener('click', (event) => { event.stopPropagation(); walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block'; }); document.addEventListener('click', (event) => { if (walletDropdown && connectWalletBtn && !connectWalletBtn.contains(event.target) && !walletDropdown.contains(event.target)) { walletDropdown.style.display = 'none'; } }); }
-            async function connectWithSatsConnect(walletTypeHint = null) { if (typeof SatsConnect === 'undefined' || typeof SatsConnect.getAddresses === 'undefined') { showCustomPopup('Sats Connect library not loaded or not ready.', "Wallet Error"); return; } try { SatsConnect.getAddresses({ payload: { purposes: ['ordinals', 'payment'], message: 'Connect to Punk Voyage Adventures', network: { type: 'Mainnet' }, }, onFinish: (response) => { const ordAddress = response.addresses.find(a => a.purpose === 'ordinals'); const payAddress = response.addresses.find(a => a.purpose === 'payment'); let addr = ordAddress ? ordAddress.address : (payAddress ? payAddress.address : null); if (addr) { let name = walletTypeHint ? walletTypeHint.replace('satsconnect_', '').toUpperCase() : "BTC"; if (name === "GENERAL") name = "BTC"; updateWalletDisplay(addr, name); } }, onCancel: () => console.log('SatsConnect canceled.'), }); } catch (e) { console.error('SatsConnect error:', e); showCustomPopup('An error occurred with SatsConnect.', 'Wallet Error');} }
-            async function connectUnisat() { try { if (typeof window.unisat !== 'undefined') { const accounts = await window.unisat.requestAccounts(); if (accounts && accounts.length > 0) { updateWalletDisplay(accounts[0], 'UniSat'); window.unisat.on('accountsChanged', (newAccs) => { if (connectedWalletName === 'UniSat') { const newAccount = (newAccs && newAccs.length > 0) ? newAccs[0] : null; if (newAccount !== connectedAccount) { if(newAccount) { updateWalletDisplay(newAccount, 'UniSat'); } else { if(logoutButton) logoutButton.click();}} } }); } } else { window.open('https://unisat.io/', '_blank'); } } catch (e) { console.error('UniSat error:', e); showCustomPopup('An error occurred with UniSat Wallet.', 'Wallet Error'); } }
-            if (walletOptions) { walletOptions.forEach(option => { option.addEventListener('click', async (event) => { const walletType = event.target.dataset.wallet; if(walletDropdown) walletDropdown.style.display = 'none'; if (walletType === 'unisat') await connectUnisat(); else if (walletType && walletType.startsWith('satsconnect_')) { await connectWithSatsConnect(walletType.split('_')[1]); } }); }); }
-            if (welcomeConnectWalletBtn && connectWalletBtn) {
-                 welcomeConnectWalletBtn.addEventListener('click', () => connectWalletBtn.click());
-            }
-
+            // Wallet connection logic (connectWalletBtn, walletDropdown, walletOptions) remains the same as before
+            // but the `updateWalletDisplay` function now calls `handleSuccessfulWalletConnection`.
 
         }); // End of 'firebaseReady' event listener
     </script>
