@@ -239,7 +239,7 @@
             margin-right: auto; 
         }
         .header-title-container img.header-logo {
-            height: 80px; /* Increased size */
+            height: 80px; 
             width: auto;
             margin-right: 15px; 
         }
@@ -325,7 +325,7 @@
         }
         #availableAdventurersDisplay { text-align:center; font-size: 1.2em; } 
         .socials-nav .social-title, .adventure-controls label, .page-title, .materials-display h4, .adventures-label, #activeAdventuresDisplay_page h3, 
-        .equipment-slots-container h4, #inventory-page > h4, .shop-section-wrapper h3, .crafting-section-wrapper h3, .swap-section h3, #whitelist-page h3, #adminRafflePanel h3 { 
+        .equipment-slots-container h4, #inventory-page > h4, .shop-section-wrapper h3, .crafting-section-wrapper h3, .swap-section h3, #whitelist-page h3, #adminRafflePanel h3, #upgrade-page h3 { 
             color: var(--label-color); font-weight: bold; transition: color 0.3s; 
         }
         .materials-display h4 {font-size: 1.2em; margin-top:0; margin-bottom: 8px;} .materials-display ul { list-style: none; padding: 0; margin: 5px 0 0 0; font-size: 1em; } .materials-display li { margin-bottom: 3px; }
@@ -334,7 +334,6 @@
         .page-content.active { display: flex; }
 
         #adventures-page { flex-direction: row; align-items: flex-start; gap: 25px; padding:0; }
-        /* Hide the player character area on the adventures page */
         .player-character-area { 
             display: none; 
         }
@@ -439,23 +438,85 @@
         .dark-mode-switch { display: flex; align-items: center; gap: 8px; } .dark-mode-switch label { font-size: 1em; color: var(--text-color); cursor: pointer; transition: color 0.3s; } .switch { position: relative; display: inline-block; width: 50px; height: 24px; } .switch input { opacity: 0; width: 0; height: 0; } .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; } .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; } input:checked + .slider { background-color: var(--highlight-color-connected); } input:focus + .slider { box-shadow: 0 0 1px var(--highlight-color-connected); } input:checked + .slider:before { transform: translateX(26px); }
         .page-title { font-size: 2.2em; margin-bottom: 25px; text-align:center; width:100%; }
         
-        #shop-page { align-items: center; } 
-        .swap-section-container { 
-            width: 100%; max-width: 800px; 
-            margin-bottom: 30px; 
-            padding: 20px; 
-            border: 2px solid var(--border-color);
-            background-color: var(--section-bg);
-            border-radius: 8px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.15); 
+        /* Shop & Crafting Page Restructure */
+        #shop-page { 
+            align-items: center; 
+            flex-direction: column; 
+        } 
+        .shop-top-section {
+            display: flex;
+            flex-direction: row; 
+            gap: 20px;
+            align-items: flex-start; 
+            width: 100%;
+            max-width: 1000px; 
+            margin-bottom: 30px;
         }
+        .shop-gif-container {
+            flex: 1; 
+            max-width: 50%; 
+        }
+        .shop-gif-container img {
+            width: 100%;
+            max-width: 400px; /* Match general large image size */
+            height: auto;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            display: block; /* For centering if parent is text-align: center */
+            margin: 0 auto; /* For centering if parent is not flex */
+        }
+        .swap-section-container { 
+            flex: 1; 
+            max-width: 45%; 
+            margin-bottom: 0; 
+        }
+
+        @media (max-width: 800px) {
+            .shop-top-section {
+                flex-direction: column;
+                align-items: center; 
+            }
+            .shop-gif-container, .swap-section-container {
+                max-width: 80%; 
+                margin-bottom: 20px; 
+            }
+        }
+
+
         .swap-section h3 { font-size: 1.8em; text-align: center; margin-bottom: 15px; }
         .shop-section-wrapper, .crafting-section-wrapper { width: 100%; max-width: 800px; margin-bottom:30px;} .shop-section-wrapper h3, .crafting-section-wrapper h3 { font-size: 1.8em; text-align: center; margin-bottom: 20px; }
         .quest-list, .shop-items, .crafting-items-container, .inventory-items-container { display: flex; flex-direction: column; gap: 18px; width:100%; max-width:800px; margin:0 auto; }
         .quest-item, .shop-item, .craftable-item-card, .inventory-item-card { background-color: var(--adventure-block-bg); border: 1px solid var(--border-color); padding: 18px; border-radius: 8px; display: flex; align-items: center; transition: background-color 0.3s, border-color 0.3s; gap: 15px; }
         .quest-item p, .shop-item p, .craftable-item-card p, .inventory-item-card p { font-size: 1.05em; margin:3px 0; }
         .quest-item .quest-reward, .shop-item .shop-price, .craftable-item-card .crafting-cost, .inventory-item-card .item-type { margin-left: auto; white-space: nowrap; text-align: right; }
-        .shop-item .shop-price { color: var(--highlight-color-pv); } .action-button { padding: 6px 12px; font-size: 0.9em; } .help-content p { font-size: 1.05em; margin-bottom: 10px; line-height: 1.6; }
+        .shop-item .shop-price { color: var(--highlight-color-pv); } .action-button { padding: 6px 12px; font-size: 0.9em; } 
+        
+        .help-content {
+            width: 100%;
+            max-width: 900px; 
+            margin: 0 auto;
+        }
+        .help-content p, .help-content ul, .help-content h3, .help-content h4 { 
+            font-size: 1.05em; 
+            margin-bottom: 10px; 
+            line-height: 1.7; 
+        }
+        .help-content h3 { font-size: 1.5em; margin-top: 20px; color: var(--label-color); }
+        .help-content h4 { font-size: 1.2em; margin-top: 15px; color: var(--label-color); }
+        .help-content ul { list-style: disc; padding-left: 25px; }
+        .help-content strong { color: var(--highlight-color-pv); }
+        body.dark-mode .help-content strong { color: var(--highlight-color-gold); }
+        .help-gif-container {
+            text-align: center;
+            margin: 25px 0;
+        }
+        .help-gif-container img {
+            max-width: 80%;
+            height: auto;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+        }
+
         .item-icon-placeholder { width: 45px; height: 45px; border: 1px solid var(--border-color); border-radius: 4px; margin-right: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.7em; background-color: #555; color: white; }
         .craftable-item-card .item-info, .inventory-item-card .item-info { flex-grow: 1; }
         .crafting-cost small, .item-perk small { display: block; font-size: 0.9em; opacity: 0.8; }
@@ -473,7 +534,23 @@
         .equipment-slot .item-icon-placeholder { margin-bottom: 5px; width: 40px; height: 40px; font-size: 0.7em; }
         .equipment-slot .equipped-item-name { font-size: 0.95em; font-weight: bold; margin-bottom: 5px; }
         .equipment-slot .empty-slot-text { font-size: 0.9em; opacity: 0.7; }
+        
+        #inventory-page {
+            align-items: center; /* Center content like title and containers */
+        }
+        .inventory-header-image-container {
+            text-align: center;
+            margin-bottom: 25px; /* Space below the image */
+        }
+        .inventory-header-image-container img {
+            max-width: 400px; /* Match shop image size */
+            width: 100%;
+            height: auto;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+        }
         #inventory-page > h4 { font-size: 1.8em; color: var(--label-color); margin-top: 25px; margin-bottom: 15px; text-align: center; width: 100%; max-width: 800px; margin-left:auto; margin-right:auto; }
+        
         #daily-rewards-page .rewards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-top: 20px; }
         #daily-rewards-page .reward-day { border: 1px solid var(--border-color); background-color: var(--adventure-block-bg); padding: 10px; border-radius: 5px; text-align: center; }
         #daily-rewards-page .reward-day h5 { margin: 0 0 5px 0; color: var(--label-color); }
@@ -484,7 +561,23 @@
         .swap-section .swap-info { margin-bottom: 10px; font-size: 1.1em; }
         .swap-btn { padding: 8px 15px; font-size: 1.1em; }
 
-        /* Whitelist Page Styles */
+        #upgrade-page {
+            align-items: center;
+            flex-direction: column; /* Stack items vertically */
+        }
+        .upgrade-main-image-container {
+            text-align: center;
+            margin-bottom: 20px; /* Space below image */
+        }
+        .upgrade-main-image-container img {
+            max-width: 400px; /* Match shop image size */
+            width: 100%;
+            height: auto;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+
         #whitelist-page { align-items: center; } 
         #adminRafflePanel {
             background-color: var(--section-bg);
@@ -639,7 +732,6 @@
             </aside>
             <div class="main-content-area">
                 <section id="adventures-page" class="page-content active"> 
-                    <!-- Player character div is now hidden by CSS -->
                     <div class="player-character-area"> 
                         <div class="player-character" aria-label="Player Character Image"></div> 
                     </div> 
@@ -670,11 +762,33 @@
                 <section id="daily-rewards-page" class="page-content"> <h2 class="page-title">DAILY LOGIN REWARDS</h2> <div class="rewards-grid" id="dailyRewardsGrid"> </div> </section>
                 <section id="shop-page" class="page-content"> 
                     <h2 class="page-title">SHOP & CRAFTING</h2> 
-                    <div class="swap-section-container"> <div class="swap-section"><h3>Currency Swap</h3> <div class="swap-info">50 <span class="gold">GOLD</span> = 1 <span class="diamond">DIAMOND</span></div> <button id="swapGoldToDiamondBtn" class="action-button swap-btn">Swap</button> </div></div>
+                    <div class="shop-top-section">
+                        <div class="shop-gif-container">
+                            <img src="https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeihnh2oz5tfkuscwq7k2llmjwp6d7nrk54b7yoc6727ppayissbg24" alt="Shopkeeper GIF">
+                        </div>
+                        <div class="swap-section-container"> 
+                            <div class="swap-section">
+                                <h3>Currency Swap</h3> 
+                                <div class="swap-info">50 <span class="gold">GOLD</span> = 1 <span class="diamond">DIAMOND</span></div> 
+                                <button id="swapGoldToDiamondBtn" class="action-button swap-btn">Swap</button> 
+                            </div>
+                        </div>
+                    </div>
                     <div class="shop-section-wrapper"> <h3 >Buy Items</h3> <div class="shop-items" id="shopItems"></div> </div> 
                     <div class="crafting-section-wrapper"> <h3 >Craft Items</h3> <div class="crafting-items-container" id="craftingItemsContainer"> </div> </div> 
                 </section>
-                <section id="inventory-page" class="page-content"> <h2 class="page-title">INVENTORY</h2> <div class="equipment-slots-container"> <h4 >EQUIPPED ITEMS</h4> <div class="equipment-slots" id="equipmentSlotsDisplay"> </div> </div> <h4 >My Items</h4> <div class="inventory-items-container" id="inventoryItemsContainer"> </div> </section>
+                <section id="inventory-page" class="page-content"> 
+                    <h2 class="page-title">INVENTORY</h2> 
+                    <div class="inventory-header-image-container">
+                        <img src="https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeibtfrmufw37ujdz77bua6d2lzfb5kmizo5q67rt4lunxmtdgzgfre" alt="Inventory Stash">
+                    </div>
+                    <div class="equipment-slots-container"> 
+                        <h4 >EQUIPPED ITEMS</h4> 
+                        <div class="equipment-slots" id="equipmentSlotsDisplay"> </div> 
+                    </div> 
+                    <h4 >My Items</h4> 
+                    <div class="inventory-items-container" id="inventoryItemsContainer"> </div> 
+                </section>
                 <section id="whitelist-page" class="page-content">
                     <h2 class="page-title">WHITELIST RAFFLES</h2>
                     <div id="adminRafflePanel" class="hidden">
@@ -729,9 +843,96 @@
                 </section>
                 <section id="upgrade-page" class="page-content">
                     <h2 class="page-title">UPGRADE STATION</h2>
-                    <p style="text-align:center;">The forge is heating up... Upgrade system coming soon!</p>
+                    <div class="upgrade-main-image-container">
+                        <img src="https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeigp746l6dpyv2ciq7g42rhpfnfmbavrzh3dcwkqhjbrdsgciad64m" alt="Upgrade Station Blacksmith">
+                    </div>
+                    <p style="text-align:center; margin-top: 20px;">The forge is heating up... The Upgrade system will allow you to enhance your items and adventurers. Stay tuned for more details on how to power up your journey!</p>
                 </section>
-                <section id="help-page" class="page-content"> <h2 class="page-title">HELP</h2> <div class="help-content"> <p>Welcome to Punk Voyage Adventures!</p>  <p><strong>Objective:</strong> Send your adventurers on exciting quests to earn PV Tokens and Gold, and gather materials to craft powerful items.</p> <p><strong>How to Play:</strong></p> <ul> <li>Register with an email and password (and choose a nickname), or sign in with your Google account. Your game progress is saved to your account.</li> <li>The game defaults to Dark Mode. Use the toggle in the header to switch to Light Mode.</li> <li>Use the right-hand menu to navigate between Adventures, Quests, Shop/Crafting, Inventory, etc.</li> <li>On the ADVENTURES page, select an adventure, choose the number of adventurers, and click SEND. Some adventures require a certain number of adventurers. Adventures may also require completion of previous adventure series (e.g., complete Adventure 1 series 5 times to unlock Adventure 2).</li> <li>Hover over the "DROPS" button on adventures to see potential materials.</li><li>Active adventures and potions are displayed in the right sidebar.</li> <li>Your adventurers will return after the specified time, bringing rewards and possibly materials. Potions provide timed or counted buffs.</li> <li>Use collected materials to CRAFT items in the Shop & Crafting page. You cannot craft an item if you already own it.</li> <li>View and EQUIP/UNEQUIP your crafted items from the INVENTORY page. Equipped items provide passive bonuses. Certain items like the "Rider Scroll" unlock new equipment slots.</li> <li>Complete QUESTS for extra rewards.</li><li>Enter WHITELIST raffles for chances at special rewards.</li> <li>Swap Gold for Diamonds in the Shop.</li> </ul> <p>This is a demo. Advanced wallet integration for account linking and some data persistence features are still being refined.</p> </div> </section>
+                <section id="help-page" class="page-content"> 
+                    <h2 class="page-title">PUNK VOYAGE HELP</h2> 
+                    <div class="help-content"> 
+                        <h3>Welcome, Voyager!</h3>
+                        <p>Embark on an epic journey in Punk Voyage Adventures! This guide will help you navigate the cosmos of possibilities, from sending your brave adventurers on perilous quests to crafting legendary gear.</p>
+
+                        <div class="help-gif-container">
+                            <img src="https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeibyu3nj3yofxnngakyoyekde2vyffe73mnesrw3ogqmidrm3wgpli" alt="Helpful Guide GIF">
+                        </div>
+
+                        <h3>Getting Started</h3>
+                        <ul>
+                            <li><strong>Account:</strong> Create an account using Email/Password (don't forget to set a cool Nickname!) or sign in quickly with your Google account. Your game progress is saved automatically to the Firebase cloud, linked to your account.</li>
+                            <li><strong>Nickname:</strong> Your chosen nickname will be your identity in the game world and for raffles.</li>
+                            <li><strong>Interface:</strong> The game starts in Dark Mode. You can toggle to Light Mode using the switch in the top-right header. Use the main menu (usually on the right) to navigate between game sections.</li>
+                        </ul>
+
+                        <h3>The Core Voyage</h3>
+                        <ul>
+                            <li><strong>Adventurers:</strong> You have a set number of adventurers (initially 5). These are the brave souls you send on quests. More might become available through special events or items in the future!</li>
+                            <li><strong>Adventures Page:</strong> This is where the action begins!
+                                <ul>
+                                    <li>Select an available adventure location.</li>
+                                    <li>Choose how many of your available adventurers to send.</li>
+                                    <li>Click "SEND". Some adventures have minimum adventurer requirements.</li>
+                                    <li><strong>Progression:</strong> New, more challenging (and rewarding!) adventures unlock as you complete prerequisites, often by finishing earlier adventure series multiple times (e.g., "Complete Spirit Forest 5 times"). Locked adventures will show their unlock requirements.</li>
+                                    <li><strong>Duration:</strong> Each adventure takes a set amount of time. Keep an eye on the "Active Adventures" list in the sidebar! (Remember: for testing, 1 game hour = 1 real second).</li>
+                                    <li><strong>Rewards:</strong> Upon return, adventurers bring back <strong>PV Tokens</strong> (the main currency), and have a chance to find <strong>Gold</strong>, rare <strong>Diamonds</strong>, and crafting <strong>Materials</strong>.</li>
+                                    <li><strong>Drops:</strong> Hover over the "DROPS" button on an adventure card to see a list of potential material drops and their chances.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Materials:</strong> Gathered from adventures, these are essential for crafting items. View your current stash under "MY MATERIALS" in the left sidebar.</li>
+                        </ul>
+
+                        <h3>Currencies & Economy</h3>
+                        <ul>
+                            <li><strong>PV Tokens:</strong> Earned primarily from adventures and quests. Used to buy items from the Shop (like Potions).</li>
+                            <li><strong>Gold:</strong> A rarer currency found on adventures or as special rewards. Its main use currently is to swap for Diamonds.</li>
+                            <li><strong>Diamonds:</strong> A premium currency. Obtainable by swapping Gold, as rare drops from high-level adventures, or specific quest rewards. Diamonds might be used for exclusive items or features in the future.</li>
+                            <li><strong>Currency Swap:</strong> In the "Shop & Crafting" page, you can swap 50 Gold for 1 Diamond.</li>
+                        </ul>
+
+                        <h3>Shop & Crafting</h3>
+                        <ul>
+                            <li><strong>Shop:</strong> Purchase consumable items like Potions using PV Tokens.
+                                <ul>
+                                    <li><strong>Potions:</strong> Provide temporary buffs, like doubling PV rewards for a time or increasing Gold find chance for a set number of adventures. You cannot have multiple identical potions active simultaneously.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Crafting:</strong> Use materials collected from adventures to craft powerful equipment.
+                                <ul>
+                                    <li>You'll see a list of craftable items and their required materials.</li>
+                                    <li>You cannot craft an item if you already own it (this applies to unique equippable gear).</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        
+                        <h3>Inventory & Equipment</h3>
+                        <ul>
+                            <li><strong>View Items:</strong> The Inventory page shows all items you've crafted or bought.</li>
+                            <li><strong>Equip Items:</strong> Equip your crafted gear to gain passive bonuses that can affect adventure times, reward amounts, drop chances, etc.
+                                <ul>
+                                    <li><strong>Slots:</strong> Armour, Helmet, Boots, Amulet, Ring 1, Ring 2, Weapon, Misc 1, Misc 2.</li>
+                                    <li><strong>Unlocking Slots:</strong> The second Ring slot can be unlocked by using a "Rider Scroll" (a rare drop).</li>
+                                </ul>
+                            </li>
+                            <li><strong>Unequip:</strong> You can unequip items to swap them out. Unequipped items return to your "My Items" list.</li>
+                        </ul>
+
+                        <h3>Other Features</h3>
+                        <ul>
+                            <li><strong>Quests:</strong> Complete specific objectives (like finishing certain adventures multiple times) for bonus PV Tokens and sometimes other rewards. Claim your rewards from the Quests page.</li>
+                            <li><strong>Daily Login Rewards:</strong> Claim a reward every 24 hours! The rewards get better as your streak continues for 30 days, after which the cycle resets.</li>
+                            <li><strong>Whitelist Raffles:</strong> Participate in raffles for a chance to win special whitelist spots or other unique prizes. Entry usually costs game currency. One entry per player per raffle.</li>
+                            <li><strong>Upgrade Station:</strong> (Coming Soon!) A place to enhance your gear and adventurers.</li>
+                        </ul>
+
+                        <h3>Community & Support</h3>
+                        <ul>
+                            <li><strong>Socials:</strong> Join our community and stay updated! Find links to our X/Twitter and Discord in the header.</li>
+                            <li><strong>Game Status:</strong> Punk Voyage Adventures is an evolving game. Features and balancing are subject to change. Your feedback is valuable!</li>
+                        </ul>
+                        <p>Good luck on your voyages, Voyager! May your hauls be plentiful and your Punks legendary!</p>
+                    </div> 
+                </section>
             </div>
             <aside class="right-sidebar-menu"> <nav class="main-menu-nav"> <div class="menu-button-container-fixed"><button class="menu-button" id="mainMenuToggleBtn">MENU</button></div> <div class="sidebar-content-area" id="sidebarContentArea"> <ul class="main-menu-nav-list" id="mainMenuList"> <li data-page="adventures-page" class="menu-list-item">ADVENTURES</li>  <li data-page="quests-page" class="menu-list-item">QUESTS</li> <li data-page="daily-rewards-page" class="menu-list-item">DAILY LOGIN REWARDS</li> <li data-page="whitelist-page" class="menu-list-item">WHITELIST</li> <li data-page="shop-page" class="menu-list-item">SHOP & CRAFTING</li> <li data-page="inventory-page" class="menu-list-item">INVENTORY</li>  <li data-page="upgrade-page" class="menu-list-item">UPGRADE</li> <li data-page="help-page" class="menu-list-item">HELP</li> </ul> <div class="sidebar-active-adventures-container" id="sidebarActiveAdventuresDisplay"> <h3>ACTIVE ADVENTURES</h3> <div id="sidebarActiveAdventuresList"></div> </div> <div class="active-potions-display hidden" id="activePotionsDisplay"> <h4>ACTIVE POTIONS</h4> <div id="activePotionsList"></div> </div> </div> </nav> </aside>
         </main>
@@ -886,7 +1087,6 @@
             let lastDailyRewardDayClaimed = 0;
             let lastDailyRewardClaimTimestamp = 0;
 
-            // Popup Queue
             let popupMessageQueue = [];
             let isPopupCurrentlyVisible = false;
             
@@ -922,12 +1122,12 @@
                 if (customPopupOverlay) customPopupOverlay.classList.add('hidden');
                 if (customPopup) customPopup.classList.add('hidden');
                 isPopupCurrentlyVisible = false;
-                processPopupQueue(); // Try to show next popup if any
+                processPopupQueue(); 
             }
 
             if (customPopupCloseBtn) customPopupCloseBtn.addEventListener('click', hideCustomPopup);
             if (customPopupOverlay) customPopupOverlay.addEventListener('click', (event) => {
-                 if (event.target === customPopupOverlay) { // Only hide if overlay itself is clicked
+                 if (event.target === customPopupOverlay) { 
                     hideCustomPopup();
                 }
             });
@@ -1210,7 +1410,7 @@
             function loadTwitterWidget(theme) { if (twitterWidgetContainer) { twitterWidgetContainer.innerHTML = ''; const twitterLink = document.createElement('a'); twitterLink.className = 'twitter-timeline'; twitterLink.setAttribute('data-dnt', 'true'); twitterLink.href = 'https://twitter.com/nvart_?ref_src=twsrc%5Etfw'; twitterLink.setAttribute('data-theme', theme); twitterLink.setAttribute('data-height', '400'); twitterLink.textContent = 'Tweets by nvart_'; twitterWidgetContainer.appendChild(twitterLink); let twitterScript = document.querySelector('script[src="https://platform.twitter.com/widgets.js"]'); if (twitterScript) { twitterScript.remove(); } twitterScript = document.createElement('script'); twitterScript.async = true; twitterScript.src = 'https://platform.twitter.com/widgets.js'; twitterScript.charset = 'utf-8'; document.body.appendChild(twitterScript); } }
             
             if(darkModeToggle){ darkModeToggle.addEventListener('change', () => { if (darkModeToggle.checked) { body.classList.add('dark-mode'); body.classList.remove('light-mode'); localStorage.setItem('theme', 'dark'); loadTwitterWidget('dark'); } else { body.classList.remove('dark-mode'); body.classList.add('light-mode'); localStorage.setItem('theme', 'light'); loadTwitterWidget('light'); } });}
-            async function showPage(pageIdToShow) { console.log("Switching to page:", pageIdToShow); if(!pageContents || pageContents.length === 0) { console.error("pageContents NodeList is empty or not found in showPage. Ensure HTML elements with class 'page-content' exist and are selected correctly."); return; } pageContents.forEach(page => { page.classList.remove('active'); }); const targetPage = document.getElementById(pageIdToShow); if (targetPage) { targetPage.classList.add('active'); if (pageIdToShow === 'quests-page') renderQuests(); else if (pageIdToShow === 'shop-page') {renderShopItems(); renderCraftingItems();} else if (pageIdToShow === 'inventory-page') renderInventory(); else if (pageIdToShow === 'daily-rewards-page') renderDailyRewards(); else if (pageIdToShow === 'whitelist-page') await fetchAndDisplayRaffles(); else if (pageIdToShow === 'upgrade-page') { /* Placeholder for future upgrade page logic */ } } else { console.error("Target page with ID '" + pageIdToShow + "' not found."); showPage('adventures-page'); }}
+            async function showPage(pageIdToShow) { console.log("Switching to page:", pageIdToShow); if(!pageContents || pageContents.length === 0) { console.error("pageContents NodeList is empty or not found in showPage. Ensure HTML elements with class 'page-content' exist and are selected correctly."); return; } pageContents.forEach(page => { page.classList.remove('active'); }); const targetPage = document.getElementById(pageIdToShow); if (targetPage) { targetPage.classList.add('active'); if (pageIdToShow === 'quests-page') renderQuests(); else if (pageIdToShow === 'shop-page') {renderShopItems(); renderCraftingItems();} else if (pageIdToShow === 'inventory-page') renderInventory(); else if (pageIdToShow === 'daily-rewards-page') renderDailyRewards(); else if (pageIdToShow === 'whitelist-page') await fetchAndDisplayRaffles(); else if (pageIdToShow === 'upgrade-page') { /* placeholder */ } } else { console.error("Target page with ID '" + pageIdToShow + "' not found."); showPage('adventures-page'); }}
             if(menuItems){ menuItems.forEach(item => { item.addEventListener('click', () => { const targetPageId = item.dataset.page; if (targetPageId) { showPage(targetPageId); } }); });}
             
             function updateStatsDisplay() { if(pvCountElement) pvCountElement.textContent = currentPvTokens; if(goldCountElement) goldCountElement.textContent = currentGold; if(diamondCountElement) diamondCountElement.textContent = currentDiamonds; if(availableAdventurersCountElement) availableAdventurersCountElement.textContent = totalAvailableAdventurers; }
