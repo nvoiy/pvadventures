@@ -36,6 +36,8 @@
             --item-placeholder-potion3: #FFB6C1;
             --item-placeholder-misc: #DA70D6; 
             --item-placeholder-scroll: #F4A460; 
+            --item-upgrade-plus4-border: #FFA500;
+            --item-upgrade-plus5-border: #DC143C; /* Crimson Red */
         }
 
         body {
@@ -62,6 +64,8 @@
             --button-border: #666666;
             --dropdown-bg: #333333;
             --twitter-feed-bg: rgba(25, 25, 25, 0.7);
+            --item-upgrade-plus4-border: #FF8C00; /* Darker Orange for dark mode */
+            --item-upgrade-plus5-border: #FF4500; /* OrangeRed for dark mode */
         }
         
         #welcomeScreen {
@@ -272,7 +276,7 @@
         .player-stats .diamond { color: var(--highlight-color-diamond); font-weight: bold; }
         .player-stats .wallet-address { font-size: 0.9em; color: var(--highlight-color-connected); word-break: break-all; }
         .wallet-connector { position: relative; }
-        .connect-wallet-btn, .menu-button, .social-btn-link button, .adventure-send-btn, .action-button, .craft-button, .equip-btn, .unequip-btn, .swap-btn, .raffle-action-btn, #signOutButton { background-color: var(--button-bg); border: 2px solid var(--button-border); padding: 6px 12px; color: var(--button-text-color); cursor: pointer; font-family: 'VT323', monospace; font-size: 1em; text-align: center; transition: background-color 0.3s, border-color 0.3s, color 0.3s; }
+        .connect-wallet-btn, .menu-button, .social-btn-link button, .adventure-send-btn, .action-button, .craft-button, .equip-btn, .unequip-btn, .swap-btn, .raffle-action-btn, #signOutButton, #upgradeItemButton { background-color: var(--button-bg); border: 2px solid var(--button-border); padding: 6px 12px; color: var(--button-text-color); cursor: pointer; font-family: 'VT323', monospace; font-size: 1em; text-align: center; transition: background-color 0.3s, border-color 0.3s, color 0.3s; }
         .connect-wallet-btn, .menu-button, #signOutButton { min-width: 160px; }
         #signOutButton { background-color: var(--highlight-color-danger); color: white; border-color: var(--highlight-color-danger); }
         body:not(.dark-mode) #signOutButton:hover { background-color: #cc0000; }
@@ -310,8 +314,8 @@
          }
 
 
-        body:not(.dark-mode) .connect-wallet-btn:hover, body:not(.dark-mode) .menu-button:hover, body:not(.dark-mode) .social-btn-link button:hover, body:not(.dark-mode) .adventure-send-btn:hover, body:not(.dark-mode) .action-button:hover, body:not(.dark-mode) .craft-button:hover, body:not(.dark-mode) .equip-btn:hover, body:not(.dark-mode) .unequip-btn:hover, body:not(.dark-mode) .swap-btn:hover, body:not(.dark-mode) .raffle-action-btn:hover { background-color: #cccccc; }
-        body.dark-mode .connect-wallet-btn:hover, body.dark-mode .menu-button:hover, body.dark-mode .social-btn-link button:hover, body.dark-mode .adventure-send-btn:hover, body.dark-mode .action-button:hover, body.dark-mode .craft-button:hover, body.dark-mode .equip-btn:hover, body.dark-mode .unequip-btn:hover, body.dark-mode .swap-btn:hover, body.dark-mode .raffle-action-btn:hover { background-color: #555555;}
+        body:not(.dark-mode) .connect-wallet-btn:hover, body:not(.dark-mode) .menu-button:hover, body:not(.dark-mode) .social-btn-link button:hover, body:not(.dark-mode) .adventure-send-btn:hover, body:not(.dark-mode) .action-button:hover, body:not(.dark-mode) .craft-button:hover, body:not(.dark-mode) .equip-btn:hover, body:not(.dark-mode) .unequip-btn:hover, body:not(.dark-mode) .swap-btn:hover, body:not(.dark-mode) .raffle-action-btn:hover, body:not(.dark-mode) #upgradeItemButton:hover { background-color: #cccccc; }
+        body.dark-mode .connect-wallet-btn:hover, body.dark-mode .menu-button:hover, body.dark-mode .social-btn-link button:hover, body.dark-mode .adventure-send-btn:hover, body.dark-mode .action-button:hover, body.dark-mode .craft-button:hover, body.dark-mode .equip-btn:hover, body.dark-mode .unequip-btn:hover, body.dark-mode .swap-btn:hover, body.dark-mode .raffle-action-btn:hover, body.dark-mode #upgradeItemButton:hover { background-color: #555555;}
         .connect-wallet-btn.connected { background-color: var(--highlight-color-connected); color: white; border-color: var(--highlight-color-connected); }
         .wallet-dropdown { display: none; position: absolute; top: 100%; right: 0; background-color: var(--dropdown-bg); color: var(--text-color); border: 2px solid var(--border-color); list-style: none; padding: 0; margin: 5px 0 0 0; width: 100%; z-index: 10; box-shadow: 0px 3px 7px rgba(0,0,0,0.2); transition: background-color 0.3s, border-color 0.3s, color 0.3s; }
         .wallet-dropdown li { padding: 8px 12px; cursor: pointer; border-bottom: 1px solid var(--border-color); text-align: center; transition: background-color 0.3s, border-color 0.3s; } .wallet-dropdown li:last-child { border-bottom: none; }
@@ -325,10 +329,12 @@
         }
         #availableAdventurersDisplay { text-align:center; font-size: 1.2em; } 
         .socials-nav .social-title, .adventure-controls label, .page-title, .materials-display h4, .adventures-label, #activeAdventuresDisplay_page h3, 
-        .equipment-slots-container h4, #inventory-page > h4, .shop-section-wrapper h3, .crafting-section-wrapper h3, .swap-section h3, #whitelist-page h3, #adminRafflePanel h3, #upgrade-page h3 { 
+        .equipment-slots-container h4, #inventory-page > h4, .shop-section-wrapper h3, .crafting-section-wrapper h3, .swap-section h3, #whitelist-page h3, #upgrade-page h3, #leaderboard-page h3, #dungeons-page h3 { 
             color: var(--label-color); font-weight: bold; transition: color 0.3s; 
         }
-        .materials-display h4 {font-size: 1.2em; margin-top:0; margin-bottom: 8px;} .materials-display ul { list-style: none; padding: 0; margin: 5px 0 0 0; font-size: 1em; } .materials-display li { margin-bottom: 3px; }
+        .materials-display h4 {font-size: 1.2em; margin-top:0; margin-bottom: 8px;} 
+        .materials-display .material-tier-title { font-size: 1.1em; font-weight: bold; margin-top:10px; margin-bottom:5px; color: var(--label-color); }
+        .materials-display ul { list-style: none; padding: 0; margin: 5px 0 0 0; font-size: 1em; } .materials-display li { margin-bottom: 3px; }
         .main-content-area { flex-grow: 1; display: flex; }
         .page-content { display: none; width: 100%; flex-direction: column; padding: 0 15px; box-sizing: border-box; overflow-y: auto; flex-grow: 1;} 
         .page-content.active { display: flex; }
@@ -523,6 +529,9 @@
         .equip-btn, .unequip-btn { font-size: 0.9em; padding: 4px 8px; margin-left: 5px; }
         .inventory-item-card .equipped-status { font-size: 0.9em; color: var(--highlight-color-connected); margin-left: 10px; }
         .inventory-item-card .use-btn { font-size: 0.9em; padding: 4px 8px; margin-left: 10px; background-color: var(--highlight-color-pv); color: black;}
+        .inventory-item-card.item-level-plus4 { border: 2px solid var(--item-upgrade-plus4-border) !important; box-shadow: 0 0 8px var(--item-upgrade-plus4-border); }
+        .inventory-item-card.item-level-plus5 { border: 2px solid var(--item-upgrade-plus5-border) !important; box-shadow: 0 0 10px var(--item-upgrade-plus5-border); }
+
 
         .equipment-slots-container { margin-bottom: 30px; padding: 15px; border: 1px dashed var(--border-color); border-radius: 5px; width: 100%; max-width: 800px; box-sizing: border-box; margin-left:auto; margin-right:auto; }
         .equipment-slots-container h4 { margin-top: 0; margin-bottom: 15px; text-align: center; color: var(--label-color); font-size: 1.8em; }
@@ -534,7 +543,9 @@
         .equipment-slot .item-icon-placeholder { margin-bottom: 5px; width: 40px; height: 40px; font-size: 0.7em; }
         .equipment-slot .equipped-item-name { font-size: 0.95em; font-weight: bold; margin-bottom: 5px; }
         .equipment-slot .empty-slot-text { font-size: 0.9em; opacity: 0.7; }
-        
+        .equipment-slot.item-level-plus4 { border: 2px solid var(--item-upgrade-plus4-border) !important; box-shadow: 0 0 8px var(--item-upgrade-plus4-border); }
+        .equipment-slot.item-level-plus5 { border: 2px solid var(--item-upgrade-plus5-border) !important; box-shadow: 0 0 10px var(--item-upgrade-plus5-border); }
+
         #inventory-page {
             align-items: center; /* Center content like title and containers */
         }
@@ -569,13 +580,43 @@
             text-align: center;
             margin-bottom: 20px; /* Space below image */
         }
-        .upgrade-main-image-container img {
-            max-width: 400px; /* Match shop image size */
+        .upgrade-main-image-container img { /* Anvil image */
+            max-width: 250px; 
             width: 100%;
             height: auto;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
+            /* border: 2px solid var(--border-color); */
+            /* border-radius: 8px; */
         }
+        .upgrade-interface {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background-color: var(--adventure-block-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 500px;
+        }
+        .upgrade-slot {
+            width: 120px;
+            height: 120px;
+            border: 2px dashed var(--border-color);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 0.9em;
+            background-color: var(--section-bg);
+            color: var(--label-color);
+            cursor: pointer;
+        }
+        .upgrade-slot img { max-width: 80%; max-height: 80%; }
+        .upgrade-slot.filled { border-style: solid; }
+        #selectedItemForUpgradeDisplay .item-name, #selectedScrollForUpgradeDisplay .item-name { font-weight: bold; font-size: 1.1em; }
+        #selectedItemForUpgradeDisplay .item-level, #selectedScrollForUpgradeDisplay .item-tier { font-size: 0.9em; }
 
 
         #whitelist-page { align-items: center; } 
@@ -653,6 +694,55 @@
         .raffle-card-winners ul { list-style: disc; padding-left: 20px; margin-top: 5px;}
         .raffle-admin-actions button { margin-right: 10px; margin-top:5px; }
 
+        /* Leaderboard Page Styles */
+        #leaderboard-page {
+            align-items: center;
+            flex-direction: column;
+        }
+        .leaderboard-container {
+            width: 100%;
+            max-width: 700px;
+            margin-bottom: 30px;
+            background-color: var(--section-bg);
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+        .leaderboard-container h4 {
+            font-size: 1.5em;
+            color: var(--label-color);
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .leaderboard-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .leaderboard-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 5px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 1.1em;
+        }
+        .leaderboard-list li:last-child {
+            border-bottom: none;
+        }
+        .leaderboard-list .rank {
+            margin-right: 10px;
+            color: var(--label-color);
+        }
+        .leaderboard-list .nickname {
+            flex-grow: 1;
+        }
+        .leaderboard-list .score {
+            font-weight: bold;
+        }
+        .leaderboard-list .score.pv { color: var(--highlight-color-pv); }
+        .leaderboard-list .score.gold { color: var(--highlight-color-gold); }
+        .leaderboard-list .score.diamond { color: var(--highlight-color-diamond); }
+
     </style>
 </head>
 <body>
@@ -727,7 +817,10 @@
         <main class="main-content">
             <aside class="left-sidebar"> 
                 <div id="availableAdventurersDisplay"> Available Adventurers: <span id="availableAdventurersCount">5</span> </div> 
-                <div class="materials-display" id="materialsDisplay"> <h4>MY MATERIALS</h4> <ul id="materialsList"></ul> </div> 
+                <div class="materials-display" id="materialsDisplay"> 
+                    <h4>MY MATERIALS</h4> 
+                    <div id="materialsListContainer"></div>
+                </div> 
                 <div class="twitter-feed-container" id="twitter-widget-container"> <a class="twitter-timeline" data-dnt="true" href="https://twitter.com/nvart_?ref_src=twsrc%5Etfw">Tweets by nvart_</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> </div> 
             </aside>
             <div class="main-content-area">
@@ -844,9 +937,48 @@
                 <section id="upgrade-page" class="page-content">
                     <h2 class="page-title">UPGRADE STATION</h2>
                     <div class="upgrade-main-image-container">
-                        <img src="https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeigp746l6dpyv2ciq7g42rhpfnfmbavrzh3dcwkqhjbrdsgciad64m" alt="Upgrade Station Blacksmith">
+                        <img src="https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeievpqgvhb2bh2v7isnjkrt2h6kwhkaxngwz662i4synqbdszgnvse" alt="Upgrade Anvil"> <!-- Placeholder Anvil Image -->
                     </div>
-                    <p style="text-align:center; margin-top: 20px;">The forge is heating up... The Upgrade system will allow you to enhance your items and adventurers. Stay tuned for more details on how to power up your journey!</p>
+                    <div class="upgrade-interface">
+                        <div id="upgradeItemSlot" class="upgrade-slot">Click to select item</div>
+                        <div id="upgradeScrollSlot" class="upgrade-slot">Click to select scroll</div>
+                        <div id="selectedItemForUpgradeDisplay">Item: None</div>
+                        <div id="selectedScrollForUpgradeDisplay">Scroll: None</div>
+                        <button id="upgradeItemButton" class="action-button">Upgrade Item</button>
+                        <div id="upgradeResultDisplay" style="margin-top: 10px;"></div>
+                    </div>
+                    <p style="text-align:center; margin-top: 20px;">Select an equippable item from your inventory and an appropriate Upgrade Scroll. High risk, high reward! Failed upgrades will destroy the item.</p>
+                </section>
+                <section id="leaderboard-page" class="page-content">
+                    <h2 class="page-title">LEADERBOARDS</h2>
+                    <div class="leaderboard-container">
+                        <h4>PV Token Leaders</h4>
+                        <ul id="pvLeaderboardList" class="leaderboard-list">
+                            <!-- PV Leaders will be populated here -->
+                            <li>Loading...</li>
+                        </ul>
+                    </div>
+                    <div class="leaderboard-container">
+                        <h4>Gold Leaders</h4>
+                        <ul id="goldLeaderboardList" class="leaderboard-list">
+                            <!-- Gold Leaders will be populated here -->
+                            <li>Loading...</li>
+                        </ul>
+                    </div>
+                    <div class="leaderboard-container">
+                        <h4>Diamond Leaders</h4>
+                        <ul id="diamondLeaderboardList" class="leaderboard-list">
+                            <!-- Diamond Leaders will be populated here -->
+                            <li>Loading...</li>
+                        </ul>
+                    </div>
+                </section>
+                <section id="dungeons-page" class="page-content">
+                    <h2 class="page-title">DUNGEONS</h2>
+                    <p style="text-align:center; margin-top: 20px;">The path to ancient dungeons is shrouded in mystery... This feature is coming soon! Prepare for challenging encounters and unique treasures.</p>
+                    <div class="help-gif-container">
+                        <img src="https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeifaf2ajzex3khnqinqr6oqkffjllkqygaq24rystxrbvcrihcpg2y" alt="Coming Soon GIF">
+                    </div>
                 </section>
                 <section id="help-page" class="page-content"> 
                     <h2 class="page-title">PUNK VOYAGE HELP</h2> 
@@ -879,12 +1011,12 @@
                                     <li><strong>Drops:</strong> Hover over the "DROPS" button on an adventure card to see a list of potential material drops and their chances.</li>
                                 </ul>
                             </li>
-                            <li><strong>Materials:</strong> Gathered from adventures, these are essential for crafting items. View your current stash under "MY MATERIALS" in the left sidebar.</li>
+                            <li><strong>Materials:</strong> Gathered from adventures, these are essential for crafting items and potentially for upgrades. View your current stash under "MY MATERIALS" in the left sidebar, now grouped by tier.</li>
                         </ul>
 
                         <h3>Currencies & Economy</h3>
                         <ul>
-                            <li><strong>PV Tokens:</strong> Earned primarily from adventures and quests. Used to buy items from the Shop (like Potions).</li>
+                            <li><strong>PV Tokens:</strong> Earned primarily from adventures and quests. Used to buy items from the Shop (like Potions and Upgrade Scrolls).</li>
                             <li><strong>Gold:</strong> A rarer currency found on adventures or as special rewards. Its main use currently is to swap for Diamonds.</li>
                             <li><strong>Diamonds:</strong> A premium currency. Obtainable by swapping Gold, as rare drops from high-level adventures, or specific quest rewards. Diamonds might be used for exclusive items or features in the future.</li>
                             <li><strong>Currency Swap:</strong> In the "Shop & Crafting" page, you can swap 50 Gold for 1 Diamond.</li>
@@ -892,37 +1024,53 @@
 
                         <h3>Shop & Crafting</h3>
                         <ul>
-                            <li><strong>Shop:</strong> Purchase consumable items like Potions using PV Tokens.
+                            <li><strong>Shop:</strong> Purchase consumable items like Potions and Upgrade Scrolls using PV Tokens.
                                 <ul>
-                                    <li><strong>Potions:</strong> Provide temporary buffs, like doubling PV rewards for a time or increasing Gold find chance for a set number of adventures. You cannot have multiple identical potions active simultaneously.</li>
+                                    <li><strong>Potions:</strong> Provide temporary buffs. For example, PV Doubler now applies to the next single adventure. Gold Magnet adds a +1% base chance for finding gold. You cannot have multiple identical potions active simultaneously.</li>
+                                    <li><strong>Upgrade Scrolls:</strong> Low, Middle, and High Class scrolls are available for item upgrades.</li>
                                 </ul>
                             </li>
                             <li><strong>Crafting:</strong> Use materials collected from adventures to craft powerful equipment.
                                 <ul>
                                     <li>You'll see a list of craftable items and their required materials.</li>
-                                    <li>You cannot craft an item if you already own it (this applies to unique equippable gear).</li>
+                                    <li>You cannot craft an item if you already own an instance of that base item ID (e.g., one "Warped Boots", regardless of its upgrade level). If an item is destroyed during a failed upgrade, you can then craft a new +0 version.</li>
                                 </ul>
                             </li>
                         </ul>
                         
                         <h3>Inventory & Equipment</h3>
                         <ul>
-                            <li><strong>View Items:</strong> The Inventory page shows all items you've crafted or bought.</li>
-                            <li><strong>Equip Items:</strong> Equip your crafted gear to gain passive bonuses that can affect adventure times, reward amounts, drop chances, etc.
+                            <li><strong>View Items:</strong> The Inventory page shows all items you've crafted or bought. Upgraded items will show their level (e.g., Warped Boots +1).</li>
+                            <li><strong>Equip Items:</strong> Equip your crafted gear to gain passive bonuses.
                                 <ul>
                                     <li><strong>Slots:</strong> Armour, Helmet, Boots, Amulet, Ring 1, Ring 2, Weapon, Misc 1, Misc 2.</li>
                                     <li><strong>Unlocking Slots:</strong> The second Ring slot can be unlocked by using a "Rider Scroll" (a rare drop).</li>
                                 </ul>
                             </li>
                             <li><strong>Unequip:</strong> You can unequip items to swap them out. Unequipped items return to your "My Items" list.</li>
+                            <li><strong>Item Levels:</strong> Items start at +0. Items at +4 will have an orange highlight, and +5 a dark red highlight.</li>
+                        </ul>
+
+                        <h3>Item Upgrading (Upgrade Station)</h3>
+                        <ul>
+                            <li>Visit the "Upgrade" page.</li>
+                            <li>Select an equippable item from your inventory and a corresponding Upgrade Scroll (Low, Middle, High class depending on the item's tier).</li>
+                            <li>Attempting an upgrade has a chance of success or failure.
+                                <ul>
+                                    <li><strong>Success:</strong> The item's level increases (e.g., +0 to +1). (Stat increases per level TBD).</li>
+                                    <li><strong>Failure:</strong> The item is **DESTROYED**! You can then craft a new +0 version of that item if you have the materials.</li>
+                                </ul>
+                            </li>
+                            <li>Upgrade Chances: +0 to +1 (100%), +1 to +2 (75%), +2 to +3 (40%), +3 to +4 (15%), +4 to +5 (3%).</li>
                         </ul>
 
                         <h3>Other Features</h3>
                         <ul>
-                            <li><strong>Quests:</strong> Complete specific objectives (like finishing certain adventures multiple times) for bonus PV Tokens and sometimes other rewards. Claim your rewards from the Quests page.</li>
-                            <li><strong>Daily Login Rewards:</strong> Claim a reward every 24 hours! The rewards get better as your streak continues for 30 days, after which the cycle resets.</li>
-                            <li><strong>Whitelist Raffles:</strong> Participate in raffles for a chance to win special whitelist spots or other unique prizes. Entry usually costs game currency. One entry per player per raffle.</li>
-                            <li><strong>Upgrade Station:</strong> (Coming Soon!) A place to enhance your gear and adventurers.</li>
+                            <li><strong>Quests:</strong> Complete specific objectives for bonus PV Tokens and sometimes other rewards. Claim your rewards from the Quests page.</li>
+                            <li><strong>Daily Login Rewards:</strong> Claim a reward every 24 hours!</li>
+                            <li><strong>Whitelist Raffles:</strong> Participate in raffles for special prizes.</li>
+                            <li><strong>Leaderboards:</strong> (New!) Check the Leaderboards page to see top players by PV, Gold, and Diamond holdings.</li>
+                            <li><strong>Dungeons:</strong> (Coming Soon!) A new challenging game mode.</li>
                         </ul>
 
                         <h3>Community & Support</h3>
@@ -934,7 +1082,7 @@
                     </div> 
                 </section>
             </div>
-            <aside class="right-sidebar-menu"> <nav class="main-menu-nav"> <div class="menu-button-container-fixed"><button class="menu-button" id="mainMenuToggleBtn">MENU</button></div> <div class="sidebar-content-area" id="sidebarContentArea"> <ul class="main-menu-nav-list" id="mainMenuList"> <li data-page="adventures-page" class="menu-list-item">ADVENTURES</li>  <li data-page="quests-page" class="menu-list-item">QUESTS</li> <li data-page="daily-rewards-page" class="menu-list-item">DAILY LOGIN REWARDS</li> <li data-page="whitelist-page" class="menu-list-item">WHITELIST</li> <li data-page="shop-page" class="menu-list-item">SHOP & CRAFTING</li> <li data-page="inventory-page" class="menu-list-item">INVENTORY</li>  <li data-page="upgrade-page" class="menu-list-item">UPGRADE</li> <li data-page="help-page" class="menu-list-item">HELP</li> </ul> <div class="sidebar-active-adventures-container" id="sidebarActiveAdventuresDisplay"> <h3>ACTIVE ADVENTURES</h3> <div id="sidebarActiveAdventuresList"></div> </div> <div class="active-potions-display hidden" id="activePotionsDisplay"> <h4>ACTIVE POTIONS</h4> <div id="activePotionsList"></div> </div> </div> </nav> </aside>
+            <aside class="right-sidebar-menu"> <nav class="main-menu-nav"> <div class="menu-button-container-fixed"><button class="menu-button" id="mainMenuToggleBtn">MENU</button></div> <div class="sidebar-content-area" id="sidebarContentArea"> <ul class="main-menu-nav-list" id="mainMenuList"> <li data-page="adventures-page" class="menu-list-item">ADVENTURES</li>  <li data-page="quests-page" class="menu-list-item">QUESTS</li> <li data-page="daily-rewards-page" class="menu-list-item">DAILY LOGIN REWARDS</li> <li data-page="whitelist-page" class="menu-list-item">WHITELIST</li> <li data-page="shop-page" class="menu-list-item">SHOP & CRAFTING</li> <li data-page="inventory-page" class="menu-list-item">INVENTORY</li>  <li data-page="upgrade-page" class="menu-list-item">UPGRADE</li> <li data-page="leaderboard-page" class="menu-list-item">LEADERBOARD</li> <li data-page="dungeons-page" class="menu-list-item">DUNGEONS</li> <li data-page="help-page" class="menu-list-item">HELP</li> </ul> <div class="sidebar-active-adventures-container" id="sidebarActiveAdventuresDisplay"> <h3>ACTIVE ADVENTURES</h3> <div id="sidebarActiveAdventuresList"></div> </div> <div class="active-potions-display hidden" id="activePotionsDisplay"> <h4>ACTIVE POTIONS</h4> <div id="activePotionsList"></div> </div> </div> </nav> </aside>
         </main>
     </div>
 
@@ -945,9 +1093,18 @@
         <button id="customPopupCloseBtn" class="action-button">OK</button>
     </div>
 
+    <!-- Item Selection Modal for Upgrading -->
+    <div id="itemSelectionModalOverlay" class="hidden customPopupOverlay" style="z-index: 2005;"></div>
+    <div id="itemSelectionModal" class="hidden customPopup" style="z-index: 2006; min-width: 400px; max-height: 70vh; overflow-y: auto;">
+        <h3 id="itemSelectionModalTitle">Select Item</h3>
+        <div id="itemSelectionModalList" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        <button id="itemSelectionModalCloseBtn" class="action-button" style="margin-top:15px;">Cancel</button>
+    </div>
+
+
     <script type="module" id="firebaseModule">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, Timestamp, query, where, orderBy, getDocs, addDoc, runTransaction, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js"; 
+        import { getFirestore, doc, getDoc, setDoc, collection, Timestamp, query, where, orderBy, getDocs, addDoc, runTransaction, updateDoc, deleteDoc, limit } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js"; 
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-analytics.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
 
@@ -972,7 +1129,7 @@
             window.firebaseApp = app;
             window.firebaseDb = db;
             window.fbAuth = auth; 
-            window.firebaseFirestore = { doc, getDoc, setDoc, collection, Timestamp, query, where, orderBy, getDocs, addDoc, runTransaction, updateDoc, deleteDoc }; 
+            window.firebaseFirestore = { doc, getDoc, setDoc, collection, Timestamp, query, where, orderBy, getDocs, addDoc, runTransaction, updateDoc, deleteDoc, limit }; 
             window.firebaseAuthFunctions = { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup }; 
             
             document.dispatchEvent(new CustomEvent('firebaseReady'));
@@ -1003,7 +1160,7 @@
             
             const db = window.firebaseDb;
             const auth = window.fbAuth; 
-            const { doc, getDoc, setDoc, collection, Timestamp, query, where, orderBy, getDocs, addDoc, runTransaction, updateDoc, deleteDoc } = window.firebaseFirestore;
+            const { doc, getDoc, setDoc, collection, Timestamp, query, where, orderBy, getDocs, addDoc, runTransaction, updateDoc, deleteDoc, limit } = window.firebaseFirestore;
             const { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut: fbSignOut, onAuthStateChanged, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup } = window.firebaseAuthFunctions; 
 
             const GAME_HOUR_IN_REAL_SECONDS = 1; 
@@ -1046,7 +1203,7 @@
             const pageContents = document.querySelectorAll('.main-content-area .page-content'); 
             const questListDiv = document.getElementById('questList');
             const shopItemsDiv = document.getElementById('shopItems');
-            const materialsListDiv = document.getElementById('materialsList');
+            const materialsListContainer = document.getElementById('materialsListContainer'); // Updated ID
             const craftingItemsContainer = document.getElementById('craftingItemsContainer');
             const inventoryItemsContainer = document.getElementById('inventoryItemsContainer');
             const equipmentSlotsDisplay = document.getElementById('equipmentSlotsDisplay');
@@ -1059,7 +1216,26 @@
             const adminRafflePanel = document.getElementById('adminRafflePanel');
             const createRaffleForm = document.getElementById('createRaffleForm');
             const whitelistRafflesContainer = document.getElementById('whitelistRafflesContainer');
+
+            // Leaderboard elements
+            const pvLeaderboardList = document.getElementById('pvLeaderboardList');
+            const goldLeaderboardList = document.getElementById('goldLeaderboardList');
+            const diamondLeaderboardList = document.getElementById('diamondLeaderboardList');
             
+            // Upgrade Page Elements
+            const upgradeItemSlot = document.getElementById('upgradeItemSlot');
+            const upgradeScrollSlot = document.getElementById('upgradeScrollSlot');
+            const selectedItemForUpgradeDisplay = document.getElementById('selectedItemForUpgradeDisplay');
+            const selectedScrollForUpgradeDisplay = document.getElementById('selectedScrollForUpgradeDisplay');
+            const upgradeItemButton = document.getElementById('upgradeItemButton');
+            const upgradeResultDisplay = document.getElementById('upgradeResultDisplay');
+            const itemSelectionModalOverlay = document.getElementById('itemSelectionModalOverlay');
+            const itemSelectionModal = document.getElementById('itemSelectionModal');
+            const itemSelectionModalTitle = document.getElementById('itemSelectionModalTitle');
+            const itemSelectionModalList = document.getElementById('itemSelectionModalList');
+            const itemSelectionModalCloseBtn = document.getElementById('itemSelectionModalCloseBtn');
+
+
             // --- Game State Variables ---
             let currentUser = null; 
             let userNickname = ''; 
@@ -1067,17 +1243,21 @@
             let currentPvTokens = 0; let currentGold = 0; let currentDiamonds = 0;
             let activeAdventures = []; let nextActiveAdventureId = 0;
             let totalAvailableAdventurers = MAX_PLAYER_ADVENTURERS;
-            let playerInventory = [];
-            let playerMaterials = { 
+            let playerInventory = []; // Will store objects like { id: "boots1", level: 0, uniqueInstanceId: "uuid" }
+            let nextUniqueInstanceId = 0; // Simple counter for uniqueInstanceId
+
+            const initialPlayerMaterials = { 
                 "Leather": 0, "Wood": 0, "Clover": 0, "Fabric": 0, "Iron": 0, "Gizmo Tail": 0, 
                 "Stone": 0, "Obsidian": 0, "Bitcoin": 0, "Bone": 0, "Flame Essence": 0, 
                 "Essence of Death": 0, "Rider's Sigil": 0, "Ancient Tablet Fragment": 0, "Shadowgem": 0 
             };
+            let playerMaterials = { ...initialPlayerMaterials };
+
             let equippedItems = { 
                 Armour: null, Helmet: null, Boots: null, Amulet: null, 
                 Ring1: null, Ring2: null, Weapon: null, 
                 Misc1: null, Misc2: null 
-            };
+            }; // Will store uniqueInstanceId of the equipped item
             let playerAdventurerLevel = 1; 
             let secondRingSlotUnlocked = false;
             let activePotions = [];
@@ -1089,14 +1269,44 @@
 
             let popupMessageQueue = [];
             let isPopupCurrentlyVisible = false;
+
+            let selectedItemForUpgrade = null; // Stores { uniqueInstanceId: '...', ...itemData, level: X }
+            let selectedScrollForUpgrade = null; // Stores { ...scrollData }
             
             // --- Game Data ---
             const adventuresData = { "1": { name: "Spirit Forest", drops: [ { name: "Leather", chance: 0.05, qty: 1}, { name: "Wood", chance: 0.10, qty: 1}, { name: "Clover", chance: 0.01, qty: 1}, { name: "Fabric", chance: 0.03, qty: 1} ] }, "2": { name: "Mountain of the Marowan", drops: [ { name: "Iron", chance: 0.05, qty: 1}, { name: "Gizmo Tail", chance: 0.01, qty: 1}, { name: "Stone", chance: 0.10, qty: 1} ] }, "3": { name: "Fire Fields of Flyinals", adventurerRequirement: 2, drops: [ { name: "Obsidian", chance: 0.01, qty: 1}, { name: "Bitcoin", chance: 0.00001, qty: 1}, { name: "Flame Essence", chance: 0.05, qty: 1} ] }, "4": { name: "Tomb of the Death Riders", adventurerRequirement: 5, drops: [ { name: "Bone", chance: 0.15, qty: 1}, { name: "Essence of Death", chance: 0.10, qty: 1}, { name: "Bitcoin", chance: 0.0001, qty: 1},  { name: "Rider's Sigil", chance: 0.05, qty: 1}, { name: "Rider Scroll", chance: 0.005, qty: 1}, { name: "Ancient Tablet Fragment", chance: 0.02, qty: 1}, { name: "Shadowgem", chance: 0.008, qty: 1}, { name: "Cursed Band", chance: 0.002, qty: 1} ] } };
-            const craftableItemsData = [ { id: "boots1", name: "Warped Boots", type: "Boots", description: "Reduces adventure time by 5 minutes.", perk: { type: "timeReduction", value: 300 }, recipe: { "Leather": 5, "Fabric": 3 }, imgColor: "var(--item-placeholder-boots)" }, { id: "amulet1", name: "Amulet of Greed", type: "Amulet", description: "Increases Gold find chance by +50% of current chance.", perk: { type: "goldChanceIncrease", multiplier: 0.5 }, recipe: { "Iron": 3, "Gizmo Tail": 1 }, imgColor: "var(--item-placeholder-amulet)" }, { id: "rucksack1", name: "Efficient Rucksack", type: "Rucksack", description: "+5% PV tokens from adventures.", perk: { type: "pvBonus", multiplier: 0.05 }, recipe: { "Fabric": 5, "Leather": 2 }, imgColor: "var(--item-placeholder-rucksack)" }, { id: "trinket1", name: "Lucky Rabbit's Foot", type: "Trinket", description: "Increases material find chance by +30% (additive).", perk: { type: "materialChanceIncrease", additive: 0.30 }, recipe: { "Clover": 3, "Bone": 2 }, imgColor: "var(--item-placeholder-trinket)" }, { id: "weapon1", name: "Rider's Blade", type: "Weapon", description: "A blade echoing with the cries of the fallen. (+5 Combat)", perk: {type: "combatBoost", value: 5}, recipe: { "Rider's Sigil": 2, "Essence of Death": 3, "Iron": 5}, imgColor: "var(--item-placeholder-weapon)"}, { id: "armour1", name: "Shadow-Woven Hauberk", type: "Armour", description: "Provides moderate protection. (+10 Defense)", perk: {type: "defenseBoost", value: 10}, recipe: {"Obsidian": 5, "Essence of Death": 2, "Shadowgem": 1}, imgColor: "var(--item-placeholder-armour)"}, { id: "helmet1", name: "Helm of the Silent Watcher", type: "Helmet", description: "Offers a gaze that pierces the veil. (+3 Perception)", perk: {type: "perceptionBoost", value: 3}, recipe: {"Iron": 4, "Rider's Sigil": 1, "Shadowgem": 1}, imgColor: "var(--item-placeholder-helmet)"}, { id: "ring_warding", name: "Ring of Minor Warding", type: "Ring", description: "Offers slight protection against mishaps. (+1 Luck)", perk: {type: "luck", value: 1}, recipe: {"Stone": 10, "Clover": 5}, imgColor: "var(--item-placeholder-ring)"}, { id: "ring_swiftness", name: "Band of Swiftness", type: "Ring", description: "Slightly reduces adventure times. (-1 min)", perk: {type: "timeReduction", value: 60}, recipe: {"Leather": 8, "Gizmo Tail": 3}, imgColor: "var(--item-placeholder-ring)"}, { id: "ring_cursedpower", name: "Cursed Band of Power", type: "Ring", description: "Grants power, but at a cost. (+2 Power)", perk: {type: "powerBoost", value: 2}, recipe: {"Rider's Sigil": 3, "Shadowgem": 2, "Essence of Death": 1}, imgColor: "var(--item-placeholder-ring)"}];
-            const shopItemsData = [ { id: "potion2", name: "PV Doubler (1 Hour)", description: "Doubles PV rewards from adventures for 1 hour.", price: 200, imgColor: "var(--item-placeholder-potion2)", type: "buff", durationSeconds: 3600, effect: { type: "pvMultiplier", value: 2 } }, { id: "potion3", name: "Gold Magnet (3 Adventures)", description: "Adds +5% flat chance of finding gold on next 3 adventures.", price: 150, imgColor: "var(--item-placeholder-potion3)", type: "buff", durationAdventures: 3, effect: { type: "goldChanceBonus", flatValue: 0.05 } }, ];
+            const materialTiers = {
+                1: ["Leather", "Wood", "Clover", "Fabric"],
+                2: ["Iron", "Gizmo Tail", "Stone"],
+                3: ["Obsidian", "Bitcoin", "Flame Essence"], // Note: Bitcoin can be T3 or T4
+                4: ["Bone", "Essence of Death", "Rider's Sigil", "Rider Scroll", "Ancient Tablet Fragment", "Shadowgem", "Cursed Band"]
+            };
+
+            const craftableItemsData = [ 
+                { id: "boots1", name: "Warped Boots", type: "Boots", description: "Reduces adventure time by 15 minutes.", perk: { type: "timeReduction", value: 900 }, recipe: { "Leather": 5, "Fabric": 3 }, imgColor: "var(--item-placeholder-boots)", tier: 1 }, 
+                { id: "amulet1", name: "Amulet of Greed", type: "Amulet", description: "Increases Gold find chance by +50% of current chance.", perk: { type: "goldChanceIncrease", multiplier: 0.5 }, recipe: { "Iron": 3, "Gizmo Tail": 1 }, imgColor: "var(--item-placeholder-amulet)", tier: 2 }, 
+                { id: "rucksack1", name: "Efficient Rucksack", type: "Rucksack", description: "+10% PV tokens from adventures.", perk: { type: "pvBonus", multiplier: 0.10 }, recipe: { "Fabric": 5, "Leather": 2 }, imgColor: "var(--item-placeholder-rucksack)", tier: 1 }, // Changed perk
+                { id: "trinket1", name: "Lucky Rabbit's Foot", type: "Trinket", description: "Increases material find chance by +30% (additive).", perk: { type: "materialChanceIncrease", additive: 0.30 }, recipe: { "Clover": 3, "Bone": 2 }, imgColor: "var(--item-placeholder-trinket)", tier: 4 }, 
+                { id: "weapon1", name: "Rider's Blade", type: "Weapon", description: "A blade echoing with the cries of the fallen. (+5 Attack)", perk: {type: "attackBoost", value: 5}, recipe: { "Rider's Sigil": 2, "Essence of Death": 3, "Iron": 5}, imgColor: "var(--item-placeholder-weapon)", tier: 4}, // Changed perk
+                { id: "armour1", name: "Shadow-Woven Hauberk", type: "Armour", description: "Provides moderate protection. (+10 Defense)", perk: {type: "defenseBoost", value: 10}, recipe: {"Obsidian": 5, "Essence of Death": 2, "Shadowgem": 1}, imgColor: "var(--item-placeholder-armour)", tier: 4}, 
+                { id: "helmet1", name: "Helm of the Silent Watcher", type: "Helmet", description: "Offers a gaze that pierces the veil. (+3 Defense)", perk: {type: "defenseBoost", value: 3}, recipe: {"Iron": 4, "Rider's Sigil": 1, "Shadowgem": 1}, imgColor: "var(--item-placeholder-helmet)", tier: 4}, // Changed perk
+                { id: "ring_warding", name: "Ring of Minor Warding", type: "Ring", description: "Offers slight protection. (+1% Gold/Diamond find).", perk: {type: "flatCurrencyChanceBoost", goldBonus: 0.01, diamondBonus: 0.01}, recipe: {"Stone": 10, "Clover": 5}, imgColor: "var(--item-placeholder-ring)", tier: 2}, // Changed perk
+                { id: "ring_swiftness", name: "Band of Swiftness", type: "Ring", description: "Slightly reduces adventure times. (-5 min)", perk: {type: "timeReduction", value: 300}, recipe: {"Leather": 8, "Gizmo Tail": 3}, imgColor: "var(--item-placeholder-ring)", tier: 2}, // Changed perk
+                { id: "ring_cursedpower", name: "Cursed Ring of Power", type: "Ring", description: "Grants power, but at a cost. (+5 Attack, -2 Defense)", perk: {type: "statBoost", attack: 5, defense: -2}, recipe: {"Rider's Sigil": 3, "Shadowgem": 2, "Essence of Death": 1}, imgColor: "var(--item-placeholder-ring)", tier: 4} // Renamed & Changed perk
+            ];
+
+            const shopItemsData = [ 
+                { id: "potion2", name: "PV Doubler (1 Use)", description: "Doubles PV rewards from NEXT adventure.", price: 200, imgColor: "var(--item-placeholder-potion2)", type: "buff", durationAdventures: 1, effect: { type: "pvMultiplier", value: 2 } }, // Changed duration
+                { id: "potion3", name: "Gold Magnet (3 Adventures)", description: "Adds +1% FLAT chance of finding gold on next 3 adventures.", price: 400, imgColor: "var(--item-placeholder-potion3)", type: "buff", durationAdventures: 3, effect: { type: "goldChanceBonus", flatValue: 0.01 } }, // Changed effect and price
+                { id: "scroll_low", name: "Low Class Scroll", description: "Used to upgrade Tier 1 items.", price: 250, imgColor: "var(--item-placeholder-scroll)", type: "upgrade_scroll", scrollTier: 1},
+                { id: "scroll_mid", name: "Middle Class Scroll", description: "Used to upgrade Tier 2 items.", price: 500, imgColor: "var(--item-placeholder-scroll)", type: "upgrade_scroll", scrollTier: 2},
+                { id: "scroll_high", name: "High Class Scroll", description: "Used to upgrade Tier 3 & 4 items.", price: 1000, imgColor: "var(--item-placeholder-scroll)", type: "upgrade_scroll", scrollTier: 3} // Assuming tier 3 can cover T3 and T4 items
+            ];
+
             const quests = [ { id: 1, text: "Complete Spirit Forest 5 times", reward: "50 PV", completed: false, progress: 0, target: 5, adventureName: "Spirit Forest" }, { id: 2, text: "Complete Mountain of the Marowan 5 times", reward: "75 PV", completed: false, progress: 0, target: 5, adventureName: "Mountain of the Marowan"}, { id: 3, text: "Complete Fire Fields of Flyinals 5 times", reward: "150 PV", completed: false, progress: 0, target: 5, adventureName: "Fire Fields of Flyinals"}, { id: 4, text: "Venture into the Tomb of the Death Riders", reward: "250 PV, 1 Diamond", completed: false, progress: 0, target: 1, adventureName: "Tomb of the Death Riders"} ];
             const dailyRewardsData = []; for (let i = 1; i <= 30; i++) { let reward = `${50 + (i * 5)} PV`; if (i % 7 === 0 && Object.keys(playerMaterials).length > 0) reward += `, 1 ${Object.keys(playerMaterials)[i % Object.keys(playerMaterials).length]}`; if (i === 30) reward = "1 Gold, 300 PV, 1 Diamond"; dailyRewardsData.push({ day: i, reward: reward });}
             const adventureProgressionConfig = [ { id: "1", blockId: "adventure-1-block", unlockQuestId: null, unlockMessage: "" }, { id: "2", blockId: "adventure-2-block", unlockQuestId: 1, unlockMessage: "Complete 'Spirit Forest' 5 times to unlock." }, { id: "3", blockId: "adventure-3-block", unlockQuestId: 2, unlockMessage: "Complete 'Mountain of the Marowan' 5 times to unlock." }, { id: "4", blockId: "adventure-4-block", unlockQuestId: 3, unlockMessage: "Complete 'Fire Fields of Flyinals' 5 times to unlock." } ];
+            const upgradeChances = [1, 0.75, 0.40, 0.15, 0.03]; // Index = current level (+0 to +4)
 
             // --- Popup Functions ---
             function processPopupQueue() {
@@ -1177,8 +1387,8 @@
                 currentPvTokens = 0; currentGold = 0; currentDiamonds = 0;
                 activeAdventures = []; nextActiveAdventureId = 0;
                 totalAvailableAdventurers = MAX_PLAYER_ADVENTURERS;
-                playerInventory = [];
-                playerMaterials = { "Leather": 0, "Wood": 0, "Clover": 0, "Fabric": 0, "Iron": 0, "Gizmo Tail": 0, "Stone": 0, "Obsidian": 0, "Bitcoin": 0, "Bone": 0, "Flame Essence": 0, "Essence of Death": 0, "Rider's Sigil": 0, "Ancient Tablet Fragment": 0, "Shadowgem": 0 };
+                playerInventory = []; nextUniqueInstanceId = 0;
+                playerMaterials = { ...initialPlayerMaterials };
                 equippedItems = { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Misc1: null, Misc2: null };
                 playerAdventurerLevel = 1; 
                 secondRingSlotUnlocked = false;
@@ -1188,14 +1398,23 @@
                 quests.forEach(q => { q.progress = 0; q.completed = false; q.claimed = false; }); 
                 lastDailyRewardDayClaimed = 0; 
                 lastDailyRewardClaimTimestamp = 0;
+                selectedItemForUpgrade = null;
+                selectedScrollForUpgrade = null;
 
                 if(sidebarActiveAdventuresList) sidebarActiveAdventuresList.innerHTML = '';
                 if(activePotionsList) activePotionsList.innerHTML = '';
-                if(materialsListDiv) materialsListDiv.innerHTML = '';
+                if(materialsListContainer) materialsListContainer.innerHTML = '';
                 if(inventoryItemsContainer) inventoryItemsContainer.innerHTML = '';
                 if(equipmentSlotsDisplay) equipmentSlotsDisplay.innerHTML = '';
                 if (whitelistRafflesContainer) whitelistRafflesContainer.innerHTML = '';
                 if (dailyRewardsGrid) dailyRewardsGrid.innerHTML = ''; 
+                if (pvLeaderboardList) pvLeaderboardList.innerHTML = '<li>Loading...</li>';
+                if (goldLeaderboardList) goldLeaderboardList.innerHTML = '<li>Loading...</li>';
+                if (diamondLeaderboardList) diamondLeaderboardList.innerHTML = '<li>Loading...</li>';
+                if (upgradeResultDisplay) upgradeResultDisplay.textContent = '';
+                if (selectedItemForUpgradeDisplay) selectedItemForUpgradeDisplay.textContent = 'Item: None';
+                if (selectedScrollForUpgradeDisplay) selectedScrollForUpgradeDisplay.textContent = 'Scroll: None';
+
             }
 
 
@@ -1303,6 +1522,7 @@
                     savableGameState.nickname = userNickname || "Voyager";
                     savableGameState.lastDailyRewardDayClaimed = lastDailyRewardDayClaimed;
                     savableGameState.lastDailyRewardClaimTimestamp = lastDailyRewardClaimTimestamp;
+                    savableGameState.nextUniqueInstanceId = nextUniqueInstanceId;
 
 
                     const playerDocRef = doc(collection(db, 'playerProgress'), userId); 
@@ -1348,8 +1568,9 @@
                     diamonds: 0, 
                     activeAdventures: [],
                     totalAvailableAdventurers: MAX_PLAYER_ADVENTURERS,
-                    playerInventory: [],
-                    playerMaterials: { "Leather": 0, "Wood": 0, "Clover": 0, "Fabric": 0, "Iron": 0, "Gizmo Tail": 0, "Stone": 0, "Obsidian": 0, "Bitcoin": 0, "Bone": 0, "Flame Essence": 0, "Essence of Death": 0, "Rider's Sigil": 0, "Ancient Tablet Fragment": 0, "Shadowgem": 0 },
+                    playerInventory: [], // Items will be { id: 'boots1', level: 0, uniqueInstanceId: ... }
+                    nextUniqueInstanceId: 0,
+                    playerMaterials: { ...initialPlayerMaterials },
                     equippedItems: { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Misc1: null, Misc2: null },
                     quests: quests.map(q => ({ ...q, progress: 0, completed: false, claimed: false })), 
                     activePotions: [],
@@ -1372,8 +1593,9 @@
                     diamonds: currentDiamonds || 0, 
                     activeAdventures: Array.isArray(activeAdventures) ? activeAdventures.map(adv => ({ id: adv.id, originalAdventureId: adv.originalAdventureId, name: adv.name || "Unknown Adventure", adventurers: adv.adventurers || 0, returnTime: adv.returnTime || Date.now(), pvReward: adv.pvReward || 0, goldChance: adv.goldChance || 0, diamondChance: adv.diamondChance || 0 })) : [], 
                     totalAvailableAdventurers: totalAvailableAdventurers !== undefined ? totalAvailableAdventurers : MAX_PLAYER_ADVENTURERS, 
-                    playerInventory: Array.isArray(playerInventory) ? playerInventory.map(item => typeof item === 'string' ? item : item.id) : [], 
-                    playerMaterials: playerMaterials || {}, 
+                    playerInventory: Array.isArray(playerInventory) ? playerInventory : [], // Already stores objects
+                    nextUniqueInstanceId: nextUniqueInstanceId,
+                    playerMaterials: playerMaterials || { ...initialPlayerMaterials }, 
                     equippedItems: equippedItems || { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Misc1: null, Misc2: null }, 
                     quests: Array.isArray(quests) ? quests.map(q => ({ id: q.id, text: q.text || "UKN", reward: q.reward || "0", completed: q.completed || false, progress: q.progress || 0, target: q.target || 0, adventureName: q.adventureName || null, metric: q.metric || null, claimed: q.claimed || false })) : [], 
                     activePotions: Array.isArray(activePotions) ? activePotions.map(p => ({ id: p.id, endTime: p.endTime || null, adventuresLeft: p.adventuresLeft !== undefined ? p.adventuresLeft : null })).filter(p => p.id) : [], 
@@ -1391,7 +1613,24 @@
                 try { 
                     userNickname = loadedState.nickname || "Voyager"; 
                     if (playerNicknameDisplay && userNickname) playerNicknameDisplay.textContent = userNickname; 
-                    currentPvTokens = loadedState.pvTokens || 0; currentGold = loadedState.gold || 0; currentDiamonds = loadedState.diamonds || 0; activeAdventures = Array.isArray(loadedState.activeAdventures) ? loadedState.activeAdventures.map(advData => { return { id: advData.id || nextActiveAdventureId++, originalAdventureId: advData.originalAdventureId || "1", name: advData.name || "Unknown Adventure", adventurers: advData.adventurers || 0, returnTime: typeof advData.returnTime === 'number' ? advData.returnTime : Date.now(), pvReward: advData.pvReward || 0, goldChance: advData.goldChance || 0, diamondChance: advData.diamondChance || 0 }; }) : []; nextActiveAdventureId = activeAdventures.length > 0 ? Math.max(0, ...activeAdventures.map(a => a.id)) + 1 : 0; totalAvailableAdventurers = loadedState.totalAvailableAdventurers !== undefined ? loadedState.totalAvailableAdventurers : MAX_PLAYER_ADVENTURERS; playerInventory = Array.isArray(loadedState.playerInventory) ? loadedState.playerInventory.map(itemSource => { if (typeof itemSource === 'string') { let itemData = craftableItemsData.find(i => i.id === itemSource); if (!itemData && itemSource === "riderScroll") itemData = { id: "riderScroll", name: "Rider Scroll", type: "Consumable", description: "Unlocks a second ring slot.", imgColor: "var(--item-placeholder-scroll)" }; if (!itemData && itemSource === "cursedBand") itemData = { id: "cursedBand", name: "Cursed Band", type: "Ring", description: "A ring pulsing with dark energy. (+1 Dark Power)", perk: { type: "darkPower", value: 1 }, imgColor: "var(--item-placeholder-ring)" }; return itemData || { id: itemSource, name: "Unknown Item ID", type: "Unknown" }; } return itemSource || { id: "unknownObjectInInventory", name: "Unknown Item Obj", type: "Unknown" }; }).filter(item => item && item.id) : []; playerMaterials = loadedState.playerMaterials || { "Leather": 0, "Wood": 0, "Clover": 0, "Fabric": 0, "Iron": 0, "Gizmo Tail": 0, "Stone": 0, "Obsidian": 0, "Bitcoin": 0, "Bone": 0, "Flame Essence": 0, "Essence of Death": 0, "Rider's Sigil": 0, "Ancient Tablet Fragment": 0, "Shadowgem": 0 }; equippedItems = loadedState.equippedItems || { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Misc1: null, Misc2: null }; playerAdventurerLevel = loadedState.playerAdventurerLevel || 1; secondRingSlotUnlocked = loadedState.secondRingSlotUnlocked || false; playerRaffleEntries = loadedState.playerRaffleEntries || {}; 
+                    currentPvTokens = loadedState.pvTokens || 0; currentGold = loadedState.gold || 0; currentDiamonds = loadedState.diamonds || 0; activeAdventures = Array.isArray(loadedState.activeAdventures) ? loadedState.activeAdventures.map(advData => { return { id: advData.id || nextActiveAdventureId++, originalAdventureId: advData.originalAdventureId || "1", name: advData.name || "Unknown Adventure", adventurers: advData.adventurers || 0, returnTime: typeof advData.returnTime === 'number' ? advData.returnTime : Date.now(), pvReward: advData.pvReward || 0, goldChance: advData.goldChance || 0, diamondChance: advData.diamondChance || 0 }; }) : []; nextActiveAdventureId = activeAdventures.length > 0 ? Math.max(0, ...activeAdventures.map(a => a.id)) + 1 : 0; totalAvailableAdventurers = loadedState.totalAvailableAdventurers !== undefined ? loadedState.totalAvailableAdventurers : MAX_PLAYER_ADVENTURERS; 
+                    
+                    playerInventory = Array.isArray(loadedState.playerInventory) ? loadedState.playerInventory.map(itemSource => {
+                        // Ensure items have id, level, and uniqueInstanceId
+                        if (typeof itemSource === 'string') { // Legacy format
+                            return { id: itemSource, level: 0, uniqueInstanceId: `legacy_${nextUniqueInstanceId++}` };
+                        }
+                        return { 
+                            ...itemSource, 
+                            level: itemSource.level || 0,
+                            uniqueInstanceId: itemSource.uniqueInstanceId || `loaded_${nextUniqueInstanceId++}`
+                        };
+                    }).filter(item => item && item.id) : [];
+                    nextUniqueInstanceId = loadedState.nextUniqueInstanceId || playerInventory.length; // Ensure it's at least after current items
+
+                    playerMaterials = loadedState.playerMaterials || { ...initialPlayerMaterials }; 
+                    equippedItems = loadedState.equippedItems || { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Misc1: null, Misc2: null }; 
+                    playerAdventurerLevel = loadedState.playerAdventurerLevel || 1; secondRingSlotUnlocked = loadedState.secondRingSlotUnlocked || false; playerRaffleEntries = loadedState.playerRaffleEntries || {}; 
                     
                     lastDailyRewardDayClaimed = loadedState.lastDailyRewardDayClaimed || 0;
                     lastDailyRewardClaimTimestamp = loadedState.lastDailyRewardClaimTimestamp || 0;
@@ -1399,7 +1638,13 @@
                     if (Array.isArray(loadedState.quests)) { quests.forEach(q_default => { const loaded_q = loadedState.quests.find(lq => lq && lq.id === q_default.id); if (loaded_q) { q_default.completed = loaded_q.completed || false; q_default.progress = loaded_q.progress || 0; q_default.claimed = loaded_q.claimed || false; } }); } 
                     
                     if (Array.isArray(loadedState.activePotions)) { activePotions = loadedState.activePotions.map(pData => { if (!pData || !pData.id) return null; const potionBase = shopItemsData.find(shopItem => shopItem.id === pData.id); if (!potionBase) return null; return { id: pData.id, name: potionBase.name, description: potionBase.description, effect: potionBase.effect, endTime: typeof pData.endTime === 'number' ? pData.endTime : null, adventuresLeft: pData.adventuresLeft !== undefined ? pData.adventuresLeft : null }; }).filter(p => p !== null); activePotions = activePotions.filter(p => (p.endTime && Date.now() < p.endTime) || (p.adventuresLeft !== undefined && p.adventuresLeft > 0) || (!p.endTime && p.adventuresLeft === undefined) ); } 
-                    updateStatsDisplay(); renderMaterials(); renderActiveAdventuresInSidebar(); renderActivePotions(); renderInventory(); updateAdventureDisplayStates(); if (document.getElementById('quests-page').classList.contains('active')) renderQuests(); if (document.getElementById('daily-rewards-page').classList.contains('active')) renderDailyRewards(); if (document.getElementById('shop-page').classList.contains('active')) { renderShopItems(); renderCraftingItems(); } if (document.getElementById('whitelist-page').classList.contains('active')) fetchAndDisplayRaffles(); 
+                    updateStatsDisplay(); renderMaterials(); renderActiveAdventuresInSidebar(); renderActivePotions(); renderInventory(); updateAdventureDisplayStates(); 
+                    if (document.getElementById('quests-page').classList.contains('active')) renderQuests(); 
+                    if (document.getElementById('daily-rewards-page').classList.contains('active')) renderDailyRewards(); 
+                    if (document.getElementById('shop-page').classList.contains('active')) { renderShopItems(); renderCraftingItems(); } 
+                    if (document.getElementById('whitelist-page').classList.contains('active')) fetchAndDisplayRaffles(); 
+                    if (document.getElementById('leaderboard-page').classList.contains('active')) fetchAndDisplayLeaderboards();
+                    if (document.getElementById('upgrade-page').classList.contains('active')) { /* any specific setup for upgrade page */ }
                     console.log("Game state applied successfully."); 
                 } catch (error) { 
                     console.error("Error during applyLoadedGameState:", error); 
@@ -1410,7 +1655,7 @@
             function loadTwitterWidget(theme) { if (twitterWidgetContainer) { twitterWidgetContainer.innerHTML = ''; const twitterLink = document.createElement('a'); twitterLink.className = 'twitter-timeline'; twitterLink.setAttribute('data-dnt', 'true'); twitterLink.href = 'https://twitter.com/nvart_?ref_src=twsrc%5Etfw'; twitterLink.setAttribute('data-theme', theme); twitterLink.setAttribute('data-height', '400'); twitterLink.textContent = 'Tweets by nvart_'; twitterWidgetContainer.appendChild(twitterLink); let twitterScript = document.querySelector('script[src="https://platform.twitter.com/widgets.js"]'); if (twitterScript) { twitterScript.remove(); } twitterScript = document.createElement('script'); twitterScript.async = true; twitterScript.src = 'https://platform.twitter.com/widgets.js'; twitterScript.charset = 'utf-8'; document.body.appendChild(twitterScript); } }
             
             if(darkModeToggle){ darkModeToggle.addEventListener('change', () => { if (darkModeToggle.checked) { body.classList.add('dark-mode'); body.classList.remove('light-mode'); localStorage.setItem('theme', 'dark'); loadTwitterWidget('dark'); } else { body.classList.remove('dark-mode'); body.classList.add('light-mode'); localStorage.setItem('theme', 'light'); loadTwitterWidget('light'); } });}
-            async function showPage(pageIdToShow) { console.log("Switching to page:", pageIdToShow); if(!pageContents || pageContents.length === 0) { console.error("pageContents NodeList is empty or not found in showPage. Ensure HTML elements with class 'page-content' exist and are selected correctly."); return; } pageContents.forEach(page => { page.classList.remove('active'); }); const targetPage = document.getElementById(pageIdToShow); if (targetPage) { targetPage.classList.add('active'); if (pageIdToShow === 'quests-page') renderQuests(); else if (pageIdToShow === 'shop-page') {renderShopItems(); renderCraftingItems();} else if (pageIdToShow === 'inventory-page') renderInventory(); else if (pageIdToShow === 'daily-rewards-page') renderDailyRewards(); else if (pageIdToShow === 'whitelist-page') await fetchAndDisplayRaffles(); else if (pageIdToShow === 'upgrade-page') { /* placeholder */ } } else { console.error("Target page with ID '" + pageIdToShow + "' not found."); showPage('adventures-page'); }}
+            async function showPage(pageIdToShow) { console.log("Switching to page:", pageIdToShow); if(!pageContents || pageContents.length === 0) { console.error("pageContents NodeList is empty or not found in showPage. Ensure HTML elements with class 'page-content' exist and are selected correctly."); return; } pageContents.forEach(page => { page.classList.remove('active'); }); const targetPage = document.getElementById(pageIdToShow); if (targetPage) { targetPage.classList.add('active'); if (pageIdToShow === 'quests-page') renderQuests(); else if (pageIdToShow === 'shop-page') {renderShopItems(); renderCraftingItems();} else if (pageIdToShow === 'inventory-page') renderInventory(); else if (pageIdToShow === 'daily-rewards-page') renderDailyRewards(); else if (pageIdToShow === 'whitelist-page') await fetchAndDisplayRaffles(); else if (pageIdToShow === 'upgrade-page') { /* placeholder */ } else if (pageIdToShow === 'leaderboard-page') await fetchAndDisplayLeaderboards(); else if (pageIdToShow === 'dungeons-page') { /* placeholder */ } } else { console.error("Target page with ID '" + pageIdToShow + "' not found."); showPage('adventures-page'); }}
             if(menuItems){ menuItems.forEach(item => { item.addEventListener('click', () => { const targetPageId = item.dataset.page; if (targetPageId) { showPage(targetPageId); } }); });}
             
             function updateStatsDisplay() { if(pvCountElement) pvCountElement.textContent = currentPvTokens; if(goldCountElement) goldCountElement.textContent = currentGold; if(diamondCountElement) diamondCountElement.textContent = currentDiamonds; if(availableAdventurersCountElement) availableAdventurersCountElement.textContent = totalAvailableAdventurers; }
@@ -1419,19 +1664,109 @@
             function renderActivePotions() { if (!activePotionsList || !activePotionsDisplay) return; activePotionsList.innerHTML = ''; if (activePotions.length === 0) { activePotionsDisplay.classList.add('hidden'); return; } activePotionsDisplay.classList.remove('hidden'); activePotions.forEach(potion => { const itemDiv = document.createElement('div'); itemDiv.classList.add('potion-item'); let details = ''; if (potion.endTime) { const timeLeftMs = potion.endTime - Date.now(); details = `Time Left: <span class="timer">${formatTimeLeft(timeLeftMs)}</span>`; } else if (potion.adventuresLeft !== undefined) { details = `Adventures Left: ${potion.adventuresLeft}`; } itemDiv.innerHTML = `<p><strong>${potion.name}</strong></p><p>${potion.description}</p><p>${details}</p>`; activePotionsList.appendChild(itemDiv); });}
             
             function renderMaterials() { 
-                if(!materialsListDiv) return; 
-                materialsListDiv.innerHTML = ''; 
-                for (const mat in playerMaterials) { 
-                    if (playerMaterials.hasOwnProperty(mat)) { 
-                        const li = document.createElement('li'); 
-                        li.textContent = `${mat}: ${playerMaterials[mat]}`; 
-                        materialsListDiv.appendChild(li); 
-                    } 
-                } 
+                if (!materialsListContainer) return;
+                materialsListContainer.innerHTML = ''; 
+
+                for (const tier in materialTiers) {
+                    const tierTitle = document.createElement('h5');
+                    tierTitle.classList.add('material-tier-title');
+                    tierTitle.textContent = `Tier ${tier} Materials:`;
+                    materialsListContainer.appendChild(tierTitle);
+
+                    const ul = document.createElement('ul');
+                    let foundInTier = false;
+                    materialTiers[tier].forEach(matName => {
+                        if (playerMaterials.hasOwnProperty(matName) && playerMaterials[matName] > 0) {
+                            const li = document.createElement('li');
+                            li.textContent = `${matName}: ${playerMaterials[matName]}`;
+                            ul.appendChild(li);
+                            foundInTier = true;
+                        } else if (playerMaterials.hasOwnProperty(matName) && playerMaterials[matName] === 0) {
+                            // Optionally show 0 count if desired
+                            // const li = document.createElement('li');
+                            // li.textContent = `${matName}: 0`;
+                            // ul.appendChild(li);
+                            // foundInTier = true;
+                        }
+                    });
+                    if (!foundInTier) {
+                         const li = document.createElement('li');
+                         li.textContent = `No Tier ${tier} materials collected.`;
+                         ul.appendChild(li);
+                    }
+                    materialsListContainer.appendChild(ul);
+                }
             }
 
-            function renderCraftingItems() { if(!craftingItemsContainer) return; craftingItemsContainer.innerHTML = ''; craftableItemsData.forEach(item => { const alreadyOwned = playerInventory.some(invItem => (typeof invItem === 'string' ? invItem : invItem.id) === item.id) || Object.values(equippedItems).includes(item.id); const card = document.createElement('div'); card.className = 'craftable-item-card'; let recipeHtml = 'Requires: '; for(const mat in item.recipe){ recipeHtml += `${item.recipe[mat]} ${mat}, `; } recipeHtml = recipeHtml.slice(0, -2); card.innerHTML = `<div class="item-icon-placeholder" style="background-color: ${item.imgColor || '#555'};">${item.type.substring(0,1)}</div> <div class="item-info"> <p><strong>${item.name}</strong> (${item.type})</p <small>${item.description}</small> <p class="crafting-cost"><small>${recipeHtml}</small></p> </div> <button class="action-button craft-button" data-item-id="${item.id}" ${alreadyOwned ? 'disabled title="You already own this item"' : ''}>${alreadyOwned ? 'Owned' : 'Craft'}</button>`; craftingItemsContainer.appendChild(card); }); document.querySelectorAll('.craft-button:not([disabled])').forEach(b => b.addEventListener('click', e => craftItem(e.target.dataset.itemId))); }
-            function renderInventory() { if (!inventoryItemsContainer || !equipmentSlotsDisplay) return; equipmentSlotsDisplay.innerHTML = ''; const slotTypes = [ { name: "Armour", id: "Armour" }, { name: "Helmet", id: "Helmet" }, { name: "Boots", id: "Boots" }, { name: "Amulet", id: "Amulet" }, { name: "Ring 1", id: "Ring1" }, { name: "Ring 2", id: "Ring2", locked: !secondRingSlotUnlocked }, { name: "Weapon", id: "Weapon" }, { name: "Misc 1", id: "Misc1" }, { name: "Misc 2", id: "Misc2" } ]; slotTypes.forEach(slot => { const slotDiv = document.createElement('div'); slotDiv.classList.add('equipment-slot'); if (slot.locked) { slotDiv.classList.add('locked'); } let slotContent = `<div class="slot-name">${slot.name.toUpperCase()}</div>`; const equippedItemId = equippedItems[slot.id]; if (equippedItemId) { let itemData = craftableItemsData.find(i => i.id === equippedItemId) || playerInventory.find(invItem => invItem && invItem.id === equippedItemId); if (!itemData && equippedItemId === "cursedBand") itemData = { id: "cursedBand", name: "Cursed Band", type: "Ring", description: "A ring pulsing with dark energy. (+1 Dark Power)", perk: { type: "darkPower", value: 1 }, imgColor: "var(--item-placeholder-ring)" }; if (itemData) { slotContent += `<div class="item-icon-placeholder" style="background-color: ${itemData.imgColor || '#ccc'};">${itemData.type ? itemData.type.substring(0,1) : (itemData.name ? itemData.name.substring(0,1) : '?')}</div> <div class="equipped-item-name">${itemData.name}</div> <button class="unequip-btn action-button" data-item-slot-id="${slot.id}">Unequip</button>`; } else { slotContent += `<div class="empty-slot-text">(Error: Item data not found for ${equippedItemId})</div>`; } } else if (!slot.locked) { slotContent += `<div class="empty-slot-text">(Empty Slot)</div>`; } else { slotContent += `<div class="empty-slot-text" style="font-size:0.8em;">Unlock with Rider Scroll</div>`; } slotDiv.innerHTML = slotContent; equipmentSlotsDisplay.appendChild(slotDiv); }); equipmentSlotsDisplay.querySelectorAll('.unequip-btn').forEach(b => b.addEventListener('click', e => { const itemSlotId = e.target.dataset.itemSlotId; unequipItem(itemSlotId); })); inventoryItemsContainer.innerHTML = ''; if (playerInventory.length === 0) { inventoryItemsContainer.innerHTML = '<p style="text-align:center;">Your bag is empty.</p>'; return; } playerInventory.forEach(item => { let itemData; if (typeof item === 'string') { itemData = craftableItemsData.find(i => i.id === item); if (!itemData && item === "riderScroll") { itemData = { id: "riderScroll", name: "Rider Scroll", type: "Consumable", description: "Unlocks a second ring slot.", imgColor: "var(--item-placeholder-scroll)" }; } if (!itemData && item === "cursedBand") { itemData = { id: "cursedBand", name: "Cursed Band", type: "Ring", description: "A ring pulsing with dark energy. (+1 Dark Power)", perk: { type: "darkPower", value: 1 }, imgColor: "var(--item-placeholder-ring)" }; } } else { itemData = item; } if (itemData) { const card = document.createElement('div'); card.className = 'inventory-item-card'; let actionsHtml = ''; if (itemData.type !== "Consumable" && !Object.values(equippedItems).includes(itemData.id) ) { actionsHtml += `<button class="equip-btn action-button" data-item-id="${itemData.id}">Equip</button>`; } if (itemData.id === "riderScroll" && !secondRingSlotUnlocked) { actionsHtml += `<button class="use-btn action-button" data-item-id="${itemData.id}">Use</button>`; } card.innerHTML = ` <div class="item-icon-placeholder" style="background-color: ${itemData.imgColor || '#ccc'};">${itemData.type ? itemData.type.substring(0,1) : (itemData.name ? itemData.name.substring(0,1) : '?')}</div> <div class="item-info"> <p><strong>${itemData.name}</strong> (${itemData.type || 'Item'})</p> <small class="item-perk">${itemData.description || ''}</small> </div> <div class="item-actions">${actionsHtml}</div>`; inventoryItemsContainer.appendChild(card); } }); inventoryItemsContainer.querySelectorAll('.equip-btn').forEach(b => b.addEventListener('click', e => equipItem(e.target.dataset.itemId))); inventoryItemsContainer.querySelectorAll('.use-btn').forEach(b => b.addEventListener('click', e => useConsumableItem(e.target.dataset.itemId)));}
+            function renderCraftingItems() { if(!craftingItemsContainer) return; craftingItemsContainer.innerHTML = ''; craftableItemsData.forEach(item => { const alreadyOwned = playerInventory.some(invItem => invItem.id === item.id) || Object.values(equippedItems).some(equippedInstanceId => { const eqItem = playerInventory.find(pi => pi.uniqueInstanceId === equippedInstanceId); return eqItem && eqItem.id === item.id; }); const card = document.createElement('div'); card.className = 'craftable-item-card'; let recipeHtml = 'Requires: '; for(const mat in item.recipe){ recipeHtml += `${item.recipe[mat]} ${mat}, `; } recipeHtml = recipeHtml.slice(0, -2); card.innerHTML = `<div class="item-icon-placeholder" style="background-color: ${item.imgColor || '#555'};">${item.type.substring(0,1)}</div> <div class="item-info"> <p><strong>${item.name}</strong> (${item.type})</p <small>${item.description}</small> <p class="crafting-cost"><small>${recipeHtml}</small></p> </div> <button class="action-button craft-button" data-item-id="${item.id}" ${alreadyOwned ? 'disabled title="You already own an instance of this base item."' : ''}>${alreadyOwned ? 'Owned' : 'Craft'}</button>`; craftingItemsContainer.appendChild(card); }); document.querySelectorAll('.craft-button:not([disabled])').forEach(b => b.addEventListener('click', e => craftItem(e.target.dataset.itemId))); }
+            
+            function renderInventory() { 
+                if (!inventoryItemsContainer || !equipmentSlotsDisplay) return; 
+                
+                equipmentSlotsDisplay.innerHTML = ''; 
+                const slotTypes = [ { name: "Armour", id: "Armour" }, { name: "Helmet", id: "Helmet" }, { name: "Boots", id: "Boots" }, { name: "Amulet", id: "Amulet" }, { name: "Ring 1", id: "Ring1" }, { name: "Ring 2", id: "Ring2", locked: !secondRingSlotUnlocked }, { name: "Weapon", id: "Weapon" }, { name: "Misc 1", id: "Misc1" }, { name: "Misc 2", id: "Misc2" } ]; 
+                
+                slotTypes.forEach(slot => { 
+                    const slotDiv = document.createElement('div'); 
+                    slotDiv.classList.add('equipment-slot'); 
+                    if (slot.locked) { slotDiv.classList.add('locked'); } 
+                    let slotContent = `<div class="slot-name">${slot.name.toUpperCase()}</div>`; 
+                    const equippedItemInstanceId = equippedItems[slot.id]; 
+                    const equippedInvItem = playerInventory.find(invItem => invItem.uniqueInstanceId === equippedItemInstanceId);
+
+                    if (equippedInvItem) { 
+                        const itemData = craftableItemsData.find(i => i.id === equippedInvItem.id) || (equippedInvItem.id === "cursedBand" ? { id: "cursedBand", name: "Cursed Ring of Power", type: "Ring", description: "A ring pulsing with dark energy.", perk: { type: "statBoost", attack:5, defense:-2 }, imgColor: "var(--item-placeholder-ring)" } : null) ; 
+                        if (itemData) { 
+                            slotContent += `<div class="item-icon-placeholder" style="background-color: ${itemData.imgColor || '#ccc'};">${itemData.type ? itemData.type.substring(0,1) : (itemData.name ? itemData.name.substring(0,1) : '?')}</div> <div class="equipped-item-name">${itemData.name} ${equippedInvItem.level > 0 ? `+${equippedInvItem.level}` : ''}</div> <button class="unequip-btn action-button" data-item-slot-id="${slot.id}">Unequip</button>`; 
+                            if (equippedInvItem.level === 4) slotDiv.classList.add('item-level-plus4');
+                            if (equippedInvItem.level === 5) slotDiv.classList.add('item-level-plus5');
+                        } else { 
+                            slotContent += `<div class="empty-slot-text">(Error: Item data not found for ${equippedInvItem.id})</div>`; 
+                        } 
+                    } else if (!slot.locked) { 
+                        slotContent += `<div class="empty-slot-text">(Empty Slot)</div>`; 
+                    } else { 
+                        slotContent += `<div class="empty-slot-text" style="font-size:0.8em;">Unlock with Rider Scroll</div>`; 
+                    } 
+                    slotDiv.innerHTML = slotContent; 
+                    equipmentSlotsDisplay.appendChild(slotDiv); 
+                }); 
+                equipmentSlotsDisplay.querySelectorAll('.unequip-btn').forEach(b => b.addEventListener('click', e => { const itemSlotId = e.target.dataset.itemSlotId; unequipItem(itemSlotId); })); 
+                
+                inventoryItemsContainer.innerHTML = ''; 
+                if (playerInventory.length === 0) { inventoryItemsContainer.innerHTML = '<p style="text-align:center;">Your bag is empty.</p>'; return; } 
+                
+                playerInventory.forEach(invItem => { 
+                    let itemData = craftableItemsData.find(i => i.id === invItem.id); 
+                    if (!itemData && invItem.id === "riderScroll") { itemData = { id: "riderScroll", name: "Rider Scroll", type: "Consumable", description: "Unlocks a second ring slot.", imgColor: "var(--item-placeholder-scroll)" }; } 
+                    if (!itemData && invItem.id === "cursedBand") { itemData = { id: "cursedBand", name: "Cursed Ring of Power", type: "Ring", description: "A ring pulsing with dark energy.", perk: { type: "statBoost", attack:5, defense:-2 }, imgColor: "var(--item-placeholder-ring)" }; } 
+                    const shopScrollData = shopItemsData.find(si => si.id === invItem.id && si.type === "upgrade_scroll");
+                    if (shopScrollData) itemData = shopScrollData;
+
+
+                    if (itemData) { 
+                        const card = document.createElement('div'); 
+                        card.className = 'inventory-item-card'; 
+                        if (invItem.level === 4) card.classList.add('item-level-plus4');
+                        if (invItem.level === 5) card.classList.add('item-level-plus5');
+
+                        let actionsHtml = ''; 
+                        const isEquipped = Object.values(equippedItems).includes(invItem.uniqueInstanceId);
+
+                        if (itemData.type !== "Consumable" && itemData.type !== "upgrade_scroll" && !isEquipped ) { 
+                            actionsHtml += `<button class="equip-btn action-button" data-item-unique-id="${invItem.uniqueInstanceId}">Equip</button>`; 
+                        } 
+                        if (invItem.id === "riderScroll" && !secondRingSlotUnlocked) { 
+                            actionsHtml += `<button class="use-btn action-button" data-item-unique-id="${invItem.uniqueInstanceId}">Use</button>`; 
+                        } 
+                        card.innerHTML = ` <div class="item-icon-placeholder" style="background-color: ${itemData.imgColor || '#ccc'};">${itemData.type ? itemData.type.substring(0,1) : (itemData.name ? itemData.name.substring(0,1) : '?')}</div> <div class="item-info"> <p><strong>${itemData.name} ${invItem.level > 0 ? `+${invItem.level}` : ''}</strong> (${itemData.type || 'Item'})</p> <small class="item-perk">${itemData.description || ''}</small> </div> <div class="item-actions">${actionsHtml} ${isEquipped ? '<span class="equipped-status">Equipped</span>' : ''}</div>`; 
+                        inventoryItemsContainer.appendChild(card); 
+                    } 
+                }); 
+                inventoryItemsContainer.querySelectorAll('.equip-btn').forEach(b => b.addEventListener('click', e => equipItem(e.target.dataset.itemUniqueId))); 
+                inventoryItemsContainer.querySelectorAll('.use-btn').forEach(b => b.addEventListener('click', e => useConsumableItem(e.target.dataset.itemUniqueId)));
+            }
+
             function renderQuests() { if (!questListDiv) return; questListDiv.innerHTML = ''; quests.forEach(quest => { const qe = document.createElement('div'); qe.classList.add('quest-item'); qe.innerHTML = `<p>${quest.text} (${quest.progress || 0}/${quest.target||'N/A'})</p><div class="quest-details"><span class="quest-reward">Reward: ${quest.reward}</span><button class="action-button claim-quest-btn" data-quest-id="${quest.id}" ${quest.completed && !(quest.claimed) ? '' : 'disabled'}>${quest.claimed ? 'Claimed' : 'Claim'}</button></div>`; questListDiv.appendChild(qe); }); document.querySelectorAll('.claim-quest-btn').forEach(b => { b.addEventListener('click', (e) => { if (!currentUser) return; const qId = parseInt(e.target.dataset.questId); const q = quests.find(q => q.id === qId); if(q && q.completed && !q.claimed){ q.claimed = true; e.target.disabled = true; e.target.textContent = 'Claimed'; const rewardParts = q.reward.split(','); let pvReward = 0; let diamondReward = 0; rewardParts.forEach(part => { if (part.includes("PV")) pvReward = parseInt(part.match(/(\d+) PV/)[1]); if (part.includes("Diamond")) diamondReward = parseInt(part.match(/(\d+) Diamond/)[1]); }); currentPvTokens += pvReward; currentDiamonds += diamondReward; updateStatsDisplay(); showCustomPopup(`Claimed reward: ${q.reward} for completing quest: "${q.text}"`, "Quest Reward Claimed"); if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState()); if ([1, 2, 3].includes(q.id)) { updateAdventureDisplayStates(); } } }); }); }
             
             function renderDailyRewards() {
@@ -1524,15 +1859,226 @@
             if (itemData.durationSeconds) { 
                 const originalHours = itemData.durationSeconds / 3600;
                 newPotion.endTime = Date.now() + (originalHours * GAME_HOUR_IN_REAL_SECONDS * 1000);
-            } else if (itemData.durationAdventures) { newPotion.adventuresLeft = itemData.durationAdventures; } activePotions.push(newPotion); renderActivePotions(); } if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState()); } else { showCustomPopup("Not enough PV Tokens to buy this item!", "Transaction Failed"); } }); }); }
-            function craftItem(itemId) { if(!currentUser) return; const itemToCraft = craftableItemsData.find(i => i.id === itemId); if (!itemToCraft) return; const alreadyOwned = playerInventory.some(invItem => (typeof invItem === 'string' ? invItem : invItem.id) === itemToCraft.id) || Object.values(equippedItems).includes(itemToCraft.id); if (alreadyOwned) { showCustomPopup(`You already own a ${itemToCraft.name}. You cannot craft another.`, "Crafting Failed"); return; } let canCraft = true; let missingMat = ""; for (const mat in itemToCraft.recipe) { if ((playerMaterials[mat] || 0) < itemToCraft.recipe[mat]) { canCraft = false; missingMat = mat; break; } } if (canCraft) { for (const mat in itemToCraft.recipe) { playerMaterials[mat] -= itemToCraft.recipe[mat]; } playerInventory.push(itemToCraft.id); showCustomPopup(`Successfully crafted ${itemToCraft.name}!`, "Item Crafted"); renderMaterials(); renderInventory(); renderCraftingItems(); if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState());} else { showCustomPopup(`Not enough ${missingMat}! You need ${itemToCraft.recipe[missingMat]} of ${missingMat} to craft ${itemToCraft.name}.`, "Crafting Failed"); } }
-            function equipItem(itemId) { if(!currentUser) return; const itemData = craftableItemsData.find(i => i.id === itemId) || (itemId === "cursedBand" ? { id: "cursedBand", name: "Cursed Band", type: "Ring", description: "A ring pulsing with dark energy. (+1 Dark Power)", perk: { type: "darkPower", value: 1 }, imgColor: "var(--item-placeholder-ring)" } : null) ; if (!itemData || !itemData.type) { console.error("Cannot equip item without a type:", itemData); return; } let targetSlotId = null; if (itemData.type === "Ring") { if (!equippedItems.Ring1) targetSlotId = "Ring1"; else if (secondRingSlotUnlocked && !equippedItems.Ring2) targetSlotId = "Ring2"; else showCustomPopup("Both ring slots are full or second slot is locked.", "Equip Failed"); } else if (itemData.type === "Trinket" || itemData.type === "Rucksack") { if (!equippedItems.Misc1) targetSlotId = "Misc1"; else if (!equippedItems.Misc2) targetSlotId = "Misc2"; else showCustomPopup("Both miscellaneous slots are full.", "Equip Failed"); } else if (equippedItems.hasOwnProperty(itemData.type)) { targetSlotId = itemData.type; } if (targetSlotId) { if (equippedItems[targetSlotId]) { playerInventory.push(equippedItems[targetSlotId]); } equippedItems[targetSlotId] = itemId; playerInventory = playerInventory.filter(invId => (typeof invId === 'string' ? invId : invId.id) !== itemId); renderInventory(); console.log("Equipped:", equippedItems); if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState()); } else if (!equippedItems.hasOwnProperty(itemData.type) && itemData.type !== "Ring" && itemData.type !== "Trinket" && itemData.type !== "Rucksack") { showCustomPopup(`No available slot for item type: ${itemData.type}`, "Equip Failed"); }}
-            function unequipItem(itemSlotId) { if(!currentUser) return; if (equippedItems.hasOwnProperty(itemSlotId) && equippedItems[itemSlotId]) { playerInventory.push(equippedItems[itemSlotId]); equippedItems[itemSlotId] = null; renderInventory(); console.log("Equipped:", equippedItems); if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState());} }
-            function useConsumableItem(itemId) { if(!currentUser) return; if (itemId === "riderScroll") { if (secondRingSlotUnlocked) { showCustomPopup("Second ring slot is already unlocked!", "Already Unlocked"); return; } const scrollIndex = playerInventory.findIndex(item => (typeof item === 'string' ? item : item.id) === "riderScroll"); if (scrollIndex > -1) { playerInventory.splice(scrollIndex, 1); secondRingSlotUnlocked = true; showCustomPopup("Rider Scroll used! Second ring slot unlocked.", "Slot Unlocked!"); renderInventory(); if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState()); } else { showCustomPopup("Rider Scroll not found in inventory.", "Item Not Found"); } } }
+            } else if (itemData.durationAdventures) { newPotion.adventuresLeft = itemData.durationAdventures; } activePotions.push(newPotion); renderActivePotions(); } else if (itemData.type === "upgrade_scroll") { playerInventory.push({ id: itemData.id, uniqueInstanceId: `scroll_${nextUniqueInstanceId++}`, type: "upgrade_scroll"}); renderInventory(); } if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState()); } else { showCustomPopup("Not enough PV Tokens to buy this item!", "Transaction Failed"); } }); }); }
+            
+            function craftItem(itemId) { 
+                if(!currentUser) return; 
+                const itemToCraft = craftableItemsData.find(i => i.id === itemId); 
+                if (!itemToCraft) return; 
+                
+                const alreadyOwned = playerInventory.some(invItem => invItem.id === itemToCraft.id) || 
+                                   Object.values(equippedItems).some(equippedInstanceId => {
+                                       const eqItem = playerInventory.find(pi => pi.uniqueInstanceId === equippedInstanceId);
+                                       return eqItem && eqItem.id === itemToCraft.id;
+                                   });
+
+                if (alreadyOwned) { 
+                    showCustomPopup(`You already own an instance of ${itemToCraft.name}. You cannot craft another unless the existing one is destroyed.`, "Crafting Failed"); 
+                    return; 
+                } 
+                
+                let canCraft = true; 
+                let missingMat = ""; 
+                for (const mat in itemToCraft.recipe) { 
+                    if ((playerMaterials[mat] || 0) < itemToCraft.recipe[mat]) { 
+                        canCraft = false; missingMat = mat; break; 
+                    } 
+                } 
+                if (canCraft) { 
+                    for (const mat in itemToCraft.recipe) { playerMaterials[mat] -= itemToCraft.recipe[mat]; } 
+                    playerInventory.push({ id: itemToCraft.id, level: 0, uniqueInstanceId: `item_${nextUniqueInstanceId++}` }); 
+                    showCustomPopup(`Successfully crafted ${itemToCraft.name}!`, "Item Crafted"); 
+                    renderMaterials(); renderInventory(); renderCraftingItems(); 
+                    if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
+                } else { 
+                    showCustomPopup(`Not enough ${missingMat}! You need ${itemToCraft.recipe[missingMat]} of ${missingMat} to craft ${itemToCraft.name}.`, "Crafting Failed"); 
+                } 
+            }
+
+            function equipItem(itemUniqueId) { 
+                if(!currentUser) return; 
+                const invItemToEquip = playerInventory.find(invItem => invItem.uniqueInstanceId === itemUniqueId);
+                if (!invItemToEquip) { console.error("Item to equip not found in inventory:", itemUniqueId); return;}
+
+                const itemData = craftableItemsData.find(i => i.id === invItemToEquip.id) || (invItemToEquip.id === "cursedBand" ? { id: "cursedBand", name: "Cursed Ring of Power", type: "Ring" } : null) ; 
+                if (!itemData || !itemData.type) { console.error("Cannot equip item without a type:", itemData); return; } 
+                
+                let targetSlotId = null; 
+                if (itemData.type === "Ring") { 
+                    if (!equippedItems.Ring1) targetSlotId = "Ring1"; 
+                    else if (secondRingSlotUnlocked && !equippedItems.Ring2) targetSlotId = "Ring2"; 
+                    else showCustomPopup("Both ring slots are full or second slot is locked.", "Equip Failed"); 
+                } else if (itemData.type === "Trinket" || itemData.type === "Rucksack") { 
+                    if (!equippedItems.Misc1) targetSlotId = "Misc1"; 
+                    else if (!equippedItems.Misc2) targetSlotId = "Misc2"; 
+                    else showCustomPopup("Both miscellaneous slots are full.", "Equip Failed"); 
+                } else if (equippedItems.hasOwnProperty(itemData.type)) { 
+                    targetSlotId = itemData.type; 
+                } 
+                
+                if (targetSlotId) { 
+                    // Unequip previous item in slot if any
+                    if (equippedItems[targetSlotId]) {
+                        // No need to push back to inventory, it's already there. Just nullify the slot.
+                    }
+                    equippedItems[targetSlotId] = invItemToEquip.uniqueInstanceId; 
+                    // Item remains in playerInventory, equippedItems just points to its uniqueInstanceId
+                    renderInventory(); 
+                    console.log("Equipped:", equippedItems); 
+                    if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState()); 
+                } else if (!equippedItems.hasOwnProperty(itemData.type) && itemData.type !== "Ring" && itemData.type !== "Trinket" && itemData.type !== "Rucksack") { 
+                    showCustomPopup(`No available slot for item type: ${itemData.type}`, "Equip Failed"); 
+                }
+            }
+
+            function unequipItem(itemSlotId) { 
+                if(!currentUser) return; 
+                if (equippedItems.hasOwnProperty(itemSlotId) && equippedItems[itemSlotId]) { 
+                    equippedItems[itemSlotId] = null; 
+                    // Item is already in playerInventory, just update UI
+                    renderInventory(); 
+                    console.log("Equipped:", equippedItems); 
+                    if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
+                } 
+            }
+            function useConsumableItem(itemUniqueId) { 
+                if(!currentUser) return; 
+                const itemIndex = playerInventory.findIndex(item => item.uniqueInstanceId === itemUniqueId);
+                if (itemIndex === -1) {showCustomPopup("Item not found.", "Use Error"); return;}
+                const invItem = playerInventory[itemIndex];
+
+                if (invItem.id === "riderScroll") { 
+                    if (secondRingSlotUnlocked) { showCustomPopup("Second ring slot is already unlocked!", "Already Unlocked"); return; } 
+                    playerInventory.splice(itemIndex, 1); 
+                    secondRingSlotUnlocked = true; 
+                    showCustomPopup("Rider Scroll used! Second ring slot unlocked.", "Slot Unlocked!"); 
+                    renderInventory(); 
+                    if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState()); 
+                } 
+            }
             function generateRandomQuests() { if (quests.length >= 5) return; const templates = [ { baseText: "Collect X PV Tokens", type: "collectPV", min: 100, max: 500, rewardBase: 20 }, { baseText: "Send Y adventurers on any Z quests", type: "sendAdventurers", minA: 3, maxA: 10, minQ: 1, maxQ: 3, rewardBase: 30 }, { baseText: "Earn Z Gold", type: "collectGold", min: 1, max: 5, rewardBase: 50}, ]; while(quests.length < 5) { const t = templates[Math.floor(Math.random() * templates.length)]; let txt = t.baseText; let rA = t.rewardBase; let nq = { id: quests.length + 1, completed: false, progress: 0 }; if (t.type === "collectPV") { const tpv = Math.floor(Math.random()*(t.max-t.min+1)+t.min); txt=txt.replace("X",tpv); rA+=Math.floor(tpv/10); nq.target=tpv; nq.metric="pvCollected"; } else if (t.type === "sendAdventurers") { const ta=Math.floor(Math.random()*(t.maxA-t.minA+1)+t.minA); const tq=Math.floor(Math.random()*(t.maxQ-t.minQ+1)+t.minQ); txt=txt.replace("Y",ta).replace("Z",tq); rA+=ta*2+tq*5; nq.target=ta; nq.metric="adventurersSentOnQuests"; } else if (t.type === "collectGold") { const tg=Math.floor(Math.random()*(t.max-t.min+1)+t.min); txt=txt.replace("Z",tg); rA+=tg*20; nq.target=tg; nq.metric="goldCollected"; } nq.text=txt; nq.reward=`${rA} PV`; quests.push(nq); } }
-            function completeAdventure(instanceId) { if(!currentUser) return; const advIdx = activeAdventures.findIndex(adv => adv.id === instanceId); if (advIdx === -1) return; const completedAdv = activeAdventures[advIdx]; let basePvReward = completedAdv.pvReward; let pvMultiplierFromPotions = 1; activePotions.forEach(p => { if(p.effect && p.effect.type === "pvMultiplier" && (p.endTime && Date.now() < p.endTime || p.adventuresLeft > 0)) { pvMultiplierFromPotions *= p.effect.value; }}); let pvBonusMultiplierFromItems = 1; if (equippedItems.Rucksack) { const rD = craftableItemsData.find(i=>i.id===equippedItems.Rucksack); if(rD && rD.perk.type==="pvBonus") pvBonusMultiplierFromItems += rD.perk.multiplier; } let earnedPvThisTrip = Math.floor(basePvReward * completedAdv.adventurers * pvBonusMultiplierFromItems * pvMultiplierFromPotions); currentPvTokens += earnedPvThisTrip; let goldChanceMultiplierFromItems = 1; if (equippedItems.Amulet) { const aD = craftableItemsData.find(i=>i.id===equippedItems.Amulet); if(aD && aD.perk.type==="goldChanceIncrease") goldChanceMultiplierFromItems += aD.perk.multiplier; } let flatGoldBonusFromPotions = 0; activePotions.forEach(p => { if(p.effect && p.effect.type === "goldChanceBonus" && (p.endTime && Date.now() < p.endTime || p.adventuresLeft > 0)) { flatGoldBonusFromPotions += p.effect.flatValue || 0; }}); let totalGoldFoundThisTrip = 0; let totalDiamondsFoundThisTrip = 0; let materialChanceAdditive = 0; if (equippedItems.Trinket) { const tD = craftableItemsData.find(i=>i.id===equippedItems.Trinket); if(tD && tD.perk.type==="materialChanceIncrease") materialChanceAdditive = tD.perk.additive; } let allFoundDrops = {}; for (let i = 0; i < completedAdv.adventurers; i++) { const finalGoldChance = (completedAdv.goldChance * goldChanceMultiplierFromItems) + flatGoldBonusFromPotions; if (completedAdv.goldChance > 0 && Math.random() < finalGoldChance) { currentGold += 1; totalGoldFoundThisTrip++; } if (completedAdv.diamondChance > 0 && Math.random() < completedAdv.diamondChance) { currentDiamonds += 1; totalDiamondsFoundThisTrip++; } const adventureBaseData = adventuresData[completedAdv.originalAdventureId]; if (adventureBaseData && adventureBaseData.drops) { adventureBaseData.drops.forEach(drop => { if (Math.random() < (drop.chance + materialChanceAdditive)) { if (drop.name === "Rider Scroll") { playerInventory.push({id: "riderScroll", name: "Rider Scroll", type: "Consumable", description: "Unlocks a second ring slot.", imgColor: "var(--item-placeholder-scroll)" }); allFoundDrops[drop.name] = (allFoundDrops[drop.name] || 0) + (drop.qty || 1); } else if (drop.name === "Cursed Band") { playerInventory.push({id: "cursedBand", name: "Cursed Band", type: "Ring", description: "A ring pulsing with dark energy. (+1 Dark Power)", perk: { type: "darkPower", value: 1 }, imgColor: "var(--item-placeholder-ring)"}); allFoundDrops[drop.name] = (allFoundDrops[drop.name] || 0) + (drop.qty || 1); } else { playerMaterials[drop.name] = (playerMaterials[drop.name] || 0) + (drop.qty || 1); allFoundDrops[drop.name] = (allFoundDrops[drop.name] || 0) + (drop.qty || 1); } } }); } } activePotions.forEach(p => { if(p.adventuresLeft !== undefined) { p.adventuresLeft--; }}); activePotions = activePotions.filter(p => (p.endTime && Date.now() < p.endTime) || (p.adventuresLeft !== undefined && p.adventuresLeft > 0) || (!p.endTime && p.adventuresLeft === undefined) ); renderActivePotions(); let popupMessage = `${completedAdv.adventurers} adventurer(s) returned from ${completedAdv.name}!\n\nRewards:\n- ${earnedPvThisTrip} PV Tokens`; if(totalGoldFoundThisTrip > 0) { popupMessage += `\n- ${totalGoldFoundThisTrip} Gold`; } if(totalDiamondsFoundThisTrip > 0) { popupMessage += `\n- ${totalDiamondsFoundThisTrip} Diamond(s)`;} const foundDropNames = Object.keys(allFoundDrops); if (foundDropNames.length > 0) { popupMessage += `\n\nMaterials Found:`; foundDropNames.forEach(dropName => { popupMessage += `\n  - ${allFoundDrops[dropName]}x ${dropName}`; }); renderMaterials(); if (foundDropNames.includes("Rider Scroll") || foundDropNames.includes("Cursed Band")) renderInventory(); } totalAvailableAdventurers += completedAdv.adventurers; showCustomPopup(popupMessage, "Adventure Complete!"); activeAdventures.splice(advIdx, 1); 
+            
+            function completeAdventure(instanceId) { 
+                if(!currentUser) return; 
+                const advIdx = activeAdventures.findIndex(adv => adv.id === instanceId); 
+                if (advIdx === -1) return; 
+                const completedAdv = activeAdventures[advIdx]; 
+                let basePvReward = completedAdv.pvReward; 
+                let pvMultiplierFromPotions = 1; 
+                let pvBonusMultiplierFromItems = 1; 
+                
+                // Apply PV Potion (now adventure count based)
+                activePotions.forEach(p => { 
+                    if(p.effect && p.effect.type === "pvMultiplier" && p.adventuresLeft > 0) { 
+                        pvMultiplierFromPotions *= p.effect.value; 
+                    }
+                });
+                
+                // Apply PV item bonus
+                Object.values(equippedItems).forEach(equippedInstanceId => {
+                    if (!equippedInstanceId) return;
+                    const invItem = playerInventory.find(i => i.uniqueInstanceId === equippedInstanceId);
+                    if (invItem) {
+                        const itemMaster = craftableItemsData.find(im => im.id === invItem.id);
+                        if (itemMaster && itemMaster.perk && itemMaster.perk.type === "pvBonus") {
+                            pvBonusMultiplierFromItems += itemMaster.perk.multiplier; //  Assumes additive for multiple items if allowed, or check specific slot.
+                        }
+                    }
+                });
+
+                let earnedPvThisTrip = Math.floor(basePvReward * completedAdv.adventurers * pvBonusMultiplierFromItems * pvMultiplierFromPotions); 
+                currentPvTokens += earnedPvThisTrip; 
+                
+                let goldChanceMultiplierFromItems = 1; 
+                let flatGoldBonusFromPotions = 0; 
+                let flatGoldBonusFromItems = 0;
+                let flatDiamondBonusFromItems = 0;
+
+                // Gold Potion Bonus
+                activePotions.forEach(p => { 
+                    if(p.effect && p.effect.type === "goldChanceBonus" && p.adventuresLeft > 0) { 
+                        flatGoldBonusFromPotions += p.effect.flatValue || 0; 
+                    }
+                });
+
+                // Item bonuses for gold/diamond
+                Object.values(equippedItems).forEach(equippedInstanceId => {
+                     if (!equippedInstanceId) return;
+                    const invItem = playerInventory.find(i => i.uniqueInstanceId === equippedInstanceId);
+                    if(invItem) {
+                        const itemMaster = craftableItemsData.find(im => im.id === invItem.id);
+                        if (itemMaster && itemMaster.perk) {
+                            if (itemMaster.perk.type === "goldChanceIncrease") goldChanceMultiplierFromItems += itemMaster.perk.multiplier;
+                            if (itemMaster.perk.type === "flatCurrencyChanceBoost") {
+                                flatGoldBonusFromItems += (itemMaster.perk.goldBonus || 0);
+                                flatDiamondBonusFromItems += (itemMaster.perk.diamondBonus || 0);
+                            }
+                        }
+                    }
+                });
+                
+                let totalGoldFoundThisTrip = 0; 
+                let totalDiamondsFoundThisTrip = 0; 
+                let materialChanceAdditive = 0; 
+
+                // Material Chance item bonus
+                Object.values(equippedItems).forEach(equippedInstanceId => {
+                     if (!equippedInstanceId) return;
+                     const invItem = playerInventory.find(i => i.uniqueInstanceId === equippedInstanceId);
+                     if(invItem) {
+                        const itemMaster = craftableItemsData.find(im => im.id === invItem.id);
+                         if (itemMaster && itemMaster.perk && itemMaster.perk.type === "materialChanceIncrease") {
+                             materialChanceAdditive += itemMaster.perk.additive;
+                         }
+                     }
+                });
+
+                let allFoundDrops = {}; 
+                for (let i = 0; i < completedAdv.adventurers; i++) { 
+                    const finalGoldChance = (completedAdv.goldChance * goldChanceMultiplierFromItems) + flatGoldBonusFromPotions + flatGoldBonusFromItems; 
+                    if (completedAdv.goldChance > 0 && Math.random() < finalGoldChance) { currentGold += 1; totalGoldFoundThisTrip++; } 
+                    
+                    const finalDiamondChance = completedAdv.diamondChance + flatDiamondBonusFromItems;
+                    if (completedAdv.diamondChance > 0 && Math.random() < finalDiamondChance) { currentDiamonds += 1; totalDiamondsFoundThisTrip++; } 
+                    
+                    const adventureBaseData = adventuresData[completedAdv.originalAdventureId]; 
+                    if (adventureBaseData && adventureBaseData.drops) { 
+                        adventureBaseData.drops.forEach(drop => { 
+                            if (Math.random() < (drop.chance + materialChanceAdditive)) { 
+                                if (drop.name === "Rider Scroll") { playerInventory.push({id: "riderScroll", name: "Rider Scroll", type: "Consumable", description: "Unlocks a second ring slot.", imgColor: "var(--item-placeholder-scroll)", uniqueInstanceId: `scroll_${nextUniqueInstanceId++}` }); allFoundDrops[drop.name] = (allFoundDrops[drop.name] || 0) + (drop.qty || 1); } 
+                                else if (drop.name === "Cursed Band") { playerInventory.push({id: "cursedBand", name: "Cursed Ring of Power", type: "Ring", description: "A ring pulsing with dark energy.", perk: { type: "statBoost", attack:5, defense:-2 }, imgColor: "var(--item-placeholder-ring)", level: 0, uniqueInstanceId: `item_${nextUniqueInstanceId++}`}); allFoundDrops[drop.name] = (allFoundDrops[drop.name] || 0) + (drop.qty || 1); } 
+                                else { playerMaterials[drop.name] = (playerMaterials[drop.name] || 0) + (drop.qty || 1); allFoundDrops[drop.name] = (allFoundDrops[drop.name] || 0) + (drop.qty || 1); } 
+                            } 
+                        }); 
+                    } 
+                } 
+                
+                // Decrement adventure count for potions
+                activePotions.forEach(p => { 
+                    if(p.adventuresLeft !== undefined && p.adventuresLeft > 0) { 
+                        if ( (p.effect.type === "pvMultiplier" && pvMultiplierFromPotions > 1) || 
+                             (p.effect.type === "goldChanceBonus" && flatGoldBonusFromPotions > 0) ) {
+                            p.adventuresLeft--; 
+                        }
+                    }
+                }); 
+                activePotions = activePotions.filter(p => (p.endTime && Date.now() < p.endTime) || (p.adventuresLeft !== undefined && p.adventuresLeft > 0) ); 
+                renderActivePotions(); 
+                
+                let popupMessage = `${completedAdv.adventurers} adventurer(s) returned from ${completedAdv.name}!\n\nRewards:\n- ${earnedPvThisTrip} PV Tokens`; 
+                if(totalGoldFoundThisTrip > 0) { popupMessage += `\n- ${totalGoldFoundThisTrip} Gold`; } 
+                if(totalDiamondsFoundThisTrip > 0) { popupMessage += `\n- ${totalDiamondsFoundThisTrip} Diamond(s)`;} 
+                const foundDropNames = Object.keys(allFoundDrops); 
+                if (foundDropNames.length > 0) { popupMessage += `\n\nMaterials Found:`; foundDropNames.forEach(dropName => { popupMessage += `\n  - ${allFoundDrops[dropName]}x ${dropName}`; }); renderMaterials(); if (foundDropNames.includes("Rider Scroll") || foundDropNames.includes("Cursed Band")) renderInventory(); } 
+                totalAvailableAdventurers += completedAdv.adventurers; 
+                showCustomPopup(popupMessage, "Adventure Complete!"); 
+                activeAdventures.splice(advIdx, 1); 
                 updateAdventureDisplayStates(); 
-                quests.forEach(quest => { if (!quest.completed && !quest.claimed) { if (quest.adventureName === completedAdv.name) quest.progress = (quest.progress || 0) + completedAdv.adventurers; if (quest.metric === "pvCollected") quest.progress = Math.min(quest.target, (quest.progress || 0) + earnedPvThisTrip); if (quest.metric === "goldCollected") quest.progress = Math.min(quest.target, (quest.progress || 0) + totalGoldFoundThisTrip); if (quest.metric === "adventurersSentOnQuests") quest.progress = (quest.progress || 0) + completedAdv.adventurers; if (quest.progress >= quest.target) { quest.completed = true; showCustomPopup(`Quest Completed: ${quest.text}`, "Quest Complete!"); if ([1,2,3].includes(quest.id)) { updateAdventureDisplayStates(); } } } }); if(document.getElementById('quests-page').classList.contains('active')) { renderQuests(); } updateStatsDisplay(); renderActiveAdventuresInSidebar(); if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState());}
+                quests.forEach(quest => { if (!quest.completed && !quest.claimed) { if (quest.adventureName === completedAdv.name) quest.progress = (quest.progress || 0) + completedAdv.adventurers; if (quest.metric === "pvCollected") quest.progress = Math.min(quest.target, (quest.progress || 0) + earnedPvThisTrip); if (quest.metric === "goldCollected") quest.progress = Math.min(quest.target, (quest.progress || 0) + totalGoldFoundThisTrip); if (quest.metric === "adventurersSentOnQuests") quest.progress = (quest.progress || 0) + completedAdv.adventurers; if (quest.progress >= quest.target) { quest.completed = true; showCustomPopup(`Quest Completed: ${quest.text}`, "Quest Complete!"); if ([1,2,3].includes(quest.id)) { updateAdventureDisplayStates(); } } } }); if(document.getElementById('quests-page').classList.contains('active')) { renderQuests(); } 
+                updateStatsDisplay(); 
+                renderActiveAdventuresInSidebar(); 
+                if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
+            }
             
             function updateAdventureDisplayStates() {
                 adventureProgressionConfig.forEach(advConfig => {
@@ -1648,13 +2194,19 @@
                     totalAvailableAdventurers -= numAdventurersToSend; 
                     let calculatedDurationMs = durationHours * GAME_HOUR_IN_REAL_SECONDS * 1000; 
 
-                    if(equippedItems.Boots){ 
-                        const bootsData = craftableItemsData.find(item => item.id === equippedItems.Boots); 
-                        if(bootsData && bootsData.perk.type === "timeReduction") { 
-                            const reductionInAcceleratedSeconds = bootsData.perk.value / 3600 * GAME_HOUR_IN_REAL_SECONDS;
-                            calculatedDurationMs = Math.max(1000, calculatedDurationMs - (reductionInAcceleratedSeconds * 1000) ); 
+                    Object.values(equippedItems).forEach(equippedInstanceId => {
+                        if (!equippedInstanceId) return;
+                        const invItem = playerInventory.find(i => i.uniqueInstanceId === equippedInstanceId);
+                        if(invItem) {
+                            const itemMaster = craftableItemsData.find(im => im.id === invItem.id);
+                            if (itemMaster && itemMaster.perk && itemMaster.perk.type === "timeReduction") {
+                                // Apply perk based on item's current level if scaling is implemented
+                                // For now, assume base perk value
+                                const reductionInAcceleratedSeconds = itemMaster.perk.value / 3600 * GAME_HOUR_IN_REAL_SECONDS;
+                                calculatedDurationMs = Math.max(1000, calculatedDurationMs - (reductionInAcceleratedSeconds * 1000));
+                            }
                         }
-                    }
+                    });
                     
                     const returnTime = Date.now() + calculatedDurationMs; 
                     const newActiveAdventure = { id: nextActiveAdventureId++, originalAdventureId: adventureIdBase, name: adventureName, adventurers: numAdventurersToSend, returnTime: returnTime, pvReward: pvReward, goldChance: goldChance, diamondChance: diamondChance }; 
@@ -1668,6 +2220,8 @@
             adventureDropButtons.forEach(button => { button.addEventListener('mouseenter', (event) => { const adventureId = event.target.dataset.adventureId; const popover = document.getElementById(`drops-popover-${adventureId}`); const adventureInfo = adventuresData[adventureId]; if (popover && adventureInfo && adventureInfo.drops) { let dropsHtml = '<h5>Possible Drops:</h5><ul>'; adventureInfo.drops.forEach(drop => { dropsHtml += `<li>${drop.qty}x ${drop.name} (${(drop.chance * 100).toFixed(3)}%)</li>`; }); dropsHtml += '</ul>'; popover.innerHTML = dropsHtml; popover.style.display = 'block'; } }); button.addEventListener('mouseleave', (event) => { const adventureId = event.target.dataset.adventureId; const popover = document.getElementById(`drops-popover-${adventureId}`); if (popover) { popover.style.display = 'none'; } }); });
             if(swapGoldToDiamondBtn) { swapGoldToDiamondBtn.addEventListener('click', () => { if(!currentUser) return; const goldCost = 50; if (currentGold >= goldCost) { currentGold -= goldCost; currentDiamonds += 1; updateStatsDisplay(); showCustomPopup(`Swapped 50 Gold for 1 Diamond!`, "Swap Successful"); if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState()); } else { showCustomPopup(`Not enough Gold! You need 50 Gold to swap for a Diamond.`, "Swap Failed"); } });}
             
+            // --- Whitelist Raffle Logic (Existing - no changes needed from prompt for this section) ---
+            // ... (Keep existing raffle functions: fetchAndDisplayRaffles, createRaffleForm listener, renderWhitelistRaffles, handleEnterRaffle, drawRaffleWinners, etc.)
             // --- Whitelist Raffle Logic ---
             async function fetchAndDisplayRaffles() {
                 if (!db) {
@@ -2023,6 +2577,205 @@
             }
 
 
+            // --- Leaderboard Logic ---
+            async function fetchAndDisplayLeaderboards() {
+                if (!db) {
+                    console.error("Firestore not initialized for fetching leaderboards.");
+                    return;
+                }
+                const leaderboardsToFetch = [
+                    { field: 'pvTokens', element: pvLeaderboardList, className: 'pv' },
+                    { field: 'gold', element: goldLeaderboardList, className: 'gold' },
+                    { field: 'diamonds', element: diamondLeaderboardList, className: 'diamond' }
+                ];
+
+                for (const lb of leaderboardsToFetch) {
+                    if (!lb.element) continue;
+                    lb.element.innerHTML = '<li>Loading...</li>';
+                    try {
+                        const q_leaderboard = query(collection(db, "playerProgress"), orderBy(lb.field, "desc"), limit(10));
+                        const querySnapshot = await getDocs(q_leaderboard);
+                        
+                        lb.element.innerHTML = ''; // Clear loading
+                        let rank = 1;
+                        if (querySnapshot.empty) {
+                            lb.element.innerHTML = '<li>No players on this leaderboard yet.</li>';
+                        }
+                        querySnapshot.forEach((docSnap) => {
+                            const playerData = docSnap.data();
+                            const li = document.createElement('li');
+                            li.innerHTML = `<span class="rank">${rank}.</span> <span class="nickname">${playerData.nickname || 'Anonymous'}</span> <span class="score ${lb.className}">${playerData[lb.field] || 0}</span>`;
+                            lb.element.appendChild(li);
+                            rank++;
+                        });
+                    } catch (error) {
+                        console.error(`Error fetching ${lb.field} leaderboard: `, error);
+                        lb.element.innerHTML = `<li>Error loading ${lb.field} leaderboard.</li>`;
+                         if (error.message.includes("indexes")) {
+                            showCustomPopup(`Leaderboard Error: Firestore index missing for '${lb.field}'. Please create it in your Firebase console.`, "DB Index Error");
+                        }
+                    }
+                }
+            }
+
+            // --- Item Upgrade Logic ---
+            function openItemSelectionModal(purpose) { // purpose can be 'item' or 'scroll'
+                itemSelectionModalList.innerHTML = '';
+                itemSelectionModalOverlay.classList.remove('hidden');
+                itemSelectionModal.classList.remove('hidden');
+
+                if (purpose === 'item') {
+                    itemSelectionModalTitle.textContent = "Select Item to Upgrade";
+                    const equippableItemsInInventory = playerInventory.filter(invItem => {
+                        const itemMaster = craftableItemsData.find(ci => ci.id === invItem.id);
+                        return itemMaster && itemMaster.type !== "Consumable" && itemMaster.type !== "upgrade_scroll";
+                    });
+
+                    if (equippableItemsInInventory.length === 0) {
+                        itemSelectionModalList.innerHTML = "<p>No upgradable items in inventory.</p>";
+                        return;
+                    }
+
+                    equippableItemsInInventory.forEach(invItem => {
+                        const itemMaster = craftableItemsData.find(ci => ci.id === invItem.id);
+                        const btn = document.createElement('button');
+                        btn.classList.add('action-button');
+                        btn.style.width = '100%';
+                        btn.style.marginBottom = '5px';
+                        btn.textContent = `${itemMaster.name} +${invItem.level || 0} (Tier ${itemMaster.tier || 'N/A'})`;
+                        btn.onclick = () => {
+                            selectedItemForUpgrade = { ...invItem, ...itemMaster, uniqueInstanceId: invItem.uniqueInstanceId, currentLevel: invItem.level || 0 }; // Store full item details
+                            selectedItemForUpgradeDisplay.innerHTML = `Item: ${selectedItemForUpgrade.name} +${selectedItemForUpgrade.currentLevel} <img src="${getItemIconPlaceholder(selectedItemForUpgrade.imgColor, selectedItemForUpgrade.type)}" style="width:20px; height:20px; vertical-align:middle;">`;
+                            closeItemSelectionModal();
+                        };
+                        itemSelectionModalList.appendChild(btn);
+                    });
+                } else if (purpose === 'scroll') {
+                    itemSelectionModalTitle.textContent = "Select Upgrade Scroll";
+                    const upgradeScrollsInInventory = playerInventory.filter(invItem => {
+                        const scrollMaster = shopItemsData.find(si => si.id === invItem.id && si.type === "upgrade_scroll");
+                        return scrollMaster;
+                    });
+                     if (upgradeScrollsInInventory.length === 0) {
+                        itemSelectionModalList.innerHTML = "<p>No upgrade scrolls in inventory.</p>";
+                        return;
+                    }
+                    upgradeScrollsInInventory.forEach(invItem => {
+                        const scrollMaster = shopItemsData.find(si => si.id === invItem.id);
+                        const btn = document.createElement('button');
+                        btn.classList.add('action-button');
+                        btn.style.width = '100%';
+                        btn.style.marginBottom = '5px';
+                        btn.textContent = `${scrollMaster.name} (For Tier ${scrollMaster.scrollTier})`;
+                        btn.onclick = () => {
+                            selectedScrollForUpgrade = { ...scrollMaster, uniqueInstanceId: invItem.uniqueInstanceId }; // Store full scroll details
+                            selectedScrollForUpgradeDisplay.innerHTML = `Scroll: ${selectedScrollForUpgrade.name} <img src="${getItemIconPlaceholder(selectedScrollForUpgrade.imgColor, 'S')}" style="width:20px; height:20px; vertical-align:middle;">`;
+                            closeItemSelectionModal();
+                        };
+                        itemSelectionModalList.appendChild(btn);
+                    });
+                }
+            }
+            function closeItemSelectionModal() {
+                itemSelectionModalOverlay.classList.add('hidden');
+                itemSelectionModal.classList.add('hidden');
+            }
+
+            function getItemIconPlaceholder(bgColor, typeInitial) {
+                // This is a simplified version. You might want a more robust way to generate/get icons.
+                return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='${bgColor.replace('#','%23')}'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='VT323' font-size='20' fill='white'%3E${typeInitial ? typeInitial.substring(0,1).toUpperCase() : 'I' }%3C/text%3E%3C/svg%3E`;
+            }
+
+
+            if (upgradeItemSlot) upgradeItemSlot.addEventListener('click', () => openItemSelectionModal('item'));
+            if (upgradeScrollSlot) upgradeScrollSlot.addEventListener('click', () => openItemSelectionModal('scroll'));
+            if (itemSelectionModalCloseBtn) itemSelectionModalCloseBtn.addEventListener('click', closeItemSelectionModal);
+            if (itemSelectionModalOverlay) itemSelectionModalOverlay.addEventListener('click', closeItemSelectionModal);
+
+            if (upgradeItemButton) {
+                upgradeItemButton.addEventListener('click', () => {
+                    if (!currentUser) return;
+                    if (!selectedItemForUpgrade || !selectedScrollForUpgrade) {
+                        upgradeResultDisplay.textContent = "Please select an item and a scroll.";
+                        return;
+                    }
+
+                    const itemMaster = craftableItemsData.find(i => i.id === selectedItemForUpgrade.id);
+                    if (!itemMaster) { upgradeResultDisplay.textContent = "Error: Item master data not found."; return; }
+
+                    const itemTier = itemMaster.tier;
+                    const scrollTierRequired = selectedScrollForUpgrade.scrollTier;
+
+                    // Tier check: Low=T1, Mid=T2, High=T3/T4
+                    let compatibleScroll = false;
+                    if (itemTier === 1 && scrollTierRequired === 1) compatibleScroll = true;
+                    else if (itemTier === 2 && scrollTierRequired === 2) compatibleScroll = true;
+                    else if ((itemTier === 3 || itemTier === 4) && scrollTierRequired === 3) compatibleScroll = true;
+
+
+                    if (!compatibleScroll) {
+                        upgradeResultDisplay.textContent = `Scroll not compatible. Item Tier ${itemTier} requires a Tier ${scrollTierRequired} scroll.`;
+                        return;
+                    }
+
+                    const currentLevel = selectedItemForUpgrade.currentLevel;
+                    if (currentLevel >= 5) {
+                        upgradeResultDisplay.textContent = "Item is already at max level (+5).";
+                        return;
+                    }
+
+                    const successChance = upgradeChances[currentLevel];
+                    upgradeResultDisplay.textContent = `Attempting to upgrade ${selectedItemForUpgrade.name} from +${currentLevel} to +${currentLevel + 1}. Chance: ${(successChance * 100).toFixed(0)}%...`;
+
+                    // Consume scroll
+                    const scrollInvIndex = playerInventory.findIndex(invScroll => invScroll.uniqueInstanceId === selectedScrollForUpgrade.uniqueInstanceId);
+                    if (scrollInvIndex > -1) {
+                        playerInventory.splice(scrollInvIndex, 1);
+                    } else {
+                         upgradeResultDisplay.textContent = "Error: Selected scroll not found in inventory."; return;
+                    }
+
+
+                    setTimeout(async () => { // Simulate processing
+                        if (Math.random() < successChance) {
+                            // SUCCESS
+                            const itemInvIndex = playerInventory.findIndex(invItem => invItem.uniqueInstanceId === selectedItemForUpgrade.uniqueInstanceId);
+                            if (itemInvIndex > -1) {
+                                playerInventory[itemInvIndex].level++;
+                                upgradeResultDisplay.textContent = `SUCCESS! ${selectedItemForUpgrade.name} upgraded to +${playerInventory[itemInvIndex].level}!`;
+                                // TODO: Apply stat changes if any based on new level
+                            } else {
+                                upgradeResultDisplay.textContent = "Error: Item to upgrade vanished unexpectedly.";
+                            }
+                        } else {
+                            // FAILURE
+                            const itemInvIndex = playerInventory.findIndex(invItem => invItem.uniqueInstanceId === selectedItemForUpgrade.uniqueInstanceId);
+                            if (itemInvIndex > -1) {
+                                // Check if the failed item was equipped, if so, unequip its instance ID
+                                for (const slot in equippedItems) {
+                                    if (equippedItems[slot] === selectedItemForUpgrade.uniqueInstanceId) {
+                                        equippedItems[slot] = null;
+                                    }
+                                }
+                                playerInventory.splice(itemInvIndex, 1); // Destroy item
+                                upgradeResultDisplay.textContent = `FAILURE! ${selectedItemForUpgrade.name} +${currentLevel} was destroyed. You can craft a new +0 version.`;
+                            } else {
+                                 upgradeResultDisplay.textContent = "Error: Item that failed to upgrade was not found for destruction.";
+                            }
+                        }
+                        // Reset selections and update UI
+                        selectedItemForUpgrade = null;
+                        selectedScrollForUpgrade = null;
+                        selectedItemForUpgradeDisplay.textContent = 'Item: None';
+                        selectedScrollForUpgradeDisplay.textContent = 'Scroll: None';
+                        renderInventory();
+                        renderCraftingItems(); // To re-enable crafting if item was destroyed
+                        if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
+                    }, 1000);
+                });
+            }
+
+
             initializeTheme(); 
             
             setInterval(updateTimers, 1000);
@@ -2040,3 +2793,6 @@
     </script>
 </body>
 </html>
+
+--- END OF FILE index.html ---
+```
