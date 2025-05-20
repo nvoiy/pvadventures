@@ -2112,13 +2112,18 @@ equippedItems = { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: 
                         if (invItem.level === 4) card.classList.add('item-level-plus4');
                         if (invItem.level === 5) card.classList.add('item-level-plus5');
 
-                        let actionsHtml = ''; 
-                        const isEquipped = Object.values(equippedItems).includes(invItem.uniqueInstanceId);
-                        const levelText = (invItem.level || 0) > 0 ? `(+${invItem.level || 0}) ` : '';
+                    let actionsHtml = '';
+                    const isEquipped = Object.values(equippedItems).includes(invItem.uniqueInstanceId);
+                    const levelText = (invItem.level || 0) > 0 ? `(+${invItem.level || 0}) ` : '';
 
-                        if (itemData.type !== "Consumable" && itemData.type !== "upgrade_scroll_purchase" && itemData.type !== "unlockable_consumable" && !isEquipped ) { 
-                            actionsHtml += `<button class="equip-btn action-button" data-item-unique-id="${invItem.uniqueInstanceId}">Equip</button>`; 
-                        } 
+                    // Prevent "Equip" button for specific non-equippable items like the whistle
+                    if (itemData.id !== 'pet_whistle_unlock' && // ADD THIS CONDITION
+                        itemData.type !== "Consumable" &&
+                        itemData.type !== "upgrade_scroll_purchase" &&
+                        itemData.type !== "unlockable_consumable" &&
+                        !isEquipped ) {
+                        actionsHtml += `<button class="equip-btn action-button" data-item-unique-id="${invItem.uniqueInstanceId}">Equip</button>`;
+                    }
                         
                         card.innerHTML = ` 
                             <div class="item-icon-placeholder">${getItemIconHTML(itemData.iconUrlOrColor, itemData.type)}</div> 
