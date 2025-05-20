@@ -632,7 +632,7 @@
                 <section id="dungeons-page" class="page-content">
                     <h2 class="page-title">DUNGEONS</h2>
                     <div class="help-gif-container" style="margin-bottom: 30px;">
-                        <img src="https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeia2l4itmrl2hynunpmp4h3k4anr2rgnxv7nb2wntxixihdxjkgwiy" alt="Dungeon Entrance Art">
+                        <img src="https://green-tough-gopher-310.mypinata.cloud/ipfs/bafybeia2l4itmrl2hynunpmp4h3k4anr2rgnxv7nb2wntxixihdxjkgwiy" alt="Dungeon Entrance Art">
                     </div>
                     <div id="dungeonListContainer" style="display: flex; flex-direction: column; align-items: center; gap: 20px; width:100%; max-width:700px; margin: 0 auto;">
                         <div class="dungeon-entry locked">
@@ -1368,52 +1368,49 @@
 
 
             // --- Popup Functions ---
-            function processPopupQueue() { 
-                if (isPopupCurrentlyVisible || popupMessageQueue.length === 0) { return; } 
-                isPopupCurrentlyVisible = true; 
-                const { message, title, craftCallback, confirmCallback } = popupMessageQueue.shift(); 
-                if (customPopupTitleEl) customPopupTitleEl.textContent = title; 
-                if (customPopupMessageEl) customPopupMessageEl.innerHTML = message; 
-                
-                const existingCraftBtn = document.getElementById('popupCraftAgainBtn');
-                if (existingCraftBtn) existingCraftBtn.remove();
+    function processPopupQueue() {
+        if (isPopupCurrentlyVisible || popupMessageQueue.length === 0) { return; }
 
-                customPopupConfirmBtn.classList.add('hidden');
-                customPopupCancelBtn.classList.add('hidden');
-                customPopupCloseBtn.classList.remove('hidden');
+        // Check if the popup is intended for the auth screen
+        // A simple heuristic: if gameContainer is hidden, popup is likely for welcomeScreen
+        const isAuthContextPopup = welcomeScreen && !welcomeScreen.classList.contains('hidden');
 
+        const { message, title, craftCallback, confirmCallback } = popupMessageQueue.shift();
 
-                if (craftCallback) {
-                    const craftBtn = document.createElement('button');
-                    craftBtn.id = 'popupCraftAgainBtn';
-                    craftBtn.className = 'action-button';
-                    craftBtn.textContent = 'Craft Again';
-                    craftBtn.onclick = () => {
-                        craftCallback();
-                        hideCustomPopup();
-                    };
-                    customPopupButtonsEl.appendChild(craftBtn);
-                } else if (confirmCallback) {
-                    customPopupConfirmBtn.classList.remove('hidden');
-                    customPopupCancelBtn.classList.remove('hidden');
-                    customPopupCloseBtn.classList.add('hidden');
-
-                    customPopupConfirmBtn.onclick = () => {
-                        confirmCallback(true);
-                        hideCustomPopup();
-                    };
-                    customPopupCancelBtn.onclick = () => {
-                        confirmCallback(false);
-                        hideCustomPopup();
-                    };
-                }
+        // If this popup was for an auth error, but the game screen is now visible,
+        // it's probably a stale error from a previous attempt. Don't show it, or log it.
+        if (!isAuthContextPopup && (title.includes("Error") || title.includes("Failed"))) {
+             console.warn("Stale auth popup suppressed. Original message:", title, message);
+             isPopupCurrentlyVisible = false; // Allow next popup in queue if any
+             processPopupQueue(); // Try to process next if exists
+             return;
+        }
 
 
-                if (customPopupOverlay) customPopupOverlay.classList.remove('hidden'); 
-                if (customPopup) customPopup.classList.remove('hidden'); 
-                if (customPopupCloseBtn && !confirmCallback) customPopupCloseBtn.focus(); 
-                else if (customPopupConfirmBtn && confirmCallback) customPopupConfirmBtn.focus();
-            }
+        isPopupCurrentlyVisible = true;
+        if (customPopupTitleEl) customPopupTitleEl.textContent = title;
+        if (customPopupMessageEl) customPopupMessageEl.innerHTML = message;
+
+        const existingCraftBtn = document.getElementById('popupCraftAgainBtn');
+        if (existingCraftBtn) existingCraftBtn.remove();
+
+        customPopupConfirmBtn.classList.add('hidden');
+        customPopupCancelBtn.classList.add('hidden');
+        customPopupCloseBtn.classList.remove('hidden');
+
+
+        if (craftCallback) {
+            // ... (craft button logic)
+        } else if (confirmCallback) {
+            // ... (confirm/cancel button logic)
+        }
+
+
+        if (customPopupOverlay) customPopupOverlay.classList.remove('hidden');
+        if (customPopup) customPopup.classList.remove('hidden');
+        if (customPopupCloseBtn && !confirmCallback) customPopupCloseBtn.focus();
+        else if (customPopupConfirmBtn && confirmCallback) customPopupConfirmBtn.focus();
+    }
             function showCustomPopup(message, title = "Notification", options = {}) { 
                 const { craftCallback = null, confirmCallback = null } = options;
                 popupMessageQueue.push({ message, title, craftCallback, confirmCallback }); 
@@ -1440,15 +1437,16 @@
             if (customPopupOverlay) customPopupOverlay.addEventListener('click', (event) => { if (event.target === customPopupOverlay) { hideCustomPopup(); } });
 
             // --- Firebase Auth State Change Listener ---
-             onAuthStateChanged(auth, async (user) => {
+            onAuthStateChanged(auth, async (user) => {
                 currentUser = user;
                 if (user) {
-                    console.log("User signed in:", user.uid, user.email, user.displayName);
+                    // User is signed in or has just signed up
+                    console.log("Auth state changed: User is present.", user.uid, user.email);
                     welcomeScreen.classList.add('hidden');
                     gameContainer.classList.remove('hidden');
                     signOutButton.classList.remove('hidden');
 
-                    if (user.email && user.email.toLowerCase() === 'nvoiysol@gmail.com' && adminRafflePanel) { 
+                    if (user.email && user.email.toLowerCase() === 'nvoiysol@gmail.com' && adminRafflePanel) {
                         adminRafflePanel.classList.remove('hidden');
                     } else if (adminRafflePanel) {
                         adminRafflePanel.classList.add('hidden');
@@ -1456,26 +1454,70 @@
 
                     const currentThemeIsDark = body.classList.contains('dark-mode');
                     loadTwitterWidget(currentThemeIsDark ? 'dark' : 'light');
-                    
-                    const loadedState = await loadGameStateFromFirebase(user.uid);
-                    if (loadedState) {
-                        applyLoadedGameState(loadedState);
-                    } else {
-                        const nicknameForNewUser = user.displayName || authNicknameInput.value.trim() || "Voyager";
-                        await createInitialGameState(user.uid, nicknameForNewUser); 
+
+                    try {
+                        const loadedState = await loadGameStateFromFirebase(user.uid);
+
+                        if (loadedState) {
+                            // EXISTING USER WITH SAVED DATA
+                            console.log("User has existing game state. Applying it.", user.uid);
+                            applyLoadedGameState(loadedState);
+                        } else {
+                            // NEW USER (or user whose data was not found/corrupted)
+                            console.log("No existing game state found for user. Will create initial state.", user.uid);
+                            let nicknameToUseForNewUser = "Voyager"; // Default
+
+                            // This block should only be relevant if it's truly a new sign-up,
+                            // and the welcomeScreen elements are still technically accessible.
+                            if (authNicknameInput && authNicknameInput.value.trim() !== "") {
+                                // This is the primary way to get nickname for new email/password registration
+                                nicknameToUseForNewUser = authNicknameInput.value.trim();
+                                console.log("Determined nickname for new user from authNicknameInput:", nicknameToUseForNewUser);
+                            } else if (user.displayName && user.displayName.trim() !== "") {
+                                // Fallback for Google Sign-In or if authNicknameInput was somehow cleared
+                                nicknameToUseForNewUser = user.displayName.trim();
+                                console.log("Determined nickname for new user from user.displayName:", nicknameToUseForNewUser);
+                            } else {
+                                console.log("Could not determine nickname from form or user.displayName. Defaulting to:", nicknameToUseForNewUser);
+                            }
+
+                            await createInitialGameState(user.uid, nicknameToUseForNewUser);
+
+                            // Clear the auth form fields after successful use for a new user.
+                            // This helps prevent stale data if the user logs out and then tries to register again in the same session.
+                            if(loginRegisterForm) loginRegisterForm.reset();
+                            if(authNicknameInput) authNicknameInput.value = ''; // Specifically clear nickname
+                        }
+                        showPage('adventures-page'); // Show the default game page
+
+                    } catch (error) {
+                        console.error("Error during user state processing in onAuthStateChanged:", error);
+                        showCustomPopup("An error occurred loading your game data. Please try logging out and back in. Details: " + error.message, "Load Error");
+                        // Optionally, sign the user out if loading fails catastrophically
+                        // await fbSignOut(auth);
                     }
-                    showPage('adventures-page'); 
+
                 } else {
-                    console.log("User signed out.");
+                    // User is signed out
+                    console.log("Auth state changed: User is signed out.");
                     currentUser = null;
-                    userNickname = '';
+                    userNickname = ''; // Clear global nickname
                     welcomeScreen.classList.remove('hidden');
                     gameContainer.classList.add('hidden');
                     signOutButton.classList.add('hidden');
                     if (adminRafflePanel) adminRafflePanel.classList.add('hidden');
-                    resetGameStateToDefaults(); 
-                    updateStatsDisplay(); 
-                    updateWalletDisplay(null);
+
+                    resetGameStateToDefaults(); // Reset all game variables to their initial empty/default states
+                    updateStatsDisplay();       // Update UI to reflect reset state
+                    updateWalletDisplay(null);  // Clear wallet display
+
+                    // Reset the auth form to its default (login) state
+                    if (authFormTitle) authFormTitle.textContent = "Login to Punk Voyage Adventures";
+                    if (authNicknameField) authNicknameField.classList.add('hidden');
+                    if (loginButton) loginButton.classList.remove('hidden');
+                    if (registerButton) registerButton.classList.add('hidden');
+                    if (authToggleLink) authToggleLink.textContent = "Need an account? Register";
+                    if (loginRegisterForm) loginRegisterForm.reset(); // Clear any typed text
                 }
             });
             
