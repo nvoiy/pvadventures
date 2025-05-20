@@ -240,7 +240,7 @@
         .right-sidebar-menu .menu-button { min-width: auto; width: 85%; padding: 10px 15px; font-size: 1.4em; }
         .sidebar-content-area { flex-grow: 1; overflow-y: auto; }
         .main-menu-nav-list { list-style: none; padding: 0; margin: 0; }
-        .main-menu-nav-list li { padding: 12px 8px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: border-color 0.3s, background-color 0.3s; font-size: 1.25em; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px;}
+        .main-menu-nav-list li { padding: 12px 8px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: border-color 0.3s, background-color 0.3s; font-size: 1.25em; text-align: left; display: flex; align-items: center; justify-content: flex-start; gap: 8px;}
         .main-menu-nav-list li img.menu-item-icon { height: var(--menu-icon-size); width: var(--menu-icon-size); object-fit: contain; vertical-align: middle; }
         .main-menu-nav-list li:last-child { border-bottom: none; } body:not(.dark-mode) .main-menu-nav-list li:hover { background-color: #f0f0f0; } body.dark-mode .main-menu-nav-list li:hover { background-color: #4a4a4a; }
         
@@ -718,9 +718,8 @@
                         <div id="upgradeResultDisplay"></div>
                     </div>
                     <p style="text-align:center; margin-top: 15px; font-size:0.95em;">
-                        Item levels enhance their base effectiveness. Each level up to +5 provides a cumulative bonus: +5% for +1, +10% for +2, +15% for +3, +20% for +4, and a +25% increase to base stats/perks at +5.
-                    </p>
-                    <p style="text-align:center; margin-top: 10px;">Select an equippable item (level +0 to +4) and an appropriate Upgrade Scroll. High risk, high reward! Failed upgrades will destroy the item.</p>
+                        Item levels enhance their effectiveness. Each level applies an increasing percentage bonus directly to the item's base stats/perks: +5% at +1, +10% at +2, +15% at +3, +20% at +4, and a +25% at +5. Max level is +5.
+                    </p>yle="text-align:center; margin-top: 10px;">Select an equippable item (level +0 to +4) and an appropriate Upgrade Scroll. High risk, high reward! Failed upgrades will destroy the item.</p>
                 </section>
                 <section id="leaderboard-page" class="page-content">
                     <h2 class="page-title">LEADERBOARDS</h2>
@@ -838,12 +837,14 @@
                              <li>Purchase consumable items like Potions and Upgrade Scrolls using PV Tokens.</li>
                              <li><strong>Potions:</strong> Provide temporary buffs. You cannot have multiple identical potions active simultaneously.</li>
                              <li><strong>Rider Scroll (Unlock):</strong> A one-time purchase from the shop for <strong>50,000 PV</strong>. This item goes to your inventory. You then "Use" it from the locked Ring 2 slot in your Equipment (Inventory page) to permanently unlock it.</li>
-                             <li><strong>Upgrade Scrolls:</strong> Low, Middle, and High Class scrolls are available for item upgrades. You can buy these in quantities of 1 to 10. Purchasing these adds to your scroll count (visible in "MY MATERIALS"). Scroll prices are 125 PV (Low), 250 PV (Middle), and 500 PV (High).
+                             <li><strong>Upgrade Scrolls:</strong> Basic, Advanced, and Master scrolls are available for item upgrades. You can buy these in quantities of 1 to 10. Purchasing these adds to your scroll count (visible in "MY MATERIALS"). Scroll prices are 125 PV (Basic), 250 PV (Advanced), and 500 PV (Master).
                                 <ul>
-                                    <li><strong>Low Class Scroll:</strong> Used for upgrading items from level +0 to +1. Cannot be used on items that are already +1 or higher.</li>
-                                    <li><strong>Middle Class Scroll:</strong> Used for upgrading items that are currently level +0, +1, or +2 (to become +1, +2, or +3 respectively).</li>
-                                    <li><strong>High Class Scroll:</strong> Used for upgrading items that are currently level +0, +1, +2, +3, or +4 (to become +1 up to +5 respectively).</li>
-                                    <li>A +10% success chance bonus is applied if you use a scroll of a higher tier (Middle or High) on an item whose base tier is lower than the scroll's effective tier, provided the scroll is compatible with the item's current level. (e.g., Middle Scroll on a Tier 0/1 item, or High Scroll on a Tier 0/1/2 item).</li>
+                                    <li><strong>Basic Upgrade Scroll (Tier 1 Scroll):</strong> Used for upgrading items from level +0 to +1. Cannot be used on items that are already +1 or higher.</li>
+                                    <li><strong>Advanced Upgrade Scroll (Tier 2 Scroll):</strong> Used for upgrading items that are currently level +0, +1, or +2 (to become +1, +2, or +3 respectively).</li>
+                                    <li><strong>Master Upgrade Scroll (Tier 3 Scroll):</strong> Used for upgrading items that are currently level +0, +1, +2, +3, or +4 (to become +1 up to +5 respectively).</li>
+                                    <li>A +10% success chance bonus is applied if you use a scroll of a higher tier (Advanced or Master) on an item whose base tier is lower than the scroll's effective tier, provided the scroll is compatible with the item's current level. (e.g., Advanced Scroll on a Tier 0/1 item, or Master Scroll on a Tier 0/1/2 item).</li>
+                                </ul>
+                             </li>
                                 </ul>
                              </li>
                         </ul>
@@ -874,9 +875,9 @@
                             <li>Select an equippable item (from +0 to +4) and an Upgrade Scroll type. The pop-up shows your scroll counts.</li>
                             <li><strong>Scroll Compatibility & Bonus:</strong>
                                 <ul>
-                                    <li><strong>Low Class Scrolls (Tier 1 Scroll):</strong> Can *only* be used to upgrade an item from +0 to +1. The item's base tier (0-4) does not prevent its use for this specific +0 to +1 upgrade.</li>
-                                    <li><strong>Middle Class Scrolls (Tier 2 Scroll):</strong> Can be used if the item's current level is +0, +1, or +2. The item's base tier (0-4) does not prevent its use. A +10% success chance bonus is granted if the item's base tier is 0 or 1 (lower than the scroll's tier).</li>
-                                    <li><strong>High Class Scrolls (Tier 3 Scroll):</strong> Can be used if the item's current level is +0, +1, +2, +3, or +4. The item's base tier (0-4) does not prevent its use. A +10% success chance bonus is granted if the item's base tier is 0, 1, or 2 (lower than the scroll's tier).</li>
+                                    <li><strong>Basic Upgrade Scrolls (Tier 1 Scroll):</strong> Can *only* be used to upgrade an item from +0 to +1. The item's base tier (0-4) does not prevent its use for this specific +0 to +1 upgrade.</li>
+                                    <li><strong>Advanced Upgrade Scrolls (Tier 2 Scroll):</strong> Can be used if the item's current level is +0, +1, or +2. The item's base tier (0-4) does not prevent its use. A +10% success chance bonus is granted if the item's base tier is 0 or 1 (lower than the scroll's tier).</li>
+                                    <li><strong>Master Upgrade Scrolls (Tier 3 Scroll):</strong> Can be used if the item's current level is +0, +1, +2, +3, or +4. The item's base tier (0-4) does not prevent its use. A +10% success chance bonus is granted if the item's base tier is 0, 1, or 2 (lower than the scroll's tier).</li>
                                 </ul>
                             </li>
                             <li>The success chance for the upgrade will be displayed.</li>
@@ -1146,10 +1147,10 @@
                 3: ["Obsidian", "Bitcoin", "Flame Essence"], 
                 4: ["Bone", "Essence of Death", "Rider's Sigil", "Ancient Tablet Fragment", "Shadowgem"]
             };
-             const scrollData = { // scrollTier: 1=Low, 2=Mid, 3=High
-                low: { name: "Low Class Scroll", icon: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafybeihk33icq4ytbr5m54tor4qkibqwphgu72l3si5ydcmvkj2oav42i4/low%20upgrade%20scroll.jpg", tier: 1, shopId: "scroll_low" },
-                middle: { name: "Middle Class Scroll", icon: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafybeihk33icq4ytbr5m54tor4qkibqwphgu72l3si5ydcmvkj2oav42i4/middle%20upgrade%20scroll.jpg", tier: 2, shopId: "scroll_mid" },
-                high: { name: "High Class Scroll", icon: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafkreicbt5kelkj3ph32jykjslocal24sn3srfjttq7pfg75bqjagrzlyi", tier: 3, shopId: "scroll_high"}
+                         const scrollData = { // scrollTier: 1=Basic (+0->+1), 2=Advanced (Up to +3), 3=Master (Up to +5)
+                low: { name: "Basic Upgrade Scroll", descriptionName: "Basic Upgrade Scroll (+0 to +1)", icon: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafybeihk33icq4ytbr5m54tor4qkibqwphgu72l3si5ydcmvkj2oav42i4/low%20upgrade%20scroll.jpg", tier: 1, shopId: "scroll_low" },
+                middle: { name: "Advanced Upgrade Scroll", descriptionName: "Advanced Upgrade Scroll (Up to +3)", icon: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafybeihk33icq4ytbr5m54tor4qkibqwphgu72l3si5ydcmvkj2oav42i4/middle%20upgrade%20scroll.jpg", tier: 2, shopId: "scroll_mid" },
+                high: { name: "Master Upgrade Scroll", descriptionName: "Master Upgrade Scroll (Up to +5)", icon: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafkreicbt5kelkj3ph32jykjslocal24sn3srfjttq7pfg75bqjagrzlyi", tier: 3, shopId: "scroll_high"}
             };
 
             const craftableItemsData = [ // item tier: 0-4
@@ -1168,9 +1169,9 @@
             const shopItemsData = [ 
                 { id: "potion2", name: "PV Doubler (1 Use)", description: "Doubles PV rewards from NEXT adventure.", price: 200, iconUrlOrColor: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafybeihk33icq4ytbr5m54tor4qkibqwphgu72l3si5ydcmvkj2oav42i4/pv%20doubler.jpg", type: "buff", durationAdventures: 1, effect: { type: "pvMultiplier", value: 2 } }, 
                 { id: "potion3", name: "Gold Magnet (3 Adventures)", description: "Adds +1% FLAT chance of finding gold on next 3 adventures.", price: 400, iconUrlOrColor: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafybeihk33icq4ytbr5m54tor4qkibqwphgu72l3si5ydcmvkj2oav42i4/gold%20magnet.jpg", type: "buff", durationAdventures: 3, effect: { type: "goldChanceBonus", flatValue: 0.01 } }, 
-                { id: "scroll_low", name: "Low Class Scroll", description: "For upgrading items from +0 to +1.", price: 125, iconUrlOrColor: scrollData.low.icon, type: "upgrade_scroll_purchase", scrollTypeKey: "low"},
-                { id: "scroll_mid", name: "Middle Class Scroll", description: "For +0 to +2 items (to +1/+2/+3). Bonus on low-tier items.", price: 250, iconUrlOrColor: scrollData.middle.icon, type: "upgrade_scroll_purchase", scrollTypeKey: "middle"},
-                { id: "scroll_high", name: "High Class Scroll", description: "For +0 to +4 items (to +1 thru +5). Bonus on low/mid-tier items.", price: 500, iconUrlOrColor: scrollData.high.icon, type: "upgrade_scroll_purchase", scrollTypeKey: "high"},
+                { id: "scroll_low", name: scrollData.low.descriptionName, description: "Used for upgrading items from level +0 to +1.", price: 125, iconUrlOrColor: scrollData.low.icon, type: "upgrade_scroll_purchase", scrollTypeKey: "low"},
+                { id: "scroll_mid", name: scrollData.middle.descriptionName, description: "Used for items at +0, +1, or +2. Grants +10% success bonus if item's base tier is 0 or 1.", price: 250, iconUrlOrColor: scrollData.middle.icon, type: "upgrade_scroll_purchase", scrollTypeKey: "middle"},
+                { id: "scroll_high", name: scrollData.high.descriptionName, description: "Used for items at +0 up to +4. Grants +10% success bonus if item's base tier is 0, 1, or 2.", price: 500, iconUrlOrColor: scrollData.high.icon, type: "upgrade_scroll_purchase", scrollTypeKey: "high"},
                 { id: "rider_scroll_unlock", name: "Rider Scroll (Unlock)", description: "Permanently unlocks your second Ring Slot. One-time purchase, consumed on use from Equipment Slot.", price: 50000, iconUrlOrColor: "var(--item-placeholder-misc)", type: "unlockable_consumable" }
             ];
 
@@ -1256,22 +1257,49 @@
                 contentHtml += `<p>${itemData.description || 'No description.'}</p>`;
 
                 if (baseItemMaster.perk) {
-                    const displayPerk = getScaledItemPerk(baseItemMaster, currentItemLevel);
-                    contentHtml += `<p class="perk-info">Perk: `;
-                    if (displayPerk.type === "timeReduction") contentHtml += `Adventure time -${displayPerk.value / 60} mins.`;
-                    else if (displayPerk.type === "goldChanceIncrease") contentHtml += `Gold find chance +${(displayPerk.value * 100).toFixed(1)}%.`;
-                    else if (displayPerk.type === "pvBonus") contentHtml += `PV Tokens +${(displayPerk.value * 100).toFixed(1)}%.`;
-                    else if (displayPerk.type === "materialChanceMultiplier") contentHtml += `Material find x${displayPerk.value.toFixed(2)}.`;
-                    else if (displayPerk.type === "attackBoost") contentHtml += `Attack +${displayPerk.value}.`;
-                    else if (displayPerk.type === "defenseBoost") contentHtml += `Defense +${displayPerk.value}.`;
-                    else if (displayPerk.type === "flatCurrencyChanceBoost") contentHtml += `Gold/Diamond find +${(displayPerk.goldBonus * 100).toFixed(1)}% / +${(displayPerk.diamondBonus * 100).toFixed(1)}%.`;
-                     else if (displayPerk.type === "statBoost") {
-                        let stats = [];
-                        if(displayPerk.attack !== undefined) stats.push(`Attack ${displayPerk.attack > 0 ? '+' : ''}${displayPerk.attack}`);
-                        if(displayPerk.defense !== undefined) stats.push(`Defense ${displayPerk.defense > 0 ? '+' : ''}${displayPerk.defense}`);
-                        contentHtml += stats.join(', ') + '.';
+                    const scaledPerk = getScaledItemPerk(baseItemMaster, currentItemLevel); // This is the perk value at currentItemLevel
+                    const basePerkForDisplay = baseItemMaster.perk; // This is the perk value at level 0
+
+                    let perkString = "";
+                    let baseString = "";
+
+                    if (scaledPerk.type === "timeReduction") {
+                        perkString = `Adventure time -${scaledPerk.value / 60} mins.`;
+                        if (currentItemLevel > 0 && basePerkForDisplay.value !== scaledPerk.value) baseString = ` (Base: -${basePerkForDisplay.value / 60} mins)`;
+                    } else if (scaledPerk.type === "goldChanceIncrease") {
+                        perkString = `Gold find chance +${(scaledPerk.value * 100).toFixed(1)}%.`;
+                        if (currentItemLevel > 0 && basePerkForDisplay.value !== scaledPerk.value) baseString = ` (Base: +${(basePerkForDisplay.value * 100).toFixed(1)}%)`;
+                    } else if (scaledPerk.type === "pvBonus") {
+                        perkString = `PV Tokens +${(scaledPerk.value * 100).toFixed(1)}%.`;
+                        if (currentItemLevel > 0 && basePerkForDisplay.value !== scaledPerk.value) baseString = ` (Base: +${(basePerkForDisplay.value * 100).toFixed(1)}%)`;
+                    } else if (scaledPerk.type === "materialChanceMultiplier") {
+                        perkString = `Material find x${scaledPerk.value.toFixed(2)}.`;
+                        if (currentItemLevel > 0 && basePerkForDisplay.value !== scaledPerk.value) baseString = ` (Base: x${basePerkForDisplay.value.toFixed(2)})`;
+                    } else if (scaledPerk.type === "attackBoost") {
+                        perkString = `Attack +${scaledPerk.value}.`;
+                        if (currentItemLevel > 0 && basePerkForDisplay.value !== scaledPerk.value) baseString = ` (Base: +${basePerkForDisplay.value})`;
+                    } else if (scaledPerk.type === "defenseBoost") {
+                        perkString = `Defense +${scaledPerk.value}.`;
+                        if (currentItemLevel > 0 && basePerkForDisplay.value !== scaledPerk.value) baseString = ` (Base: +${basePerkForDisplay.value})`;
+                    } else if (scaledPerk.type === "flatCurrencyChanceBoost") {
+                        perkString = `Gold/Diamond find +${(scaledPerk.goldBonus * 100).toFixed(1)}% / +${(scaledPerk.diamondBonus * 100).toFixed(1)}%.`;
+                        if (currentItemLevel > 0 && (basePerkForDisplay.goldBonus !== scaledPerk.goldBonus || basePerkForDisplay.diamondBonus !== scaledPerk.diamondBonus)) {
+                            baseString = ` (Base: +${(basePerkForDisplay.goldBonus * 100).toFixed(1)}% / +${(basePerkForDisplay.diamondBonus * 100).toFixed(1)}%)`;
+                        }
+                    } else if (scaledPerk.type === "statBoost") {
+                        let currentStats = [];
+                        if(scaledPerk.attack !== undefined) currentStats.push(`Attack ${scaledPerk.attack > 0 ? '+' : ''}${scaledPerk.attack}`);
+                        if(scaledPerk.defense !== undefined) currentStats.push(`Defense ${scaledPerk.defense > 0 ? '+' : ''}${scaledPerk.defense}`);
+                        perkString = currentStats.join(', ') + '.';
+
+                        if (currentItemLevel > 0 && (basePerkForDisplay.attack !== scaledPerk.attack || basePerkForDisplay.defense !== scaledPerk.defense)) {
+                            let baseStatsArr = [];
+                            if(basePerkForDisplay.attack !== undefined) baseStatsArr.push(`Atk ${basePerkForDisplay.attack > 0 ? '+' : ''}${basePerkForDisplay.attack}`);
+                            if(basePerkForDisplay.defense !== undefined) baseStatsArr.push(`Def ${basePerkForDisplay.defense > 0 ? '+' : ''}${basePerkForDisplay.defense}`);
+                            baseString = ` (Base: ${baseStatsArr.join(', ')})`;
+                        }
                     }
-                    contentHtml += `</p>`;
+                    contentHtml += `<p class="perk-info">Perk: ${perkString}${baseString}</p>`;
                 }
                 if (itemData.level > 0) { // Item level for +X display
                      contentHtml += `<p>Level: +${itemData.level}</p>`;
@@ -1917,9 +1945,9 @@
                 scrollsTitle.textContent = 'Upgrade Scrolls:';
                 materialsListContainer.appendChild(scrollsTitle);
                 const scrollsUl = document.createElement('ul');
-                scrollsUl.appendChild(createScrollListItem("Low Class Scroll", playerScrolls.low));
-                scrollsUl.appendChild(createScrollListItem("Middle Class Scroll", playerScrolls.middle));
-                scrollsUl.appendChild(createScrollListItem("High Class Scroll", playerScrolls.high));
+                                scrollsUl.appendChild(createScrollListItem(scrollData.low.name, playerScrolls.low));
+                scrollsUl.appendChild(createScrollListItem(scrollData.middle.name, playerScrolls.middle));
+                scrollsUl.appendChild(createScrollListItem(scrollData.high.name, playerScrolls.high));
                 materialsListContainer.appendChild(scrollsUl);
             }
             function createScrollListItem(name, count) {
@@ -2969,10 +2997,10 @@
                 else if (scrollTier === 3 && (itemCurrentLevel >= 0 && itemCurrentLevel <= 4)) compatibleForLevel = true; // High scroll for +0 to +4 items
 
                 if (!compatibleForLevel) { 
-                    if (scrollTier === 1 && itemCurrentLevel > 0) {
-                        upgradeSuccessRateDisplay.textContent = `Low Class Scrolls can only be used on +0 items. This item is +${itemCurrentLevel}.`;
+                                        if (scrollTier === 1 && itemCurrentLevel > 0) {
+                        upgradeSuccessRateDisplay.textContent = `Basic Upgrade Scrolls can only be used on +0 items. This item is +${itemCurrentLevel}.`;
                     } else {
-                        upgradeSuccessRateDisplay.textContent = `This scroll (Tier ${scrollTier}) is not for upgrading an item at +${itemCurrentLevel}.`; 
+                        upgradeSuccessRateDisplay.textContent = `This scroll (${selectedScrollForUpgrade.name}) is not for upgrading an item at +${itemCurrentLevel}.`; 
                     }
                     return; 
                 }
