@@ -34,6 +34,7 @@
             --item-placeholder-armour: #C0C0C0; --item-placeholder-helmet: #A9A9A9;
             --item-placeholder-ring: #B8860B; --item-placeholder-weapon: #778899;
             --item-placeholder-misc: #DA70D6; 
+            --item-placeholder-pet: #32CD32; /* LimeGreen for Pet slot */
             --item-upgrade-plus4-border: #FFA500;
             --item-upgrade-plus5-border: #DC143C; 
         }
@@ -1110,13 +1111,14 @@
             };
             let playerMaterials = { ...initialPlayerMaterials };
 
-            let equippedItems = { 
-                Armour: null, Helmet: null, Boots: null, Amulet: null, 
-                Ring1: null, Ring2: null, Weapon: null, 
-                Misc1: null, Misc2: null 
-            }; 
+            let equippedItems = {
+                Armour: null, Helmet: null, Boots: null, Amulet: null,
+                Ring1: null, Ring2: null, Weapon: null, Pet: null, // ADDED Pet: null
+                Misc1: null, Misc2: null
+            };
             let playerAdventurerLevel = 1; 
             let secondRingSlotUnlocked = false;
+                      let petSlotUnlocked = false;
             let activePotions = [];
             let allRaffles = []; 
             let playerRaffleEntries = {}; 
@@ -1163,7 +1165,16 @@
                 { id: "helmet1", name: "Helm of the Silent Watcher", type: "Helmet", description: "Offers a gaze that pierces the veil. (+3 Defense)", perk: {type: "defenseBoost", value: 3}, recipe: {"Iron": 4, "Rider's Sigil": 1, "Shadowgem": 1}, iconUrlOrColor: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafybeidvav6u7a4naahsxhqalytbmnr7mhmonhanqhcuerchy7fkldjiua/helmet.jpg", tier: 4}, 
                 { id: "ring_warding", name: "Ring of Minor Warding", type: "Ring", description: "Offers slight protection. (+1% Gold/Diamond find).", perk: {type: "flatCurrencyChanceBoost", goldBonus: 0.01, diamondBonus: 0.01}, recipe: {"Stone": 10, "Clover": 5}, iconUrlOrColor: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafybeidvav6u7a4naahsxhqalytbmnr7mhmonhanqhcuerchy7fkldjiua/ring1.jpeg", tier: 2}, 
                 { id: "ring_swiftness", name: "Band of Swiftness", type: "Ring", description: "Slightly reduces adventure times. (-5 min)", perk: {type: "timeReduction", value: 300}, recipe: {"Leather": 8, "Gizmo Tail": 3}, iconUrlOrColor: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafybeidvav6u7a4naahsxhqalytbmnr7mhmonhanqhcuerchy7fkldjiua/ring2.jpeg", tier: 2}, 
-                { id: "ring_cursedpower", name: "Cursed Ring of Power", type: "Ring", description: "Grants power, but at a cost. (+5 Attack, -2 Defense)", perk: {type: "statBoost", attack: 5, defense: -2}, recipe: {"Rider's Sigil": 3, "Shadowgem": 2, "Essence of Death": 1}, iconUrlOrColor: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafybeidvav6u7a4naahsxhqalytbmnr7mhmonhanqhcuerchy7fkldjiua/ring3.jpg", tier: 4}
+                { id: "ring_cursedpower", name: "Cursed Ring of Power", type: "Ring", description: "Grants power, but at a cost. (+5 Attack, -2 Defense)", perk: {type: "statBoost", attack: 5, defense: -2}, recipe: {"Rider's Sigil": 3, "Shadowgem": 2, "Essence of Death": 1}, iconUrlOrColor: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafybeidvav6u7a4naahsxhqalytbmnr7mhmonhanqhcuerchy7fkldjiua/ring3.jpg", tier: 4}                , // Add comma if needed
+                {
+                    id: "pet_whistle_unlock",
+                    name: "Ancient Pet Whistle",
+                    type: "Pet Unlock Consumable",
+                    description: "A mystical whistle. When used from the locked Pet Slot, it permanently unlocks the slot for a future companion.",
+                    recipe: { "Ancient Tablet Fragment": 1, "Flame Essence": 1, "Bitcoin": 1, "Wood": 10 },
+                    iconUrlOrColor: "var(--item-placeholder-misc)", // Or a specific new icon URL
+                    tier: 4 // Example tier, adjust as needed
+                }
             ];
 
             const shopItemsData = [ 
@@ -1478,9 +1489,10 @@
                 playerHasPurchasedRiderScroll = false;
                 totalAdventuresCompleted = 0;
 
-                equippedItems = { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Misc1: null, Misc2: null };
+equippedItems = { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Pet: null, Misc1: null, Misc2: null };
                 playerAdventurerLevel = 1; 
                 secondRingSlotUnlocked = false;
+                petSlotUnlocked = false;
                 activePotions = [];
                 allRaffles = []; 
                 playerRaffleEntries = {}; 
@@ -1665,11 +1677,12 @@
                     playerScrolls: { low: 0, middle: 0, high: 0 },
                     playerHasPurchasedRiderScroll: false,
                     totalAdventuresCompleted: 0,
-                    equippedItems: { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Misc1: null, Misc2: null },
+                    equippedItems: { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Pet: null, Misc1: null, Misc2: null },
                     quests: quests.map(q => ({ ...q, progress: 0, completed: false, claimed: false })), 
                     activePotions: [],
                     playerAdventurerLevel: 1,
                     secondRingSlotUnlocked: false,
+                                petSlotUnlocked: false,
                     playerRaffleEntries: {},
                     lastDailyRewardDayClaimed: 0, 
                     lastDailyRewardClaimTimestamp: 0 
@@ -1698,6 +1711,7 @@
                     activePotions: Array.isArray(activePotions) ? activePotions.map(p => ({ id: p.id, endTime: p.endTime || null, adventuresLeft: p.adventuresLeft !== undefined ? p.adventuresLeft : null })).filter(p => p.id) : [], 
                     playerAdventurerLevel: playerAdventurerLevel || 1, 
                     secondRingSlotUnlocked: secondRingSlotUnlocked || false, 
+                                petSlotUnlocked: petSlotUnlocked || false,
                     playerRaffleEntries: playerRaffleEntries || {},
                     lastDailyRewardDayClaimed: lastDailyRewardDayClaimed, 
                     lastDailyRewardClaimTimestamp: lastDailyRewardClaimTimestamp 
@@ -1769,9 +1783,17 @@
                     playerScrolls = loadedState.playerScrolls || { low: 0, middle: 0, high: 0 };
                     playerHasPurchasedRiderScroll = loadedState.playerHasPurchasedRiderScroll || false;
 
-                    equippedItems = loadedState.equippedItems || { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Misc1: null, Misc2: null };
+            console.log("Applying: Equipped Items"); // Your existing log
+            const defaultEquippedStructure = { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Pet: null, Misc1: null, Misc2: null };
+            if (loadedState.equippedItems && typeof loadedState.equippedItems === 'object') {
+                equippedItems = { ...defaultEquippedStructure, ...loadedState.equippedItems };
+            } else {
+                equippedItems = { ...defaultEquippedStructure };
+            }
+            console.log("Equipped Items after load and merge:", JSON.parse(JSON.stringify(equippedItems))); // Your existing log
                     playerAdventurerLevel = loadedState.playerAdventurerLevel || 1;
                     secondRingSlotUnlocked = loadedState.secondRingSlotUnlocked || false;
+                                petSlotUnlocked = loadedState.petSlotUnlocked || false;
                     playerRaffleEntries = loadedState.playerRaffleEntries || {};
 
                     lastDailyRewardDayClaimed = loadedState.lastDailyRewardDayClaimed || 0;
@@ -2028,7 +2050,7 @@
                 if (!inventoryItemsContainer || !equipmentSlotsDisplay) return; 
                 
                 equipmentSlotsDisplay.innerHTML = ''; 
-                const slotTypes = [ { name: "Armour", id: "Armour" }, { name: "Helmet", id: "Helmet" }, { name: "Boots", id: "Boots" }, { name: "Amulet", id: "Amulet" }, { name: "Ring 1", id: "Ring1" }, { name: "Ring 2", id: "Ring2" }, { name: "Weapon", id: "Weapon" }, { name: "Misc 1", id: "Misc1" }, { name: "Misc 2", id: "Misc2" } ]; 
+                    const slotTypes = [ { name: "Armour", id: "Armour" }, { name: "Helmet", id: "Helmet" }, { name: "Boots", id: "Boots" }, { name: "Amulet", id: "Amulet" }, { name: "Ring 1", id: "Ring1" }, { name: "Ring 2", id: "Ring2" }, { name: "Weapon", id: "Weapon" }, { name: "Pet", id: "Pet" }, { name: "Misc 1", id: "Misc1" }, { name: "Misc 2", id: "Misc2" } ];
                 
                 slotTypes.forEach(slot => { 
                     const slotDiv = document.createElement('div'); 
