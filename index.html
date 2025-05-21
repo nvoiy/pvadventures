@@ -2122,16 +2122,18 @@ function applyLoadedGameState(loadedState) {
             function formatTimeLeft(milliseconds) { if (milliseconds <= 0) return "Ended"; let ts = Math.ceil(milliseconds / 1000); let h = Math.floor(ts / 3600); ts %= 3600; let m = Math.floor(ts / 60); let s = ts % 60; return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`; }
             
             function recalculateTotalAvailableAdventurers() {
-    // Calculate adventurers currently on adventures
-    const adventurersOnAdventure = activeAdventures.reduce((sum, adv) => sum + adv.adventurers, 0);
-    
-    // Base adventurers + bonus from ordinals - those currently busy
-    totalAvailableAdventurers = MAX_PLAYER_ADVENTURERS + ordinalBonusAdventurers - adventurersOnAdventure;
-    
-    updateStatsDisplay(); // This will update the UI for available adventurers
-    updateAdventureDisplayStates(); // Update adventure buttons based on new availability
-    console.log(`Recalculated totalAvailableAdventurers: ${totalAvailableAdventurers} (Base: ${MAX_PLAYER_ADVENTURERS}, Bonus: ${ordinalBonusAdventurers}, On Adventure: ${adventurersOnAdventure})`);
-}
+                // Calculate adventurers currently on adventures
+                const adventurersOnAdventure = activeAdventures.reduce((sum, adv) => sum + adv.adventurers, 0);
+                
+                // Base adventurers + bonus from ordinals - those currently busy
+                let calculated = MAX_PLAYER_ADVENTURERS + ordinalBonusAdventurers - adventurersOnAdventure;
+                totalAvailableAdventurers = Math.max(0, calculated); // This ensures it's never less than 0
+                
+                updateStatsDisplay(); // This will update the UI for available adventurers
+                updateAdventureDisplayStates(); // Update adventure buttons based on new availability
+                // Updated console.log to show the value before clamping, for better debugging
+                console.log(`Recalculated totalAvailableAdventurers: ${totalAvailableAdventurers} (Base: ${MAX_PLAYER_ADVENTURERS}, Bonus: ${ordinalBonusAdventurers}, On Adventure: ${adventurersOnAdventure}, Pre-clamp: ${calculated})`);
+            }
             
             function renderActiveAdventuresInSidebar() {
                 if (!sidebarActiveAdventuresList || !sidebarActiveAdventuresContainer) return;
