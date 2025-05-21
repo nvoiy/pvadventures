@@ -1493,74 +1493,105 @@ function updateAdventureCardPvDisplay() {
             }
 
 
-    function processPopupQueue() {
-        if (isPopupCurrentlyVisible || popupMessageQueue.length === 0) { return; }
+function processPopupQueue() {
+    if (isPopupCurrentlyVisible || popupMessageQueue.length === 0) { return; }
 
-        const isAuthContextPopup = welcomeScreen && !welcomeScreen.classList.contains('hidden');
-        const { message, title, craftCallback, confirmCallback } = popupMessageQueue.shift();
+    const isAuthContextPopup = welcomeScreen && !welcomeScreen.classList.contains('hidden');
+    const { message, title, craftCallback, confirmCallback, secondaryActionCallback, secondaryActionText, confirmText, cancelText } = popupMessageQueue.shift();
 
-        if (!isAuthContextPopup && (title.includes("Error") || title.includes("Failed"))) {
-             console.warn("Stale auth popup suppressed. Original message:", title, message);
-             isPopupCurrentlyVisible = false;
-             processPopupQueue();
-             return;
-        }
-
-        isPopupCurrentlyVisible = true;
-        if (customPopupTitleEl) customPopupTitleEl.textContent = title;
-        if (customPopupMessageEl) customPopupMessageEl.innerHTML = message;
-
-        // Hide all buttons initially
-        customPopupCloseBtn.classList.add('hidden');
-        customPopupConfirmBtn.classList.add('hidden');
-        customPopupCancelBtn.classList.add('hidden');
-        const existingCraftBtn = document.getElementById('popupCraftAgainBtn');
-        if (existingCraftBtn) existingCraftBtn.remove();
-
-        currentPopupConfirmCallback = null; // Reset confirm callback
-        currentPopupCraftCallback = null;   // Reset craft callback
-
-        if (craftCallback) {
-            currentPopupCraftCallback = craftCallback; // Store it
-            const craftAgainBtn = document.createElement('button');
-            craftAgainBtn.id = 'popupCraftAgainBtn';
-            craftAgainBtn.className = 'action-button';
-            craftAgainBtn.textContent = 'Craft Again';
-            craftAgainBtn.style.backgroundColor = 'var(--highlight-color-connected)';
-            craftAgainBtn.style.color = 'white';
-            // The actual click listener for this button is added globally once
-            customPopupButtonsEl.insertBefore(craftAgainBtn, customPopupCloseBtn);
-
-            customPopupCloseBtn.textContent = "No Thanks";
-            customPopupCloseBtn.classList.remove('hidden'); // Show "No Thanks"
-        } else if (confirmCallback) {
-            currentPopupConfirmCallback = confirmCallback; // Store it
-            customPopupConfirmBtn.classList.remove('hidden'); // Show Confirm
-            customPopupCancelBtn.classList.remove('hidden');  // Show Cancel
-        } else {
-            // Default: Simple notification, just show OK
-            customPopupCloseBtn.textContent = "OK";
-            customPopupCloseBtn.classList.remove('hidden');
-        }
-
-        if (customPopupOverlay) customPopupOverlay.classList.remove('hidden');
-        if (customPopup) customPopup.classList.remove('hidden');
-
-        // Focus appropriate button
-        if (confirmCallback) {
-            customPopupConfirmBtn.focus();
-        } else if (craftCallback) {
-            const craftBtnToFocus = document.getElementById('popupCraftAgainBtn');
-            if(craftBtnToFocus) craftBtnToFocus.focus();
-        } else {
-            customPopupCloseBtn.focus();
-        }
+    if (!isAuthContextPopup && (title.includes("Error") || title.includes("Failed"))) {
+        console.warn("Stale auth popup suppressed. Original message:", title, message);
+        isPopupCurrentlyVisible = false;
+        processPopupQueue();
+        return;
     }
-            function showCustomPopup(message, title = "Notification", options = {}) { 
-                const { craftCallback = null, confirmCallback = null } = options;
-                popupMessageQueue.push({ message, title, craftCallback, confirmCallback }); 
-                processPopupQueue(); 
+
+    isPopupCurrentlyVisible = true;
+    if (customPopupTitleEl) customPopupTitleEl.textContent = title;
+    if (customPopupMessageEl) customPopupMessageEl.innerHTML = message;
+
+    // Hide all buttons initially and remove previous dynamic ones
+    customPopupCloseBtn.classList.add('hidden');
+    customPopupConfirmBtn.classList.add('hidden');
+    customPopupCancelBtn.classList.add('hidden');
+    const existingCraftBtn = document.getElementById('popupCraftAgainBtn');
+    if (existingCraftBtn) existingCraftBtn.remove();
+    const existingSecondaryBtn = document.getElementById('popupSecondaryActionBtn');
+    if (existingSecondaryBtn) existingSecondaryBtn.remove();
+
+
+    currentPopupConfirmCallback = null;
+    currentPopupCraftCallback = null;
+    let currentPopupSecondaryActionCallback = null; // Store secondary callback
+
+    if (craftCallback) {
+        currentPopupCraftCallback = craftCallback;
+        const craftAgainBtn = document.createElement('button');
+        craftAgainBtn.id = 'popupCraftAgainBtn';
+        craftAgainBtn.className = 'action-button';
+        craftAgainBtn.textContent = 'Craft Again'; // Or make this an option
+        craftAgainBtn.style.backgroundColor = 'var(--highlight-color-connected)';
+        craftAgainBtn.style.color = 'white';
+        customPopupButtonsEl.insertBefore(craftAgainBtn, customPopupCloseBtn);
+        customPopupCloseBtn.textContent = cancelText || "No Thanks";
+        customPopupCloseBtn.classList.remove('hidden');
+    } else if (confirmCallback) { // Standard confirm/cancel or confirm/secondaryAction
+        currentPopupConfirmCallback = confirmCallback;
+        customPopupConfirmBtn.textContent = confirmText || "Confirm";
+        customPopupConfirmBtn.classList.remove('hidden');
+
+        if (secondaryActionCallback && secondaryActionText) {
+            currentPopupSecondaryActionCallback = secondaryActionCallback;
+            const secondaryBtn = document.createElement('button');
+            secondaryBtn.id = 'popupSecondaryActionBtn';
+            secondaryBtn.className = 'action-button'; // You might want a different style
+            secondaryBtn.textContent = secondaryActionText;
+            // Add listener for secondary button
+            secondaryBtn.addEventListener('click', () => {
+                if (currentPopupSecondaryActionCallback) {
+                    currentPopupSecondaryActionCallback();
+                }
+                hideCustomPopup();
+            }, { once: true }); // Ensure listener is added only once per show
+            customPopupButtonsEl.insertBefore(secondaryBtn, customPopupCancelBtn.nextSibling); // Insert before any final "cancel/close"
+
+            // If secondary action exists, the original 'cancel' button becomes the third option or is hidden
+            // For now, let's assume customPopupCancelBtn acts as a general "close/cancel" if no specific cancelText
+            if (cancelText) {
+                customPopupCancelBtn.textContent = cancelText;
+                customPopupCancelBtn.classList.remove('hidden');
+            } else {
+                customPopupCancelBtn.classList.add('hidden'); // Hide default cancel if we have confirm + secondary
             }
+
+        } else { // Just confirm and cancel
+            customPopupCancelBtn.textContent = cancelText || "Cancel";
+            customPopupCancelBtn.classList.remove('hidden');
+        }
+    } else { // Simple notification
+        customPopupCloseBtn.textContent = confirmText || "OK"; // confirmText can be "OK" for simple popups
+        customPopupCloseBtn.classList.remove('hidden');
+    }
+
+    if (customPopupOverlay) customPopupOverlay.classList.remove('hidden');
+    if (customPopup) customPopup.classList.remove('hidden');
+
+    // Focus logic
+    if (customPopupConfirmBtn && !customPopupConfirmBtn.classList.contains('hidden')) {
+        customPopupConfirmBtn.focus();
+    } else if (document.getElementById('popupCraftAgainBtn')) {
+        document.getElementById('popupCraftAgainBtn').focus();
+    } else if (document.getElementById('popupSecondaryActionBtn')) {
+         document.getElementById('popupSecondaryActionBtn').focus();
+    } else if (customPopupCloseBtn && !customPopupCloseBtn.classList.contains('hidden')) {
+        customPopupCloseBtn.focus();
+    }
+}
+function showCustomPopup(message, title = "Notification", options = {}) {
+    const { craftCallback = null, confirmCallback = null, secondaryActionCallback = null, secondaryActionText = null, confirmText = null, cancelText = null } = options;
+    popupMessageQueue.push({ message, title, craftCallback, confirmCallback, secondaryActionCallback, secondaryActionText, confirmText, cancelText });
+    processPopupQueue();
+}
             function hideCustomPopup() { 
                 if (customPopupOverlay) customPopupOverlay.classList.add('hidden'); 
                 if (customPopup) customPopup.classList.add('hidden'); 
@@ -3140,26 +3171,44 @@ function updateAdventureDisplayStates() {
             
             adventureSendButtons.forEach(button => {
                 button.addEventListener('click', () => {
-                    if (walletVerificationPendingForBonus) {
-            showCustomPopup(
-                "Please connect your wallet to verify your Ordinal holdings before sending adventurers. This ensures your bonus adventurer count is accurate.",
-                "Wallet Connection Required",
-                {
-                    confirmCallback: (confirmed) => {
-                        if (confirmed) {
-                            if (connectWalletBtn && walletDropdown) {
-                                walletDropdown.style.display = 'block';
-                            } else if (connectWalletBtn) {
-                                connectWalletBtn.click();
+      if (walletVerificationPendingForBonus) {
+                showCustomPopup(
+                    `Your game remembers a bonus of +${ordinalBonusAdventurers} adventurers from your Ordinals. To use this bonus, please connect your wallet to verify your current holdings.<br><br>Alternatively, you can proceed with only your base ${MAX_PLAYER_ADVENTURERS} adventurer(s) and forfeit the remembered bonus for now.`,
+                    "Wallet Verification Needed",
+                    {
+                        confirmText: "Connect Wallet",
+                        confirmCallback: (confirmed) => { // This is the "Connect Wallet" action
+                            if (confirmed) {
+                                if (connectWalletBtn && walletDropdown) {
+                                    walletDropdown.style.display = 'block';
+                                } else if (connectWalletBtn) {
+                                    connectWalletBtn.click();
+                                }
                             }
-                        }
+                            // If not confirmed (e.g., overlay click), popup closes, adventure blocked.
+                        },
+                        secondaryActionText: "Use Base Adventurers (Forfeit Bonus)",
+                        secondaryActionCallback: () => {
+                            console.log("User chose to forfeit bonus and use base adventurers.");
+                            let previousBonus = ordinalBonusAdventurers;
+                            ordinalBonusAdventurers = 0; // Forfeit the bonus
+                            walletVerificationPendingForBonus = false; // No longer pending for this action
+                            recalculateTotalAvailableAdventurers();
+                            updateAdventureDisplayStates(); // Reflect change in available adventurers
+                            if (currentUser && currentUser.uid && previousBonus > 0) { // Save if bonus was actually forfeited
+                                saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
+                            }
+                            // Now, re-simulate the click on the original adventure button
+                            // This will pass the 'walletVerificationPendingForBonus' check
+                            // and proceed with ordinalBonusAdventurers = 0.
+                            button.click();
+                        },
+                        // Optional: A third "Cancel" button (using the original customPopupCancelBtn)
+                        // cancelText: "Cancel Adventure Start"
                     }
-                }
-            );
-            if (customPopupConfirmBtn) customPopupConfirmBtn.textContent = "Connect Wallet";
-            if (customPopupCancelBtn) customPopupCancelBtn.textContent = "OK"; // Or "Later"
-            return; // Prevent adventure from starting
-        }
+                );
+                return; // Prevent adventure from starting *until a choice is made in the popup*
+            }
                     
                     if(!currentUser) return;
                     const adventureIdBase = button.dataset.adventureId;
