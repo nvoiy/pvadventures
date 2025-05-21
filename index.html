@@ -642,19 +642,27 @@
                             <div class="adventure" id="adventure-1-block"> 
                                 <div class="adventure-lock-overlay hidden"></div>
                                 <div class="adventure-icon tree"></div> 
-                                <div class="adventure-main-info"> <div class="adventure-content"> <div class="adventure-details"> ADVENTURE 1, SPIRIT FOREST<br> ADVENTURE TIME = 4 HOURS<br> <span class="prize">PRIZE = 50 PV TOKENS</span> </div> <div class="adventure-controls"> <label for="num-adventurers-1">ADVENTURERS:</label> <select id="num-adventurers-1" class="adventure-num-select"> <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option> </select> <button class="adventure-send-btn active-adv1" data-adventure-id="1" data-adventure-name="Spirit Forest" data-duration-hours="4" data-pv-reward="25" data-gold-chance="0">SEND</button> </div> </div> <div class="adventure-drops-area"> <button class="adventure-drops-button" data-adventure-id="1">DROPS</button> <div class="drops-popover" id="drops-popover-1"></div>  </div> </div> 
+                                <div class="adventure-main-info"> <div class="adventure-content"> <div class="adventure-details"> ADVENTURE 1, SPIRIT FOREST<br> ADVENTURE TIME = 4 HOURS<br> <span class="prize">PRIZE = 50 PV TOKENS</span> </div> <div class="adventure-controls"> <label for="num-adventurers-1">ADVENTURERS:</label> 
+                            <input type="number" id="num-adventurers-1" class="adventure-num-select" value="1" min="1">
+                                <button class="adventure-send-btn active-adv1" data-adventure-id="1" data-adventure-name="Spirit Forest" data-duration-hours="4" data-pv-reward="25" data-gold-chance="0">SEND</button> </div> 
+                                </div> <div class="adventure-drops-area"> <button class="adventure-drops-button" data-adventure-id="1">DROPS</button> <div class="drops-popover" id="drops-popover-1"></div>  </div> </div> 
                             </div> 
                             <div class="adventure" id="adventure-2-block"> 
                                 <div class="adventure-lock-overlay hidden"></div>
-                                <div class="adventure-icon mountain"></div> <div class="adventure-main-info"> <div class="adventure-content"> <div class="adventure-details"> ADVENTURE 2, MOUNTAIN OF THE MAROWAN<br> ADVENTURE TIME = 8 HOURS<br> <span class="prize">PRIZE = 80 PV TOKENS</span> </div> <div class="adventure-controls"> <label for="num-adventurers-2">ADVENTURERS:</label> <select id="num-adventurers-2" class="adventure-num-select"> <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option> </select> <button class="adventure-send-btn active-adv2" data-adventure-id="2" data-adventure-name="Mountain of the Marowan" data-duration-hours="8" data-pv-reward="40" data-gold-chance="0">SEND</button> </div> </div> <div class="adventure-drops-area"> <button class="adventure-drops-button" data-adventure-id="2">DROPS</button> <div class="drops-popover" id="drops-popover-2"></div>  </div> </div> 
+                                <div class="adventure-icon mountain"></div> <div class="adventure-main-info"> <div class="adventure-content"> <div class="adventure-details"> ADVENTURE 2, MOUNTAIN OF THE MAROWAN<br> ADVENTURE TIME = 8 HOURS<br> <span class="prize">PRIZE = 80 PV TOKENS</span> </div> <div class="adventure-controls"> <label for="num-adventurers-2">ADVENTURERS:</label> <input type="number" id="num-adventurers-2" class="adventure-num-select" value="1" min="1">
+                                <button class="adventure-send-btn active-adv2" data-adventure-id="2" data-adventure-name="Mountain of the Marowan" data-duration-hours="8" data-pv-reward="40" data-gold-chance="0">SEND</button> </div> </div> <div class="adventure-drops-area"> <button class="adventure-drops-button" data-adventure-id="2">DROPS</button> <div class="drops-popover" id="drops-popover-2"></div>  </div> </div> 
                             </div> 
                             <div class="adventure" id="adventure-3-block"> 
                                 <div class="adventure-lock-overlay hidden"></div>
-                                <div class="adventure-icon fire-fields"></div> <div class="adventure-main-info"> <div class="adventure-content"> <div class="adventure-details"> ADVENTURE 3, FIRE FIELDS OF FLYINALS<br> ADVENTURE TIME = 24 HOURS<br> <span class="prize">PRIZE = 200 PV TOKENS</span><br> <span class="chance-gold">%1 CHANCE OF GOLD</span> <div class="adventure-requirement">Requires: 2 Adventurers</div> </div> <div class="adventure-controls"> <label for="num-adventurers-3">ADVENTURERS:</label> <select id="num-adventurers-3" class="adventure-num-select"> <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option> </select> <button class="adventure-send-btn active-adv3" data-adventure-id="3" data-adventure-name="Fire Fields of Flyinals" data-duration-hours="24" data-pv-reward="100" data-gold-chance="0.01" data-adventurer-requirement="2">SEND</button> </div> </div> <div class="adventure-drops-area"> <button class="adventure-drops-button" data-adventure-id="3">DROPS</button> <div class="drops-popover" id="drops-popover-3"></div>  </div> </div> 
+                                <div class="adventure-icon fire-fields"></div> <div class="adventure-main-info"> <div class="adventure-content"> <div class="adventure-details"> ADVENTURE 3, FIRE FIELDS OF FLYINALS<br> ADVENTURE TIME = 24 HOURS<br> <span class="prize">PRIZE = 200 PV TOKENS</span><br> <span class="chance-gold">%1 CHANCE OF GOLD</span> <div class="adventure-requirement">Requires: 2 Adventurers</div> </div> <div class="adventure-controls"> <label for="num-adventurers-3">ADVENTURERS:</label>
+<input type="number" id="num-adventurers-3" class="adventure-num-select" value="1" min="1">
+                                <button class="adventure-send-btn active-adv3" data-adventure-id="3" data-adventure-name="Fire Fields of Flyinals" data-duration-hours="24" data-pv-reward="100" data-gold-chance="0.01" data-adventurer-requirement="2">SEND</button> </div> </div> <div class="adventure-drops-area"> <button class="adventure-drops-button" data-adventure-id="3">DROPS</button> <div class="drops-popover" id="drops-popover-3"></div>  </div> </div> 
                             </div>
                             <div class="adventure" id="adventure-4-block"> 
                                 <div class="adventure-lock-overlay hidden"></div>
-                                <div class="adventure-icon tomb"></div> <div class="adventure-main-info"> <div class="adventure-content"> <div class="adventure-details"> ADVENTURE 4, TOMB OF THE DEATH RIDERS<br> ADVENTURE TIME = 168 HOURS (1 WEEK)<br> <span class="prize">PRIZE = 1400 PV TOKENS</span><br> <span class="chance-gold">5% CHANCE OF GOLD</span><br> <span class="chance-diamond">1% CHANCE OF DIAMOND</span><div class="adventure-requirement">Requires: 5 Adventurers</div></div> <div class="adventure-controls"> <label for="num-adventurers-4">ADVENTURERS:</label> <select id="num-adventurers-4" class="adventure-num-select"> <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5" selected>5</option> </select> <button class="adventure-send-btn active-adv4" data-adventure-id="4" data-adventure-name="Tomb of the Death Riders" data-duration-hours="168" data-pv-reward="700" data-gold-chance="0.05" data-diamond-chance="0.01" data-adventurer-requirement="5">SEND</button> </div> </div> <div class="adventure-drops-area"> <button class="adventure-drops-button" data-adventure-id="4">DROPS</button> <div class="drops-popover" id="drops-popover-4"></div>  </div> </div> 
+                                <div class="adventure-icon tomb"></div> <div class="adventure-main-info"> <div class="adventure-content"> <div class="adventure-details"> ADVENTURE 4, TOMB OF THE DEATH RIDERS<br> ADVENTURE TIME = 168 HOURS (1 WEEK)<br> <span class="prize">PRIZE = 1400 PV TOKENS</span><br> <span class="chance-gold">5% CHANCE OF GOLD</span><br> <span class="chance-diamond">1% CHANCE OF DIAMOND</span><div class="adventure-requirement">Requires: 5 Adventurers</div></div> <div class="adventure-controls"> <label for="num-adventurers-4">ADVENTURERS:</label>
+<input type="number" id="num-adventurers-4" class="adventure-num-select" value="1" min="1">
+                                <button class="adventure-send-btn active-adv4" data-adventure-id="4" data-adventure-name="Tomb of the Death Riders" data-duration-hours="168" data-pv-reward="700" data-gold-chance="0.05" data-diamond-chance="0.01" data-adventurer-requirement="5">SEND</button> </div> </div> <div class="adventure-drops-area"> <button class="adventure-drops-button" data-adventure-id="4">DROPS</button> <div class="drops-popover" id="drops-popover-4"></div>  </div> </div> 
                             </div>
                         </div> 
                     </div> 
@@ -3033,49 +3041,66 @@ function usePetWhistleUnlock(itemUniqueId) {
                 if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
             }
             
-            function updateAdventureDisplayStates() {
-                adventureProgressionConfig.forEach(advConfig => {
-                    const adventureBlock = document.getElementById(advConfig.blockId);
-                    if (!adventureBlock) return;
+function updateAdventureDisplayStates() {
+    adventureProgressionConfig.forEach(advConfig => {
+        const adventureBlock = document.getElementById(advConfig.blockId);
+        if (!adventureBlock) return;
 
-                    const sendBtnElement = adventureBlock.querySelector('.adventure-send-btn');
-                    const numSelect = adventureBlock.querySelector('.adventure-num-select');
-                    const lockOverlay = adventureBlock.querySelector('.adventure-lock-overlay');
+        const sendBtnElement = adventureBlock.querySelector('.adventure-send-btn');
+        const numInput = adventureBlock.querySelector('.adventure-num-select'); // Changed variable name
+        const lockOverlay = adventureBlock.querySelector('.adventure-lock-overlay');
 
-                    let isLockedByProgression = false;
-                    if (advConfig.unlockQuestId) {
-                        const unlockingQuest = quests.find(q => q.id === advConfig.unlockQuestId);
-                        if (!unlockingQuest || !unlockingQuest.completed) {
-                            isLockedByProgression = true;
-                        }
-                    }
-                    const existingActiveAdventure = activeAdventures.find(adv => adv.originalAdventureId === advConfig.id);
-                    
-                    if (sendBtnElement) {
-                        if (existingActiveAdventure) {
-                            sendBtnElement.textContent = "ADD MORE (+)";
-                            sendBtnElement.disabled = totalAvailableAdventurers <= 0; // Can add if player has adventurers
-                        } else {
-                            sendBtnElement.textContent = "SEND";
-                            sendBtnElement.disabled = isLockedByProgression;
-                        }
-                    }
-                    if (numSelect) {
-                        numSelect.disabled = isLockedByProgression && !existingActiveAdventure; // Keep enabled if adding more
-                    }
-                    
-                    adventureBlock.classList.toggle('locked-by-progression', isLockedByProgression && !existingActiveAdventure);
-
-                    if (lockOverlay) {
-                        if (isLockedByProgression && !existingActiveAdventure) {
-                            lockOverlay.textContent = advConfig.unlockMessage;
-                            lockOverlay.classList.remove('hidden');
-                        } else {
-                            lockOverlay.classList.add('hidden');
-                        }
-                    }
-                });
+        let isLockedByProgression = false;
+        if (advConfig.unlockQuestId) {
+            const unlockingQuest = quests.find(q => q.id === advConfig.unlockQuestId);
+            if (!unlockingQuest || !unlockingQuest.completed) {
+                isLockedByProgression = true;
             }
+        }
+        const existingActiveAdventure = activeAdventures.find(adv => adv.originalAdventureId === advConfig.id);
+
+        if (sendBtnElement) {
+            if (existingActiveAdventure) {
+                sendBtnElement.textContent = "ADD MORE (+)";
+                // Can add if player has adventurers AND input is not disabled by lock
+                sendBtnElement.disabled = totalAvailableAdventurers <= 0 || (isLockedByProgression && !existingActiveAdventure);
+            } else {
+                sendBtnElement.textContent = "SEND";
+                sendBtnElement.disabled = isLockedByProgression;
+            }
+        }
+
+        if (numInput) {
+            numInput.disabled = isLockedByProgression && !existingActiveAdventure;
+            numInput.max = totalAvailableAdventurers; // Set max based on currently available
+
+            // If current value exceeds new max, reset it (optional, but good UX)
+            if (parseInt(numInput.value) > totalAvailableAdventurers && totalAvailableAdventurers > 0) {
+                numInput.value = totalAvailableAdventurers;
+            } else if (totalAvailableAdventurers === 0 && parseInt(numInput.value) > 0) {
+                numInput.value = 0; // Or 1 if you want to always default to 1 if possible
+            } else if (parseInt(numInput.value) < 1 && totalAvailableAdventurers > 0) {
+                 numInput.value = 1; // Ensure it's at least 1 if adventurers are available
+            }
+             // Ensure value is not less than min (1) if it was somehow set lower
+            if (parseInt(numInput.value) < parseInt(numInput.min)) {
+                numInput.value = numInput.min;
+            }
+
+        }
+
+        adventureBlock.classList.toggle('locked-by-progression', isLockedByProgression && !existingActiveAdventure);
+
+        if (lockOverlay) {
+            if (isLockedByProgression && !existingActiveAdventure) {
+                lockOverlay.textContent = advConfig.unlockMessage;
+                lockOverlay.classList.remove('hidden');
+            } else {
+                lockOverlay.classList.add('hidden');
+            }
+        }
+    });
+}
             
             function handleCancelAdventure(adventureInstanceId) {
                 if (!currentUser) return;
