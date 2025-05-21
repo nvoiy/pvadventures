@@ -586,7 +586,7 @@
                 <div class="player-info-wallet"> 
                      <div class="player-stats" id="playerStats"> PLAYER <span id="playerNicknameDisplay">Voyager</span>, WELCOME<br> <span class="pv">PV = <span id="pvCount">0</span></span> , <span class="gold">GOLD = <span id="goldCount">0</span></span>, <span class="diamond">DIAMOND = <span id="diamondCount">0</span></span> <div class="wallet-address" id="walletAddressDisplay"></div> 
                     </div> 
-                    <div class="wallet-connector"><button class="connect-wallet-btn" id="connectWalletBtn">CONNECT WALLET</button><ul class="wallet-dropdown" id="walletDropdown"><li data-wallet="xverse_provider">XVERSE</li><li data-wallet="unisat">UNISAT</li><li data-wallet="satsconnect_magiceden">MAGIC EDEN</li><li data-wallet="satsconnect_general">ANY BTC WALLET</li></ul>
+                    <div class="wallet-connector"><button class="connect-wallet-btn" id="connectWalletBtn">CONNECT WALLET</button><ul class="wallet-dropdown" id="walletDropdown"><li data-wallet="xverse_provider">XVERSE</li><li data-wallet="unisat">UNISAT</li></ul>
                     </div> 
                 </div>
                  <button id="signOutButton" class="hidden">Sign Out</button> 
@@ -622,6 +622,12 @@
                     <h4>MY MATERIALS</h4> 
                     <div id="materialsListContainer"></div>
                 </div> 
+                               <div id="userOrdinalsDisplay" class="materials-display" style="text-align:center; display: none; margin-top: 20px;">
+                   <h4>MY PUNK VOYAGE ORDINALS</h4>
+                   <div id="userOrdinalsList" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-height: 300px; overflow-y: auto; padding-top: 10px;">
+                       <!-- Fetched Ordinals will be listed here -->
+                   </div>
+               </div>
                 <div class="twitter-feed-container" id="twitter-widget-container"> <a class="twitter-timeline" data-dnt="true" href="https://twitter.com/nvart_?ref_src=twsrc%5Etfw">Tweets by nvart_</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> </div> 
             </aside>
             <div class="main-content-area">
@@ -1028,33 +1034,34 @@
     </script>
 
     <script>
-        document.addEventListener('firebaseReady', () => {
-            {
-        // --- ADD YOUR API KEY HERE ---
+        document.addEventListener('firebaseReady', async () => {
+            
+                const userOrdinalsDisplayElement = document.getElementById('userOrdinalsDisplay');
+    const userOrdinalsListElement = document.getElementById('userOrdinalsList');
+    let PUNK_VOYAGE_IDS_SET = new Set(); // To store your fixed inscription IDs for quick lookup
+    const PUNK_VOYAGE_ID_IMAGE_CACHE = {}; // Simple cache for inscription images
 
-        function updateAdventureCardPvDisplay() {
-            function updateAdventureCardPvDisplay() {}}
-    console.log("Updating adventure card PV displays...");
-    const adventureSendButtons = document.querySelectorAll('.adventure-send-btn');
-    adventureSendButtons.forEach(button => {
-        const adventureBlock = button.closest('.adventure');
-        if (!adventureBlock) return;
+function updateAdventureCardPvDisplay() {
+            // The actual body of this function should start here.
+            // For example, from your previous working code:
+            console.log("Updating adventure card PV displays...");
+            const adventureSendButtons = document.querySelectorAll('.adventure-send-btn');
+            adventureSendButtons.forEach(button => {
+                const adventureBlock = button.closest('.adventure');
+                if (!adventureBlock) return;
 
-        const detailsDiv = adventureBlock.querySelector('.adventure-details');
-        if (!detailsDiv) return;
+                const detailsDiv = adventureBlock.querySelector('.adventure-details');
+                if (!detailsDiv) return;
 
-        const prizeSpan = detailsDiv.querySelector('.prize');
-        if (prizeSpan && button.dataset.pvReward) {
-            const basePvFromButton = parseInt(button.dataset.pvReward);
-            const displayPv = basePvFromButton * 2; // Calculate the doubled PV for display
-
-            // Update the text. This regex is a bit more robust.
-            // It looks for "PRIZE = " followed by numbers, then " PV"
-            prizeSpan.innerHTML = prizeSpan.innerHTML.replace(/(PRIZE\s*=\s*)(\d+)(\s*PV TOKENS)/i, `$1${displayPv}$3`);
-            console.log(`Updated PV display for ${button.dataset.adventureName} to ${displayPv}`);
-        }
-    });
-}
+                const prizeSpan = detailsDiv.querySelector('.prize');
+                if (prizeSpan && button.dataset.pvReward) {
+                    const basePvFromButton = parseInt(button.dataset.pvReward);
+                    const displayPv = basePvFromButton * 2; // Calculate the doubled PV for display
+                    prizeSpan.innerHTML = prizeSpan.innerHTML.replace(/(PRIZE\s*=\s*)(\d+)(\s*PV TOKENS)/i, `$1${displayPv}$3`);
+                    console.log(`Updated PV display for ${button.dataset.adventureName} to ${displayPv}`);
+                }
+            });
+        } 
             console.log("'firebaseReady' event received by main script. Initializing game logic.");
             
             const db = window.firebaseDb;
@@ -1669,6 +1676,7 @@
                             if(authNicknameInput) authNicknameInput.value = ''; // Specifically clear nickname
                         }
                         showPage('adventures-page'); // Show the default game page
+                        await loadPunkVoyageIds(); // Load the fixed list of IDs
 
                     } catch (error) {
                         console.error("Error during user state processing in onAuthStateChanged:", error);
@@ -3293,6 +3301,137 @@ function usePetWhistleUnlock(itemUniqueId) {
             async function handleDrawWinners(event) { await drawRaffleWinners(event.target.dataset.raffleId, false); }
             async function handleDrawNow(event) { await drawRaffleWinners(event.target.dataset.raffleId, true); }
             async function handleDeleteRaffle(event) { if (!currentUser || !currentUser.email || currentUser.email.toLowerCase() !== 'nvoiysol@gmail.com' || !db) return; const raffleId = event.target.dataset.raffleId; const raffleName = allRaffles.find(r => r.id === raffleId)?.name || "this raffle"; if (confirm(`Are you sure you want to delete "${raffleName}"? This cannot be undone.`)) { const raffleDocRef = doc(db, "raffles", raffleId); try { await deleteDoc(raffleDocRef); showCustomPopup(`Raffle "${raffleName}" deleted.`, "Admin Action"); await fetchAndDisplayRaffles(); } catch (error) { console.error("Error deleting raffle:", error); showCustomPopup("Failed to delete raffle.", "Admin Error"); } }}
+            async function loadPunkVoyageIds() {
+    try {
+        const response = await fetch('fixed_ids.json'); // Assumes fixed_ids.json is in the same directory
+        if (!response.ok) {
+            console.error('Failed to load fixed_ids.json:', response.statusText);
+            showCustomPopup("Error: Could not load collection ID list.", "Ordinal Error");
+            return false;
+        }
+        const idsArray = await response.json();
+        PUNK_VOYAGE_IDS_SET = new Set(idsArray);
+        console.log(`Loaded ${PUNK_VOYAGE_IDS_SET.size} Punk Voyage inscription IDs.`);
+        return true;
+    } catch (error) {
+        console.error('Error fetching fixed_ids.json:', error);
+        showCustomPopup("Error: Could not fetch collection ID list. Make sure 'fixed_ids.json' is present.", "Ordinal Error");
+        return false;
+    }
+}
+
+async function fetchWalletInscriptions(userAddress, walletName) {
+    if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'block';
+    if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>Loading your inscriptions...</p>`;
+
+    let walletInscriptionIds = [];
+    let inscriptionDetailsForRendering = []; // Will store {id, name, imageUrl}
+
+    try {
+        if (walletName === 'UniSat' && typeof window.unisat !== 'undefined') {
+            const unisatInscriptions = await window.unisat.getInscriptions(0, 200); // Get up to 200, adjust if needed
+            if (unisatInscriptions && unisatInscriptions.list) {
+                walletInscriptionIds = unisatInscriptions.list.map(insc => insc.inscriptionId);
+            } else {
+                console.warn("UniSat: No inscriptions found or unexpected response format.");
+            }
+        } else if (walletName === 'Xverse' || walletName === 'UniSat') { // Fallback for Xverse or if UniSat direct fails
+            // Use Hiro API to get all inscriptions for the address
+            const hiroApiUrl = `https://api.hiro.so/ordinals/v1/inscriptions?address=${userAddress}&limit=60`; // Hiro's API has pages, 60 is max per page.
+            // For more than 60, you'd need to implement pagination.
+            const response = await fetch(hiroApiUrl);
+            if (!response.ok) {
+                console.error(`Hiro API error for ${userAddress}: ${response.statusText}`);
+                if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>Error fetching inscriptions via public API.</p>`;
+                return;
+            }
+            const data = await response.json();
+            if (data.results) {
+                walletInscriptionIds = data.results.map(insc => insc.id);
+            }
+        } else {
+            if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>Wallet type not supported for direct inscription listing.</p>`;
+            return;
+        }
+
+        if (walletInscriptionIds.length === 0) {
+            if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>No inscriptions found in this wallet via ${walletName} provider/API.</p>`;
+            return;
+        }
+
+        const ownedPunkVoyageIds = walletInscriptionIds.filter(id => PUNK_VOYAGE_IDS_SET.has(id));
+
+        if (ownedPunkVoyageIds.length === 0) {
+            if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>No Punk Voyage Ordinals from your collection found in this wallet.</p>`;
+            return;
+        }
+
+        // Fetch details for each owned Punk Voyage ID
+        if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>Found ${ownedPunkVoyageIds.length} Punk Voyage Ordinal(s). Fetching details...</p>`;
+        
+        for (const inscriptionId of ownedPunkVoyageIds) {
+            if (PUNK_VOYAGE_ID_IMAGE_CACHE[inscriptionId]) {
+                inscriptionDetailsForRendering.push(PUNK_VOYAGE_ID_IMAGE_CACHE[inscriptionId]);
+                continue;
+            }
+            try {
+                const detailUrl = `https://api.hiro.so/ordinals/v1/inscriptions/${inscriptionId}`;
+                const contentUrl = `https://api.hiro.so/ordinals/v1/inscriptions/${inscriptionId}/content`;
+                
+                const detailResponse = await fetch(detailUrl); // Fetch metadata
+                let name = `#${inscriptionId.slice(0,4)}...`; // Default name
+                if(detailResponse.ok){
+                    const detailData = await detailResponse.json();
+                    name = `#${detailData.number || inscriptionId.slice(0,4)}`; // Use inscription number if available
+                }
+
+                PUNK_VOYAGE_ID_IMAGE_CACHE[inscriptionId] = { id: inscriptionId, name: name, imageUrl: contentUrl };
+                inscriptionDetailsForRendering.push(PUNK_VOYAGE_ID_IMAGE_CACHE[inscriptionId]);
+            } catch (detailError) {
+                console.error(`Error fetching details for inscription ${inscriptionId}:`, detailError);
+                // Add with a placeholder if detail fetch fails
+                inscriptionDetailsForRendering.push({ id: inscriptionId, name: `ID ${inscriptionId.slice(0,6)}...`, imageUrl: null });
+            }
+        }
+        renderOwnedPunkVoyageOrdinals(inscriptionDetailsForRendering);
+
+    } catch (error) {
+        console.error(`Error in fetchWalletInscriptions for ${walletName}:`, error);
+        if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>An error occurred while checking your Ordinals.</p>`;
+    }
+}
+
+function renderOwnedPunkVoyageOrdinals(ownedInscriptions) { // ownedInscriptions is now an array of {id, name, imageUrl}
+    if (!userOrdinalsListElement) return;
+    userOrdinalsListElement.innerHTML = ''; // Clear previous
+
+    if (!ownedInscriptions || ownedInscriptions.length === 0) {
+        userOrdinalsListElement.innerHTML = `<p>You don't own any Punk Voyage Ordinals from the fixed list in this wallet.</p>`;
+        return;
+    }
+
+    ownedInscriptions.forEach(insc => {
+        const tokenDiv = document.createElement('div');
+        tokenDiv.className = 'ordinal-item'; // You can style this class
+        tokenDiv.style.border = '1px solid var(--border-color)';
+        tokenDiv.style.padding = '5px';
+        tokenDiv.style.borderRadius = '4px';
+        tokenDiv.style.textAlign = 'center';
+        tokenDiv.style.width = '80px'; // Adjust size as needed
+        tokenDiv.style.margin = '5px';
+
+        let content = '';
+        if (insc.imageUrl) {
+             // Use the direct content URL for the image
+            content += `<img src="${insc.imageUrl}" alt="${insc.name}" style="width: 60px; height: 60px; object-fit: contain; border-radius: 3px; margin-bottom: 3px;">`;
+        } else {
+            content += `<div style="width: 60px; height: 60px; background-color: #333; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8em; border-radius: 3px; margin-bottom: 3px;">No Image</div>`;
+        }
+        content += `<p style="font-size: 0.7em; margin: 0; word-break: break-all;">${insc.name}</p>`;
+        tokenDiv.innerHTML = content;
+        userOrdinalsListElement.appendChild(tokenDiv);
+    });
+}
 
             // --- Leaderboard Logic ---
             async function fetchAndDisplayLeaderboards(resourceType = 'pvTokens') {
