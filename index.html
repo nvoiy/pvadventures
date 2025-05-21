@@ -1169,6 +1169,7 @@ function updateAdventureCardPvDisplay() {
             let playerHasPurchasedRiderScroll = false;
             let playerHasPurchasedPetWhistle = false;
             let totalAdventuresCompleted = 0;
+            let ordinalBonusAdventurers = 0;
 
 
             const initialPlayerMaterials = { 
@@ -1711,47 +1712,49 @@ function updateAdventureCardPvDisplay() {
                 }
             });
             
-            function resetGameStateToDefaults() {
-                currentPvTokens = 0; currentGold = 0; currentDiamonds = 0;
-                activeAdventures = []; nextActiveAdventureId = 0;
-                totalAvailableAdventurers = MAX_PLAYER_ADVENTURERS;
-                playerInventory = []; nextUniqueInstanceId = 0;
-                playerMaterials = { ...initialPlayerMaterials };
-                playerScrolls = { low: 0, middle: 0, high: 0 };
-                playerHasPurchasedRiderScroll = false;
-                 playerHasPurchasedPetWhistle = false; 
-                totalAdventuresCompleted = 0;
+function resetGameStateToDefaults() {
+    currentPvTokens = 0; currentGold = 0; currentDiamonds = 0;
+    activeAdventures = []; nextActiveAdventureId = 0;
+    // totalAvailableAdventurers will be set by recalculateTotalAvailableAdventurers
+    playerInventory = []; nextUniqueInstanceId = 0;
+    playerMaterials = { ...initialPlayerMaterials };
+    playerScrolls = { low: 0, middle: 0, high: 0 };
+    playerHasPurchasedRiderScroll = false;
+    playerHasPurchasedPetWhistle = false;
+    totalAdventuresCompleted = 0;
+    ordinalBonusAdventurers = 0; // <<< ADDED THIS LINE
 
-equippedItems = { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Pet: null, Misc1: null, Misc2: null };
-                playerAdventurerLevel = 1; 
-                secondRingSlotUnlocked = false;
-                petSlotUnlocked = false;
-                activePotions = [];
-                allRaffles = []; 
-                playerRaffleEntries = {}; 
-                quests.forEach(q => { q.progress = 0; q.completed = false; q.claimed = false; }); 
-                lastDailyRewardDayClaimed = 0; 
-                lastDailyRewardClaimTimestamp = 0;
-                selectedItemForUpgrade = null;
-                selectedScrollForUpgrade = null;
-                isGoldToDiamondSwap = true; updateSwapDisplay();
+    equippedItems = { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Pet: null, Misc1: null, Misc2: null };
+    playerAdventurerLevel = 1;
+    secondRingSlotUnlocked = false;
+    petSlotUnlocked = false;
+    activePotions = [];
+    allRaffles = [];
+    playerRaffleEntries = {};
+    quests.forEach(q => { q.progress = 0; q.completed = false; q.claimed = false; });
+    lastDailyRewardDayClaimed = 0;
+    lastDailyRewardClaimTimestamp = 0;
+    selectedItemForUpgrade = null;
+    selectedScrollForUpgrade = null;
+    isGoldToDiamondSwap = true; updateSwapDisplay();
 
-
-                if(sidebarActiveAdventuresList) sidebarActiveAdventuresList.innerHTML = '';
-                if(activePotionsList) activePotionsList.innerHTML = '';
-                if(materialsListContainer) materialsListContainer.innerHTML = '';
-                if(inventoryItemsContainer) inventoryItemsContainer.innerHTML = '';
-                if(equipmentSlotsDisplay) equipmentSlotsDisplay.innerHTML = '';
-                if (whitelistRafflesContainer) whitelistRafflesContainer.innerHTML = '';
-                if (dailyRewardsGrid) dailyRewardsGrid.innerHTML = ''; 
-                if (leaderboardDisplayList) leaderboardDisplayList.innerHTML = '<li>Click a filter above to load a leaderboard.</li>';
-                if (leaderboardCurrentTypeTitle) leaderboardCurrentTypeTitle.textContent = 'Leaderboard';
-                if (upgradeResultDisplay) upgradeResultDisplay.textContent = '';
-                if (selectedItemForUpgradeDisplay) selectedItemForUpgradeDisplay.innerHTML = 'Item: None';
-                if (selectedScrollForUpgradeDisplay) selectedScrollForUpgradeDisplay.innerHTML = 'Scroll: None';
-                if (upgradeSuccessRateDisplay) upgradeSuccessRateDisplay.textContent = '';
-                updatePlayerCombatStatsDisplay(); 
-            }
+    if(sidebarActiveAdventuresList) sidebarActiveAdventuresList.innerHTML = '';
+    if(activePotionsList) activePotionsList.innerHTML = '';
+    if(materialsListContainer) materialsListContainer.innerHTML = '';
+    if(inventoryItemsContainer) inventoryItemsContainer.innerHTML = '';
+    if(equipmentSlotsDisplay) equipmentSlotsDisplay.innerHTML = '';
+    if (whitelistRafflesContainer) whitelistRafflesContainer.innerHTML = '';
+    if (dailyRewardsGrid) dailyRewardsGrid.innerHTML = '';
+    if (leaderboardDisplayList) leaderboardDisplayList.innerHTML = '<li>Click a filter above to load a leaderboard.</li>';
+    if (leaderboardCurrentTypeTitle) leaderboardCurrentTypeTitle.textContent = 'Leaderboard';
+    if (upgradeResultDisplay) upgradeResultDisplay.textContent = '';
+    if (selectedItemForUpgradeDisplay) selectedItemForUpgradeDisplay.innerHTML = 'Item: None';
+    if (selectedScrollForUpgradeDisplay) selectedScrollForUpgradeDisplay.innerHTML = 'Scroll: None';
+    if (upgradeSuccessRateDisplay) upgradeSuccessRateDisplay.textContent = '';
+    
+    recalculateTotalAvailableAdventurers(); // Call this to set totalAvailableAdventurers correctly after reset
+    updatePlayerCombatStatsDisplay();
+}
 
 
             // --- Auth Form Toggle ---
@@ -1925,168 +1928,174 @@ equippedItems = { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: 
                 showCustomPopup(`Welcome, ${nicknameToUse}! Your new voyage begins!`, "New Game Created");
             }
             
-            function getCurrentGameState() { 
-                return { 
-                    nickname: userNickname || "Voyager",
-                    pvTokens: currentPvTokens || 0, 
-                    gold: currentGold || 0, 
-                    diamonds: currentDiamonds || 0, 
-                    activeAdventures: Array.isArray(activeAdventures) ? activeAdventures.map(adv => ({ id: adv.id, originalAdventureId: adv.originalAdventureId, name: adv.name || "Unknown Adventure", adventurers: adv.adventurers || 0, returnTime: adv.returnTime || Date.now(), pvReward: adv.pvReward || 0, goldChance: adv.goldChance || 0, diamondChance: adv.diamondChance || 0 })) : [], 
-                    totalAvailableAdventurers: totalAvailableAdventurers !== undefined ? totalAvailableAdventurers : MAX_PLAYER_ADVENTURERS, 
-                    playerInventory: Array.isArray(playerInventory) ? playerInventory : [], 
-                    nextUniqueInstanceId: nextUniqueInstanceId,
-                    playerMaterials: playerMaterials || { ...initialPlayerMaterials }, 
-                    playerScrolls: playerScrolls || { low: 0, middle: 0, high: 0 },
-                    playerHasPurchasedRiderScroll: playerHasPurchasedRiderScroll || false,
-                    totalAdventuresCompleted: totalAdventuresCompleted || 0,
-                    equippedItems: equippedItems || { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Misc1: null, Misc2: null }, 
-                    quests: Array.isArray(quests) ? quests.map(q => ({ id: q.id, text: q.text || "UKN", reward: q.reward || "0", completed: q.completed || false, progress: q.progress || 0, target: q.target || 0, adventureName: q.adventureName || null, metric: q.metric || null, claimed: q.claimed || false })) : [], 
-                    activePotions: Array.isArray(activePotions) ? activePotions.map(p => ({ id: p.id, endTime: p.endTime || null, adventuresLeft: p.adventuresLeft !== undefined ? p.adventuresLeft : null })).filter(p => p.id) : [], 
-                    playerAdventurerLevel: playerAdventurerLevel || 1, 
-                    secondRingSlotUnlocked: secondRingSlotUnlocked || false, 
-                                petSlotUnlocked: petSlotUnlocked || false,
-                                playerHasPurchasedPetWhistle: playerHasPurchasedPetWhistle || false,
-                    playerRaffleEntries: playerRaffleEntries || {},
-                    lastDailyRewardDayClaimed: lastDailyRewardDayClaimed, 
-                    lastDailyRewardClaimTimestamp: lastDailyRewardClaimTimestamp 
-                };
-            }
+function getCurrentGameState() {
+    return {
+        nickname: userNickname || "Voyager",
+        pvTokens: currentPvTokens || 0,
+        gold: currentGold || 0,
+        diamonds: currentDiamonds || 0,
+        activeAdventures: Array.isArray(activeAdventures) ? activeAdventures.map(adv => ({ id: adv.id, originalAdventureId: adv.originalAdventureId, name: adv.name || "Unknown Adventure", adventurers: adv.adventurers || 0, returnTime: adv.returnTime || Date.now(), pvReward: adv.pvReward || 0, goldChance: adv.goldChance || 0, diamondChance: adv.diamondChance || 0 })) : [],
+        // totalAvailableAdventurers is no longer saved directly
+        playerInventory: Array.isArray(playerInventory) ? playerInventory : [],
+        nextUniqueInstanceId: nextUniqueInstanceId,
+        playerMaterials: playerMaterials || { ...initialPlayerMaterials },
+        playerScrolls: playerScrolls || { low: 0, middle: 0, high: 0 },
+        playerHasPurchasedRiderScroll: playerHasPurchasedRiderScroll || false,
+        totalAdventuresCompleted: totalAdventuresCompleted || 0,
+        equippedItems: equippedItems || { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Pet: null, Misc1: null, Misc2: null }, // Added Pet back
+        quests: Array.isArray(quests) ? quests.map(q => ({ id: q.id, text: q.text || "UKN", reward: q.reward || "0", completed: q.completed || false, progress: q.progress || 0, target: q.target || 0, adventureName: q.adventureName || null, metric: q.metric || null, claimed: q.claimed || false })) : [],
+        activePotions: Array.isArray(activePotions) ? activePotions.map(p => ({ id: p.id, endTime: p.endTime || null, adventuresLeft: p.adventuresLeft !== undefined ? p.adventuresLeft : null })).filter(p => p.id) : [],
+        playerAdventurerLevel: playerAdventurerLevel || 1,
+        secondRingSlotUnlocked: secondRingSlotUnlocked || false,
+        petSlotUnlocked: petSlotUnlocked || false,
+        playerHasPurchasedPetWhistle: playerHasPurchasedPetWhistle || false,
+        playerRaffleEntries: playerRaffleEntries || {},
+        lastDailyRewardDayClaimed: lastDailyRewardDayClaimed,
+        lastDailyRewardClaimTimestamp: lastDailyRewardClaimTimestamp
+        // Note: ordinalBonusAdventurers is intentionally not saved, it's derived on wallet connect.
+    };
+}
 
-            function applyLoadedGameState(loadedState) {
-                console.log("Applying loaded game state:", JSON.parse(JSON.stringify(loadedState)));
-                if (!loadedState) {
-                    console.error("applyLoadedGameState called with null or undefined state.");
-                    showCustomPopup("No game data found to load. Starting fresh or try logging in again.", "Load Error");
+function applyLoadedGameState(loadedState) {
+    console.log("Applying loaded game state:", JSON.parse(JSON.stringify(loadedState)));
+    if (!loadedState) {
+        console.error("applyLoadedGameState called with null or undefined state.");
+        showCustomPopup("No game data found to load. Starting fresh or try logging in again.", "Load Error");
+        return;
+    }
+    try {
+        userNickname = loadedState.nickname || "Voyager";
+        if (playerNicknameDisplay && userNickname) playerNicknameDisplay.textContent = userNickname;
+        currentPvTokens = loadedState.pvTokens || 0;
+        currentGold = loadedState.gold || 0;
+        currentDiamonds = loadedState.diamonds || 0;
+
+        ordinalBonusAdventurers = 0; // Reset here, will be set by wallet connection later
+
+        activeAdventures = Array.isArray(loadedState.activeAdventures) ? loadedState.activeAdventures.map(advData => {
+            return {
+                id: advData.id || nextActiveAdventureId++,
+                originalAdventureId: advData.originalAdventureId || "1",
+                name: advData.name || "Unknown Adventure",
+                adventurers: advData.adventurers || 0,
+                returnTime: typeof advData.returnTime === 'number' ? advData.returnTime : Date.now(),
+                pvReward: advData.pvReward || 0,
+                goldChance: advData.goldChance || 0,
+                diamondChance: advData.diamondChance || 0
+            };
+        }) : [];
+        nextActiveAdventureId = activeAdventures.length > 0 ? Math.max(0, ...activeAdventures.map(a => a.id)) + 1 : 0;
+
+        // totalAvailableAdventurers = loadedState.totalAvailableAdventurers !== undefined ? loadedState.totalAvailableAdventurers : MAX_PLAYER_ADVENTURERS; // This line is now removed/commented
+        totalAdventuresCompleted = loadedState.totalAdventuresCompleted || 0;
+
+        nextUniqueInstanceId = loadedState.nextUniqueInstanceId || 0;
+        playerInventory = [];
+        if (Array.isArray(loadedState.playerInventory)) {
+            loadedState.playerInventory.forEach(itemSource => {
+                if (!itemSource) return;
+                if (itemSource.id === "scroll_low" || itemSource.id === "scroll_mid" || itemSource.id === "scroll_high" || (itemSource.type && itemSource.type === "upgrade_scroll")) {
                     return;
                 }
-                try {
-                    userNickname = loadedState.nickname || "Voyager";
-                    if (playerNicknameDisplay && userNickname) playerNicknameDisplay.textContent = userNickname;
-                    currentPvTokens = loadedState.pvTokens || 0;
-                    currentGold = loadedState.gold || 0;
-                    currentDiamonds = loadedState.diamonds || 0;
-
-                    activeAdventures = Array.isArray(loadedState.activeAdventures) ? loadedState.activeAdventures.map(advData => {
-                        return {
-                            id: advData.id || nextActiveAdventureId++,
-                            originalAdventureId: advData.originalAdventureId || "1",
-                            name: advData.name || "Unknown Adventure",
-                            adventurers: advData.adventurers || 0,
-                            returnTime: typeof advData.returnTime === 'number' ? advData.returnTime : Date.now(),
-                            pvReward: advData.pvReward || 0,
-                            goldChance: advData.goldChance || 0,
-                            diamondChance: advData.diamondChance || 0
-                        };
-                    }) : [];
-                    nextActiveAdventureId = activeAdventures.length > 0 ? Math.max(0, ...activeAdventures.map(a => a.id)) + 1 : 0;
-
-                    totalAvailableAdventurers = loadedState.totalAvailableAdventurers !== undefined ? loadedState.totalAvailableAdventurers : MAX_PLAYER_ADVENTURERS;
-                    totalAdventuresCompleted = loadedState.totalAdventuresCompleted || 0;
-
-                    nextUniqueInstanceId = loadedState.nextUniqueInstanceId || 0; 
-                    playerInventory = []; 
-                    if (Array.isArray(loadedState.playerInventory)) {
-                        loadedState.playerInventory.forEach(itemSource => {
-                            if (!itemSource) return; 
-                            if (itemSource.id === "scroll_low" || itemSource.id === "scroll_mid" || itemSource.id === "scroll_high" || (itemSource.type && itemSource.type === "upgrade_scroll")) {
-                                return; 
-                            }
-                            let newItem = {};
-                            if (typeof itemSource === 'string') { 
-                                newItem = {
-                                    id: itemSource,
-                                    level: 0,
-                                    uniqueInstanceId: `legacy_${nextUniqueInstanceId++}`
-                                };
-                            } else { 
-                                newItem = {
-                                    id: itemSource.id, 
-                                    level: itemSource.level || 0,
-                                    uniqueInstanceId: itemSource.uniqueInstanceId || `loaded_${nextUniqueInstanceId++}`
-                                };
-                            }
-                            if (newItem.id) { 
-                                playerInventory.push(newItem);
-                            } else {
-                                console.warn("Loaded inventory item source without an ID:", itemSource);
-                            }
-                        });
-                    }
-                    
-                    playerMaterials = loadedState.playerMaterials || { ...initialPlayerMaterials };
-                    playerScrolls = loadedState.playerScrolls || { low: 0, middle: 0, high: 0 };
-                    playerHasPurchasedRiderScroll = loadedState.playerHasPurchasedRiderScroll || false;
-                    playerHasPurchasedPetWhistle = loadedState.playerHasPurchasedPetWhistle || false;
-
-            console.log("Applying: Equipped Items"); // Your existing log
-            const defaultEquippedStructure = { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Pet: null, Misc1: null, Misc2: null };
-            if (loadedState.equippedItems && typeof loadedState.equippedItems === 'object') {
-                equippedItems = { ...defaultEquippedStructure, ...loadedState.equippedItems };
-            } else {
-                equippedItems = { ...defaultEquippedStructure };
-            }
-            console.log("Equipped Items after load and merge:", JSON.parse(JSON.stringify(equippedItems))); // Your existing log
-                    playerAdventurerLevel = loadedState.playerAdventurerLevel || 1;
-                    secondRingSlotUnlocked = loadedState.secondRingSlotUnlocked || false;
-                                petSlotUnlocked = loadedState.petSlotUnlocked || false;
-                    playerRaffleEntries = loadedState.playerRaffleEntries || {};
-
-                    lastDailyRewardDayClaimed = loadedState.lastDailyRewardDayClaimed || 0;
-                    lastDailyRewardClaimTimestamp = loadedState.lastDailyRewardClaimTimestamp || 0;
-
-                    if (Array.isArray(loadedState.quests)) {
-                        quests.forEach(q_default => {
-                            const loaded_q = loadedState.quests.find(lq => lq && lq.id === q_default.id);
-                            if (loaded_q) {
-                                q_default.completed = loaded_q.completed || false;
-                                q_default.progress = loaded_q.progress || 0;
-                                q_default.claimed = loaded_q.claimed || false;
-                            }
-                        });
-                    }
-
-                    if (Array.isArray(loadedState.activePotions)) {
-                        activePotions = loadedState.activePotions.map(pData => {
-                            if (!pData || !pData.id) return null;
-                            const potionBase = shopItemsData.find(shopItem => shopItem.id === pData.id);
-                            if (!potionBase) return null;
-                            return {
-                                id: pData.id,
-                                name: potionBase.name,
-                                description: potionBase.description,
-                                effect: potionBase.effect,
-                                endTime: typeof pData.endTime === 'number' ? pData.endTime : null,
-                                adventuresLeft: pData.adventuresLeft !== undefined ? pData.adventuresLeft : null
-                            };
-                        }).filter(p => p !== null);
-                        activePotions = activePotions.filter(p => (p.endTime && Date.now() < p.endTime) || (p.adventuresLeft !== undefined && p.adventuresLeft > 0) || (!p.endTime && p.adventuresLeft === undefined));
-                    }
-
-                    updateStatsDisplay();
-                    updatePlayerCombatStatsDisplay();
-                    renderMaterials();
-                    renderActiveAdventuresInSidebar();
-                    renderActivePotions();
-                    renderInventory(); 
-                    updateAdventureDisplayStates();
-                    updateSwapDisplay(); // For currency swap
-
-                    const activePageElement = document.querySelector('.page-content.active');
-                    if (activePageElement) {
-                        const pageId = activePageElement.id;
-                        if (pageId === 'quests-page') renderQuests();
-                        else if (pageId === 'daily-rewards-page') renderDailyRewards();
-                        else if (pageId === 'shop-page') renderShopItems();
-                        else if (pageId === 'crafting-page') renderCraftingItems();
-                        else if (pageId === 'whitelist-page') fetchAndDisplayRaffles();
-                        else if (pageId === 'leaderboard-page') fetchAndDisplayLeaderboards('pvTokens'); 
-                    }
-                    console.log("Game state applied successfully.");
-                } catch (error) {
-                    console.error("Error during applyLoadedGameState:", error, error.stack); 
-                    showCustomPopup("Error applying loaded game data. Please try logging in again or contact support if this persists.", "Apply State Error");
+                let newItem = {};
+                if (typeof itemSource === 'string') {
+                    newItem = {
+                        id: itemSource,
+                        level: 0,
+                        uniqueInstanceId: `legacy_${nextUniqueInstanceId++}`
+                    };
+                } else {
+                    newItem = {
+                        id: itemSource.id,
+                        level: itemSource.level || 0,
+                        uniqueInstanceId: itemSource.uniqueInstanceId || `loaded_${nextUniqueInstanceId++}`
+                    };
                 }
-            }
+                if (newItem.id) {
+                    playerInventory.push(newItem);
+                } else {
+                    console.warn("Loaded inventory item source without an ID:", itemSource);
+                }
+            });
+        }
+
+        playerMaterials = loadedState.playerMaterials || { ...initialPlayerMaterials };
+        playerScrolls = loadedState.playerScrolls || { low: 0, middle: 0, high: 0 };
+        playerHasPurchasedRiderScroll = loadedState.playerHasPurchasedRiderScroll || false;
+        playerHasPurchasedPetWhistle = loadedState.playerHasPurchasedPetWhistle || false;
+
+        console.log("Applying: Equipped Items");
+        const defaultEquippedStructure = { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Pet: null, Misc1: null, Misc2: null };
+        if (loadedState.equippedItems && typeof loadedState.equippedItems === 'object') {
+            equippedItems = { ...defaultEquippedStructure, ...loadedState.equippedItems };
+        } else {
+            equippedItems = { ...defaultEquippedStructure };
+        }
+        console.log("Equipped Items after load and merge:", JSON.parse(JSON.stringify(equippedItems)));
+        playerAdventurerLevel = loadedState.playerAdventurerLevel || 1;
+        secondRingSlotUnlocked = loadedState.secondRingSlotUnlocked || false;
+        petSlotUnlocked = loadedState.petSlotUnlocked || false;
+        playerRaffleEntries = loadedState.playerRaffleEntries || {};
+
+        lastDailyRewardDayClaimed = loadedState.lastDailyRewardDayClaimed || 0;
+        lastDailyRewardClaimTimestamp = loadedState.lastDailyRewardClaimTimestamp || 0;
+
+        if (Array.isArray(loadedState.quests)) {
+            quests.forEach(q_default => {
+                const loaded_q = loadedState.quests.find(lq => lq && lq.id === q_default.id);
+                if (loaded_q) {
+                    q_default.completed = loaded_q.completed || false;
+                    q_default.progress = loaded_q.progress || 0;
+                    q_default.claimed = loaded_q.claimed || false;
+                }
+            });
+        }
+
+        if (Array.isArray(loadedState.activePotions)) {
+            activePotions = loadedState.activePotions.map(pData => {
+                if (!pData || !pData.id) return null;
+                const potionBase = shopItemsData.find(shopItem => shopItem.id === pData.id);
+                if (!potionBase) return null;
+                return {
+                    id: pData.id,
+                    name: potionBase.name,
+                    description: potionBase.description,
+                    effect: potionBase.effect,
+                    endTime: typeof pData.endTime === 'number' ? pData.endTime : null,
+                    adventuresLeft: pData.adventuresLeft !== undefined ? pData.adventuresLeft : null
+                };
+            }).filter(p => p !== null);
+            activePotions = activePotions.filter(p => (p.endTime && Date.now() < p.endTime) || (p.adventuresLeft !== undefined && p.adventuresLeft > 0) || (!p.endTime && p.adventuresLeft === undefined));
+        }
+
+        // Call recalculate AFTER other state (like activeAdventures) is loaded
+        recalculateTotalAvailableAdventurers(); 
+
+        updateStatsDisplay(); // Ensure this is called after recalculate or reflects its changes
+        updatePlayerCombatStatsDisplay();
+        renderMaterials();
+        renderActiveAdventuresInSidebar();
+        renderActivePotions();
+        renderInventory();
+        updateAdventureDisplayStates();
+        updateSwapDisplay(); // For currency swap
+
+        const activePageElement = document.querySelector('.page-content.active');
+        if (activePageElement) {
+            const pageId = activePageElement.id;
+            if (pageId === 'quests-page') renderQuests();
+            else if (pageId === 'daily-rewards-page') renderDailyRewards();
+            else if (pageId === 'shop-page') renderShopItems();
+            else if (pageId === 'crafting-page') renderCraftingItems();
+            else if (pageId === 'whitelist-page') fetchAndDisplayRaffles();
+            else if (pageId === 'leaderboard-page') fetchAndDisplayLeaderboards('pvTokens');
+        }
+        console.log("Game state applied successfully.");
+    } catch (error) {
+        console.error("Error during applyLoadedGameState:", error, error.stack);
+        showCustomPopup("Error applying loaded game data. Please try logging in again or contact support if this persists.", "Apply State Error");
+    }
+}
             
 
             // --- Theme and Page Navigation ---
@@ -2103,6 +2112,18 @@ equippedItems = { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: 
             
             function updateStatsDisplay() { if(pvCountElement) pvCountElement.textContent = currentPvTokens; if(goldCountElement) goldCountElement.textContent = currentGold; if(diamondCountElement) diamondCountElement.textContent = currentDiamonds; if(availableAdventurersCountElement) availableAdventurersCountElement.textContent = totalAvailableAdventurers; }
             function formatTimeLeft(milliseconds) { if (milliseconds <= 0) return "Ended"; let ts = Math.ceil(milliseconds / 1000); let h = Math.floor(ts / 3600); ts %= 3600; let m = Math.floor(ts / 60); let s = ts % 60; return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`; }
+            
+            function recalculateTotalAvailableAdventurers() {
+    // Calculate adventurers currently on adventures
+    const adventurersOnAdventure = activeAdventures.reduce((sum, adv) => sum + adv.adventurers, 0);
+    
+    // Base adventurers + bonus from ordinals - those currently busy
+    totalAvailableAdventurers = MAX_PLAYER_ADVENTURERS + ordinalBonusAdventurers - adventurersOnAdventure;
+    
+    updateStatsDisplay(); // This will update the UI for available adventurers
+    updateAdventureDisplayStates(); // Update adventure buttons based on new availability
+    console.log(`Recalculated totalAvailableAdventurers: ${totalAvailableAdventurers} (Base: ${MAX_PLAYER_ADVENTURERS}, Bonus: ${ordinalBonusAdventurers}, On Adventure: ${adventurersOnAdventure})`);
+}
             
             function renderActiveAdventuresInSidebar() {
                 if (!sidebarActiveAdventuresList || !sidebarActiveAdventuresContainer) return;
@@ -2969,6 +2990,7 @@ function usePetWhistleUnlock(itemUniqueId) {
                 }
 
                 totalAvailableAdventurers += completedAdv.adventurers; 
+                recalculateTotalAvailableAdventurers();
                 showCustomPopup(popupMessage, "Adventure Complete!"); 
                 activeAdventures.splice(advIdx, 1); 
                 updateAdventureDisplayStates(); 
@@ -3067,6 +3089,7 @@ function usePetWhistleUnlock(itemUniqueId) {
                         confirmCallback: (confirmed) => {
                             if (confirmed) {
                                 totalAvailableAdventurers += adventureToCancel.adventurers;
+                                recalculateTotalAvailableAdventurers();
                                 activeAdventures = activeAdventures.filter(adv => adv.id !== adventureInstanceId);
                                 
                                 showCustomPopup(`Adventure "${adventureToCancel.name}" has been cancelled. Adventurers have returned.`, "Adventure Cancelled");
@@ -3159,6 +3182,7 @@ function usePetWhistleUnlock(itemUniqueId) {
                                 confirmCallback: (confirmed) => {
                                     if (confirmed) {
                                         totalAvailableAdventurers -= numAdventurersToSend;
+                                        recalculateTotalAvailableAdventurers();
                                         const advInstance = activeAdventures[existingActiveAdventureIndex];
                                         advInstance.adventurers += numAdventurersToSend;
                                         
@@ -3197,7 +3221,8 @@ function usePetWhistleUnlock(itemUniqueId) {
                                 return;
                             }
                         }
-                        totalAvailableAdventurers -= numAdventurersToSend; 
+                        totalAvailableAdventurers -= numAdventurersToSend;
+                        recalculateTotalAvailableAdventurers();
                         let calculatedDurationMs = originalDurationHours * GAME_HOUR_IN_REAL_SECONDS * 1000; 
                         Object.values(equippedItems).forEach(equippedInstanceId => { 
                             if (!equippedInstanceId) return;
@@ -5005,24 +5030,25 @@ async function fetchWalletInscriptions(userAddress, walletName) {
     if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>Loading your inscriptions...</p>`;
 
     let walletInscriptionIds = [];
-    let inscriptionDetailsForRendering = []; // Will store {id, name, imageUrl}
+    let inscriptionDetailsForRendering = [];
+    let previousBonusAdventurers = ordinalBonusAdventurers; // Store current bonus
 
     try {
         if (walletName === 'UniSat' && typeof window.unisat !== 'undefined') {
-            const unisatInscriptions = await window.unisat.getInscriptions(0, 200); // Get up to 200, adjust if needed
+            const unisatInscriptions = await window.unisat.getInscriptions(0, 200);
             if (unisatInscriptions && unisatInscriptions.list) {
                 walletInscriptionIds = unisatInscriptions.list.map(insc => insc.inscriptionId);
             } else {
                 console.warn("UniSat: No inscriptions found or unexpected response format.");
             }
-        } else if (walletName === 'Xverse' || walletName === 'UniSat') { // Fallback for Xverse or if UniSat direct fails
-            // Use Hiro API to get all inscriptions for the address
-            const hiroApiUrl = `https://api.hiro.so/ordinals/v1/inscriptions?address=${userAddress}&limit=60`; // Hiro's API has pages, 60 is max per page.
-            // For more than 60, you'd need to implement pagination.
+        } else if (walletName === 'Xverse' || walletName === 'UniSat') {
+            const hiroApiUrl = `https://api.hiro.so/ordinals/v1/inscriptions?address=${userAddress}&limit=60`;
             const response = await fetch(hiroApiUrl);
             if (!response.ok) {
                 console.error(`Hiro API error for ${userAddress}: ${response.statusText}`);
                 if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>Error fetching inscriptions via public API.</p>`;
+                ordinalBonusAdventurers = 0; // Reset bonus on error
+                recalculateTotalAvailableAdventurers();
                 return;
             }
             const data = await response.json();
@@ -5031,11 +5057,15 @@ async function fetchWalletInscriptions(userAddress, walletName) {
             }
         } else {
             if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>Wallet type not supported for direct inscription listing.</p>`;
+            ordinalBonusAdventurers = 0; // Reset bonus
+            recalculateTotalAvailableAdventurers();
             return;
         }
 
         if (walletInscriptionIds.length === 0) {
             if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>No inscriptions found in this wallet via ${walletName} provider/API.</p>`;
+            ordinalBonusAdventurers = 0;
+            recalculateTotalAvailableAdventurers();
             return;
         }
 
@@ -5043,11 +5073,19 @@ async function fetchWalletInscriptions(userAddress, walletName) {
 
         if (ownedPunkVoyageIds.length === 0) {
             if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>No Punk Voyage Ordinals from your collection found in this wallet.</p>`;
+            ordinalBonusAdventurers = 0;
+            recalculateTotalAvailableAdventurers();
             return;
         }
 
-        // Fetch details for each owned Punk Voyage ID
-        if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>Found ${ownedPunkVoyageIds.length} Punk Voyage Ordinal(s). Fetching details...</p>`;
+        // --- BONUS LOGIC ---
+        // Simple: 1 bonus adventurer for each owned Punk Voyage Ordinal, up to a max.
+        const MAX_BONUS_ADVENTURERS = 5; // Example: Max 5 bonus adventurers
+        ordinalBonusAdventurers = Math.min(ownedPunkVoyageIds.length, MAX_BONUS_ADVENTURERS);
+        // --- END BONUS LOGIC ---
+
+
+        if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>Found ${ownedPunkVoyageIds.length} Punk Voyage Ordinal(s). Fetching details... You get ${ordinalBonusAdventurers} bonus adventurer(s)!</p>`;
         
         for (const inscriptionId of ownedPunkVoyageIds) {
             if (PUNK_VOYAGE_ID_IMAGE_CACHE[inscriptionId]) {
@@ -5058,18 +5096,17 @@ async function fetchWalletInscriptions(userAddress, walletName) {
                 const detailUrl = `https://api.hiro.so/ordinals/v1/inscriptions/${inscriptionId}`;
                 const contentUrl = `https://api.hiro.so/ordinals/v1/inscriptions/${inscriptionId}/content`;
                 
-                const detailResponse = await fetch(detailUrl); // Fetch metadata
-                let name = `#${inscriptionId.slice(0,4)}...`; // Default name
+                const detailResponse = await fetch(detailUrl);
+                let name = `#${inscriptionId.slice(0,4)}...`;
                 if(detailResponse.ok){
                     const detailData = await detailResponse.json();
-                    name = `#${detailData.number || inscriptionId.slice(0,4)}`; // Use inscription number if available
+                    name = `#${detailData.number || inscriptionId.slice(0,4)}`;
                 }
 
                 PUNK_VOYAGE_ID_IMAGE_CACHE[inscriptionId] = { id: inscriptionId, name: name, imageUrl: contentUrl };
                 inscriptionDetailsForRendering.push(PUNK_VOYAGE_ID_IMAGE_CACHE[inscriptionId]);
             } catch (detailError) {
                 console.error(`Error fetching details for inscription ${inscriptionId}:`, detailError);
-                // Add with a placeholder if detail fetch fails
                 inscriptionDetailsForRendering.push({ id: inscriptionId, name: `ID ${inscriptionId.slice(0,6)}...`, imageUrl: null });
             }
         }
@@ -5078,6 +5115,13 @@ async function fetchWalletInscriptions(userAddress, walletName) {
     } catch (error) {
         console.error(`Error in fetchWalletInscriptions for ${walletName}:`, error);
         if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>An error occurred while checking your Ordinals.</p>`;
+        ordinalBonusAdventurers = 0; // Reset bonus on error
+    } finally {
+        recalculateTotalAvailableAdventurers(); // Always recalculate
+        if (ordinalBonusAdventurers !== previousBonusAdventurers && currentUser && currentUser.uid) {
+            // Save game state only if the bonus actually changed
+            saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
+        }
     }
 }
 
@@ -5349,31 +5393,67 @@ function renderOwnedPunkVoyageOrdinals(ownedInscriptions) { // ownedInscriptions
             
             const connectWalletBtn = document.getElementById('connectWalletBtn'); const walletDropdown = document.getElementById('walletDropdown'); const walletOptions = walletDropdown.querySelectorAll('li'); const walletAddressDisplay = document.getElementById('walletAddressDisplay');
             let connectedAccount = null; let connectedWalletName = null;
-function updateWalletDisplay(account, walletName = '') {
-    if (account) {
-        const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
-        if (connectWalletBtn) {
-            connectWalletBtn.textContent = `${walletName}: ${shortAddress}`;
-            connectWalletBtn.classList.add('connected');
-        }
-        if (walletAddressDisplay) walletAddressDisplay.textContent = `Wallet: ${account}`;
-        // ADD THIS LINE HERE:
-        if (punkVoyageIdsLoaded && connectedAccount && connectedWalletName) { // Check if IDs are loaded
+            function updateWalletDisplay(account, walletName = '') { if (account) { const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`; if(connectWalletBtn) { connectWalletBtn.textContent = `${walletName}: ${shortAddress}`; connectWalletBtn.classList.add('connected'); } 
+             if(walletAddressDisplay) walletAddressDisplay.textContent = `Wallet: ${account}`; 
+             
+            } 
+                    if (punkVoyageIdsLoaded && connectedAccount && connectedWalletName) { // Check if IDs are loaded
             fetchWalletInscriptions(connectedAccount, connectedWalletName);
         }
-    } else {
-        if (connectWalletBtn) {
-            connectWalletBtn.textContent = 'CONNECT WALLET';
-            connectWalletBtn.classList.remove('connected');
-        }
-        if (walletAddressDisplay) walletAddressDisplay.textContent = '';
-        // ADD THIS LINE HERE TO HIDE/CLEAR THE ORDINAL DISPLAY ON DISCONNECT:
-        if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none';
+            else { if(connectWalletBtn) { connectWalletBtn.textContent = 'CONNECT WALLET'; connectWalletBtn.classList.remove('connected'); } 
+            if(walletAddressDisplay) walletAddressDisplay.textContent = '';
+                    if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none';
         if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = '';
+                } }
+            if(connectWalletBtn && walletDropdown) { connectWalletBtn.addEventListener('click', (event) => { event.stopPropagation(); walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block'; }); document.addEventListener('click', (event) => { if (walletDropdown && connectWalletBtn && !connectWalletBtn.contains(event.target) && !walletDropdown.contains(event.target)) { walletDropdown.style.display = 'none'; } }); }
+SatsConnect.getAddresses({
+    payload: { /* ... */ },
+    onFinish: (response) => {
+        const ordAddress = response.addresses.find(a => a.purpose === 'ordinals');
+        const payAddress = response.addresses.find(a => a.purpose === 'payment');
+        let addr = ordAddress ? ordAddress.address : (payAddress ? payAddress.address : null);
+        if (addr) {
+            connectedAccount = addr;
+            let name = walletTypeHint ? walletTypeHint.replace('satsconnect_', '').toUpperCase() : "BTC";
+            if (name === "GENERAL") name = "BTC";
+            connectedWalletName = name;
+            updateWalletDisplay(connectedAccount, connectedWalletName);
+            // ADD THIS LINE:
+            if (punkVoyageIdsLoaded) fetchWalletInscriptions(connectedAccount, connectedWalletName);
+        }
+    },
+    onCancel: () => console.log('SatsConnect canceled.'),
+});
+async function connectUnisat() {
+    try {
+        if (typeof window.unisat !== 'undefined') {
+            const accounts = await window.unisat.requestAccounts();
+            if (accounts && accounts.length > 0) {
+                connectedAccount = accounts[0];
+                connectedWalletName = 'UniSat';
+                updateWalletDisplay(connectedAccount, 'UniSat');
+                // ADD THIS LINE:
+                if (punkVoyageIdsLoaded) fetchWalletInscriptions(connectedAccount, connectedWalletName);
+
+                window.unisat.on('accountsChanged', (newAccs) => {
+                    if (connectedWalletName === 'UniSat') {
+                        connectedAccount = (newAccs && newAccs.length > 0) ? newAccs[0] : null;
+                        if (!connectedAccount) connectedWalletName = null;
+                        updateWalletDisplay(connectedAccount, connectedAccount ? 'UniSat' : '');
+                        // ADD THIS LINE (for account changes):
+                        if (punkVoyageIdsLoaded && connectedAccount) fetchWalletInscriptions(connectedAccount, connectedWalletName);
+                        else if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none'; // Hide if no account
+                    }
+                });
+            }
+        } else {
+            window.open('https://unisat.io/', '_blank');
+        }
+    } catch (e) {
+        console.error('UniSat error:', e);
+        showCustomPopup('An error occurred with UniSat Wallet.', 'Wallet Error');
     }
 }
-            async function connectWithSatsConnect(walletTypeHint = null) { if (typeof SatsConnect === 'undefined' || typeof SatsConnect.getAddresses === 'undefined') { showCustomPopup('Sats Connect library not loaded or not ready.', "Wallet Error"); return; } try { SatsConnect.getAddresses({ payload: { purposes: ['ordinals', 'payment'], message: 'Connect to Punk Voyage Adventures', network: { type: 'Mainnet' }, }, onFinish: (response) => { const ordAddress = response.addresses.find(a => a.purpose === 'ordinals'); const payAddress = response.addresses.find(a => a.purpose === 'payment'); let addr = ordAddress ? ordAddress.address : (payAddress ? payAddress.address : null); if (addr) { connectedAccount = addr; let name = walletTypeHint ? walletTypeHint.replace('satsconnect_', '').toUpperCase() : "BTC"; if (name === "GENERAL") name = "BTC"; connectedWalletName = name; updateWalletDisplay(connectedAccount, connectedWalletName); } }, onCancel: () => console.log('SatsConnect canceled.'), }); } catch (e) { console.error('SatsConnect error:', e); showCustomPopup('An error occurred with SatsConnect.', 'Wallet Error');} }
-            async function connectUnisat() { try { if (typeof window.unisat !== 'undefined') { const accounts = await window.unisat.requestAccounts(); if (accounts && accounts.length > 0) { connectedAccount = accounts[0]; connectedWalletName = 'UniSat'; updateWalletDisplay(connectedAccount, 'UniSat'); window.unisat.on('accountsChanged', (newAccs) => { if (connectedWalletName === 'UniSat') { connectedAccount = (newAccs && newAccs.length > 0) ? newAccs[0] : null; if (!connectedAccount) connectedWalletName = null; updateWalletDisplay(connectedAccount, connectedAccount ? 'UniSat' : ''); } }); } } else { window.open('https://unisat.io/', '_blank'); } } catch (e) { console.error('UniSat error:', e); showCustomPopup('An error occurred with UniSat Wallet.', 'Wallet Error'); } }
 if (walletOptions) {
     walletOptions.forEach(option => {
         option.addEventListener('click', async (event) => {
@@ -5443,6 +5523,7 @@ if (walletOptions) {
                 connectedAccount = addrToUse;
                 connectedWalletName = 'Xverse'; // Set wallet name
                 updateWalletDisplay(connectedAccount, connectedWalletName);
+                  if (punkVoyageIdsLoaded) fetchWalletInscriptions(connectedAccount, connectedWalletName);
                 // You might want to check Xverse documentation for an 'accountsChanged' event
                 // to handle account switches in the wallet, similar to UniSat.
             } else {
