@@ -1100,6 +1100,11 @@ function updateAdventureCardPvDisplay() {
                     alert("Refresh button was clicked!");
                     console.log("Refresh Ordinal Bonus button was definitely clicked - simple test.");
                 });
+                 console.log("Click listener for refreshOrdinalBonusBtn SHOULD BE ATTACHED.");
+            } else {
+                // If refreshOrdinalBonusBtn was somehow null HERE, this would log.
+                // Based on your screenshot, it shouldn't be null, but this is a failsafe log.
+                console.error("CRITICAL: refreshOrdinalBonusBtn IS NULL OR FALSY just before adding listener. This should not happen if it was found earlier.");
             }
             });
         } 
