@@ -5078,11 +5078,19 @@ ordinalBonusAdventurers = ownedPunkVoyageIds.length;
         if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>An error occurred while checking your Ordinals.</p>`;
         ordinalBonusAdventurers = 0; // Reset bonus on error
     } finally {
-        recalculateTotalAvailableAdventurers(); // Always recalculate
+        recalculateTotalAvailableAdventurers(); // This sets the correct totalAvailableAdventurers
+        
         if (ordinalBonusAdventurers !== previousBonusAdventurers && currentUser && currentUser.uid) {
-            // Save game state only if the bonus actually changed
             saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
         }
+
+        // Add a short delay to ensure this UI update is likely the last one to apply
+        // after all async wallet operations and event handlers might have settled.
+        setTimeout(() => {
+            console.log(`Delayed UI update in fetchWalletInscriptions. Current totalAvailableAdventurers: ${totalAvailableAdventurers}, OrdinalBonus: ${ordinalBonusAdventurers}`);
+            // Directly call updateStatsDisplay to refresh the UI with the latest calculated value
+            updateStatsDisplay(); 
+        }, 250); // 250 milliseconds delay, can be adjusted
     }
 }
 
@@ -5444,16 +5452,28 @@ function renderOwnedPunkVoyageOrdinals(ownedInscriptions) { // ownedInscriptions
                 // ADD THIS LINE:
                 if (punkVoyageIdsLoaded) fetchWalletInscriptions(connectedAccount, connectedWalletName);
 
-                window.unisat.on('accountsChanged', (newAccs) => {
-                    if (connectedWalletName === 'UniSat') {
-                        connectedAccount = (newAccs && newAccs.length > 0) ? newAccs[0] : null;
-                        if (!connectedAccount) connectedWalletName = null;
-                        updateWalletDisplay(connectedAccount, connectedAccount ? 'UniSat' : '');
-                        // ADD THIS LINE (for account changes):
-                        if (punkVoyageIdsLoaded && connectedAccount) fetchWalletInscriptions(connectedAccount, connectedWalletName);
-                        else if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none'; // Hide if no account
-                    }
-                });
+            window.unisat.on('accountsChanged', (newAccs) => {
+                console.log("UniSat accountsChanged event received, new accounts:", newAccs);
+                const newAccount = (newAccs && newAccs.length > 0) ? newAccs[0] : null;
+
+                // Only proceed if the account *actually* changed from what we last knew,
+                // or if we thought we were connected to UniSat but now there's no new account (meaning a disconnect).
+                if (newAccount !== connectedAccount || (connectedWalletName === 'UniSat' && !newAccount && connectedAccount /* was previously connected */)) {
+                    console.log(`UniSat accountsChanged: Account change processed. Old: ${connectedAccount}, New: ${newAccount}`);
+                    
+                    const oldConnectedAccount = connectedAccount; // Store before changing
+                    connectedAccount = newAccount;
+                    
+                    // Update wallet name: if newAccount is valid, it's UniSat, otherwise nullify
+                    connectedWalletName = newAccount ? 'UniSat' : null; 
+                    
+                    // Call updateWalletDisplay with the new state.
+                    // This function will correctly handle setting ordinalBonusAdventurers to 0 if newAccount is null.
+                    updateWalletDisplay(connectedAccount, connectedWalletName);
+                } else {
+                    console.log("UniSat accountsChanged: No actual change in connected account or already reflecting disconnected state.");
+                }
+            });
             }
         } else {
             window.open('https://unisat.io/', '_blank');
