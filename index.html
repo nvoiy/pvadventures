@@ -2121,16 +2121,21 @@ function applyLoadedGameState(loadedState) {
             function updateStatsDisplay() { if(pvCountElement) pvCountElement.textContent = currentPvTokens; if(goldCountElement) goldCountElement.textContent = currentGold; if(diamondCountElement) diamondCountElement.textContent = currentDiamonds; if(availableAdventurersCountElement) availableAdventurersCountElement.textContent = totalAvailableAdventurers; }
             function formatTimeLeft(milliseconds) { if (milliseconds <= 0) return "Ended"; let ts = Math.ceil(milliseconds / 1000); let h = Math.floor(ts / 3600); ts %= 3600; let m = Math.floor(ts / 60); let s = ts % 60; return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`; }
             
-            function recalculateTotalAvailableAdventurers() {
-    // Calculate adventurers currently on adventures
-    const adventurersOnAdventure = activeAdventures.reduce((sum, adv) => sum + adv.adventurers, 0);
+function recalculateTotalAvailableAdventurers() {
+    const adventurersOnAdventure = activeAdventures.reduce((sum, adv) => sum + (adv.adventurers || 0), 0); // Added (adv.adventurers || 0) for safety
     
-    // Base adventurers + bonus from ordinals - those currently busy
+    console.log(`--- Recalculating Adventurers ---`);
+    console.log(`MAX_PLAYER_ADVENTURERS: ${MAX_PLAYER_ADVENTURERS}`);
+    console.log(`ordinalBonusAdventurers: ${ordinalBonusAdventurers}`);
+    console.log(`adventurersOnAdventure: ${adventurersOnAdventure} (from ${activeAdventures.length} active adventures)`);
+    
     totalAvailableAdventurers = MAX_PLAYER_ADVENTURERS + ordinalBonusAdventurers - adventurersOnAdventure;
     
-    updateStatsDisplay(); // This will update the UI for available adventurers
-    updateAdventureDisplayStates(); // Update adventure buttons based on new availability
-    console.log(`Recalculated totalAvailableAdventurers: ${totalAvailableAdventurers} (Base: ${MAX_PLAYER_ADVENTURERS}, Bonus: ${ordinalBonusAdventurers}, On Adventure: ${adventurersOnAdventure})`);
+    console.log(`New totalAvailableAdventurers: ${totalAvailableAdventurers}`);
+    console.log(`--- End Recalculation ---`);
+
+    updateStatsDisplay();
+    updateAdventureDisplayStates();
 }
             
             function renderActiveAdventuresInSidebar() {
@@ -2874,6 +2879,9 @@ function usePetWhistleUnlock(itemUniqueId) {
             function generateRandomQuests() { /* Using predefined quests */ }
             
             function completeAdventure(instanceId) { 
+                    console.log(`--- completeAdventure START for instanceId: ${instanceId} ---`);
+    console.log("Current activeAdventures:", JSON.parse(JSON.stringify(activeAdventures)));
+    console.log("Current totalAvailableAdventurers BEFORE completion:", totalAvailableAdventurers);
                 if(!currentUser) return; 
                 const advIdx = activeAdventures.findIndex(adv => adv.id === instanceId); 
                 if (advIdx === -1) return; 
@@ -5058,6 +5066,8 @@ async function loadPunkVoyageIds() { // This was originally line 2414
 
 
 async function fetchWalletInscriptions(userAddress, walletName) {
+        console.log(`--- fetchWalletInscriptions START for address: ${userAddress}, wallet: ${walletName} ---`);
+    console.log(`Current punkVoyageIdsLoaded status: ${punkVoyageIdsLoaded}`);
     if (!punkVoyageIdsLoaded) { // Added a guard here
         console.log("fetchWalletInscriptions: Punk Voyage IDs not loaded yet. Aborting ordinal check.");
         ordinalBonusAdventurers = 0; // Ensure reset if IDs aren't ready
@@ -5406,36 +5416,27 @@ function renderOwnedPunkVoyageOrdinals(ownedInscriptions) { // ownedInscriptions
             
             const connectWalletBtn = document.getElementById('connectWalletBtn'); const walletDropdown = document.getElementById('walletDropdown'); const walletOptions = walletDropdown.querySelectorAll('li'); const walletAddressDisplay = document.getElementById('walletAddressDisplay');
             let connectedAccount = null; let connectedWalletName = null;
-            function updateWalletDisplay(account, walletName = '') { if (account) { const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`; if(connectWalletBtn) { connectWalletBtn.textContent = `${walletName}: ${shortAddress}`; connectWalletBtn.classList.add('connected'); } 
-             if(walletAddressDisplay) walletAddressDisplay.textContent = `Wallet: ${account}`; 
-             
-            } 
-                    if (punkVoyageIdsLoaded && connectedAccount && connectedWalletName) { // Check if IDs are loaded
-            fetchWalletInscriptions(connectedAccount, connectedWalletName);
             
-} else { // Wallet disconnected or not present
-    if (connectWalletBtn) {
-        connectWalletBtn.textContent = 'CONNECT WALLET';
-        connectWalletBtn.classList.remove('connected');
-    }
-    if (walletAddressDisplay) walletAddressDisplay.textContent = '';
-
-    if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none';
-    if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = '';
-
-    // Reset ordinal bonus and recalculate adventurers if wallet disconnects
-    if (connectedAccount !== null || connectedWalletName !== null) { // only if there WAS a connection
-        ordinalBonusAdventurers = 0;
-        recalculateTotalAvailableAdventurers();
-        if (currentUser && currentUser.uid) { // Save the state change if user is logged in
-            saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
+function updateWalletDisplay(account, walletName = '') {
+    if (account) {
+        const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
+        if (connectWalletBtn) { /* ... */ }
+        if (walletAddressDisplay) { /* ... */ }
+        
+        console.log(`updateWalletDisplay: Account detected. punkVoyageIdsLoaded: ${punkVoyageIdsLoaded}, connectedAccount: ${connectedAccount}, connectedWalletName: ${connectedWalletName}`);
+        if (punkVoyageIdsLoaded && connectedAccount && connectedWalletName) {
+            console.log("updateWalletDisplay: Conditions met, calling fetchWalletInscriptions.");
+            fetchWalletInscriptions(connectedAccount, connectedWalletName);
+        } else {
+            console.log("updateWalletDisplay: Conditions NOT met for fetchWalletInscriptions.");
+            if (!punkVoyageIdsLoaded) console.log("Reason: punkVoyageIdsLoaded is false.");
+            if (!connectedAccount) console.log("Reason: connectedAccount is null/undefined.");
+            if (!connectedWalletName) console.log("Reason: connectedWalletName is null/undefined.");
         }
+    } else {
+        // ... (existing else block for disconnection) ...
     }
-    connectedAccount = null; // Ensure these are nullified
-    connectedWalletName = null;
 }
-                
-            }
             if(connectWalletBtn && walletDropdown) { connectWalletBtn.addEventListener('click', (event) => { event.stopPropagation(); walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block'; }); document.addEventListener('click', (event) => { if (walletDropdown && connectWalletBtn && !connectWalletBtn.contains(event.target) && !walletDropdown.contains(event.target)) { walletDropdown.style.display = 'none'; } }); }
        async function connectWithSatsConnect(walletTypeHint = null) {
         // Check for SatsConnect availability right when the function is called
