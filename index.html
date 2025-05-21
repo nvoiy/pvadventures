@@ -1035,7 +1035,14 @@
 
     <script>
         document.addEventListener('firebaseReady', async () => {
-            
+                    console.log("FirebaseReady event triggered. Starting main script logic.");
+                    {      
+                        const userOrdinalsDisplayElement = document.getElementById('userOrdinalsDisplay');
+        const userOrdinalsListElement = document.getElementById('userOrdinalsList');
+        let PUNK_VOYAGE_IDS_SET = new Set();
+        const PUNK_VOYAGE_ID_IMAGE_CACHE = {};
+                        
+                    }
                 const userOrdinalsDisplayElement = document.getElementById('userOrdinalsDisplay');
     const userOrdinalsListElement = document.getElementById('userOrdinalsList');
     let PUNK_VOYAGE_IDS_SET = new Set(); // To store your fixed inscription IDs for quick lookup
@@ -3301,24 +3308,51 @@ function usePetWhistleUnlock(itemUniqueId) {
             async function handleDrawWinners(event) { await drawRaffleWinners(event.target.dataset.raffleId, false); }
             async function handleDrawNow(event) { await drawRaffleWinners(event.target.dataset.raffleId, true); }
             async function handleDeleteRaffle(event) { if (!currentUser || !currentUser.email || currentUser.email.toLowerCase() !== 'nvoiysol@gmail.com' || !db) return; const raffleId = event.target.dataset.raffleId; const raffleName = allRaffles.find(r => r.id === raffleId)?.name || "this raffle"; if (confirm(`Are you sure you want to delete "${raffleName}"? This cannot be undone.`)) { const raffleDocRef = doc(db, "raffles", raffleId); try { await deleteDoc(raffleDocRef); showCustomPopup(`Raffle "${raffleName}" deleted.`, "Admin Action"); await fetchAndDisplayRaffles(); } catch (error) { console.error("Error deleting raffle:", error); showCustomPopup("Failed to delete raffle.", "Admin Error"); } }}
-            async function loadPunkVoyageIds() {
-    try {
-        const response = await fetch('fixed_ids.json'); // Assumes fixed_ids.json is in the same directory
-        if (!response.ok) {
-            console.error('Failed to load fixed_ids.json:', response.statusText);
-            showCustomPopup("Error: Could not load collection ID list.", "Ordinal Error");
-            return false;
+        async function loadPunkVoyageIds() {
+            console.log("loadPunkVoyageIds: Attempting to load fixed_ids.json");
+            try {
+                const response = await fetch('fixed_ids.json'); // Assumes fixed_ids.json is in the same directory
+                if (!response.ok) {
+                    console.error(`loadPunkVoyageIds: Failed to fetch fixed_ids.json. Status: ${response.status} ${response.statusText}`);
+                    if(userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'block'; // Show the area
+                    if(userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>Error: Could not load collection ID list (status: ${response.status}). Check console.</p>`;
+                    return false;
+                }
+                const idsArray = await response.json();
+                 if (!Array.isArray(idsArray)) {
+                    console.error("loadPunkVoyageIds: fixed_ids.json did not contain a valid JSON array.");
+                    if(userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'block';
+                    if(userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>Error: Collection ID file has incorrect format. Expected an array.</p>`;
+                    PUNK_VOYAGE_IDS_SET = new Set();
+                    return false;
+                }
+            {        console.log("firebaseReady: About to call loadPunkVoyageIds()");
+        try {
+            const idsSuccessfullyLoaded = await loadPunkVoyageIds();
+            if (idsSuccessfullyLoaded) {
+                console.log("firebaseReady: Punk Voyage IDs loaded successfully.");
+            } else {
+                console.error("firebaseReady: Punk Voyage IDs FAILED to load. Ordinal checking will be impaired.");
+                // Optionally show a non-critical UI message to the user here
+                // showCustomPopup("Warning: Could not load collection data. Owned Ordinals might not display.", "Data Load Warning");
+            }
+        } catch (e) {
+            console.error("firebaseReady: CRITICAL error during the call to loadPunkVoyageIds():", e);
+            // This catch is a fallback, the inner one in loadPunkVoyageIds should ideally catch specific errors
+            showCustomPopup("A critical error occurred loading collection data. Please try refreshing. Check console.", "Startup Error");
         }
-        const idsArray = await response.json();
-        PUNK_VOYAGE_IDS_SET = new Set(idsArray);
-        console.log(`Loaded ${PUNK_VOYAGE_IDS_SET.size} Punk Voyage inscription IDs.`);
-        return true;
-    } catch (error) {
-        console.error('Error fetching fixed_ids.json:', error);
-        showCustomPopup("Error: Could not fetch collection ID list. Make sure 'fixed_ids.json' is present.", "Ordinal Error");
-        return false;
-    }
-}
+        console.log("firebaseReady: Proceeding with the rest of the script initialization.");}
+                PUNK_VOYAGE_IDS_SET = new Set(idsArray);
+                console.log(`loadPunkVoyageIds: Successfully loaded ${PUNK_VOYAGE_IDS_SET.size} Punk Voyage inscription IDs.`);
+                return true;
+            } catch (error) {
+                console.error('loadPunkVoyageIds: Error fetching or parsing fixed_ids.json:', error);
+                if(userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'block';
+                if(userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>Error: Could not process collection ID list. Check 'fixed_ids.json' and console. Error: ${error.message}</p>`;
+                PUNK_VOYAGE_IDS_SET = new Set();
+                return false;
+            }
+        }
 
 async function fetchWalletInscriptions(userAddress, walletName) {
     if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'block';
