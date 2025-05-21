@@ -5104,20 +5104,65 @@ async function fetchWalletInscriptions(userAddress, walletName) {
             } else {
                 console.warn("UniSat: No inscriptions found or unexpected response format.");
             }
-        } else if (walletName === 'Xverse' || walletName === 'UniSat') {
-            const hiroApiUrl = `https://api.hiro.so/ordinals/v1/inscriptions?address=${userAddress}&limit=60`;
-            const response = await fetch(hiroApiUrl);
-            if (!response.ok) {
-                console.error(`Hiro API error for ${userAddress}: ${response.statusText}`);
-                if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>Error fetching inscriptions via public API.</p>`;
-                ordinalBonusAdventurers = 0; // Reset bonus on error
-                recalculateTotalAvailableAdventurers();
-                return;
+        } else if (walletName === 'Xverse' || walletName === 'UniSat') { // This part is used by Xverse direct and as fallback for UniSat
+            walletInscriptionIds = []; // Initialize as empty to accumulate from pages
+            let currentOffset = 0;
+            const pageLimit = 60; // Hiro's max limit per page
+            let hasMore = true;
+            let totalFetchedSoFar = 0;
+            const MAX_TOTAL_FETCH_LIMIT = 500; // Safety limit to prevent infinite loops or excessive API calls
+
+            console.log(`Fetching inscriptions for ${userAddress} from Hiro API with pagination.`);
+
+            while (hasMore && totalFetchedSoFar < MAX_TOTAL_FETCH_LIMIT) {
+                const hiroApiUrl = `https://api.hiro.so/ordinals/v1/inscriptions?address=${userAddress}&limit=${pageLimit}&offset=${currentOffset}`;
+                console.log(`Fetching page: ${hiroApiUrl}`);
+                try {
+                    const response = await fetch(hiroApiUrl);
+                    if (!response.ok) {
+                        console.error(`Hiro API error for ${userAddress} (offset ${currentOffset}): ${response.statusText}`);
+                        // Optionally, break or handle error differently if a page fails.
+                        // For now, we'll stop fetching if a page fails.
+                        hasMore = false; // Stop trying to fetch more pages
+                        if (walletInscriptionIds.length === 0 && userOrdinalsListElement) { // Only show error if no inscriptions were fetched at all
+                             userOrdinalsListElement.innerHTML = `<p>Error fetching inscriptions via public API on page. Status: ${response.statusText}</p>`;
+                        }
+                        break; // Exit the while loop
+                    }
+                    const data = await response.json();
+
+                    if (data.results && data.results.length > 0) {
+                        const idsFromPage = data.results.map(insc => insc.id);
+                        walletInscriptionIds.push(...idsFromPage);
+                        totalFetchedSoFar += idsFromPage.length;
+                    }
+
+                    if (data.total > walletInscriptionIds.length && data.results && data.results.length === pageLimit) {
+                        currentOffset += pageLimit;
+                        hasMore = true;
+                    } else {
+                        hasMore = false; // No more pages or fewer results than limit means it's the last page
+                    }
+                     console.log(`Fetched ${data.results ? data.results.length : 0} inscriptions from this page. Total fetched so far: ${walletInscriptionIds.length}. API reports total: ${data.total}`);
+
+                } catch (pageError) {
+                    console.error(`Network or other error fetching page (offset ${currentOffset}) for ${userAddress}:`, pageError);
+                    hasMore = false; // Stop on network errors
+                    if (walletInscriptionIds.length === 0 && userOrdinalsListElement) {
+                        userOrdinalsListElement.innerHTML = `<p>Network error fetching inscriptions. Please check your connection.</p>`;
+                    }
+                    break; // Exit the while loop
+                }
             }
-            const data = await response.json();
-            if (data.results) {
-                walletInscriptionIds = data.results.map(insc => insc.id);
+            if (totalFetchedSoFar >= MAX_TOTAL_FETCH_LIMIT) {
+                console.warn(`Reached MAX_TOTAL_FETCH_LIMIT (${MAX_TOTAL_FETCH_LIMIT}) for address ${userAddress}. Some inscriptions might be missing if user owns more.`);
+                if (userOrdinalsListElement) {
+                    const p = userOrdinalsListElement.querySelector('p') || document.createElement('p');
+                    p.innerHTML += `<br><small>(Note: Display limited to the first ${MAX_TOTAL_FETCH_LIMIT} inscriptions due to high volume.)</small>`;
+                    if (!userOrdinalsListElement.querySelector('p')) userOrdinalsListElement.appendChild(p);
+                }
             }
+            console.log(`Finished fetching from Hiro API. Total inscriptions found: ${walletInscriptionIds.length}`);
         } else {
             if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>Wallet type not supported for direct inscription listing.</p>`;
             ordinalBonusAdventurers = 0; // Reset bonus
