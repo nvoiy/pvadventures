@@ -1095,27 +1095,10 @@ function updateAdventureCardPvDisplay() {
                     prizeSpan.innerHTML = prizeSpan.innerHTML.replace(/(PRIZE\s*=\s*)(\d+)(\s*PV TOKENS)/i, `$1${displayPv}$3`);
                     console.log(`Updated PV display for ${button.dataset.adventureName} to ${displayPv}`);
                 }
-                            if (refreshOrdinalBonusBtn) {
-                refreshOrdinalBonusBtn.addEventListener('click', async () => {
-                    console.log("Refresh Ordinal Bonus button clicked.");
-                    if (connectedAccount && connectedWalletName && punkVoyageIdsLoaded) {
-                        showCustomPopup("Re-checking Ordinal bonus... This may take a moment.", "Refreshing Bonus");
-                        refreshOrdinalBonusBtn.disabled = true; 
-                        try {
-                            await fetchWalletInscriptions(connectedAccount, connectedWalletName);
-                        } catch (error) {
-                            console.error("Error during manual Ordinal bonus refresh:", error);
-                            showCustomPopup("An error occurred while refreshing the bonus.", "Refresh Error");
-                        } finally {
-                            refreshOrdinalBonusBtn.disabled = false; 
-                        }
-                    } else if (!punkVoyageIdsLoaded) {
-                        showCustomPopup("Collection data is still loading. Please try again in a moment.", "Info");
-                    } else if (!connectedAccount || !connectedWalletName) {
-                        showCustomPopup("Please connect your wallet first to check for Ordinal bonuses.", "Wallet Needed");
-                    } else {
-                        showCustomPopup("Cannot refresh bonus at this time. Ensure wallet is connected and data is loaded.", "Info");
-                    }
+            if (refreshOrdinalBonusBtn) {
+                refreshOrdinalBonusBtn.addEventListener('click', () => { // Removed async for this simple test
+                    alert("Refresh button was clicked!");
+                    console.log("Refresh Ordinal Bonus button was definitely clicked - simple test.");
                 });
             }
             });
