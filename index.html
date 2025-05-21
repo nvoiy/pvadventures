@@ -3616,7 +3616,9 @@ function usePetWhistleUnlock(itemUniqueId) {
             
             const connectWalletBtn = document.getElementById('connectWalletBtn'); const walletDropdown = document.getElementById('walletDropdown'); const walletOptions = walletDropdown.querySelectorAll('li'); const walletAddressDisplay = document.getElementById('walletAddressDisplay');
             let connectedAccount = null; let connectedWalletName = null;
-            function updateWalletDisplay(account, walletName = '') { if (account) { const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`; if(connectWalletBtn) { connectWalletBtn.textContent = `${walletName}: ${shortAddress}`; connectWalletBtn.classList.add('connected'); } if(walletAddressDisplay) walletAddressDisplay.textContent = `Wallet: ${account}`;                fetchAndDisplayUserTokens(account); // Fetch ordinals for the connected account
+            function updateWalletDisplay(account, walletName = '') { if (account) { const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`; if(connectWalletBtn) { connectWalletBtn.textContent = `${walletName}: ${shortAddress}`; connectWalletBtn.classList.add('connected'); } 
+          //   if(walletAddressDisplay) walletAddressDisplay.textContent = `Wallet: ${account}`;    
+            fetchAndDisplayUserTokens(account); // Fetch ordinals for the connected account
             } else { if(connectWalletBtn) { connectWalletBtn.textContent = 'CONNECT WALLET'; connectWalletBtn.classList.remove('connected'); } if(walletAddressDisplay) walletAddressDisplay.textContent = '';if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none';
                 if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = ''; // Clear ordinals display
                 } }
