@@ -5543,6 +5543,47 @@ if (walletOptions) {
         }
         showCustomPopup(errorMessage, 'Wallet Error');
     }
+    
+    async function connectWithSatsConnect(walletTypeHint = null) {
+    // Check for SatsConnect availability right when the function is called
+    if (typeof SatsConnect === 'undefined' || typeof SatsConnect.getAddresses === 'undefined') {
+        console.error("SatsConnect object is not available. The library might not have loaded yet or failed to load.");
+        showCustomPopup('Sats Connect library is not ready. Please try again in a moment or ensure it is loaded.', "Wallet Error");
+        return;
+    }
+
+    try {
+        SatsConnect.getAddresses({
+            payload: {
+                purposes: ['ordinals', 'payment'],
+                message: 'Connect to Punk Voyage Adventures',
+                network: { type: 'Mainnet' },
+            },
+            onFinish: (response) => {
+                const ordAddress = response.addresses.find(a => a.purpose === 'ordinals');
+                const payAddress = response.addresses.find(a => a.purpose === 'payment');
+                let addr = ordAddress ? ordAddress.address : (payAddress ? payAddress.address : null);
+                if (addr) {
+                    connectedAccount = addr;
+                    let name = walletTypeHint ? walletTypeHint.replace('satsconnect_', '').toUpperCase() : "BTC";
+                    if (name === "GENERAL") name = "BTC"; // Assuming GENERAL might be a placeholder
+                    connectedWalletName = name;
+                    updateWalletDisplay(connectedAccount, connectedWalletName);
+                    if (punkVoyageIdsLoaded) fetchWalletInscriptions(connectedAccount, connectedWalletName);
+                } else {
+                    showCustomPopup('No suitable Bitcoin address found via SatsConnect.', 'Wallet Error');
+                }
+            },
+            onCancel: () => {
+                console.log('SatsConnect connection canceled by user.');
+                // Optionally show a message: showCustomPopup('Wallet connection canceled.', 'Info');
+            },
+        });
+    } catch (e) {
+        console.error('Error during SatsConnect.getAddresses call:', e);
+        showCustomPopup(`An error occurred with SatsConnect: ${e.message || 'Unknown error'}`, 'Wallet Error');
+    }
+}
 }
 
         }); // End of 'firebaseReady' event listener
