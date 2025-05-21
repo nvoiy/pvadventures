@@ -42,26 +42,6 @@
             --item-upgrade-plus3-border: #BF00BF; /* Bright Purple (MediumOrchid/DarkMagenta like) */
             --item-upgrade-plus4-border: #FFA500; /* Orange */
             --item-upgrade-plus5-border: #DC143C; /* Dark Red */
-            #refreshOrdinalBonusBtn {
-    background-color: var(--button-bg); /* Use your existing button background color */
-    border: 1px solid var(--button-border); /* Use your existing button border */
-    padding: 4px 6px; /* Adjust padding to make it look nice and not too big */
-    cursor: pointer;
-    line-height: 0; /* Helps keep the button tight around the icon */
-    border-radius: 4px; /* Optional: for rounded corners */
-    transition: filter 0.2s; /* Smooth hover effect */
-}
-
-#refreshOrdinalBonusBtn:hover {
-    filter: brightness(0.85); /* Same hover as your social icons */
-}
-
-#refreshOrdinalBonusBtn img {
-    transform: rotate(90deg); /* Rotates the icon 90 degrees clockwise */
-    width: 16px;  /* Adjust for desired icon size */
-    height: 16px; /* Adjust for desired icon size */
-    vertical-align: middle; /* Helps with alignment if line-height isn't 0 */
-}
         }
 
         body {
@@ -632,12 +612,7 @@
         </header>
         <main class="main-content">
             <aside class="left-sidebar"> 
-<div id="availableAdventurersDisplay" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-    Available Adventurers: <span id="availableAdventurersCount">5</span>
-    <button id="refreshOrdinalBonusBtn" title="Refresh Ordinal Bonus & Adventurer Count">
-        <img src="https://green-tough-gopher-310.mypinata.cloud/ipfs/bafkreigehaezkeralenqxjg5sk6q7s3flkxuz5iu7xlseztd5ptvxm2tnq" alt="Refresh" style="display: block;">
-    </button>
-</div>
+                <div id="availableAdventurersDisplay"> Available Adventurers: <span id="availableAdventurersCount">5</span> </div> 
                 <div id="playerCombatStatsDisplay" class="materials-display" style="text-align:center;">
                     <h4>COMBAT STATS</h4>
                     <p>Attack: <span id="playerAttackStat">0</span></p>
@@ -1095,23 +1070,7 @@ function updateAdventureCardPvDisplay() {
                     prizeSpan.innerHTML = prizeSpan.innerHTML.replace(/(PRIZE\s*=\s*)(\d+)(\s*PV TOKENS)/i, `$1${displayPv}$3`);
                     console.log(`Updated PV display for ${button.dataset.adventureName} to ${displayPv}`);
                 }
-// Debug: Check the button right before trying to add the listener
-            console.log("DEBUG_POINT_1: Attempting to add click listener. refreshOrdinalBonusBtn is:", refreshOrdinalBonusBtn); 
-
-            // --- Refresh Ordinal Bonus Button Listener (TEMPORARY DEBUG VERSION with more logs) ---
-            if (refreshOrdinalBonusBtn) {
-                console.log("DEBUG_POINT_2: refreshOrdinalBonusBtn is TRUTHY. Adding click listener now."); 
-                refreshOrdinalBonusBtn.addEventListener('click', () => {
-                    alert("Refresh button was clicked! Hooray!"); // Changed alert message slightly
-                    console.log("DEBUG_POINT_4: Click event fired! Alert should have shown.");
-                });
-                console.log("DEBUG_POINT_3: Click listener for refreshOrdinalBonusBtn SHOULD BE ATTACHED.");
-            } else {
-                console.error("DEBUG_POINT_ERROR: refreshOrdinalBonusBtn was NULL or FALSY here. This is unexpected if DEBUG_POINT_1 showed the element.");
-            }
-            // The new block ends here
-
-        }); 
+            });
         } 
             console.log("'firebaseReady' event received by main script. Initializing game logic.");
             
@@ -1204,9 +1163,6 @@ function updateAdventureCardPvDisplay() {
             const itemSelectionModalTitle = document.getElementById('itemSelectionModalTitle');
             const itemSelectionModalList = document.getElementById('itemSelectionModalList');
             const itemSelectionModalCloseBtn = document.getElementById('itemSelectionModalCloseBtn');
-            const refreshOrdinalBonusBtn = document.getElementById('refreshOrdinalBonusBtn');
-            console.log("Value of refreshOrdinalBonusBtn:", refreshOrdinalBonusBtn);
-
 
             // --- Game State Variables ---
             let currentUser = null; 
@@ -2166,18 +2122,16 @@ function applyLoadedGameState(loadedState) {
             function formatTimeLeft(milliseconds) { if (milliseconds <= 0) return "Ended"; let ts = Math.ceil(milliseconds / 1000); let h = Math.floor(ts / 3600); ts %= 3600; let m = Math.floor(ts / 60); let s = ts % 60; return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`; }
             
             function recalculateTotalAvailableAdventurers() {
-                // Calculate adventurers currently on adventures
-                const adventurersOnAdventure = activeAdventures.reduce((sum, adv) => sum + adv.adventurers, 0);
-                
-                // Base adventurers + bonus from ordinals - those currently busy
-                let calculated = MAX_PLAYER_ADVENTURERS + ordinalBonusAdventurers - adventurersOnAdventure;
-                totalAvailableAdventurers = Math.max(0, calculated); // This ensures it's never less than 0
-                
-                updateStatsDisplay(); // This will update the UI for available adventurers
-                updateAdventureDisplayStates(); // Update adventure buttons based on new availability
-                // Updated console.log to show the value before clamping, for better debugging
-                console.log(`Recalculated totalAvailableAdventurers: ${totalAvailableAdventurers} (Base: ${MAX_PLAYER_ADVENTURERS}, Bonus: ${ordinalBonusAdventurers}, On Adventure: ${adventurersOnAdventure}, Pre-clamp: ${calculated})`);
-            }
+    // Calculate adventurers currently on adventures
+    const adventurersOnAdventure = activeAdventures.reduce((sum, adv) => sum + adv.adventurers, 0);
+    
+    // Base adventurers + bonus from ordinals - those currently busy
+    totalAvailableAdventurers = MAX_PLAYER_ADVENTURERS + ordinalBonusAdventurers - adventurersOnAdventure;
+    
+    updateStatsDisplay(); // This will update the UI for available adventurers
+    updateAdventureDisplayStates(); // Update adventure buttons based on new availability
+    console.log(`Recalculated totalAvailableAdventurers: ${totalAvailableAdventurers} (Base: ${MAX_PLAYER_ADVENTURERS}, Bonus: ${ordinalBonusAdventurers}, On Adventure: ${adventurersOnAdventure})`);
+}
             
             function renderActiveAdventuresInSidebar() {
                 if (!sidebarActiveAdventuresList || !sidebarActiveAdventuresContainer) return;
@@ -5122,19 +5076,11 @@ ordinalBonusAdventurers = ownedPunkVoyageIds.length;
         if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>An error occurred while checking your Ordinals.</p>`;
         ordinalBonusAdventurers = 0; // Reset bonus on error
     } finally {
-        recalculateTotalAvailableAdventurers(); // This sets the correct totalAvailableAdventurers
-        
+        recalculateTotalAvailableAdventurers(); // Always recalculate
         if (ordinalBonusAdventurers !== previousBonusAdventurers && currentUser && currentUser.uid) {
+            // Save game state only if the bonus actually changed
             saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
         }
-
-        // Add a short delay to ensure this UI update is likely the last one to apply
-        // after all async wallet operations and event handlers might have settled.
-        setTimeout(() => {
-            console.log(`Delayed UI update in fetchWalletInscriptions. Current totalAvailableAdventurers: ${totalAvailableAdventurers}, OrdinalBonus: ${ordinalBonusAdventurers}`);
-            // Directly call updateStatsDisplay to refresh the UI with the latest calculated value
-            updateStatsDisplay(); 
-        }, 250); // 250 milliseconds delay, can be adjusted
     }
 }
 
@@ -5496,28 +5442,16 @@ function renderOwnedPunkVoyageOrdinals(ownedInscriptions) { // ownedInscriptions
                 // ADD THIS LINE:
                 if (punkVoyageIdsLoaded) fetchWalletInscriptions(connectedAccount, connectedWalletName);
 
-            window.unisat.on('accountsChanged', (newAccs) => {
-                console.log("UniSat accountsChanged event received, new accounts:", newAccs);
-                const newAccount = (newAccs && newAccs.length > 0) ? newAccs[0] : null;
-
-                // Only proceed if the account *actually* changed from what we last knew,
-                // or if we thought we were connected to UniSat but now there's no new account (meaning a disconnect).
-                if (newAccount !== connectedAccount || (connectedWalletName === 'UniSat' && !newAccount && connectedAccount /* was previously connected */)) {
-                    console.log(`UniSat accountsChanged: Account change processed. Old: ${connectedAccount}, New: ${newAccount}`);
-                    
-                    const oldConnectedAccount = connectedAccount; // Store before changing
-                    connectedAccount = newAccount;
-                    
-                    // Update wallet name: if newAccount is valid, it's UniSat, otherwise nullify
-                    connectedWalletName = newAccount ? 'UniSat' : null; 
-                    
-                    // Call updateWalletDisplay with the new state.
-                    // This function will correctly handle setting ordinalBonusAdventurers to 0 if newAccount is null.
-                    updateWalletDisplay(connectedAccount, connectedWalletName);
-                } else {
-                    console.log("UniSat accountsChanged: No actual change in connected account or already reflecting disconnected state.");
-                }
-            });
+                window.unisat.on('accountsChanged', (newAccs) => {
+                    if (connectedWalletName === 'UniSat') {
+                        connectedAccount = (newAccs && newAccs.length > 0) ? newAccs[0] : null;
+                        if (!connectedAccount) connectedWalletName = null;
+                        updateWalletDisplay(connectedAccount, connectedAccount ? 'UniSat' : '');
+                        // ADD THIS LINE (for account changes):
+                        if (punkVoyageIdsLoaded && connectedAccount) fetchWalletInscriptions(connectedAccount, connectedWalletName);
+                        else if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none'; // Hide if no account
+                    }
+                });
             }
         } else {
             window.open('https://unisat.io/', '_blank');
