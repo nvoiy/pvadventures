@@ -1038,7 +1038,7 @@
             {
         // --- ADD YOUR API KEY HERE ---
         // IMPORTANT: Read the security warning about exposing API keys in frontend code!
-        const MAGIC_EDEN_API_KEY = "https://api-mainnet.magiceden.dev/v2/ord/btc/tokens?collectionSymbol=punkvoyage&ownerAddress=[the"; // <--- REPLACE THIS
+        const MAGIC_EDEN_API_KEY = "https://api-mainnet.magiceden.dev/v2/ord/btc/tokens?collectionSymbol=punkvoyage&ownerAddress=3KGEoF3akq8jCFnGDgfTsPCVKn8pNi3znz&showAll=true&sortBy=priceAsc%27"; // <--- REPLACE THIS
         const COLLECTION_SYMBOL = "punkvoyage"; // Your collection symbol
                 const userOrdinalsDisplayElement = document.getElementById('userOrdinalsDisplay');
         const userOrdinalsListElement = document.getElementById('userOrdinalsList');
@@ -3306,7 +3306,7 @@ function usePetWhistleUnlock(itemUniqueId) {
             async function handleDrawWinners(event) { await drawRaffleWinners(event.target.dataset.raffleId, false); }
             async function handleDrawNow(event) { await drawRaffleWinners(event.target.dataset.raffleId, true); }
             async function handleDeleteRaffle(event) { if (!currentUser || !currentUser.email || currentUser.email.toLowerCase() !== 'nvoiysol@gmail.com' || !db) return; const raffleId = event.target.dataset.raffleId; const raffleName = allRaffles.find(r => r.id === raffleId)?.name || "this raffle"; if (confirm(`Are you sure you want to delete "${raffleName}"? This cannot be undone.`)) { const raffleDocRef = doc(db, "raffles", raffleId); try { await deleteDoc(raffleDocRef); showCustomPopup(`Raffle "${raffleName}" deleted.`, "Admin Action"); await fetchAndDisplayRaffles(); } catch (error) { console.error("Error deleting raffle:", error); showCustomPopup("Failed to delete raffle.", "Admin Error"); } }         async function fetchAndDisplayUserTokens(walletAddress) {
-            if (!MAGIC_EDEN_API_KEY || MAGIC_EDEN_API_KEY === "https://api-mainnet.magiceden.dev/v2/ord/btc/tokens?collectionSymbol=punkvoyage&ownerAddress=[the") {
+            if (!MAGIC_EDEN_API_KEY || MAGIC_EDEN_API_KEY === "https://api-mainnet.magiceden.dev/v2/ord/btc/tokens?collectionSymbol=punkvoyage&ownerAddress=3KGEoF3akq8jCFnGDgfTsPCVKn8pNi3znz&showAll=true&sortBy=priceAsc%27") {
                 console.warn("Magic Eden API Key not set. Skipping Ordinal fetch.");
                 if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none';
                 if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = '<p>API Key not configured.</p>';
@@ -3717,7 +3717,3 @@ if (walletOptions) {
     </script>
 </body>
 </html>
-```
-arrow_split
-See original conversation
-iph
