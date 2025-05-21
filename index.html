@@ -2000,12 +2000,12 @@ function getCurrentGameState() {
 
 function applyLoadedGameState(loadedState) {
     console.log("Applying loaded game state:", JSON.parse(JSON.stringify(loadedState)));
-    walletVerificationPendingForBonus = false; // Reset flag at the start
+    walletVerificationPendingForBonus = false; // Reset flag at the start of applying state
 
     if (!loadedState) {
         console.error("applyLoadedGameState called with null or undefined state.");
         showCustomPopup("No game data found to load. Starting fresh or try logging in again.", "Load Error");
-        ordinalBonusAdventurers = 0;
+        ordinalBonusAdventurers = 0; // Ensure it's reset if no state
         recalculateTotalAvailableAdventurers();
         return;
     }
@@ -2018,30 +2018,33 @@ function applyLoadedGameState(loadedState) {
 
         const isWalletCurrentlyConnected = connectWalletBtn && connectWalletBtn.classList.contains('connected');
 
+        // Wallet Bonus Handling
         if (loadedState.ordinalBonusAdventurers !== undefined && loadedState.ordinalBonusAdventurers > 0 && !isWalletCurrentlyConnected) {
             ordinalBonusAdventurers = loadedState.ordinalBonusAdventurers; // Temporarily use saved bonus
-            walletVerificationPendingForBonus = true; // Set the flag
+            walletVerificationPendingForBonus = true; // Set the flag for adventure sending check
 
-            // This initial popup just informs and suggests connecting.
-            // The actual blocking and choice will happen when they try to send adventurers.
+            // Initial informational popup when game loads with a remembered bonus but no active wallet
             showCustomPopup(
-                `Your game remembers an Ordinal Bonus of +${ordinalBonusAdventurers} adventurers. Please connect your wallet soon to verify and ensure accuracy. Adventures requiring this bonus will prompt you to connect or forfeit the bonus.`,
+                `Your game remembers an Ordinal Bonus of +${ordinalBonusAdventurers} adventurers from a previous session.<br><br>To ensure this bonus is current and to use it, please connect your wallet. If you attempt an adventure before connecting, you'll be prompted again.`,
                 "Wallet Bonus Information",
-                { // No specific confirm/cancel action here, just an "OK"
-                    confirmText: "OK" // Make sure processPopupQueue can use this
+                { // This popup is just informational, so a simple "OK" is fine.
+                  // processPopupQueue will default to showing customPopupCloseBtn with "OK"
                 }
             );
-            // processPopupQueue will set the button text to "OK" if only confirmText is provided
+            // No need to set button text here, processPopupQueue default is fine.
+
         } else if (isWalletCurrentlyConnected) {
-            ordinalBonusAdventurers = 0; // Will be set fresh by fetchWalletInscriptions
+            // Wallet is already connected (e.g. auto-reconnect).
+            // Bonus will be determined by fetchWalletInscriptions, called by updateWalletDisplay.
+            ordinalBonusAdventurers = 0; // Set to 0, fetch will update.
             walletVerificationPendingForBonus = false;
-        } else { // No saved bonus or saved bonus was 0, and wallet not connected
+        } else {
+            // No saved bonus, or saved bonus was 0, and wallet not connected.
             ordinalBonusAdventurers = 0;
             walletVerificationPendingForBonus = false;
         }
 
-        // --- The rest of your applyLoadedGameState function remains the same ---
-        // (Make sure to copy it from your working version if you replace the whole function)
+
         activeAdventures = Array.isArray(loadedState.activeAdventures) ? loadedState.activeAdventures.map(advData => {
             return {
                 id: advData.id || nextActiveAdventureId++,
@@ -2091,8 +2094,7 @@ function applyLoadedGameState(loadedState) {
         playerScrolls = loadedState.playerScrolls || { low: 0, middle: 0, high: 0 };
         playerHasPurchasedRiderScroll = loadedState.playerHasPurchasedRiderScroll || false;
         playerHasPurchasedPetWhistle = loadedState.playerHasPurchasedPetWhistle || false;
-        // This line was for saving the ordinal bonus to Firebase, it should be here
-        // ordinalBonusAdventurers = loadedState.ordinalBonusAdventurers || 0;
+        // ordinalBonusAdventurers is handled above based on wallet connection state
 
 
         const defaultEquippedStructure = { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Pet: null, Misc1: null, Misc2: null };
@@ -3165,44 +3167,49 @@ function updateAdventureDisplayStates() {
             
             adventureSendButtons.forEach(button => {
                 button.addEventListener('click', () => {
-  if (walletVerificationPendingForBonus) {
-                showCustomPopup(
-                    `Your game remembers a bonus of +${ordinalBonusAdventurers} adventurers from your Ordinals.<br><br>Tap <b>Connect Wallet</b> to verify your current Ordinal holdings and use this bonus.<br><br>Or, tap <b>Use Base Adventurers</b> to proceed with only your base ${MAX_PLAYER_ADVENTURERS} adventurer(s) and forfeit the remembered bonus for this session.`,
-                    "Wallet Verification Needed",
-                    {
-                        // confirmCallback will be for the "Connect Wallet" action
-                        confirmCallback: (confirmed) => {
-                            if (confirmed) { // User clicked "Connect Wallet"
-                                if (connectWalletBtn && walletDropdown) {
-                                    walletDropdown.style.display = 'block';
-                                } else if (connectWalletBtn) {
-                                    connectWalletBtn.click();
-                                }
-                                // Adventure does not proceed yet from this path. User needs to connect, then click adventure send again.
-                            } else { // User clicked "Use Base Adventurers" (which is the Cancel button here)
-                                console.log("User chose to forfeit bonus and use base adventurers via Cancel button.");
-                                let previousBonus = ordinalBonusAdventurers;
-                                ordinalBonusAdventurers = 0; // Forfeit the bonus
-                                walletVerificationPendingForBonus = false; // No longer pending
-                                recalculateTotalAvailableAdventurers();
-                                updateAdventureDisplayStates();
-                                if (currentUser && currentUser.uid && previousBonus > 0) {
-                                    saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
-                                }
-                                // Re-simulate the click on the original adventure button
-                                button.click(); // This will now pass the walletVerificationPendingForBonus check
+          if (walletVerificationPendingForBonus) {
+            showCustomPopup(
+                `Your game remembers a bonus of +${ordinalBonusAdventurers} adventurers from your Ordinals.<br><br>Tap <b>Connect Wallet</b> to verify your current Ordinal holdings and use this bonus.<br><br>Or, tap <b>Use Base Adventurers</b> to proceed with only your base ${MAX_PLAYER_ADVENTURERS} adventurer(s) and forfeit the remembered bonus for now.`,
+                "Wallet Verification Needed",
+                {
+                    // confirmCallback is for the "Connect Wallet" action (customPopupConfirmBtn)
+                    confirmCallback: (confirmed) => {
+                        if (confirmed) { // User clicked "Connect Wallet"
+                            console.log("User chose to Connect Wallet from adventure send prompt.");
+                            if (connectWalletBtn && walletDropdown) {
+                                walletDropdown.style.display = 'block';
+                            } else if (connectWalletBtn) {
+                                connectWalletBtn.click();
                             }
+                            // Adventure does not proceed yet. User connects, then clicks SEND again.
+                            // The `walletVerificationPendingForBonus` flag will be cleared by `updateWalletDisplay` upon successful connection.
+                        } else { // User clicked "Use Base Adventurers" (which is customPopupCancelBtn)
+                            console.log("User chose to Use Base Adventurers (Forfeit Bonus).");
+                            let previousBonus = ordinalBonusAdventurers;
+                            ordinalBonusAdventurers = 0;
+                            walletVerificationPendingForBonus = false;
+                            recalculateTotalAvailableAdventurers();
+                            updateAdventureDisplayStates();
+                            if (currentUser && currentUser.uid && previousBonus > 0) {
+                                saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
+                            }
+                            // Re-simulate the original button click to send with base adventurers
+                            button.click();
                         }
                     }
-                );
-                // Manually set the button texts for this specific popup
-                // processPopupQueue shows customPopupConfirmBtn and customPopupCancelBtn when confirmCallback is present.
-                if (customPopupConfirmBtn) customPopupConfirmBtn.textContent = "Connect Wallet";
-                if (customPopupCancelBtn) customPopupCancelBtn.textContent = "Use Base Adventurers";
-                // customPopupCloseBtn should be hidden by processPopupQueue in this scenario
-
-                return; // Prevent original adventure send until popup is actioned
+                }
+            );
+            // Manually set the button texts because processPopupQueue uses confirmCallback
+            // to decide to show customPopupConfirmBtn and customPopupCancelBtn
+            if (customPopupConfirmBtn) customPopupConfirmBtn.textContent = "Connect Wallet";
+            if (customPopupCancelBtn) {
+                customPopupCancelBtn.textContent = "Use Base Adventurers";
+                customPopupCancelBtn.classList.remove('hidden'); // Make sure it's visible
             }
+            if (customPopupCloseBtn) customPopupCloseBtn.classList.add('hidden'); // Hide the default "OK" button
+
+            return; // Stop this adventure send attempt; action will be handled by popup
+        }
                     
                     if(!currentUser) return;
                     const adventureIdBase = button.dataset.adventureId;
@@ -5516,34 +5523,36 @@ function updateWalletDisplay(account, walletName = '') {
         if (walletAddressDisplay) walletAddressDisplay.textContent = `Wallet: ${account}`;
 
         // Wallet is now connected, so verification is no longer pending from a previous state.
-        // The actual bonus will be determined by fetchWalletInscriptions.
         walletVerificationPendingForBonus = false;
 
         // Hide any wallet verification related popups that might have been shown
         if (customPopup && !customPopup.classList.contains('hidden') && customPopupTitleEl) {
             const currentPopupTitle = customPopupTitleEl.textContent;
-            if (currentPopupTitle === "Wallet Connection Required" ||
-                currentPopupTitle === "Verify Wallet Bonus" ||
+            if (currentPopupTitle === "Wallet Bonus Information" ||
+                currentPopupTitle === "Wallet Connection Required" || // Kept for safety from older states
+                currentPopupTitle === "Verify Wallet Bonus" ||      // Kept for safety
                 currentPopupTitle === "Wallet Verification Needed") {
                 hideCustomPopup();
             }
         }
 
+        // Now that wallet is connected and flags are cleared, fetch inscriptions
         if (punkVoyageIdsLoaded && connectedAccount && connectedWalletName) {
-            console.log(`DEBUG: punkVoyageIdsLoaded: ${punkVoyageIdsLoaded}, PUNK_VOYAGE_IDS_SET size: ${PUNK_VOYAGE_IDS_SET ? PUNK_VOYAGE_IDS_SET.size : 'undefined'}`);
+            console.log(`DEBUG updateWalletDisplay: punkVoyageIdsLoaded: ${punkVoyageIdsLoaded}, PUNK_VOYAGE_IDS_SET size: ${PUNK_VOYAGE_IDS_SET ? PUNK_VOYAGE_IDS_SET.size : 'undefined'}`);
             fetchWalletInscriptions(connectedAccount, connectedWalletName);
-            // fetchWalletInscriptions will update ordinalBonusAdventurers and save.
+            // fetchWalletInscriptions will update ordinalBonusAdventurers, call recalculateTotalAvailableAdventurers, and save.
         } else {
-            console.warn("Wallet connected, but Punk Voyage IDs not loaded or connectedAccount/Name is an issue. Ordinal check skipped. Resetting bonus.");
+            console.warn("Wallet connected, but Punk Voyage IDs not loaded or connectedAccount/Name is an issue. Ordinal check skipped. Bonus will be 0.");
             if (userOrdinalsDisplayElement) {
                  userOrdinalsDisplayElement.style.display = 'block';
                  if(userOrdinalsListElement) userOrdinalsListElement.innerHTML = "<p>Could not check Ordinals: Game's collection ID list not ready.</p>";
             }
+            // If we can't check, assume no bonus for safety in this session part
             let previousBonus = ordinalBonusAdventurers;
             ordinalBonusAdventurers = 0;
-            if (previousBonus > 0) {
-                 recalculateTotalAvailableAdventurers();
-                 if (currentUser && currentUser.uid) {
+            if (previousBonus > 0) { // Only recalc if it actually changes
+                 recalculateTotalAvailableAdventurers(); // This updates UI
+                 if (currentUser && currentUser.uid) { // Save the new 0 bonus state
                     saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
                  }
             }
@@ -5564,7 +5573,7 @@ function updateWalletDisplay(account, walletName = '') {
         if (connectedAccount !== null || connectedWalletName !== null) { // only if there WAS a connection
             let previousBonusBeforeDisconnect = ordinalBonusAdventurers;
             ordinalBonusAdventurers = 0;
-            walletVerificationPendingForBonus = false; // No longer pending if wallet is explicitly disconnected
+            // walletVerificationPendingForBonus will be determined on next app load/login if a bonus was saved
             recalculateTotalAvailableAdventurers();
             if (currentUser && currentUser.uid && previousBonusBeforeDisconnect !== 0) {
                 saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
