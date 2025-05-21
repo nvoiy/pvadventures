@@ -586,7 +586,7 @@
                 <div class="player-info-wallet"> 
                      <div class="player-stats" id="playerStats"> PLAYER <span id="playerNicknameDisplay">Voyager</span>, WELCOME<br> <span class="pv">PV = <span id="pvCount">0</span></span> , <span class="gold">GOLD = <span id="goldCount">0</span></span>, <span class="diamond">DIAMOND = <span id="diamondCount">0</span></span> <div class="wallet-address" id="walletAddressDisplay"></div> 
                     </div> 
-                    <div class="wallet-connector"><button class="connect-wallet-btn" id="connectWalletBtn">CONNECT WALLET</button><ul class="wallet-dropdown" id="walletDropdown"><li data-wallet="xverse_provider">XVERSE</li><li data-wallet="unisat">UNISAT</li><li data-wallet="satsconnect_magiceden">MAGIC EDEN</li><li data-wallet="satsconnect_general">ANY BTC WALLET</li></ul>
+                    <div class="wallet-connector"><button class="connect-wallet-btn" id="connectWalletBtn">CONNECT WALLET</button><ul class="wallet-dropdown" id="walletDropdown"><li data-wallet="satsconnect_xverse">XVERSE</li><li data-wallet="unisat">UNISAT</li><li data-wallet="satsconnect_magiceden">MAGIC EDEN</li><li data-wallet="satsconnect_general">ANY BTC WALLET</li></ul>
                     </div> 
                 </div>
                  <button id="signOutButton" class="hidden">Sign Out</button> 
@@ -3531,95 +3531,7 @@ function usePetWhistleUnlock(itemUniqueId) {
             if(connectWalletBtn && walletDropdown) { connectWalletBtn.addEventListener('click', (event) => { event.stopPropagation(); walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block'; }); document.addEventListener('click', (event) => { if (walletDropdown && connectWalletBtn && !connectWalletBtn.contains(event.target) && !walletDropdown.contains(event.target)) { walletDropdown.style.display = 'none'; } }); }
             async function connectWithSatsConnect(walletTypeHint = null) { if (typeof SatsConnect === 'undefined' || typeof SatsConnect.getAddresses === 'undefined') { showCustomPopup('Sats Connect library not loaded or not ready.', "Wallet Error"); return; } try { SatsConnect.getAddresses({ payload: { purposes: ['ordinals', 'payment'], message: 'Connect to Punk Voyage Adventures', network: { type: 'Mainnet' }, }, onFinish: (response) => { const ordAddress = response.addresses.find(a => a.purpose === 'ordinals'); const payAddress = response.addresses.find(a => a.purpose === 'payment'); let addr = ordAddress ? ordAddress.address : (payAddress ? payAddress.address : null); if (addr) { connectedAccount = addr; let name = walletTypeHint ? walletTypeHint.replace('satsconnect_', '').toUpperCase() : "BTC"; if (name === "GENERAL") name = "BTC"; connectedWalletName = name; updateWalletDisplay(connectedAccount, connectedWalletName); } }, onCancel: () => console.log('SatsConnect canceled.'), }); } catch (e) { console.error('SatsConnect error:', e); showCustomPopup('An error occurred with SatsConnect.', 'Wallet Error');} }
             async function connectUnisat() { try { if (typeof window.unisat !== 'undefined') { const accounts = await window.unisat.requestAccounts(); if (accounts && accounts.length > 0) { connectedAccount = accounts[0]; connectedWalletName = 'UniSat'; updateWalletDisplay(connectedAccount, 'UniSat'); window.unisat.on('accountsChanged', (newAccs) => { if (connectedWalletName === 'UniSat') { connectedAccount = (newAccs && newAccs.length > 0) ? newAccs[0] : null; if (!connectedAccount) connectedWalletName = null; updateWalletDisplay(connectedAccount, connectedAccount ? 'UniSat' : ''); } }); } } else { window.open('https://unisat.io/', '_blank'); } } catch (e) { console.error('UniSat error:', e); showCustomPopup('An error occurred with UniSat Wallet.', 'Wallet Error'); } }
-if (walletOptions) {
-    walletOptions.forEach(option => {
-        option.addEventListener('click', async (event) => {
-            const walletType = event.target.dataset.wallet;
-            if(walletDropdown) walletDropdown.style.display = 'none';
-            connectedAccount = null;
-            connectedWalletName = null;
-            updateWalletDisplay(null);
-
-            if (walletType === 'unisat') {
-                await connectUnisat();
-            } else if (walletType === 'xverse_provider') { // <<< ADD THIS ELSE IF BLOCK
-                await connectXverseProvider();
-            } else if (walletType && walletType.startsWith('satsconnect_')) {
-                // This will now handle 'satsconnect_magiceden' and 'satsconnect_general'
-                // and any other 'satsconnect_whatever' you might add.
-                // The original 'satsconnect_xverse' is effectively replaced by 'xverse_provider'
-                // unless you kept/added another list item for it.
-                const satsConnectHint = walletType.substring('satsconnect_'.length);
-                await connectWithSatsConnect(satsConnectHint);
-            }
-        });
-    });
-}
-            async function connectXverseProvider() {
-    let xverseBitcoinProvider; // Specific variable for Xverse provider
-    if (typeof window !== "undefined") {
-        const anyWindow = window; // Use 'any' to access potentially non-standard window properties
-        if (anyWindow?.XverseProviders?.BitcoinProvider) {
-            xverseBitcoinProvider = anyWindow.XverseProviders.BitcoinProvider;
-        }
-    }
-
-    if (!xverseBitcoinProvider) {
-        showCustomPopup('Xverse Wallet provider not found. Please ensure Xverse Wallet is installed and enabled.', "Wallet Error");
-        // Consider adding a link to Xverse website: window.open('https://www.xverse.app/', '_blank');
-        return;
-    }
-
-    try {
-        // Using 'wallet_connect' as per your snippet
-        const response = await xverseBitcoinProvider.request('wallet_connect', { addresses: ['ordinals', 'payment'] });
-
-        if (response.error) {
-            console.error('Xverse connection error in response:', response.error);
-            showCustomPopup(response.error.message || 'Xverse connection failed.', 'Wallet Error');
-            return;
-        }
-
-        // Processing the response as per your snippet
-        if (response.result && response.result.addresses && response.result.addresses.length > 0) {
-            const addresses = response.result.addresses
-                .filter(address => address.addressType !== "stacks"); // Filter out Stacks addresses as per your snippet
-
-            const ordAddressInfo = addresses.find(a => a.purpose === 'ordinals');
-            const payAddressInfo = addresses.find(a => a.purpose === 'payment');
-
-            let addrToUse = null;
-            // Prioritize ordinals address if available
-            if (ordAddressInfo) {
-                addrToUse = ordAddressInfo.address;
-            } else if (payAddressInfo) {
-                addrToUse = payAddressInfo.address;
-            }
-            
-            if (addrToUse) {
-                connectedAccount = addrToUse;
-                connectedWalletName = 'Xverse'; // Set wallet name
-                updateWalletDisplay(connectedAccount, connectedWalletName);
-                // You might want to check Xverse documentation for an 'accountsChanged' event
-                // to handle account switches in the wallet, similar to UniSat.
-            } else {
-                showCustomPopup('Could not retrieve a suitable Bitcoin address from Xverse Wallet.', 'Wallet Error');
-            }
-        } else {
-            showCustomPopup('No suitable addresses returned from Xverse Wallet.', 'Wallet Error');
-        }
-
-    } catch (e) { // Catch errors from the provider.request call itself or other issues
-        console.error('Xverse Wallet connection exception:', e);
-        let errorMessage = 'An error occurred with Xverse Wallet.';
-        if (e && e.message) {
-            errorMessage = e.message;
-        } else if (typeof e === 'string') {
-            errorMessage = e; // Some providers might throw string errors
-        }
-        showCustomPopup(errorMessage, 'Wallet Error');
-    }
-}
+            if (walletOptions) { walletOptions.forEach(option => { option.addEventListener('click', async (event) => { const walletType = event.target.dataset.wallet; if(walletDropdown) walletDropdown.style.display = 'none'; connectedAccount = null; connectedWalletName = null; updateWalletDisplay(null); if (walletType === 'unisat') await connectUnisat(); else if (walletType && walletType.startsWith('satsconnect_')) { await connectWithSatsConnect(walletType.split('_')[1]); } }); }); }
 
         }); // End of 'firebaseReady' event listener
     </script>
