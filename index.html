@@ -1762,6 +1762,8 @@ function resetGameStateToDefaults() {
     
     recalculateTotalAvailableAdventurers(); // Call this to set totalAvailableAdventurers correctly after reset
     updatePlayerCombatStatsDisplay();
+    ordinalBonusAdventurers = 0;
+
 }
 
 
@@ -1943,14 +1945,13 @@ function getCurrentGameState() {
         gold: currentGold || 0,
         diamonds: currentDiamonds || 0,
         activeAdventures: Array.isArray(activeAdventures) ? activeAdventures.map(adv => ({ id: adv.id, originalAdventureId: adv.originalAdventureId, name: adv.name || "Unknown Adventure", adventurers: adv.adventurers || 0, returnTime: adv.returnTime || Date.now(), pvReward: adv.pvReward || 0, goldChance: adv.goldChance || 0, diamondChance: adv.diamondChance || 0 })) : [],
-        // totalAvailableAdventurers is no longer saved directly
         playerInventory: Array.isArray(playerInventory) ? playerInventory : [],
         nextUniqueInstanceId: nextUniqueInstanceId,
         playerMaterials: playerMaterials || { ...initialPlayerMaterials },
         playerScrolls: playerScrolls || { low: 0, middle: 0, high: 0 },
         playerHasPurchasedRiderScroll: playerHasPurchasedRiderScroll || false,
         totalAdventuresCompleted: totalAdventuresCompleted || 0,
-        equippedItems: equippedItems || { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Pet: null, Misc1: null, Misc2: null }, // Added Pet back
+        equippedItems: equippedItems || { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: null, Ring2: null, Weapon: null, Pet: null, Misc1: null, Misc2: null },
         quests: Array.isArray(quests) ? quests.map(q => ({ id: q.id, text: q.text || "UKN", reward: q.reward || "0", completed: q.completed || false, progress: q.progress || 0, target: q.target || 0, adventureName: q.adventureName || null, metric: q.metric || null, claimed: q.claimed || false })) : [],
         activePotions: Array.isArray(activePotions) ? activePotions.map(p => ({ id: p.id, endTime: p.endTime || null, adventuresLeft: p.adventuresLeft !== undefined ? p.adventuresLeft : null })).filter(p => p.id) : [],
         playerAdventurerLevel: playerAdventurerLevel || 1,
@@ -1959,8 +1960,8 @@ function getCurrentGameState() {
         playerHasPurchasedPetWhistle: playerHasPurchasedPetWhistle || false,
         playerRaffleEntries: playerRaffleEntries || {},
         lastDailyRewardDayClaimed: lastDailyRewardDayClaimed,
-        lastDailyRewardClaimTimestamp: lastDailyRewardClaimTimestamp
-        // Note: ordinalBonusAdventurers is intentionally not saved, it's derived on wallet connect.
+        lastDailyRewardClaimTimestamp: lastDailyRewardClaimTimestamp,
+        ordinalBonusAdventurers: ordinalBonusAdventurers // <<< ADD THIS LINE
     };
 }
 
@@ -1978,7 +1979,48 @@ function applyLoadedGameState(loadedState) {
         currentGold = loadedState.gold || 0;
         currentDiamonds = loadedState.diamonds || 0;
 
-        ordinalBonusAdventurers = 0; // Reset here, will be set by wallet connection later
+     const isWalletCurrentlyConnected = connectWalletBtn && connectWalletBtn.classList.contains('connected');
+
+    if (loadedState.ordinalBonusAdventurers !== undefined && !isWalletCurrentlyConnected) {
+        ordinalBonusAdventurers = loadedState.ordinalBonusAdventurers;
+        if (ordinalBonusAdventurers > 0) {
+            showCustomPopup(
+                `Using your remembered Ordinal Bonus of +${ordinalBonusAdventurers} adventurers.<br><br>Please reconnect your wallet to verify this bonus and ensure its accuracy, especially if your Ordinal holdings might have changed.`,
+                "Verify Wallet Bonus",
+                {
+                    confirmCallback: (confirmed) => {
+                        if (confirmed) {
+                            // Try to open the wallet dropdown or directly trigger connection if possible.
+                            // If connectWalletBtn is the main button that opens the dropdown:
+                            if (connectWalletBtn && walletDropdown) {
+                                walletDropdown.style.display = 'block'; // Show dropdown
+                            } else if (connectWalletBtn) {
+                                connectWalletBtn.click(); // If it directly triggers a specific wallet
+                            }
+                        }
+                        // If cancelled, game proceeds with remembered bonus
+                    }
+                }
+            );
+            // Customize button texts after calling showCustomPopup
+            if (customPopupConfirmBtn) customPopupConfirmBtn.textContent = "Connect Wallet";
+            if (customPopupCancelBtn) customPopupCancelBtn.textContent = "Later";
+        } else { // No saved bonus, or saved bonus was 0, and wallet not connected
+            ordinalBonusAdventurers = 0;
+            // Optionally, if you want to prompt even if saved bonus is 0:
+            // if (!isWalletCurrentlyConnected) {
+            //     showCustomPopup("Connect your wallet to check for Ordinal bonuses!", "Wallet Connection");
+            // }
+        }
+    } else if (isWalletCurrentlyConnected) { // Wallet is already connected
+        // Don't use loadedState.ordinalBonusAdventurers, let fetchWalletInscriptions determine it.
+        // We set ordinalBonusAdventurers = 0 here so recalculateTotalAvailableAdventurers is correct
+        // before fetchWalletInscriptions potentially updates it.
+        ordinalBonusAdventurers = 0;
+        // fetchWalletInscriptions will be called by updateWalletDisplay if wallet is connected
+    } else { // No saved bonus AND no wallet connected
+        ordinalBonusAdventurers = 0;
+    }
 
         activeAdventures = Array.isArray(loadedState.activeAdventures) ? loadedState.activeAdventures.map(advData => {
             return {
@@ -5362,36 +5404,55 @@ function renderOwnedPunkVoyageOrdinals(ownedInscriptions) { // ownedInscriptions
             
             const connectWalletBtn = document.getElementById('connectWalletBtn'); const walletDropdown = document.getElementById('walletDropdown'); const walletOptions = walletDropdown.querySelectorAll('li'); const walletAddressDisplay = document.getElementById('walletAddressDisplay');
             let connectedAccount = null; let connectedWalletName = null;
-            function updateWalletDisplay(account, walletName = '') { if (account) { const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`; if(connectWalletBtn) { connectWalletBtn.textContent = `${walletName}: ${shortAddress}`; connectWalletBtn.classList.add('connected'); } 
-             if(walletAddressDisplay) walletAddressDisplay.textContent = `Wallet: ${account}`; 
-             
-            } 
-                    if (punkVoyageIdsLoaded && connectedAccount && connectedWalletName) { // Check if IDs are loaded
-            fetchWalletInscriptions(connectedAccount, connectedWalletName);
-            
-} else { // Wallet disconnected or not present
-    if (connectWalletBtn) {
-        connectWalletBtn.textContent = 'CONNECT WALLET';
-        connectWalletBtn.classList.remove('connected');
-    }
-    if (walletAddressDisplay) walletAddressDisplay.textContent = '';
-
-    if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none';
-    if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = '';
-
-    // Reset ordinal bonus and recalculate adventurers if wallet disconnects
-    if (connectedAccount !== null || connectedWalletName !== null) { // only if there WAS a connection
-        ordinalBonusAdventurers = 0;
-        recalculateTotalAvailableAdventurers();
-        if (currentUser && currentUser.uid) { // Save the state change if user is logged in
-            saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
+// --- START OF FULL updateWalletDisplay FUNCTION TO REPLACE ---
+// (This will replace your existing function from approx. line 5407 to its end)
+function updateWalletDisplay(account, walletName = '') {
+    if (account) { // This is line 5408 in your screenshot
+        const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
+        if (connectWalletBtn) {
+            connectWalletBtn.textContent = `${walletName}: ${shortAddress}`;
+            connectWalletBtn.classList.add('connected');
         }
-    }
-    connectedAccount = null; // Ensure these are nullified
-    connectedWalletName = null;
-}
-                
+        if (walletAddressDisplay) walletAddressDisplay.textContent = `Wallet: ${account}`;
+
+        // START OF ADDED CODE TO HIDE "VERIFY" POPUP
+        // This hides the specific "Verify Wallet Bonus" popup if the user connects their wallet
+        if (customPopup && !customPopup.classList.contains('hidden') &&
+            customPopupTitleEl && customPopupTitleEl.textContent === "Verify Wallet Bonus") {
+            hideCustomPopup();
+        }
+        // END OF ADDED CODE TO HIDE "VERIFY" POPUP
+
+        if (punkVoyageIdsLoaded && connectedAccount && connectedWalletName) { // Check if IDs are loaded (This is around line 5418)
+            fetchWalletInscriptions(connectedAccount, connectedWalletName);
+        }
+    } else { // Wallet disconnected or not present (This is line 5421 in your screenshot)
+        if (connectWalletBtn) {
+            connectWalletBtn.textContent = 'CONNECT WALLET';
+            connectWalletBtn.classList.remove('connected');
+        }
+        if (walletAddressDisplay) walletAddressDisplay.textContent = '';
+
+        if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none';
+        if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = '';
+
+        // Reset ordinal bonus and recalculate adventurers if wallet disconnects (This is around line 5432)
+        // This part should already be in your code from the previous step.
+        if (connectedAccount !== null || connectedWalletName !== null) { // only if there WAS a connection
+            let previousBonusBeforeDisconnect = ordinalBonusAdventurers;
+            ordinalBonusAdventurers = 0; // Bonus is gone if wallet disconnects actively
+            recalculateTotalAvailableAdventurers();
+            // Save game state if the bonus actually changed due to disconnect
+            if (currentUser && currentUser.uid && previousBonusBeforeDisconnect !== 0) {
+                saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
             }
+        }
+
+        connectedAccount = null;
+        connectedWalletName = null;
+    }
+}
+// --- END OF FULL updateWalletDisplay FUNCTION TO REPLACE ---
             if(connectWalletBtn && walletDropdown) { connectWalletBtn.addEventListener('click', (event) => { event.stopPropagation(); walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block'; }); document.addEventListener('click', (event) => { if (walletDropdown && connectWalletBtn && !connectWalletBtn.contains(event.target) && !walletDropdown.contains(event.target)) { walletDropdown.style.display = 'none'; } }); }
        async function connectWithSatsConnect(walletTypeHint = null) {
         // Check for SatsConnect availability right when the function is called
