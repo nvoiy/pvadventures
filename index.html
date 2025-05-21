@@ -1095,18 +1095,23 @@ function updateAdventureCardPvDisplay() {
                     prizeSpan.innerHTML = prizeSpan.innerHTML.replace(/(PRIZE\s*=\s*)(\d+)(\s*PV TOKENS)/i, `$1${displayPv}$3`);
                     console.log(`Updated PV display for ${button.dataset.adventureName} to ${displayPv}`);
                 }
+// Debug: Check the button right before trying to add the listener
+            console.log("DEBUG_POINT_1: Attempting to add click listener. refreshOrdinalBonusBtn is:", refreshOrdinalBonusBtn); 
+
+            // --- Refresh Ordinal Bonus Button Listener (TEMPORARY DEBUG VERSION with more logs) ---
             if (refreshOrdinalBonusBtn) {
-                refreshOrdinalBonusBtn.addEventListener('click', () => { // Removed async for this simple test
-                    alert("Refresh button was clicked!");
-                    console.log("Refresh Ordinal Bonus button was definitely clicked - simple test.");
+                console.log("DEBUG_POINT_2: refreshOrdinalBonusBtn is TRUTHY. Adding click listener now."); 
+                refreshOrdinalBonusBtn.addEventListener('click', () => {
+                    alert("Refresh button was clicked! Hooray!"); // Changed alert message slightly
+                    console.log("DEBUG_POINT_4: Click event fired! Alert should have shown.");
                 });
-                 console.log("Click listener for refreshOrdinalBonusBtn SHOULD BE ATTACHED.");
+                console.log("DEBUG_POINT_3: Click listener for refreshOrdinalBonusBtn SHOULD BE ATTACHED.");
             } else {
-                // If refreshOrdinalBonusBtn was somehow null HERE, this would log.
-                // Based on your screenshot, it shouldn't be null, but this is a failsafe log.
-                console.error("CRITICAL: refreshOrdinalBonusBtn IS NULL OR FALSY just before adding listener. This should not happen if it was found earlier.");
+                console.error("DEBUG_POINT_ERROR: refreshOrdinalBonusBtn was NULL or FALSY here. This is unexpected if DEBUG_POINT_1 showed the element.");
             }
-            });
+            // The new block ends here
+
+        }); 
         } 
             console.log("'firebaseReady' event received by main script. Initializing game logic.");
             
