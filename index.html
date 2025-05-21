@@ -1159,7 +1159,7 @@ function updateAdventureCardPvDisplay() {
             // --- Game State Variables ---
             let currentUser = null; 
             let userNickname = ''; 
-            const MAX_PLAYER_ADVENTURERS = 5;
+            const MAX_PLAYER_ADVENTURERS = 1;
             let currentPvTokens = 0; let currentGold = 0; let currentDiamonds = 0;
             let activeAdventures = []; let nextActiveAdventureId = 0;
             let totalAvailableAdventurers = MAX_PLAYER_ADVENTURERS;
@@ -5078,11 +5078,10 @@ async function fetchWalletInscriptions(userAddress, walletName) {
             return;
         }
 
-        // --- BONUS LOGIC ---
-        // Simple: 1 bonus adventurer for each owned Punk Voyage Ordinal, up to a max.
-        const MAX_BONUS_ADVENTURERS = 5; // Example: Max 5 bonus adventurers
-        ordinalBonusAdventurers = Math.min(ownedPunkVoyageIds.length, MAX_BONUS_ADVENTURERS);
-        // --- END BONUS LOGIC ---
+// --- BONUS LOGIC ---
+// Each owned Punk Voyage Ordinal gives +1 adventurer.
+ordinalBonusAdventurers = ownedPunkVoyageIds.length;
+// --- END BONUS LOGIC ---
 
 
         if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>Found ${ownedPunkVoyageIds.length} Punk Voyage Ordinal(s). Fetching details... You get ${ordinalBonusAdventurers} bonus adventurer(s)!</p>`;
@@ -5125,36 +5124,46 @@ async function fetchWalletInscriptions(userAddress, walletName) {
     }
 }
 
-function renderOwnedPunkVoyageOrdinals(ownedInscriptions) { // ownedInscriptions is now an array of {id, name, imageUrl}
-    if (!userOrdinalsListElement) return;
-    userOrdinalsListElement.innerHTML = ''; // Clear previous
+function renderOwnedPunkVoyageOrdinals(ownedInscriptions) { // ownedInscriptions is an array of {id, name, imageUrl}
+    if (!userOrdinalsDisplayElement || !userOrdinalsListElement) return;
+
+    userOrdinalsListElement.innerHTML = ''; // Clear previous list items
+
+    // Get the <h4> element for the title, or create it if it doesn't exist
+    let titleElement = userOrdinalsDisplayElement.querySelector('h4');
+    if (!titleElement) {
+        titleElement = document.createElement('h4');
+        // Ensure the title is the first child of userOrdinalsDisplayElement, before userOrdinalsListElement
+        if (userOrdinalsDisplayElement.firstChild) {
+            userOrdinalsDisplayElement.insertBefore(titleElement, userOrdinalsDisplayElement.firstChild);
+        } else {
+            userOrdinalsDisplayElement.appendChild(titleElement);
+        }
+    }
 
     if (!ownedInscriptions || ownedInscriptions.length === 0) {
-        userOrdinalsListElement.innerHTML = `<p>You don't own any Punk Voyage Ordinals from the fixed list in this wallet.</p>`;
+        titleElement.textContent = "MY PUNK VOYAGE ORDINALS (0)";
+        userOrdinalsListElement.innerHTML = `<p style="text-align:center; font-size:0.9em;">You don't own any Punk Voyage Ordinals from this collection in the connected wallet.</p>`;
+        userOrdinalsDisplayElement.style.display = 'block'; // Ensure the section is visible to show the "0" count
         return;
     }
 
-    ownedInscriptions.forEach(insc => {
-        const tokenDiv = document.createElement('div');
-        tokenDiv.className = 'ordinal-item'; // You can style this class
-        tokenDiv.style.border = '1px solid var(--border-color)';
-        tokenDiv.style.padding = '5px';
-        tokenDiv.style.borderRadius = '4px';
-        tokenDiv.style.textAlign = 'center';
-        tokenDiv.style.width = '80px'; // Adjust size as needed
-        tokenDiv.style.margin = '5px';
+    titleElement.textContent = `MY PUNK VOYAGE ORDINALS (${ownedInscriptions.length})`;
 
-        let content = '';
-        if (insc.imageUrl) {
-             // Use the direct content URL for the image
-            content += `<img src="${insc.imageUrl}" alt="${insc.name}" style="width: 60px; height: 60px; object-fit: contain; border-radius: 3px; margin-bottom: 3px;">`;
-        } else {
-            content += `<div style="width: 60px; height: 60px; background-color: #333; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8em; border-radius: 3px; margin-bottom: 3px;">No Image</div>`;
-        }
-        content += `<p style="font-size: 0.7em; margin: 0; word-break: break-all;">${insc.name}</p>`;
-        tokenDiv.innerHTML = content;
-        userOrdinalsListElement.appendChild(tokenDiv);
+    const ul = document.createElement('ul');
+    ul.style.listStyleType = 'none'; // Remove bullet points
+    ul.style.paddingLeft = '0';
+    ul.style.textAlign = 'center'; // Center the list items
+
+    ownedInscriptions.forEach(insc => {
+        const li = document.createElement('li');
+        li.textContent = insc.name; // insc.name already includes '#' from fetchWalletInscriptions
+        li.style.fontSize = '0.9em';
+        li.style.marginBottom = '3px';
+        ul.appendChild(li);
     });
+    userOrdinalsListElement.appendChild(ul);
+    userOrdinalsDisplayElement.style.display = 'block'; // Make sure the section is visible
 }
 
             // --- Leaderboard Logic ---
@@ -5399,12 +5408,30 @@ function renderOwnedPunkVoyageOrdinals(ownedInscriptions) { // ownedInscriptions
             } 
                     if (punkVoyageIdsLoaded && connectedAccount && connectedWalletName) { // Check if IDs are loaded
             fetchWalletInscriptions(connectedAccount, connectedWalletName);
+            
+} else { // Wallet disconnected or not present
+    if (connectWalletBtn) {
+        connectWalletBtn.textContent = 'CONNECT WALLET';
+        connectWalletBtn.classList.remove('connected');
+    }
+    if (walletAddressDisplay) walletAddressDisplay.textContent = '';
+
+    if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none';
+    if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = '';
+
+    // Reset ordinal bonus and recalculate adventurers if wallet disconnects
+    if (connectedAccount !== null || connectedWalletName !== null) { // only if there WAS a connection
+        ordinalBonusAdventurers = 0;
+        recalculateTotalAvailableAdventurers();
+        if (currentUser && currentUser.uid) { // Save the state change if user is logged in
+            saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
         }
-            else { if(connectWalletBtn) { connectWalletBtn.textContent = 'CONNECT WALLET'; connectWalletBtn.classList.remove('connected'); } 
-            if(walletAddressDisplay) walletAddressDisplay.textContent = '';
-                    if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none';
-        if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = '';
-                } }
+    }
+    connectedAccount = null; // Ensure these are nullified
+    connectedWalletName = null;
+}
+                
+            }
             if(connectWalletBtn && walletDropdown) { connectWalletBtn.addEventListener('click', (event) => { event.stopPropagation(); walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block'; }); document.addEventListener('click', (event) => { if (walletDropdown && connectWalletBtn && !connectWalletBtn.contains(event.target) && !walletDropdown.contains(event.target)) { walletDropdown.style.display = 'none'; } }); }
        async function connectWithSatsConnect(walletTypeHint = null) {
         // Check for SatsConnect availability right when the function is called
