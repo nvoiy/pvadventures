@@ -1030,24 +1030,13 @@
                     alert("CRITICAL FIREBASE ERROR: " + error.message + "\nCheck Firebase config and internet connection."); 
                 }
             }, 100);
-            if (!punkVoyageIdsLoaded) { // <--- ADD THIS CHECK
-            punkVoyageIdsLoaded = true; // <--- SET FLAG
-            console.log("firebaseReady: About to call loadPunkVoyageIds()");
-            try {
-                const idsSuccessfullyLoaded = await loadPunkVoyageIds();
-                // ... (rest of the try block)
-            } catch (e) {
-                // ... (catch block)
-            }
-        } else {
-            console.log("firebaseReady: Skipping loadPunkVoyageIds as it was already attempted.");
-        }
         }
     </script>
 
     <script>
-        {let punkVoyageIdsLoaded = false;}
+        
         document.addEventListener('firebaseReady', async () => {
+                   let punkVoyageIdsLoaded = false;
                     console.log("FirebaseReady event triggered. Starting main script logic.");
                     {      
                         const userOrdinalsDisplayElement = document.getElementById('userOrdinalsDisplay');
