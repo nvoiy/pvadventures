@@ -42,6 +42,26 @@
             --item-upgrade-plus3-border: #BF00BF; /* Bright Purple (MediumOrchid/DarkMagenta like) */
             --item-upgrade-plus4-border: #FFA500; /* Orange */
             --item-upgrade-plus5-border: #DC143C; /* Dark Red */
+            #refreshOrdinalBonusBtn {
+    background-color: var(--button-bg); /* Use your existing button background color */
+    border: 1px solid var(--button-border); /* Use your existing button border */
+    padding: 4px 6px; /* Adjust padding to make it look nice and not too big */
+    cursor: pointer;
+    line-height: 0; /* Helps keep the button tight around the icon */
+    border-radius: 4px; /* Optional: for rounded corners */
+    transition: filter 0.2s; /* Smooth hover effect */
+}
+
+#refreshOrdinalBonusBtn:hover {
+    filter: brightness(0.85); /* Same hover as your social icons */
+}
+
+#refreshOrdinalBonusBtn img {
+    transform: rotate(90deg); /* Rotates the icon 90 degrees clockwise */
+    width: 16px;  /* Adjust for desired icon size */
+    height: 16px; /* Adjust for desired icon size */
+    vertical-align: middle; /* Helps with alignment if line-height isn't 0 */
+}
         }
 
         body {
@@ -612,7 +632,12 @@
         </header>
         <main class="main-content">
             <aside class="left-sidebar"> 
-                <div id="availableAdventurersDisplay"> Available Adventurers: <span id="availableAdventurersCount">5</span> </div> 
+<div id="availableAdventurersDisplay" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+    Available Adventurers: <span id="availableAdventurersCount">5</span>
+    <button id="refreshOrdinalBonusBtn" title="Refresh Ordinal Bonus & Adventurer Count">
+        <img src="https://green-tough-gopher-310.mypinata.cloud/ipfs/bafkreigehaezkeralenqxjg5sk6q7s3flkxuz5iu7xlseztd5ptvxm2tnq" alt="Refresh" style="display: block;">
+    </button>
+</div>
                 <div id="playerCombatStatsDisplay" class="materials-display" style="text-align:center;">
                     <h4>COMBAT STATS</h4>
                     <p>Attack: <span id="playerAttackStat">0</span></p>
@@ -1070,6 +1095,29 @@ function updateAdventureCardPvDisplay() {
                     prizeSpan.innerHTML = prizeSpan.innerHTML.replace(/(PRIZE\s*=\s*)(\d+)(\s*PV TOKENS)/i, `$1${displayPv}$3`);
                     console.log(`Updated PV display for ${button.dataset.adventureName} to ${displayPv}`);
                 }
+                            if (refreshOrdinalBonusBtn) {
+                refreshOrdinalBonusBtn.addEventListener('click', async () => {
+                    console.log("Refresh Ordinal Bonus button clicked.");
+                    if (connectedAccount && connectedWalletName && punkVoyageIdsLoaded) {
+                        showCustomPopup("Re-checking Ordinal bonus... This may take a moment.", "Refreshing Bonus");
+                        refreshOrdinalBonusBtn.disabled = true; 
+                        try {
+                            await fetchWalletInscriptions(connectedAccount, connectedWalletName);
+                        } catch (error) {
+                            console.error("Error during manual Ordinal bonus refresh:", error);
+                            showCustomPopup("An error occurred while refreshing the bonus.", "Refresh Error");
+                        } finally {
+                            refreshOrdinalBonusBtn.disabled = false; 
+                        }
+                    } else if (!punkVoyageIdsLoaded) {
+                        showCustomPopup("Collection data is still loading. Please try again in a moment.", "Info");
+                    } else if (!connectedAccount || !connectedWalletName) {
+                        showCustomPopup("Please connect your wallet first to check for Ordinal bonuses.", "Wallet Needed");
+                    } else {
+                        showCustomPopup("Cannot refresh bonus at this time. Ensure wallet is connected and data is loaded.", "Info");
+                    }
+                });
+            }
             });
         } 
             console.log("'firebaseReady' event received by main script. Initializing game logic.");
@@ -1163,6 +1211,8 @@ function updateAdventureCardPvDisplay() {
             const itemSelectionModalTitle = document.getElementById('itemSelectionModalTitle');
             const itemSelectionModalList = document.getElementById('itemSelectionModalList');
             const itemSelectionModalCloseBtn = document.getElementById('itemSelectionModalCloseBtn');
+            const refreshOrdinalBonusBtn = document.getElementById('refreshOrdinalBonusBtn');
+
 
             // --- Game State Variables ---
             let currentUser = null; 
