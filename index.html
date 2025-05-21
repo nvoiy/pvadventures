@@ -5349,11 +5349,29 @@ function renderOwnedPunkVoyageOrdinals(ownedInscriptions) { // ownedInscriptions
             
             const connectWalletBtn = document.getElementById('connectWalletBtn'); const walletDropdown = document.getElementById('walletDropdown'); const walletOptions = walletDropdown.querySelectorAll('li'); const walletAddressDisplay = document.getElementById('walletAddressDisplay');
             let connectedAccount = null; let connectedWalletName = null;
-            function updateWalletDisplay(account, walletName = '') { if (account) { const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`; if(connectWalletBtn) { connectWalletBtn.textContent = `${walletName}: ${shortAddress}`; connectWalletBtn.classList.add('connected'); } 
-             if(walletAddressDisplay) walletAddressDisplay.textContent = `Wallet: ${account}`;    
-            } else { if(connectWalletBtn) { connectWalletBtn.textContent = 'CONNECT WALLET'; connectWalletBtn.classList.remove('connected'); } if(walletAddressDisplay) walletAddressDisplay.textContent = '';
-                } }
-            if(connectWalletBtn && walletDropdown) { connectWalletBtn.addEventListener('click', (event) => { event.stopPropagation(); walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block'; }); document.addEventListener('click', (event) => { if (walletDropdown && connectWalletBtn && !connectWalletBtn.contains(event.target) && !walletDropdown.contains(event.target)) { walletDropdown.style.display = 'none'; } }); }
+function updateWalletDisplay(account, walletName = '') {
+    if (account) {
+        const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
+        if (connectWalletBtn) {
+            connectWalletBtn.textContent = `${walletName}: ${shortAddress}`;
+            connectWalletBtn.classList.add('connected');
+        }
+        if (walletAddressDisplay) walletAddressDisplay.textContent = `Wallet: ${account}`;
+        // ADD THIS LINE HERE:
+        if (punkVoyageIdsLoaded && connectedAccount && connectedWalletName) { // Check if IDs are loaded
+            fetchWalletInscriptions(connectedAccount, connectedWalletName);
+        }
+    } else {
+        if (connectWalletBtn) {
+            connectWalletBtn.textContent = 'CONNECT WALLET';
+            connectWalletBtn.classList.remove('connected');
+        }
+        if (walletAddressDisplay) walletAddressDisplay.textContent = '';
+        // ADD THIS LINE HERE TO HIDE/CLEAR THE ORDINAL DISPLAY ON DISCONNECT:
+        if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none';
+        if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = '';
+    }
+}
             async function connectWithSatsConnect(walletTypeHint = null) { if (typeof SatsConnect === 'undefined' || typeof SatsConnect.getAddresses === 'undefined') { showCustomPopup('Sats Connect library not loaded or not ready.', "Wallet Error"); return; } try { SatsConnect.getAddresses({ payload: { purposes: ['ordinals', 'payment'], message: 'Connect to Punk Voyage Adventures', network: { type: 'Mainnet' }, }, onFinish: (response) => { const ordAddress = response.addresses.find(a => a.purpose === 'ordinals'); const payAddress = response.addresses.find(a => a.purpose === 'payment'); let addr = ordAddress ? ordAddress.address : (payAddress ? payAddress.address : null); if (addr) { connectedAccount = addr; let name = walletTypeHint ? walletTypeHint.replace('satsconnect_', '').toUpperCase() : "BTC"; if (name === "GENERAL") name = "BTC"; connectedWalletName = name; updateWalletDisplay(connectedAccount, connectedWalletName); } }, onCancel: () => console.log('SatsConnect canceled.'), }); } catch (e) { console.error('SatsConnect error:', e); showCustomPopup('An error occurred with SatsConnect.', 'Wallet Error');} }
             async function connectUnisat() { try { if (typeof window.unisat !== 'undefined') { const accounts = await window.unisat.requestAccounts(); if (accounts && accounts.length > 0) { connectedAccount = accounts[0]; connectedWalletName = 'UniSat'; updateWalletDisplay(connectedAccount, 'UniSat'); window.unisat.on('accountsChanged', (newAccs) => { if (connectedWalletName === 'UniSat') { connectedAccount = (newAccs && newAccs.length > 0) ? newAccs[0] : null; if (!connectedAccount) connectedWalletName = null; updateWalletDisplay(connectedAccount, connectedAccount ? 'UniSat' : ''); } }); } } else { window.open('https://unisat.io/', '_blank'); } } catch (e) { console.error('UniSat error:', e); showCustomPopup('An error occurred with UniSat Wallet.', 'Wallet Error'); } }
 if (walletOptions) {
