@@ -622,6 +622,12 @@
                     <h4>MY MATERIALS</h4> 
                     <div id="materialsListContainer"></div>
                 </div> 
+                <div id="userOrdinalsDisplay" class="materials-display" style="text-align:center; display: none; margin-top: 20px;">
+                    <h4>MY PUNK VOYAGE ORDINALS</h4>
+                    <div id="userOrdinalsList" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-height: 300px; overflow-y: auto;">
+                        <!-- Fetched Ordinals will be listed here -->
+                    </div>
+                </div>
                 <div class="twitter-feed-container" id="twitter-widget-container"> <a class="twitter-timeline" data-dnt="true" href="https://twitter.com/nvart_?ref_src=twsrc%5Etfw">Tweets by nvart_</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> </div> 
             </aside>
             <div class="main-content-area">
@@ -1029,7 +1035,16 @@
 
     <script>
         document.addEventListener('firebaseReady', () => {
-            function updateAdventureCardPvDisplay() {
+            {
+        // --- ADD YOUR API KEY HERE ---
+        // IMPORTANT: Read the security warning about exposing API keys in frontend code!
+        const MAGIC_EDEN_API_KEY = "https://api-mainnet.magiceden.dev/v2/ord/btc/tokens?collectionSymbol=punkvoyage&ownerAddress=[the"; // <--- REPLACE THIS
+        const COLLECTION_SYMBOL = "punkvoyage"; // Your collection symbol
+                const userOrdinalsDisplayElement = document.getElementById('userOrdinalsDisplay');
+        const userOrdinalsListElement = document.getElementById('userOrdinalsList');
+
+        function updateAdventureCardPvDisplay() {
+            function updateAdventureCardPvDisplay() {}}
     console.log("Updating adventure card PV displays...");
     const adventureSendButtons = document.querySelectorAll('.adventure-send-btn');
     adventureSendButtons.forEach(button => {
@@ -1721,6 +1736,8 @@ equippedItems = { Armour: null, Helmet: null, Boots: null, Amulet: null, Ring1: 
                 selectedItemForUpgrade = null;
                 selectedScrollForUpgrade = null;
                 isGoldToDiamondSwap = true; updateSwapDisplay();
+                                if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none';
+                if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = '';
 
 
                 if(sidebarActiveAdventuresList) sidebarActiveAdventuresList.innerHTML = '';
@@ -3288,7 +3305,79 @@ function usePetWhistleUnlock(itemUniqueId) {
             async function drawRaffleWinners(raffleId, isDrawingNow = false) { if (!currentUser || !currentUser.email || currentUser.email.toLowerCase() !== 'nvoiysol@gmail.com' || !db) return; const raffleDocRef = doc(db, "raffles", raffleId); try { const raffleDocSnap = await getDoc(raffleDocRef); if (!raffleDocSnap.exists()) { showCustomPopup("Raffle document not found.", "Admin Error"); return false; } const raffleData = raffleDocSnap.data(); if (!isDrawingNow && raffleData.status === 'active' && raffleData.endTime.toDate().getTime() > Date.now()) { showCustomPopup("Raffle not ended yet.", "Admin Action Failed"); return false; } if (raffleData.winners && raffleData.winners.length > 0) { showCustomPopup("Winners already drawn.", "Admin Info"); return false; } await updateDoc(raffleDocRef, { status: 'drawing_winners', endTime: Timestamp.now() }); const localRaffle = allRaffles.find(r => r.id === raffleId); if(localRaffle) { localRaffle.status = 'drawing_winners'; localRaffle.endTime = Date.now(); } renderWhitelistRaffles(); const entriesColRef = collection(db, "raffles", raffleId, "entries"); const entriesSnapshot = await getDocs(entriesColRef); const allEntryNicknames = []; entriesSnapshot.forEach(entryDoc => allEntryNicknames.push(entryDoc.data().nickname || entryDoc.id)); if (allEntryNicknames.length === 0) { await updateDoc(raffleDocRef, { status: 'winners_announced', winners: [] }); if(localRaffle) { localRaffle.status = 'winners_announced'; localRaffle.winners = [];} showCustomPopup(`No entries for ${raffleData.name}.`, "Raffle Result"); renderWhitelistRaffles(); return true; } let potentialWinners = [...new Set(allEntryNicknames)]; const drawnWinners = []; for (let i = 0; i < raffleData.maxWinners && potentialWinners.length > 0; i++) { const winnerIndex = Math.floor(Math.random() * potentialWinners.length); drawnWinners.push(potentialWinners.splice(winnerIndex, 1)[0]); } await updateDoc(raffleDocRef, { winners: drawnWinners, status: 'winners_announced' }); if(localRaffle) { localRaffle.winners = drawnWinners; localRaffle.status = 'winners_announced'; } showCustomPopup(`Winners drawn for ${raffleData.name}!`, "Raffle Result"); renderWhitelistRaffles(); return true; } catch (error) { console.error("Error drawing winners: ", error); showCustomPopup("Failed to draw winners.", "Admin Error"); const localRaffle = allRaffles.find(r => r.id === raffleId); if(localRaffle && localRaffle.status === 'drawing_winners') localRaffle.status = (localRaffle.endTime > Date.now() ? 'active' : 'ended');  renderWhitelistRaffles(); return false; } }
             async function handleDrawWinners(event) { await drawRaffleWinners(event.target.dataset.raffleId, false); }
             async function handleDrawNow(event) { await drawRaffleWinners(event.target.dataset.raffleId, true); }
-            async function handleDeleteRaffle(event) { if (!currentUser || !currentUser.email || currentUser.email.toLowerCase() !== 'nvoiysol@gmail.com' || !db) return; const raffleId = event.target.dataset.raffleId; const raffleName = allRaffles.find(r => r.id === raffleId)?.name || "this raffle"; if (confirm(`Are you sure you want to delete "${raffleName}"? This cannot be undone.`)) { const raffleDocRef = doc(db, "raffles", raffleId); try { await deleteDoc(raffleDocRef); showCustomPopup(`Raffle "${raffleName}" deleted.`, "Admin Action"); await fetchAndDisplayRaffles(); } catch (error) { console.error("Error deleting raffle:", error); showCustomPopup("Failed to delete raffle.", "Admin Error"); } } }
+            async function handleDeleteRaffle(event) { if (!currentUser || !currentUser.email || currentUser.email.toLowerCase() !== 'nvoiysol@gmail.com' || !db) return; const raffleId = event.target.dataset.raffleId; const raffleName = allRaffles.find(r => r.id === raffleId)?.name || "this raffle"; if (confirm(`Are you sure you want to delete "${raffleName}"? This cannot be undone.`)) { const raffleDocRef = doc(db, "raffles", raffleId); try { await deleteDoc(raffleDocRef); showCustomPopup(`Raffle "${raffleName}" deleted.`, "Admin Action"); await fetchAndDisplayRaffles(); } catch (error) { console.error("Error deleting raffle:", error); showCustomPopup("Failed to delete raffle.", "Admin Error"); } }         async function fetchAndDisplayUserTokens(walletAddress) {
+            if (!MAGIC_EDEN_API_KEY || MAGIC_EDEN_API_KEY === "https://api-mainnet.magiceden.dev/v2/ord/btc/tokens?collectionSymbol=punkvoyage&ownerAddress=[the") {
+                console.warn("Magic Eden API Key not set. Skipping Ordinal fetch.");
+                if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none';
+                if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = '<p>API Key not configured.</p>';
+                return;
+            }
+            if (!walletAddress) {
+                if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none';
+                if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = '';
+                return;
+            }
+
+            if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'block';
+            if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = '<p>Loading your Ordinals...</p>';
+
+            const apiUrl = `https://api-mainnet.magiceden.dev/v2/ord/btc/tokens?collectionSymbol=${COLLECTION_SYMBOL}&ownerAddress=${walletAddress}&showAll=true&sortBy=inscriptionNumber&limit=50`; // Added limit
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${MAGIC_EDEN_API_KEY}`
+                    }
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("Magic Eden API Error:", response.status, errorData);
+                    if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>Error fetching Ordinals: ${errorData.message || response.statusText}</p>`;
+                    if (response.status === 401) { // Unauthorized
+                        if (userOrdinalsListElement) userOrdinalsListElement.innerHTML += '<p>Please check your API Key.</p>';
+                    }
+                    return;
+                }
+
+                const data = await response.json();
+                renderUserTokens(data.tokens);
+            } catch (error) {
+                console.error("Error fetching or parsing Ordinals data:", error);
+                if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = '<p>Could not connect to Ordinals service.</p>';
+            }
+        }
+
+        function renderUserTokens(tokens) {
+            if (!userOrdinalsListElement) return;
+            userOrdinalsListElement.innerHTML = ''; // Clear previous
+
+            if (!tokens || tokens.length === 0) {
+                userOrdinalsListElement.innerHTML = `<p>No Punk Voyage Ordinals found in this wallet for collection '${COLLECTION_SYMBOL}'.</p>`;
+                return;
+            }
+
+            tokens.forEach(token => {
+                const tokenDiv = document.createElement('div');
+                tokenDiv.className = 'ordinal-item';
+                tokenDiv.style.border = '1px solid var(--border-color)';
+                tokenDiv.style.padding = '5px';
+                tokenDiv.style.borderRadius = '4px';
+                tokenDiv.style.textAlign = 'center';
+                tokenDiv.style.width = '80px'; // Adjust size as needed
+
+                let content = '';
+                if (token.meta && token.meta.image) {
+                    content += `<img src="${token.meta.image}" alt="${token.meta.name || token.id}" style="width: 60px; height: 60px; object-fit: contain; border-radius: 3px; margin-bottom: 3px;">`;
+                } else {
+                    content += `<div style="width: 60px; height: 60px; background-color: #333; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8em; border-radius: 3px; margin-bottom: 3px;">No Image</div>`;
+                }
+                content += `<p style="font-size: 0.7em; margin: 0; word-break: break-all;">${token.meta?.name || '#' + token.inscriptionNumber}</p>`;
+                tokenDiv.innerHTML = content;
+                userOrdinalsListElement.appendChild(tokenDiv);
+            });
+        } }
 
 
             // --- Leaderboard Logic ---
@@ -3527,7 +3616,10 @@ function usePetWhistleUnlock(itemUniqueId) {
             
             const connectWalletBtn = document.getElementById('connectWalletBtn'); const walletDropdown = document.getElementById('walletDropdown'); const walletOptions = walletDropdown.querySelectorAll('li'); const walletAddressDisplay = document.getElementById('walletAddressDisplay');
             let connectedAccount = null; let connectedWalletName = null;
-            function updateWalletDisplay(account, walletName = '') { if (account) { const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`; if(connectWalletBtn) { connectWalletBtn.textContent = `${walletName}: ${shortAddress}`; connectWalletBtn.classList.add('connected'); } if(walletAddressDisplay) walletAddressDisplay.textContent = `Wallet: ${account}`; } else { if(connectWalletBtn) { connectWalletBtn.textContent = 'CONNECT WALLET'; connectWalletBtn.classList.remove('connected'); } if(walletAddressDisplay) walletAddressDisplay.textContent = ''; } }
+            function updateWalletDisplay(account, walletName = '') { if (account) { const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`; if(connectWalletBtn) { connectWalletBtn.textContent = `${walletName}: ${shortAddress}`; connectWalletBtn.classList.add('connected'); } if(walletAddressDisplay) walletAddressDisplay.textContent = `Wallet: ${account}`;                fetchAndDisplayUserTokens(account); // Fetch ordinals for the connected account
+            } else { if(connectWalletBtn) { connectWalletBtn.textContent = 'CONNECT WALLET'; connectWalletBtn.classList.remove('connected'); } if(walletAddressDisplay) walletAddressDisplay.textContent = '';if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none';
+                if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = ''; // Clear ordinals display
+                } }
             if(connectWalletBtn && walletDropdown) { connectWalletBtn.addEventListener('click', (event) => { event.stopPropagation(); walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block'; }); document.addEventListener('click', (event) => { if (walletDropdown && connectWalletBtn && !connectWalletBtn.contains(event.target) && !walletDropdown.contains(event.target)) { walletDropdown.style.display = 'none'; } }); }
             async function connectWithSatsConnect(walletTypeHint = null) { if (typeof SatsConnect === 'undefined' || typeof SatsConnect.getAddresses === 'undefined') { showCustomPopup('Sats Connect library not loaded or not ready.', "Wallet Error"); return; } try { SatsConnect.getAddresses({ payload: { purposes: ['ordinals', 'payment'], message: 'Connect to Punk Voyage Adventures', network: { type: 'Mainnet' }, }, onFinish: (response) => { const ordAddress = response.addresses.find(a => a.purpose === 'ordinals'); const payAddress = response.addresses.find(a => a.purpose === 'payment'); let addr = ordAddress ? ordAddress.address : (payAddress ? payAddress.address : null); if (addr) { connectedAccount = addr; let name = walletTypeHint ? walletTypeHint.replace('satsconnect_', '').toUpperCase() : "BTC"; if (name === "GENERAL") name = "BTC"; connectedWalletName = name; updateWalletDisplay(connectedAccount, connectedWalletName); } }, onCancel: () => console.log('SatsConnect canceled.'), }); } catch (e) { console.error('SatsConnect error:', e); showCustomPopup('An error occurred with SatsConnect.', 'Wallet Error');} }
             async function connectUnisat() { try { if (typeof window.unisat !== 'undefined') { const accounts = await window.unisat.requestAccounts(); if (accounts && accounts.length > 0) { connectedAccount = accounts[0]; connectedWalletName = 'UniSat'; updateWalletDisplay(connectedAccount, 'UniSat'); window.unisat.on('accountsChanged', (newAccs) => { if (connectedWalletName === 'UniSat') { connectedAccount = (newAccs && newAccs.length > 0) ? newAccs[0] : null; if (!connectedAccount) connectedWalletName = null; updateWalletDisplay(connectedAccount, connectedAccount ? 'UniSat' : ''); } }); } } else { window.open('https://unisat.io/', '_blank'); } } catch (e) { console.error('UniSat error:', e); showCustomPopup('An error occurred with UniSat Wallet.', 'Wallet Error'); } }
