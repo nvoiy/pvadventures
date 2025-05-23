@@ -6867,6 +6867,24 @@ if (walletOptions) {
         });
     });
 }
+// --- Add Dungeon Button Listeners --- // <<< Add this comment
+            const createDungeonPartyBtn = document.getElementById('createDungeonPartyBtn');
+            if (createDungeonPartyBtn) {
+                createDungeonPartyBtn.addEventListener('click', handleCreateDungeonParty); // Attach the click listener
+                console.log("Attached listener to Create Party button."); // Added log for confirmation
+            }
+
+            const leaveDungeonPartyBtn = document.getElementById('leaveDungeonPartyBtn');
+            if (leaveDungeonPartyBtn) {
+                 leaveDungeonPartyBtn.addEventListener('click', handleLeaveDungeonParty); // Attach leave listener too
+                 console.log("Attached listener to Leave Party button.");
+            }
+
+             const claimDungeonRewardsBtn = document.getElementById('claimDungeonRewardsBtn');
+            if (claimDungeonRewardsBtn) {
+                 claimDungeonRewardsBtn.addEventListener('click', handleClaimDungeonRewards); // Attach claim listener too
+                 console.log("Attached listener to Claim Rewards button.");
+            }
             async function connectXverseProvider() {
     let xverseBitcoinProvider; // Specific variable for Xverse provider
     if (typeof window !== "undefined") {
