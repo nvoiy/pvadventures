@@ -1135,7 +1135,7 @@ function updateAdventureCardPvDisplay() {
             const { doc, getDoc, setDoc, collection, Timestamp, query, where, orderBy, getDocs, addDoc, runTransaction, updateDoc, deleteDoc, limit } = window.firebaseFirestore;
             const { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut: fbSignOut, onAuthStateChanged, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup } = window.firebaseAuthFunctions; 
 
-            const GAME_HOUR_IN_REAL_SECONDS = 1; 
+            const GAME_HOUR_IN_REAL_SECONDS = 3600; 
             const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
 
 
@@ -2937,8 +2937,11 @@ async function handleJoinDungeonParty(event) {
             // Check if the party is now full
              if (newMembers.length === 4) {
                  newPartyStatus = 'in_dungeon'; // Party is now full, start the dungeon
-                 const DUNGEON_DURATION_MS = 60 * 1000; // 1 minute real time for testing
-                 dungeonEndTime = Timestamp.fromDate(new Date(Date.now() + DUNGEON_DURATION_MS));
+const dungeonInfo = dungeonsData[partyData.dungeonId]; // Get info for the dungeon the party is for
+                             if (!dungeonInfo) throw `Unknown dungeon ID: ${partyData.dungeonId}`; // Should not happen if partyData is correct
+
+                             const DUNGEON_DURATION_MS = dungeonInfo.durationHours * GAME_HOUR_IN_REAL_SECONDS * 1000; // Use dungeon data duration
+                             dungeonEndTime = Timestamp.fromDate(new Date(Date.now() + DUNGEON_DURATION_MS));
 
                  // Calculate combined stats for the party members right now
                  const membersProgress = await Promise.all(newMembers.map(uid => transaction.get(doc(db, 'playerProgress', uid))));
