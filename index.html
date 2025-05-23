@@ -2568,7 +2568,7 @@ if(menuItems){ menuItems.forEach(item => { item.addEventListener('click', () => 
         }
 
 function renderDungeonPageContent({ playersData, partiesData }) {
-            console.log("Rendering Dungeons Page with data:", { playersData, partiesData });
+            console.log("DEBUG: renderDungeonPageContent called with data:", { playersData: JSON.parse(JSON.stringify(playersData)), partiesData: JSON.parse(JSON.stringify(partiesData)) });
              const eligiblePlayersListElement = document.getElementById('eligiblePlayersList');
              const formingPartiesListElement = document.getElementById('formingPartiesList');
              const playerEligibilityStatusElement = document.getElementById('playerEligibilityStatus');
@@ -2711,10 +2711,13 @@ function renderDungeonPageContent({ playersData, partiesData }) {
              formingPartiesListElement.innerHTML = '';
              // Filter partiesData to get only forming parties
              const formingParties = partiesData.filter(p => p.status === 'forming');
+             console.log("DEBUG: renderDungeonPageContent - Filtering parties, found forming parties:", JSON.parse(JSON.stringify(formingParties)));
 
              if (formingParties.length === 0) {
-                 formingPartiesListElement.innerHTML = '<p style="text-align:center;">No dungeon parties are currently forming.</p>';
+console.log("DEBUG: renderDungeonPageContent - No forming parties found to render."); // <-- Add this
+             formingPartiesListElement.innerHTML = '<p style="text-align:center;">No dungeon parties are currently forming.</p>';
              } else {
+                 console.log(`DEBUG: renderDungeonPageContent - Rendering ${formingParties.length} forming parties.`);
                  const formingPartiesTitle = document.createElement('h5');
                  formingPartiesTitle.textContent = `Forming Parties (${formingParties.length}):`;
                  formingPartiesTitle.style.marginTop = '0';
@@ -2722,6 +2725,7 @@ function renderDungeonPageContent({ playersData, partiesData }) {
                  formingPartiesListElement.appendChild(formingPartiesTitle);
 
                  formingParties.forEach(party => {
+                     console.log("DEBUG: renderDungeonPageContent - Rendering party:", JSON.parse(JSON.stringify(party)));
                       const partyCard = document.createElement('div');
                      partyCard.classList.add('dungeon-party-card');
 
