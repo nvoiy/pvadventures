@@ -2436,12 +2436,11 @@ if(menuItems){ menuItems.forEach(item => { item.addEventListener('click', () => 
              let fetchedPartiesData = []; // Store parties separately
 
             try {
-                // 1. Fetch all players (or at least those likely to be eligible/in parties/dungeons)
-                // This query might need optimization later. Fetching ALL playerProgress docs can be expensive.
-                // For beta, fetching up to a limit or based on recent activity might be better.
-                 const playersSnapshot = await getDocs(collection(db, 'playerProgress'));
-                 fetchedPlayersData = playersSnapshot.docs.map(doc => ({ uid: doc.id, ...doc.data() }));
-                 console.log(`Fetched ${fetchedPlayersData.length} playerProgress docs.`);
+              console.log("DEBUG: fetchDungeonData - Fetching playerProgress..."); // <-- Add this
+             const playersSnapshot = await getDocs(collection(db, 'playerProgress'));
+             fetchedPlayersData = playersSnapshot.docs.map(doc => ({ uid: doc.id, ...doc.data() }));
+             console.log(`DEBUG: fetchDungeonData - Fetched ${fetchedPlayersData.length} playerProgress docs.`); // <-- Add this
+                 
 
 
                  // 2. Fetch active dungeon parties (forming, in_dungeon, ended, disbanded)
@@ -2449,7 +2448,7 @@ if(menuItems){ menuItems.forEach(item => { item.addEventListener('click', () => 
                  const partiesQuery = query(collection(db, 'dungeonParties'), where('status', 'in', ['forming', 'in_dungeon', 'ended', 'disbanded'])); // ADD 'disbanded'
                  const partiesSnapshot = await getDocs(partiesQuery);
                  fetchedPartiesData = partiesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                 console.log(`Fetched ${fetchedPartiesData.length} dungeonParties docs.`);
+                 console.log(`DEBUG: fetchDungeonData - Fetched ${fetchedPartiesData.length} dungeonParties docs. Data:`, JSON.parse(JSON.stringify(fetchedPartiesData)));
 
 
                 // --- Update Current User's Local State Based on Fetched Data ---
