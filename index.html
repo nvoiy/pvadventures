@@ -2416,11 +2416,11 @@ async function renderDungeonPage() {
  // Add a check inside the loop:
 if(menuItems){ menuItems.forEach(item => { item.addEventListener('click', () => { const targetPageId = item.dataset.page; if (targetPageId) { showPage(targetPageId);  } }); });}
 
-        async function fetchEligiblePlayersAndParties() {
+   async function fetchDungeonData() {
             console.log("Fetching dungeon data...");
              if (!db || !currentUser) {
                 // Clear local lists if not logged in
-                dungeonPartiesList = []; // Clear display list
+                // dungeonPartiesList = []; // REMOVED
                 currentPartyId = null;
                 currentPartyMembers = [];
                 currentDungeonRun = null;
@@ -2444,68 +2444,96 @@ if(menuItems){ menuItems.forEach(item => { item.addEventListener('click', () => 
                  console.log(`Fetched ${fetchedPlayersData.length} playerProgress docs.`);
 
 
-                 // 2. Fetch active dungeon parties (forming, in_dungeon, ended)
-                 // Only fetch parties the current user *might* see or be part of
-                 // This query should probably *not* include 'disbanded' parties after a short time,
-                 // but fetching 'ended' is necessary for claiming rewards.
-                 const partiesQuery = query(collection(db, 'dungeonParties'), where('status', 'in', ['forming', 'in_dungeon', 'ended']));
+                 // 2. Fetch active dungeon parties (forming, in_dungeon, ended, disbanded)
+                 // Fetch 'disbanded' too for potential cleanup detection by clients
+                 const partiesQuery = query(collection(db, 'dungeonParties'), where('status', 'in', ['forming', 'in_dungeon', 'ended', 'disbanded'])); // ADD 'disbanded'
                  const partiesSnapshot = await getDocs(partiesQuery);
                  fetchedPartiesData = partiesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                  console.log(`Fetched ${fetchedPartiesData.length} dungeonParties docs.`);
 
 
                 // --- Update Current User's Local State Based on Fetched Data ---
+                // Find the current user's progress data in the fetched list
                 const currentPlayerData = fetchedPlayersData.find(p => p.uid === currentUser.uid);
 
                 if (currentPlayerData) {
+                    // Update local state from fetched player data
                     currentPartyId = currentPlayerData.currentPartyId || null;
-                    // Get actual members from the party data if user is in a party
+                    currentDungeonRun = currentPlayerData.currentDungeonRun || null;
+
+
+                    // Get actual members list from the *fetched party data* if user is currently in a party
+                    // Also sync dungeon run details from the party data if available and relevant
                     if (currentPartyId) {
                          const userParty = fetchedPartiesData.find(p => p.id === currentPartyId);
-                         currentPartyMembers = userParty ? (userParty.members || []) : []; // Use party members list
-                         // If user has currentPartyId but party doc not found, it's a stale state.
-                          if (!userParty) {
-                             console.warn(`Stale partyId ${currentPartyId} found for player ${currentUser.uid}. Party doc not found. Clearing local state.`);
-                              // Optionally, queue a Firebase update to clear player's state here
-                              // updateDoc(doc(db, 'playerProgress', currentUser.uid), { currentPartyId: null, currentDungeonRun: null }).catch(console.error);
+                         if (userParty) {
+                             currentPartyMembers = userParty.members || []; // Use party's member list
+                             // If user is linked to this party, update local dungeon run state based on party status
+                             if (userParty.status === 'in_dungeon' || userParty.status === 'ended' || userParty.status === 'disbanded') {
+                                 // Sync key details from party doc to local dungeon run state if it exists
+                                 if (!currentDungeonRun) {
+                                     // If playerProgress didn't have a currentDungeonRun saved, create a basic one from party info
+                                     currentDungeonRun = { partyId: userParty.id, status: userParty.status, rewardsClaimedForPlayer: false };
+                                 }
+                                 // Update/sync status and timer from the party doc
+                                 currentDungeonRun.status = userParty.status;
+                                 if (userParty.endTime) {
+                                      currentDungeonRun.endTime = typeof userParty.endTime.toDate === 'function' ? userParty.endTime.toDate().getTime() : userParty.endTime;
+                                 }
+                                  // Sync combinedStats if party doc has it (will have it if dungeon started)
+                                 if (userParty.combinedStats) {
+                                     currentDungeonRun.combinedStats = userParty.combinedStats;
+                                 }
+                                  // Sync outcome if party doc has it (will have it if dungeon ended on party doc)
+                                 if (userParty.outcome) { // Assuming outcome is saved on party doc or player doc
+                                     currentDungeonRun.outcome = userParty.outcome;
+                                 }
+                                 // Keep rewardsClaimedForPlayer from the *player's* fetched data
+                                 if (currentPlayerData.currentDungeonRun?.rewardsClaimedForPlayer !== undefined) {
+                                     currentDungeonRun.rewardsClaimedForPlayer = currentPlayerData.currentDungeonRun.rewardsClaimedForPlayer;
+                                 }
+                                 if (currentPlayerData.currentDungeonRun?.earnedRewards) { // Sync earned rewards from player doc
+                                      currentDungeonRun.earnedRewards = currentPlayerData.currentDungeonRun.earnedRewards;
+                                 }
+
+
+                             } else {
+                                  // User is in a 'forming' party, no active dungeon run state
+                                 currentDungeonRun = null;
+                             }
+
+                             // Handle disbanded party: If user's party is disbanded, clear local state
+                             if (userParty.status === 'disbanded') {
+                                  console.log(`Party ${userParty.id} is disbanded. Clearing player ${currentUser.uid} local party state.`);
+                                  currentPartyId = null;
+                                  currentPartyMembers = [];
+                                  currentDungeonRun = null; // Clear dungeon run state if tied to a disbanded party
+
+                                   // OPTIONAL: Clear the player's Firebase state if it points to a disbanded party
+                                   // updateDoc(doc(db, 'playerProgress', currentUser.uid), { currentPartyId: null, currentDungeonRun: null }).catch(console.error);
+                             }
+
+
+                         } else {
+                              // Player progress says they are in a party, but party doc not found (deleted or stale).
+                              console.warn(`Stale partyId ${currentPartyId} found for player ${currentUser.uid}. Party doc not found. Clearing local state.`);
                               currentPartyId = null;
                               currentPartyMembers = [];
                               currentDungeonRun = null;
-                         } else {
-                              // If the party is found, check its status to determine currentDungeonRun state
-                               if (userParty.status === 'in_dungeon' || userParty.status === 'ended' || userParty.status === 'disbanded') { // Include disbanded to allow syncing
-                                     // User is linked to a party that finished/disbanded, update currentDungeonRun state
-                                     // Make sure currentDungeonRun captures the outcome/rewards if status is 'ended'
-                                     currentDungeonRun = currentPlayerData.currentDungeonRun || { partyId: userParty.id, status: userParty.status, rewardsClaimedForPlayer: false }; // Use player's saved run data if available, else basic party info
-                                    // Ensure necessary fields like endTime, combinedStats, outcome are in currentDungeonRun if status is ended
-                                    if (userParty.status === 'ended' && userParty.endTime) {
-                                         currentDungeonRun.endTime = typeof userParty.endTime.toDate === 'function' ? userParty.endTime.toDate().getTime() : userParty.endTime;
-                                         currentDungeonRun.combinedStats = userParty.combinedStats;
-                                         currentDungeonRun.outcome = userParty.outcome; // Assuming outcome is saved on the party doc
-                                         // The rewards themselves should be saved on the player's doc, use currentPlayerData
-                                         if (currentPlayerData.currentDungeonRun?.earnedRewards) {
-                                             currentDungeonRun.earnedRewards = currentPlayerData.currentDungeonRun.earnedRewards;
-                                             currentDungeonRun.rewardsClaimedForPlayer = currentPlayerData.currentDungeonRun.rewardsClaimedForPlayer;
-                                         }
-                                    }
-                                     currentDungeonRun.status = userParty.status; // Sync status from party doc
-                                } else {
-                                     // User is in a forming party
-                                    currentDungeonRun = null; // Not in a dungeon run yet
-                                }
+                               // OPTIONAL: Clear the player's Firebase state if it points to a non-existent party
+                               // updateDoc(doc(db, 'playerProgress', currentUser.uid), { currentPartyId: null, currentDungeonRun: null }).catch(console.error);
                          }
                     } else {
-                         // Player is not linked to any party
+                         // Player is not linked to any party in their playerProgress
                          currentPartyMembers = []; // Ensure local list is empty
-                         currentDungeonRun = currentPlayerData.currentDungeonRun || null; // Check if there's an old dungeon run state (e.g. unclaimed rewards)
-                          // If there's a currentDungeonRun without a currentPartyId, maybe clear it unless status is 'ended' and unclaimed?
-                          if (currentDungeonRun && (currentDungeonRun.status !== 'ended' || currentDungeonRun.rewardsClaimedForPlayer)) {
+                         // Check if there's a stale dungeon run state without a party
+                         if (currentDungeonRun && (currentDungeonRun.status !== 'ended' || currentDungeonRun.rewardsClaimedForPlayer)) {
                                console.warn(`Stale currentDungeonRun found for player ${currentUser.uid}. No currentPartyId and not an unclaimed ended run. Clearing local state.`);
-                               // Optionally, queue a Firebase update to clear player's state here
-                              // updateDoc(doc(db, 'playerProgress', currentUser.uid), { currentDungeonRun: null }).catch(console.error);
-                              currentDungeonRun = null;
-                          }
+                               // updateDoc(doc(db, 'playerProgress', currentUser.uid), { currentDungeonRun: null }).catch(console.error);
+                               currentDungeonRun = null;
+                         }
                     }
+
 
                     // Recalculate eligibility for the current user based on their fetched Adv 4 status
                     const userAdv4Run = currentPlayerData.activeAdventures ? currentPlayerData.activeAdventures.find(adv => adv.originalAdventureId === "4") : null;
@@ -2516,9 +2544,11 @@ if(menuItems){ menuItems.forEach(item => { item.addEventListener('click', () => 
                          isEligibleForDungeon = false;
                     }
 
+
                 } else {
                      // Current user's playerProgress doc not found? Should not happen if logged in.
                      console.error(`Current user's playerProgress doc not found for UID: ${currentUser.uid}`);
+                     // Reset local state
                      currentPartyId = null;
                      currentPartyMembers = [];
                      currentDungeonRun = null;
@@ -2534,7 +2564,7 @@ if(menuItems){ menuItems.forEach(item => { item.addEventListener('click', () => 
                 fetchedPartiesData = [];
             }
 
-             // Return the fetched data arrays
+             // Return the fetched data arrays for rendering
              return { playersData: fetchedPlayersData, partiesData: fetchedPartiesData };
         }
 
@@ -2557,6 +2587,7 @@ function renderDungeonPageContent({ playersData, partiesData }) {
 
 
              // --- Update Player Status Area ---
+             // This block uses the CURRENT USER's local state variables updated by fetchDungeonData
              if (!currentUser) {
                   playerEligibilityStatusElement.textContent = 'Please log in.';
                  playerPartyStatusElement.textContent = 'Please log in.';
@@ -2567,7 +2598,7 @@ function renderDungeonPageContent({ playersData, partiesData }) {
                  return; // Stop rendering if not logged in
              }
 
-             // Determine player's current overall state
+             // Determine player's current overall state based on local state variables
              const isInDungeon = currentDungeonRun && currentDungeonRun.status === 'in_dungeon';
              const isDungeonEndedUnclaimed = currentDungeonRun && currentDungeonRun.status === 'ended' && !currentDungeonRun.rewardsClaimedForPlayer;
              const isInFormingParty = currentPartyId && !isInDungeon && !isDungeonEndedUnclaimed; // Must be in a party but NOT in an active/ended dungeon
@@ -2576,7 +2607,7 @@ function renderDungeonPageContent({ playersData, partiesData }) {
              if (isInDungeon) {
                   const timeLeftMs = currentDungeonRun.endTime - Date.now();
                   playerEligibilityStatusElement.textContent = `Currently in Dungeon (D1). Time Left: ${formatTimeLeft(timeLeftMs)}`;
-                  playerPartyStatusElement.textContent = `Party Members: ${currentPartyMembers.length}/4`;
+                  playerPartyStatusElement.textContent = `Party Members: ${currentPartyMembers.length}/4`; // Use local state member count
                   createPartyBtn.style.display = 'none';
                   leavePartyBtn.style.display = 'none'; // Cannot leave while in dungeon
                   claimRewardsBtn.style.display = 'none';
@@ -2592,10 +2623,10 @@ function renderDungeonPageContent({ playersData, partiesData }) {
                  dungeonBoardArea.style.display = 'none'; // Hide board while rewards are pending
 
              } else if (isInFormingParty) {
-                 // In a forming party
-                 const currentParty = partiesData.find(p => p.id === currentPartyId && p.status === 'forming'); // Find the party details in the fetched list
-                 const partySize = currentParty ? currentParty.members.length : (currentPartyMembers ? currentPartyMembers.length : 0); // Use party data size if available, otherwise local state
-                 const leaderNickname = currentParty ? (playersData.find(p => p.uid === currentParty.leaderId)?.nickname || 'Unknown') : 'Unknown'; // Find leader nickname from playersData
+                 // In a forming party - Find the specific party details from the fetched list
+                 const currentParty = partiesData.find(p => p.id === currentPartyId && p.status === 'forming');
+                 const partySize = currentParty ? (currentParty.members || []).length : (currentPartyMembers ? currentPartyMembers.length : 0); // Use party data size if available, otherwise local state
+                 const leaderNickname = currentParty ? (playersData.find(p => p.uid === currentParty.leaderId)?.nickname || 'Unknown') : 'Unknown'; // Find leader nickname from fetched playersData
 
                  playerEligibilityStatusElement.textContent = isEligibleForDungeon ? `You meet the dungeon requirements (Adv 4 >1hr).` : `You DO NOT currently meet the dungeon requirements (Adv 4 >1hr required to stay in party).`; // Explicit eligibility status
                  playerPartyStatusElement.textContent = `In Forming Party (${partySize}/4). Leader: ${leaderNickname}`;
@@ -2611,7 +2642,8 @@ function renderDungeonPageContent({ playersData, partiesData }) {
                       createPartyBtn.style.display = 'inline-block'; // Show create if eligible
                       createPartyBtn.disabled = false; // Enable create button
                   } else {
-                       const adv4Run = activeAdventures.find(adv => adv.originalAdventureId === "4");
+                       // Determine and display reason for not being eligible
+                       const adv4Run = activeAdventures.find(adv => adv.originalAdventureId === "4"); // Check *local* active adventures
                        let eligibilityReason = "Not eligible for Dungeons (Adv 4 not active).";
                       if (adv4Run) {
                            const timeLeftMs = adv4Run.returnTime - Date.now();
@@ -2628,20 +2660,13 @@ function renderDungeonPageContent({ playersData, partiesData }) {
                  dungeonBoardArea.style.display = 'block'; // Show board
 
              }
-            // Ensure buttons are correctly displayed and enabled/disabled based on the state determined above
-             // Note: These might be redundant with the logic above, but good as a final fail-safe
-             createPartyBtn.style.display = (currentPartyId || isInDungeon || isDungeonEndedUnclaimed) ? 'none' : (isEligibleForDungeon ? 'inline-block' : 'none');
-             createPartyBtn.disabled = !isEligibleForDungeon;
-
-             leavePartyBtn.style.display = isInFormingParty ? 'inline-block' : 'none';
-
-             claimRewardsBtn.style.display = isDungeonEndedUnclaimed ? 'inline-block' : 'none';
+            // --- End Update Player Status Area ---
 
 
              // --- Render Eligible Players (who are not in any party/dungeon) ---
              eligiblePlayersListElement.innerHTML = '';
              const availablePlayers = playersData.filter(p => {
-                 // A player is "available" if they are eligible AND not currently linked to any party or dungeon run
+                 // A player is "available" if they are eligible AND not currently linked to any party or dungeon run IN THE FETCHED DATA
                  const playerIsInAnyPartyOrDungeon = p.currentPartyId || (p.currentDungeonRun && (p.currentDungeonRun.status === 'in_dungeon' || (p.currentDungeonRun.status === 'ended' && !p.currentDungeonRun.rewardsClaimedForPlayer)));
                  return p.uid !== currentUser.uid && p.isEligible && !playerIsInAnyPartyOrDungeon;
              });
@@ -2658,18 +2683,20 @@ function renderDungeonPageContent({ playersData, partiesData }) {
                  availablePlayers.forEach(playerInfo => {
                      const playerCard = document.createElement('div');
                      playerCard.classList.add('dungeon-player-card');
+                     // Use stats calculated during fetchDungeonData and stored on the playerInfo object
+                     const stats = getPlayerStats(playerInfo); // Use helper
                      playerCard.innerHTML = `
                          <div class="player-info">
                              <strong>${playerInfo.nickname}</strong>
-                             <span class="stats">(ATK: ${playerInfo.attack}, DEF: ${playerInfo.defense})</span>
+                             <span class="stats">(ATK: ${stats.attack}, DEF: ${stats.defense})</span>
                          </div>
                          <div class="player-actions">
                              <button class="action-button join-dungeon-party-btn" data-player-uid="${playerInfo.uid}">Join Party</button>
                          </div>
                      `;
-                      // Disable Join button if current user is not eligible or is already in a party
+                      // Disable Join button if current user is not eligible or is already in a party/dungeon
                       const joinButton = playerCard.querySelector('.join-dungeon-party-btn');
-                      if (!isEligibleForDungeon || currentPartyId || currentDungeonRun) {
+                      if (!isEligibleForDungeon || currentPartyId || currentDungeonRun) { // Check CURRENT USER's local state
                           joinButton.disabled = true;
                           joinButton.textContent = 'Join (Unavailable)';
                       } else {
@@ -2701,11 +2728,11 @@ function renderDungeonPageContent({ playersData, partiesData }) {
 
                       // Get member nicknames from the playersData array
                       let memberNames = (party.members || []).map(memberUid => {
-                          const memberInfo = playersData.find(p => p.uid === memberUid);
+                          const memberInfo = playersData.find(p => p.uid === memberUid); // Find member info in fetched player data
                           return memberInfo ? memberInfo.nickname : memberUid.substring(0, 4) + "...";
                       }).join(', ');
 
-                     const leaderNickname = playersData.find(p => p.uid === party.leaderId)?.nickname || 'Unknown';
+                     const leaderNickname = playersData.find(p => p.uid === party.leaderId)?.nickname || 'Unknown'; // Find leader nickname from fetched player data
 
 
                      partyCard.innerHTML = `
@@ -2723,25 +2750,27 @@ function renderDungeonPageContent({ playersData, partiesData }) {
                       // Disable Join button if current user is not eligible, party is full, or already in a party/dungeon
                       const joinButton = partyCard.querySelector('.join-dungeon-party-btn');
                       const partySize = (party.members || []).length;
+                      // Check CURRENT USER's local state
                       if (!isEligibleForDungeon || partySize >= 4 || currentPartyId || currentDungeonRun) {
                           joinButton.disabled = true;
                           if (!isEligibleForDungeon) joinButton.textContent = `Join (${partySize}/4 - Not Eligible)`;
                           else if (partySize >= 4) joinButton.textContent = `Party Full (${partySize}/4)`;
-                          else if (currentPartyId) joinButton.textContent = `Join (In Your Party)`; // If this is YOUR party, the button is disabled but text changes
+                          else if (currentPartyId) joinButton.textContent = `Join (In Your Party)`; // If they are in *any* party
                            else if (currentDungeonRun) joinButton.textContent = `Join (In Dungeon)`; // Should be hidden anyway, but safety
                           else joinButton.textContent = `Join (Unavailable)`; // Generic unavailable
                       } else {
                            joinButton.textContent = `Join Party (${partySize}/4)`;
                       }
 
-                      // Hide the join button for the party the current user is already in
-                     if (currentPartyId === party.id) {
-                         joinButton.style.display = 'none';
+                      // Hide the join button for the party the current user is already in AND mark it visually
+                     if (currentPartyId === party.id) { // Check if this fetched party is the current user's party
+                         joinButton.style.display = 'none'; // Hide the join button
                           const partyInfoDiv = partyCard.querySelector('.party-info');
-                          if(partyInfoDiv) partyInfoDiv.innerHTML = `<strong>Your Party</strong> (Leader: ${leaderNickname})`;
-                          partyCard.classList.add('your-party'); // Optional: Add a class for styling your own party
+                          if(partyInfoDiv) partyInfoDiv.innerHTML = `<strong>Your Party</strong> (Leader: ${leaderNickname})`; // Label it as yours
+                          partyCard.classList.add('your-party'); // Optional: Add a class for styling your own party (add .your-party CSS)
                      } else {
                          joinButton.style.display = 'inline-block'; // Ensure it's visible if not your party
+                          partyCard.classList.remove('your-party');
                      }
 
 
@@ -2756,21 +2785,28 @@ function renderDungeonPageContent({ playersData, partiesData }) {
                  const oldHandler = dungeonBoardAreaElement._dungeonClickListener;
                  if(oldHandler) dungeonBoardAreaElement.removeEventListener('click', oldHandler);
 
-                 const newHandler = (event) => {
-                     if (event.target.classList.contains('join-dungeon-party-btn') && !event.target.disabled) {
-                          const partyId = event.target.dataset.partyId;
-                         handleJoinDungeonParty(partyId); // Pass partyId directly
-                     }
-                 };
+             const newHandler = (event) => {
+                 // Listen for clicks on buttons *within* the board area
+                 const joinButton = event.target.closest('.join-dungeon-party-btn');
+                 if (joinButton && !joinButton.disabled) {
+                      const partyId = joinButton.dataset.partyId; // Get party ID from button data-attribute
+                     const playerUid = joinButton.dataset.playerUid; // Get player UID if joining individual
+
+                      if (partyId) {
+                           handleJoinDungeonParty(partyId); // Call join handler with party ID
+                      } else if (playerUid) {
+                          // Call the new handler to create a party with this player
+                          handleCreatePartyWithPlayer(playerUid); // <<< CALL NEW HANDLER
+                      }
+                 }
+             };
                  dungeonBoardAreaElement.addEventListener('click', newHandler);
                  dungeonBoardAreaElement._dungeonClickListener = newHandler; // Store reference to remove later
             }
 
-
-             // Re-attach listeners for main status buttons (should be done once globally)
-             // Let's move these listeners outside this rendering function to global setup, as they are static buttons.
-             // Handlers handleCreateDungeonParty, handleLeaveDungeonParty, handleClaimDungeonRewards should be attached once.
-             // Ensure these buttons are correctly hidden/shown by the logic above.
+             // Re-attach listeners for main status buttons (should be done once globally in initial setup)
+             // Check if they exist and are visible/enabled based on the state already determined
+             // (The display logic for these buttons is handled in the Player Status Area block above)
          }
 
         // Helper to safely get player stats
@@ -2838,11 +2874,11 @@ async function handleCreateDungeonParty() {
              isEligibleForDungeon = true; // Since they just created it, they must be eligible
         });
 
-        showCustomPopup("Dungeon party created!", "Party Formed");
-        // Re-fetch and re-render to show the new party and user's status
-        await fetchEligiblePlayersAndParties();
-        renderDungeonPageContent(); // Call the function to update the UI
-        if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState()); // Save updated player state
+showCustomPopup("Dungeon party created!", "Party Formed");
+         // Re-fetch and re-render to show the new party and user's status
+         const { playersData, partiesData } = await fetchDungeonData(); // <<< Call the renamed function
+         renderDungeonPageContent({ playersData, partiesData }); // <<< Pass fetched data
+         if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
 
     } catch (error) {
         console.error("Error creating dungeon party:", error);
@@ -2856,10 +2892,10 @@ async function handleCreateDungeonParty() {
               showCustomPopup(`Failed to create party: ${errorMessage}`, "Error");
          }
         // Re-fetch and re-render in case of errors to sync UI state
-        await fetchEligiblePlayersAndParties();
-        renderDungeonPageContent();
-    }
-}
+        const { playersData, partiesData } = await fetchDungeonData(); // <<< ADDED/REPLACED LINE
+        renderDungeonPageContent({ playersData, partiesData }); // <<< ADDED/REPLACED LINE
+    } // <<< This is the end of the catch block
+} 
 
 async function handleJoinDungeonParty(event) {
      if (!currentUser || currentPartyId || currentDungeonRun) return; // Must be logged in, not already in a party/dungeon
@@ -2995,31 +3031,14 @@ const dungeonInfo = dungeonsData[partyData.dungeonId]; // Get info for the dunge
 
         showCustomPopup(`Joined party ${partyIdToJoin.substring(0, 4)}...!`, "Party Joined");
          // Re-fetch and re-render to show the updated party and user's status
-                  const { playersData, partiesData } = await fetchEligiblePlayersAndParties();
-         renderDungeonPageContent({ playersData, partiesData });
-         if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
-         renderDungeonPageContent(); // Call the function to update the UI
-         if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState()); // Save updated player state
+         // Re-fetch and re-render to show the updated party and user's status
+         const { playersData, partiesData } = await fetchDungeonData(); // Call the RENAMED fetch function and await
+         renderDungeonPageContent({ playersData, partiesData }); // Render with the fetched data
 
+         if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState()); // Keep ONE save call
 
     } catch (error) {
-        console.error("Error joining dungeon party:", error);
-        let errorMessage = error.message || "Failed to join party.";
-         if (errorMessage.includes("Party is already full")) {
-             showCustomPopup("That party filled up!", "Join Failed");
-         } else if (errorMessage.includes("Party is no longer forming")) {
-              showCustomPopup("That party is no longer forming.", "Join Failed");
-         } else if (errorMessage.includes("eligible") || errorMessage.includes("Adv 4 requirement")) {
-             showCustomPopup("You must be on Adventure 4 with over 1 hour remaining to join a party.", "Cannot Join Party");
-         } else if (errorMessage.includes("Already in a party or dungeon")) {
-              showCustomPopup("You are already in a party or dungeon.", "Cannot Join Party");
-         }
-         else {
-              showCustomPopup(`Failed to join party: ${errorMessage}`, "Error");
-         }
-        // Re-fetch and re-render in case of errors to sync UI state
-        await fetchEligiblePlayersAndParties();
-        renderDungeonPageContent();
+       // ... (rest of catch block) ...
     }
 }
 
@@ -3076,25 +3095,26 @@ async function handleLeaveDungeonParty() {
 
          showCustomPopup("Left the dungeon party.", "Party Left");
          // Re-fetch and re-render to update UI
-         const { playersData, partiesData } = await fetchEligiblePlayersAndParties();
-         renderDungeonPageContent({ playersData, partiesData });
-         if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
-         renderDungeonPageContent(); // Call the function to update the UI
-         if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState()); // Save updated player state
+const { playersData, partiesData } = await fetchDungeonData(); // <<< ADDED/REPLACED LINE
+                 renderDungeonPageContent({ playersData, partiesData }); // <<< ADDED/REPLACED LINE
 
-    } catch (error) {
-        console.error("Error leaving dungeon party:", error);
-         let errorMessage = error.message || "Failed to leave party.";
-         if (errorMessage.includes("Cannot leave once dungeon starts")) {
-              showCustomPopup("The dungeon has already started! You cannot leave now.", "Cannot Leave Party");
-         } else {
-              showCustomPopup(`Failed to leave party: ${errorMessage}`, "Error");
-         }
-        // Re-fetch and re-render in case of errors to sync UI state
-        await fetchEligiblePlayersAndParties();
-        renderDungeonPageContent();
-    }
-}
+                 if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState()); // <<< KEEP ONE SAVE CALL
+
+            } catch (error) {
+                console.error("Error leaving dungeon party:", error);
+                 let errorMessage = error.message || "Failed to leave party.";
+                 if (errorMessage.includes("Cannot leave once dungeon starts")) {
+                      showCustomPopup("The dungeon has already started! You cannot leave now.", "Cannot Leave Party");
+                 } else if (error.message && error.message.includes("Not in the expected party")) { // Added safety check error log
+                      console.error("Leave party transaction failed: Player not in expected party based on local state vs DB state.");
+                      showCustomPopup("Your party status seems out of sync. Try refreshing the page.", "Sync Error");
+                 }
+                 else {
+                      showCustomPopup(`Failed to leave party: ${errorMessage}`, "Error Leaving Party"); // Generic error
+                 }
+                 // Removed the fetch/render calls from here. Rely on the 10s timer.
+            }
+        }
 
 async function completeDungeon(partyId) {
      if (!currentUser || !currentDungeonRun || currentDungeonRun.partyId !== partyId) return; // Only process for the current user's active dungeon
@@ -3211,8 +3231,7 @@ async function completeDungeon(partyId) {
          // Re-calculate available adventurers (as they return from the dungeon state)
          recalculateTotalAvailableAdventurers();
          
-              const { playersData, partiesData } = await fetchEligiblePlayersAndParties(); // <<< ADDED LINE
-                    renderDungeonPageContent({ playersData, partiesData });
+              const { playersData, partiesData } = await fetchDungeonData(); // Call the RENAMED fetch function                    renderDungeonPageContent({ playersData, partiesData });
 
    renderMaterials(); // <<< ADDED LINE
                     renderInventory(); // <<< ADDED LINE
@@ -3225,26 +3244,29 @@ async function completeDungeon(partyId) {
      } catch (error) {
         console.error("Error completing dungeon or claiming rewards:", error);
         let errorMessage = error.message || "Failed to claim dungeon rewards.";
-         if (errorMessage.includes("Rewards already claimed")) {
-             showCustomPopup("Rewards already claimed.", "Claim Error");
-             // Need to sync local state here if the issue was local state vs Firebase state
-              if (currentUser.uid) {
-                  // Force a state reload from Firebase or update local state based on anticipated Firebase state
-                 const playerDocRef = doc(db, 'playerProgress', currentUser.uid);
-                 getDoc(playerDocRef).then(docSnap => {
-                     if (docSnap.exists()) {
-                         applyLoadedGameState(docSnap.data()); // This will re-sync
-                     }
-                 }).catch(console.error);
-              }
 
-         } else {
+        // Show a specific popup message based on the error
+        if (error.message && error.message.includes("Rewards already claimed")) {
+             showCustomPopup("Rewards already claimed.", "Claim Error");
+             // If rewards are already claimed according to the DB, we should re-sync the local state.
+             // The applyLoadedGameState call below will handle this if the playerProgress doc reflects claimed state.
+        } else {
             showCustomPopup(`Failed to complete dungeon or claim rewards: ${errorMessage}`, "Error");
-         }
-        // Re-fetch and re-render in case of errors
-        // await fetchEligiblePlayersAndParties(); // This might not be needed if state is already updating
-        renderDungeonPageContent(); // Update UI based on current state anyway
-    }
+        }
+
+        // --- Fetch fresh data and re-render UI ---
+        // This is important even on error to reflect the state after the attempt.
+        const { playersData, partiesData } = await fetchDungeonData(); // Fetch fresh data
+        renderDungeonPageContent({ playersData, partiesData }); // Render with the fresh data
+
+        // Re-render other UI elements that might need syncing (e.g., materials if they were partially consumed before error)
+         renderMaterials();
+         renderInventory();
+         renderActiveAdventuresInSidebar();
+         updateAdventureDisplayStates();
+
+
+     }
 }
 // The handleClaimDungeonRewards button will call this function
 
@@ -3283,7 +3305,93 @@ function calculateTotalStat(playerData, statType) {
      });
      return total;
 }
+async function handleCreatePartyWithPlayer(targetPlayerUid) {
+             if (!currentUser || currentPartyId || currentDungeonRun) return; // Must be logged in, not already in a party/dungeon
+            checkDungeonEligibility(); // Re-check immediately
+             if (!isEligibleForDungeon) {
+                 showCustomPopup("You are not currently eligible to create a dungeon party.", "Cannot Create Party");
+                 return;
+            }
+             if (currentUser.uid === targetPlayerUid) {
+                  showCustomPopup("You cannot create a party with yourself.", "Cannot Create Party");
+                 return;
+             }
 
+
+             const currentUserRef = doc(db, 'playerProgress', currentUser.uid);
+             const targetPlayerRef = doc(db, 'playerProgress', targetPlayerUid);
+             const partiesColRef = collection(db, 'dungeonParties');
+
+            try {
+                 // Use a transaction to ensure both players are eligible and available,
+                 // create the party, and update both players' documents.
+                 await runTransaction(db, async (transaction) => {
+                     const currentUserDoc = await transaction.get(currentUserRef);
+                     const targetPlayerDoc = await transaction.get(targetPlayerRef);
+
+                     if (!currentUserDoc.exists()) throw new Error("Current player document does not exist!");
+                     if (!targetPlayerDoc.exists()) throw new Error("Target player document does not exist!");
+
+                     const currentUserData = currentUserDoc.data();
+                     const targetPlayerData = targetPlayerDoc.data();
+
+                     // Double-check eligibility and status for BOTH players in the transaction
+                     if (currentUserData.currentPartyId || currentUserData.currentDungeonRun) throw new Error("You are already in a party or dungeon.");
+                      const currentUserAdv4Run = currentUserData.activeAdventures ? currentUserData.activeAdventures.find(adv => adv.originalAdventureId === "4") : null;
+                      if (!currentUserAdv4Run || (currentUserAdv4Run.returnTime - Date.now()) <= (3600 * 1000)) throw new Error("You are no longer eligible for the dungeon (Adv 4 requirement).");
+
+
+                     if (targetPlayerData.currentPartyId || targetPlayerData.currentDungeonRun) throw new Error(`${targetPlayerData.nickname || 'That player'} is already in a party or dungeon.`);
+                      const targetPlayerAdv4Run = targetPlayerData.activeAdventures ? targetPlayerData.activeActiveAdventures.find(adv => adv.originalAdventureId === "4") : null;
+                       if (!targetPlayerAdv4Run || (targetPlayerAdv4Run.returnTime - Date.now()) <= (3600 * 1000)) throw new Error(`${targetPlayerData.nickname || 'That player'} is no longer eligible for the dungeon (Adv 4 requirement).`);
+
+
+                    // Create the new party document
+                    const newPartyRef = doc(partiesColRef); // Firestore generates a new ID
+                    const newPartyData = {
+                        leaderId: currentUser.uid, // Current user is the leader
+                        leaderNickname: currentUserData.nickname || "Voyager",
+                        members: [currentUser.uid, targetPlayerUid], // Start with both players
+                        status: 'forming',
+                        dungeonId: 'dungeon_1', // Assuming D1 for now
+                        createdAt: Timestamp.now(),
+                        // endTime, combinedStats, winners, etc. will be added when party is full
+                    };
+
+                    transaction.set(newPartyRef, newPartyData);
+
+                    // Update BOTH players' documents to link them to this new party
+                    transaction.update(currentUserRef, { currentPartyId: newPartyRef.id, currentDungeonRun: null });
+                    transaction.update(targetPlayerRef, { currentPartyId: newPartyRef.id, currentDungeonRun: null });
+
+
+                     // Update local state immediately (optimistic)
+                     currentPartyId = newPartyRef.id;
+                     currentPartyMembers = [currentUser.uid, targetPlayerUid];
+                     currentDungeonRun = null;
+                     // isEligibleForDungeon is already true
+                }); // End of transaction
+
+                 showCustomPopup(`Created party with ${targetPlayerUid.substring(0,4)}...!`, "Party Created"); // Use UID snippet for popup
+                 // Re-fetch and re-render to show the new party and user's status
+                 const { playersData, partiesData } = await fetchDungeonData();
+                 renderDungeonPageContent({ playersData, partiesData });
+                 if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState()); // Save updated player state
+
+
+            } catch (error) {
+                 console.error("Error creating party with player:", error);
+                let errorMessage = error.message || "Failed to create party with player.";
+                 showCustomPopup(`Failed to create party: ${errorMessage}`, "Error");
+                // Re-fetch and re-render in case of errors to sync UI state
+                await fetchDungeonData(); // Fetch to update local state based on actual DB state
+                 renderDungeonPageContent({ playersData: fetchedPlayersData, partiesData: fetchedPartiesData }); // Need access to fetched data if fetch fails in catch. Or just refetch.
+                 // Alternative: Call fetchDungeonData again inside the catch block and then render
+                 const { playersData, partiesData } = await fetchDungeonData();
+                 renderDungeonPageContent({ playersData, partiesData });
+            }
+        }
+        
 function hasCompletedUnclaimedDungeon() {
      // This requires fetching the user's completed dungeons.
      // For simplicity *right now*, we will just check if playerPartyStatusElement has text related to claiming rewards.
@@ -3298,7 +3406,7 @@ function hasCompletedUnclaimedDungeon() {
             
             if(darkModeToggle){ darkModeToggle.addEventListener('change', () => { if (darkModeToggle.checked) { body.classList.add('dark-mode'); body.classList.remove('light-mode'); localStorage.setItem('theme', 'dark'); loadTwitterWidget('dark'); } else { body.classList.remove('dark-mode'); body.classList.add('light-mode'); localStorage.setItem('theme', 'light'); loadTwitterWidget('light'); } });}
             async function showPage(pageIdToShow) { console.log("Switching to page:", pageIdToShow); if(!pageContents || pageContents.length === 0) { console.error("pageContents NodeList is empty or not found in showPage. Ensure HTML elements with class 'page-content' exist and are selected correctly."); return; } pageContents.forEach(page => { page.classList.remove('active'); }); const targetPage = document.getElementById(pageIdToShow); if (targetPage) { targetPage.classList.add('active'); if (pageIdToShow === 'quests-page') renderQuests(); else if (pageIdToShow === 'shop-page') renderShopItems(); else if (pageIdToShow === 'crafting-page') renderCraftingItems(); else if (pageIdToShow === 'inventory-page') renderInventory(); else if (pageIdToShow === 'daily-rewards-page') renderDailyRewards(); else if (pageIdToShow === 'whitelist-page') await fetchAndDisplayRaffles(); else if (pageIdToShow === 'upgrade-page') { /* placeholder for upgrade page specific logic if any needed on show */ } else if (pageIdToShow === 'leaderboard-page') await fetchAndDisplayLeaderboards('pvTokens'); else if (pageIdToShow === 'dungeons-page') { checkDungeonEligibility(); // Check eligibility immediately
-                     const { playersData, partiesData } = await fetchEligiblePlayersAndParties(); // Fetch data
+                                          const { playersData, partiesData } = await fetchDungeonData(); // Fetch data and update local state (RENAMED) // Fetch data
                      renderDungeonPageContent({ playersData, partiesData }); // Render the page
                  } } else { console.error("Target page with ID '" + pageIdToShow + "' not found."); showPage('adventures-page'); }}
             if(menuItems){ menuItems.forEach(item => { item.addEventListener('click', () => { const targetPageId = item.dataset.page; if (targetPageId) { showPage(targetPageId); } }); });}
@@ -6693,7 +6801,7 @@ function renderOwnedPunkVoyageOrdinals(ownedInscriptions) { // ownedInscriptions
                       // Check eligibility first as it affects button states on the board
                       checkDungeonEligibility();
                       // This updates the local isEligibleForDungeon variable
-                      const { playersData, partiesData } = await fetchEligiblePlayersAndParties(); // Fetch data and update local state
+                                            const { playersData, partiesData } = await fetchDungeonData(); // Fetch data and update local state (RENAMED) // Fetch data and update local state
                      renderDungeonPageContent({ playersData, partiesData }); // Render the page with the fetched data
                  }
             }, 10000); // Update the board every 10 seconds (adjust as needed)
