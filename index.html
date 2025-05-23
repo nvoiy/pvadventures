@@ -2209,24 +2209,32 @@ function recalculateTotalAvailableAdventurers() {
     console.log(`Recalculated totalAvailableAdventurers: ${totalAvailableAdventurers} (Base: ${MAX_PLAYER_ADVENTURERS}, Bonus: ${ordinalBonusAdventurers}, Busy: ${totalAdventurersBusy})`); // <-- MODIFY LOG
 }
             
-                        function renderDungeonsPage() {
+            function renderDungeonsPage() {
                 if (!dungeonListContainer) return;
                 dungeonListContainer.innerHTML = ''; // Clear previous content
 
                 // Check the unlock condition once for all dungeons
                 const adventure4 = activeAdventures.find(adv => adv.originalAdventureId === "4");
-                const isAdventure4ActiveAndTimerLow = adventure4 && ((adventure4.returnTime - Date.now()) / 1000) <= dungeonsData[0].requiredTimeLeftSeconds; // Check against the requirement of the first dungeon, assuming all party dungeons have the same unlock condition
+                const timeRemainingOnAdventure4Seconds = adventure4 ? (adventure4.returnTime - Date.now()) / 1000 : Infinity;
+
+                // Corrected unlock condition:
+                // Dungeon is UNLOCKED if Adventure 4 is active AND its remaining time is LESS THAN OR EQUAL to the requirement.
+                const partyDungeonConditionMet = adventure4 && timeRemainingOnAdventure4Seconds <= dungeonsData[0].requiredTimeLeftSeconds;
 
                 dungeonsData.forEach(dungeon => {
                     const dungeonDiv = document.createElement('div');
                     dungeonDiv.classList.add('dungeon-entry');
                     dungeonDiv.dataset.dungeonId = dungeon.id;
 
-                    const isLocked = !isAdventure4ActiveAndTimerLow; // Check our calculated unlock condition
+                    // Dungeon is LOCKED if the condition is NOT met.
+                    const isLocked = !partyDungeonConditionMet; // <-- CORRECTED LOGIC
 
                     if (isLocked) {
                         dungeonDiv.classList.add('locked');
                     }
+
+                    // Corrected display text for the requirement
+                    const requirementText = `Unlock Requirement: Adventure 4 active with 1 Hour or less remaining.`;
 
                     dungeonDiv.innerHTML = `
                         <div class="dungeon-icon-placeholder" style="background-color: #4A2A00;">${dungeon.id.replace('dungeon_', '').toUpperCase()}</div>
@@ -2235,7 +2243,7 @@ function recalculateTotalAvailableAdventurers() {
                             <p>${dungeon.description}</p>
                              <p>Duration: ${dungeon.durationHours} Hours</p>
                              <p>Reward: ${dungeon.placeholderReward}</p>
-                             ${isLocked ? `<p class="dungeon-requirements">Unlock Requirement: Adventure 4 active with ≤ 1 Hour remaining.</p>` : ''}
+                             ${isLocked ? `<p class="dungeon-requirements">${requirementText}</p>` : `<p class="dungeon-requirements" style="color:var(--highlight-color-connected);">Unlocked!</p>`}
                         </div>
                         <button class="action-button enter-dungeon-btn" data-dungeon-id="${dungeon.id}" ${isLocked || totalAvailableAdventurers < 1 ? 'disabled' : ''}>Enter</button>
                     `;
@@ -2616,9 +2624,13 @@ function recalculateTotalAvailableAdventurers() {
 
                  // Re-check the unlock condition at the moment of clicking
                 const adventure4 = activeAdventures.find(adv => adv.originalAdventureId === "4");
-                const isAdventure4ActiveAndTimerLow = adventure4 && ((adventure4.returnTime - Date.now()) / 1000) <= dungeon.requiredTimeLeftSeconds;
+                const timeRemainingOnAdventure4Seconds = adventure4 ? (adventure4.returnTime - Date.now()) / 1000 : Infinity;
 
-                if (!isAdventure4ActiveAndTimerLow) {
+                // Corrected unlock condition check:
+                // Must be on Adventure 4 AND time left must be LESS THAN OR EQUAL to requirement
+                const partyDungeonConditionMet = adventure4 && timeRemainingOnAdventure4Seconds <= dungeon.requiredTimeLeftSeconds;
+
+                if (!partyDungeonConditionMet) { // <-- CORRECTED LOGIC
                      showCustomPopup(`This dungeon requires an adventurer on Adventure 4 with ${dungeon.requiredTimeLeftSeconds / 60} minutes or less remaining.`, "Dungeon Locked");
                      renderDungeonsPage(); // Re-render to show updated state
                      return;
