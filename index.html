@@ -673,7 +673,7 @@
                         <img src="https://green-tough-gopher-310.mypinata.cloud/ipfs/bafybeifeareynjcio5d5grjduek3w4fsxrckxfylfdznnxcy6af2ew6uo4" alt="Dungeon Entrance Art">
                     </div>
                     <p style="text-align:center; margin-top: 5px; margin-bottom:15px; font-size:1em;">
-                        Party Dungeons unlock when you have an adventurer on **Adventure 4** with **1 hour or less** time remaining.<br>
+                        Party Dungeons unlock when you have an adventurer on **Adventure 4**.<br> {/* MODIFIED TEXT */}
                         Entering a Party Dungeon uses **one** adventurer from your available pool.
                     </p>
                     <div id="dungeonListContainer" style="display: flex; flex-direction: column; align-items: center; gap: 20px; width:100%; max-width:700px; margin: 0 auto;">
@@ -1317,9 +1317,9 @@ function updateAdventureCardPvDisplay() {
 
             dailyRewardsData.push({ day: day, reward: rewardsArray.join(', ') });
         }
-        const dungeonsData = [
-                { id: "dungeon_1", name: "Death Rider's Crypt Lvl 1", description: "A challenging foray into a crypt tied to Adventure 4.", durationHours: 2, requiredAdventureId: "4", requiredTimeLeftSeconds: 3600, placeholderReward: "1000 PV, 10 Gold" },
-                { id: "dungeon_2", name: "Death Rider's Crypt Lvl 2", description: "A deeper, tougher challenge in the crypt.", durationHours: 4, requiredAdventureId: "4", requiredTimeLeftSeconds: 3600, placeholderReward: "2500 PV, 25 Gold, 1 Diamond" },
+const dungeonsData = [
+                { id: "dungeon_1", name: "Death Rider's Crypt Lvl 1", description: "A challenging foray into a crypt tied to Adventure 4.", durationHours: 2, requiredAdventureId: "4", placeholderReward: "1000 PV, 10 Gold" }, // REMOVED requiredTimeLeftSeconds
+                { id: "dungeon_2", name: "Death Rider's Crypt Lvl 2", description: "A deeper, tougher challenge in the crypt.", durationHours: 4, requiredAdventureId: "4", placeholderReward: "2500 PV, 25 Gold, 1 Diamond" }, // REMOVED requiredTimeLeftSeconds
                 // Add more dungeons here with increasing difficulty and rewards
             ];
             const adventureProgressionConfig = [ { id: "1", blockId: "adventure-1-block", unlockQuestId: null, unlockMessage: "" }, { id: "2", blockId: "adventure-2-block", unlockQuestId: 1, unlockMessage: "Complete 'Spirit Forest' 5 times to unlock." }, { id: "3", blockId: "adventure-3-block", unlockQuestId: 2, unlockMessage: "Complete 'Mountain of the Marowan' 5 times to unlock." }, { id: "4", blockId: "adventure-4-block", unlockQuestId: 3, unlockMessage: "Complete 'Fire Fields of Flyinals' 5 times to unlock." } ];
@@ -2215,11 +2215,10 @@ function recalculateTotalAvailableAdventurers() {
 
                 // Check the unlock condition once for all dungeons
                 const adventure4 = activeAdventures.find(adv => adv.originalAdventureId === "4");
-                const timeRemainingOnAdventure4Seconds = adventure4 ? (adventure4.returnTime - Date.now()) / 1000 : Infinity;
 
                 // Corrected unlock condition:
-                // Dungeon is UNLOCKED if Adventure 4 is active AND its remaining time is LESS THAN OR EQUAL to the requirement.
-                const partyDungeonConditionMet = adventure4 && timeRemainingOnAdventure4Seconds <= dungeonsData[0].requiredTimeLeftSeconds;
+                // Dungeon is UNLOCKED if Adventure 4 is active.
+                const partyDungeonConditionMet = !!adventure4; // True if adventure4 object exists (is active)
 
                 dungeonsData.forEach(dungeon => {
                     const dungeonDiv = document.createElement('div');
@@ -2227,14 +2226,14 @@ function recalculateTotalAvailableAdventurers() {
                     dungeonDiv.dataset.dungeonId = dungeon.id;
 
                     // Dungeon is LOCKED if the condition is NOT met.
-                    const isLocked = !partyDungeonConditionMet; // <-- CORRECTED LOGIC
+                    const isLocked = !partyDungeonConditionMet;
 
                     if (isLocked) {
                         dungeonDiv.classList.add('locked');
                     }
 
                     // Corrected display text for the requirement
-                    const requirementText = `Unlock Requirement: Adventure 4 active with 1 Hour or less remaining.`;
+                    const requirementText = `Unlock Requirement: Adventure 4 active.`;
 
                     dungeonDiv.innerHTML = `
                         <div class="dungeon-icon-placeholder" style="background-color: #4A2A00;">${dungeon.id.replace('dungeon_', '').toUpperCase()}</div>
@@ -2624,14 +2623,13 @@ function recalculateTotalAvailableAdventurers() {
 
                  // Re-check the unlock condition at the moment of clicking
                 const adventure4 = activeAdventures.find(adv => adv.originalAdventureId === "4");
-                const timeRemainingOnAdventure4Seconds = adventure4 ? (adventure4.returnTime - Date.now()) / 1000 : Infinity;
 
                 // Corrected unlock condition check:
-                // Must be on Adventure 4 AND time left must be LESS THAN OR EQUAL to requirement
-                const partyDungeonConditionMet = adventure4 && timeRemainingOnAdventure4Seconds <= dungeon.requiredTimeLeftSeconds;
+                // Must be on Adventure 4
+                const partyDungeonConditionMet = !!adventure4;
 
-                if (!partyDungeonConditionMet) { // <-- CORRECTED LOGIC
-                     showCustomPopup(`This dungeon requires an adventurer on Adventure 4 with ${dungeon.requiredTimeLeftSeconds / 60} minutes or less remaining.`, "Dungeon Locked");
+                if (!partyDungeonConditionMet) {
+                     showCustomPopup(`This dungeon requires an adventurer on Adventure 4.`, "Dungeon Locked"); // MODIFIED MESSAGE
                      renderDungeonsPage(); // Re-render to show updated state
                      return;
                  }
