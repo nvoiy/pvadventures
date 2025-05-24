@@ -6884,14 +6884,19 @@ initializeTheme();
 
 
 
-         function updateWalletDisplay(account, walletName = '') {
+        function updateWalletDisplay(account, walletName = '') {
+            // Ensure critical elements are defined before proceeding
+            const connectWalletBtnElement = document.getElementById('connectWalletBtn');
+            const walletAddressDisplayElement = document.getElementById('walletAddressDisplay');
+            const playerNicknameDisplayElement = document.getElementById('playerNicknameDisplay'); // Assuming this is its ID
+
             if (account) {
                 const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
-                if (connectWalletBtn) {
-                    connectWalletBtn.textContent = `${walletName}: ${shortAddress}`;
-                    connectWalletBtn.classList.add('connected');
+                if (connectWalletBtnElement) { // Check if the element exists
+                    connectWalletBtnElement.textContent = `${walletName}: ${shortAddress}`;
+                    connectWalletBtnElement.classList.add('connected');
                 }
-                if (walletAddressDisplay) walletAddressDisplay.textContent = `Wallet: ${account}`;
+                if (walletAddressDisplayElement) walletAddressDisplayElement.textContent = `Wallet: ${account}`; // Check
 
                 walletVerificationPendingForBonus = false;
 
@@ -6920,36 +6925,25 @@ initializeTheme();
                     ordinalBonusAdventurers = 0;
                     if (previousBonus > 0) {
                          recalculateTotalAvailableAdventurers();
-                         if (currentUser && currentUser.uid) { // currentUser.uid here is the wallet address
+                         if (currentUser && currentUser.uid) {
                             saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
                          }
                     }
                 }
-                if (playerNicknameDisplay && userNickname) {
-                    playerNicknameDisplay.textContent = userNickname;
+                if (playerNicknameDisplayElement && userNickname) { // Check
+                    playerNicknameDisplayElement.textContent = userNickname;
                 }
 
             } else { // Wallet disconnected or not present
-                if (connectWalletBtn) {
-                    connectWalletBtn.textContent = 'CONNECT WALLET';
-                    connectWalletBtn.classList.remove('connected');
+                if (connectWalletBtnElement) { // Check
+                    connectWalletBtnElement.textContent = 'CONNECT WALLET';
+                    connectWalletBtnElement.classList.remove('connected');
                 }
-                if (walletAddressDisplay) walletAddressDisplay.textContent = '';
-                if (playerNicknameDisplay) playerNicknameDisplay.textContent = 'Voyager';
+                if (walletAddressDisplayElement) walletAddressDisplayElement.textContent = ''; // Check
+                if (playerNicknameDisplayElement) playerNicknameDisplayElement.textContent = 'Voyager'; // Check
 
                 if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none';
                 if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = '';
-                
-                // The actual state reset (like setting connectedAccount to null)
-                // is handled by handleWalletDisconnected. This function (updateWalletDisplay)
-                // should primarily focus on UI updates based on the account status.
-                // The recursive call was removed from here:
-                // if (connectedAccount !== null || connectedWalletName !== null) {
-                //     console.log("Wallet was connected, now disconnecting session (from updateWalletDisplay).");
-                //     // handleWalletDisconnected(); // <<< THIS LINE IS REMOVED/COMMENTED
-                // }
-                window.connectedAccount = null;
-                window.connectedWalletName = null;
             }
         }
 // --- END OF FULL updateWalletDisplay FUNCTION TO REPLACE ---
