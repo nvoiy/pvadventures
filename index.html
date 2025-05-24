@@ -329,6 +329,70 @@
         .swap-section h3 { font-size: 1.8em; text-align: center; margin-bottom: 15px; }
         .shop-section-wrapper, .crafting-section-wrapper { width: 100%; max-width: 800px; margin-bottom:30px;} .shop-section-wrapper h3, #crafting-page h3 { font-size: 1.8em; text-align: center; margin-bottom: 20px; color: var(--label-color); }
         .quest-list, .shop-items, .crafting-items-container { display: flex; flex-direction: column; gap: 18px; width:100%; max-width:800px; margin:0 auto; }
+        .quest-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px; /* Add some padding */
+            border: 2px solid var(--border-color); /* Default border */
+            border-radius: 8px;
+            background-color: var(--adventure-block-bg); /* Consistent background */
+            margin-bottom: 15px; /* Space between quest items */
+            transition: border-color 0.3s, box-shadow 0.3s, opacity 0.3s; /* Smooth transitions */
+        }
+
+        .quest-item .quest-info {
+            flex-grow: 1; /* Allows the info to take up available space */
+            margin-right: 15px; /* Space before the actions */
+        }
+        .quest-item .quest-info p { /* Ensure quest text wraps nicely */
+            margin: 0;
+            white-space: normal; /* Allow text to wrap */
+            word-break: break-word; /* Break long words if necessary */
+        }
+
+
+        .quest-item .quest-actions {
+            display: flex; /* To align reward and button if needed */
+            flex-direction: column; /* Stack reward and button vertically */
+            align-items: flex-end; /* Align them to the right */
+            text-align: right; /* Ensure text inside is right-aligned */
+            flex-shrink: 0; /* Prevent actions from shrinking */
+        }
+        .quest-item .quest-actions .quest-reward {
+            margin-bottom: 5px; /* Space between reward and button */
+            font-size: 0.9em; /* Slightly smaller reward text */
+        }
+        .quest-item .quest-actions .claim-quest-btn {
+            min-width: 80px; /* Give button a minimum width */
+            padding: 6px 10px; /* Adjust padding */
+        }
+
+        /* Styling for completed but not claimed quests (AVAILABLE TO CLAIM) */
+        .quest-item.available-to-claim {
+            border-color: var(--quest-available-outline); /* Use your existing variable */
+            box-shadow: 0 0 8px var(--quest-available-outline);
+        }
+        /* Make the claim button more prominent when available */
+        .quest-item.available-to-claim .claim-quest-btn:not([disabled]) {
+            background-color: var(--highlight-color-connected); /* Greenish button */
+            color: white;
+            border-color: var(--highlight-color-connected);
+        }
+
+
+        /* Styling for claimed quests (COMPLETED AND CLAIMED) */
+        .quest-item.completed-and-claimed {
+            border-color: var(--quest-completed-outline); /* Use your existing variable */
+            box-shadow: 0 0 8px var(--quest-completed-outline);
+            opacity: 0.7; /* Optional: make claimed quests less prominent */
+        }
+        /* Style for already claimed button */
+        .quest-item.completed-and-claimed .claim-quest-btn[disabled] {
+            background-color: var(--button-bg); /* Default button bg */
+            color: var(--button-text-color);
+            opacity: 0.6;
+        }
         /* --- MODIFIED FOR INVENTORY GRID --- */
         .inventory-items-container {
             display: grid;
@@ -791,7 +855,7 @@
                                         <div class="adventure-controls">
                                             <label for="num-adventurers-5">ADVENTURERS:</label> 
                                             <input type="number" id="num-adventurers-5" class="adventure-num-select" value="1" min="1">
-                                            <button class="adventure-send-btn" data-adventure-id="5" data-adventure-name="The Cyber Void Echo" data-duration-hours="720" data-pv-reward="3125" data-gold-guaranteed="5" data-diamond-chance="0.10" data-diamond-reward-multiplier="3" data-adventurer-requirement="10" style="background-color: #8A2BE2; color:white;">SEND</button> {/* BlueViolet style */}
+                                            <button class="adventure-send-btn" data-adventure-id="5" data-adventure-name="The Cyber Void Echo" data-duration-hours="720" data-pv-reward="3125" data-gold-guaranteed="5" data-diamond-chance="0.10" data-diamond-reward-multiplier="3" data-adventurer-requirement="10" style="background-color: #8A2BE2; color:white;">SEND</button> 
                                         </div> 
                                     </div> 
                                     <div class="adventure-drops-area"> 
@@ -809,7 +873,7 @@
                         <img src="https://green-tough-gopher-310.mypinata.cloud/ipfs/bafybeifeareynjcio5d5grjduek3w4fsxrckxfylfdznnxcy6af2ew6uo4" alt="Dungeon Entrance Art">
                     </div>
                     <p style="text-align:center; margin-top: 5px; margin-bottom:15px; font-size:1em;">
-                        Party Dungeons unlock when you have an adventurer on **Adventure 4**.<br> {/* MODIFIED TEXT */}
+                        Party Dungeons unlock when you have an adventurer on **Adventure 4 +**.<br> 
                         Entering a Party Dungeon uses **one** adventurer from your available pool.
                     </p>
                     <div id="dungeonListContainer" style="display: flex; flex-direction: column; align-items: center; gap: 20px; width:100%; max-width:700px; margin: 0 auto;">
@@ -878,9 +942,9 @@
                         <div id="upgradeSuccessRateDisplay"></div>
                         <div id="upgradeResultDisplay"></div>
                     </div>
-            <p style="text-align:center; margin-top: 15px; font-size:0.95em;">
-                Item levels enhance their effectiveness. Each level applies an increasing percentage bonus directly to the item's base stats/perks: +5% at +1, +10% at +2, +15% at +3, +20% at +4, and a +25% at +5. Max level is +5. High risk, high reward! Failed upgrades will destroy the item
-            </p>
+         <p style="text-align:center; margin-top: 15px; font-size:0.95em;">
+            Item levels enhance their effectiveness. Each level applies an increasing percentage bonus directly to the item's base stats/perks: +15% at +1, +25% at +2, +35% at +3, +50% at +4, and a +70% at +5. Max level is +5. High risk, high reward! Failed upgrades will destroy the item
+        </p>
         </section>
                 <section id="leaderboard-page" class="page-content">
                     <h2 class="page-title">LEADERBOARDS</h2>
