@@ -3943,7 +3943,7 @@ function usePetWhistleUnlock(itemUniqueId) {
                 showCustomPopup(popupMessage, "Adventure Complete!");
                 
                 // --- Quest Updates ---
-                quests.forEach(quest => {  
+                quests.forEach(quest => {  // Quest variable is 'quest'
                     if (!quest.completed && !quest.claimed) { 
                         let progressChanged = false;
                         if (quest.adventureName === completedAdv.name) { quest.progress = (quest.progress || 0) + completedAdv.adventurers; progressChanged = true; }
@@ -3975,7 +3975,7 @@ function usePetWhistleUnlock(itemUniqueId) {
 
                         if (progressChanged && quest.progress >= quest.target && !quest.completed) { 
                             quest.completed = true; 
-                            if(!quest.claimed) showCustomPopup(`Quest Completed: ${q.text}`, "Quest Complete!"); 
+                            if(!quest.claimed) showCustomPopup(`Quest Completed: ${quest.text}`, "Quest Complete!"); // <<< THIS LINE IS NOW FIXED
                             if ([1,2,3,15].includes(quest.id)) { updateAdventureDisplayStates(); } // Include quest 15 for Adv 5
                         }
                     }
