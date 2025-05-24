@@ -537,6 +537,77 @@
         #itemTooltip .recipe-info { margin-top: 8px; font-size: 0.9em;}
         #itemTooltip .recipe-info strong { color: var(--label-color); }
         body.dark-mode #itemTooltip .recipe-info strong { color: var(--orange-label); }
+         #dungeonCrawlerSelectionModalOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.85); /* Slightly darker than item selection */
+            display: flex; 
+            justify-content: center; align-items: center;
+            z-index: 2010; /* Higher than item selection modal */
+        }
+
+        #dungeonCrawlerSelectionModal {
+            background-color: var(--section-bg); border: 3px solid var(--border-color);
+            padding: 20px; border-radius: 10px; 
+            text-align: left; /* Align content to left for lists */
+            min-width: 400px; max-width: 90%; width: auto; 
+            box-shadow: 0 5px 25px rgba(0,0,0,0.5); font-family: 'VT323', monospace;
+            color: var(--text-color); box-sizing: border-box;
+            position: fixed; 
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%); 
+            z-index: 2011;
+            max-height: 80vh; /* Allow for more content */
+            display: flex; /* Use flex for better internal layout */
+            flex-direction: column;
+        }
+
+        #dungeonCrawlerSelectionModalTitle {
+            font-size: 1.7em; margin-top: 0; margin-bottom: 10px;
+            color: var(--label-color); 
+            text-align: center;
+        }
+
+        #availableDungeonCrawlersList .crawler-item-btn,
+        #selectedDungeonCrawlersDisplay .selected-crawler-tag {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            margin-bottom: 5px;
+            border: 1px solid var(--border-color);
+            background-color: var(--adventure-block-bg);
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'VT323', monospace;
+            font-size: 1em;
+        }
+        #availableDungeonCrawlersList .crawler-item-btn:hover {
+            background-color: var(--button-bg-hover); /* You might need to define this variable or use a direct color */
+        }
+        body:not(.dark-mode) #availableDungeonCrawlersList .crawler-item-btn:hover { background-color: #f0f0f0; }
+        body.dark-mode #availableDungeonCrawlersList .crawler-item-btn:hover { background-color: #4a4a4a; }
+
+
+        #availableDungeonCrawlersList .crawler-item-btn.selected-for-dungeon {
+            background-color: var(--highlight-color-connected) !important;
+            color: white !important;
+        }
+
+
+        #selectedDungeonCrawlersDisplay .selected-crawler-tag {
+            cursor: default;
+            margin-right: 8px;
+            margin-bottom: 8px; /* Add bottom margin for tags */
+            display: inline-flex; /* Allow tags to sit next to each other */
+        }
+        #selectedDungeonCrawlersDisplay .selected-crawler-tag .remove-crawler-btn {
+            margin-left: 10px;
+            background: none;
+            border: none;
+            color: var(--highlight-color-danger);
+            font-size: 1.1em;
+            cursor: pointer;
+            padding: 0 3px;
+        }
     </style>
 </head>
 <body>
@@ -974,6 +1045,36 @@
         <button id="itemSelectionModalCloseBtn" class="action-button">Cancel</button>
     </div>
 
+    <!-- Item Selection Modal for Upgrading -->
+    <div id="itemSelectionModalOverlay" class="hidden"></div>
+    <div id="itemSelectionModal" class="hidden">
+        <h3 id="itemSelectionModalTitle">Select Item</h3>
+        <div id="itemSelectionModalList"></div>
+        <button id="itemSelectionModalCloseBtn" class="action-button">Cancel</button>
+    </div>
+
+    <!-- +++ NEW: Dungeon Crawler Selection Modal +++ -->
+    <div id="dungeonCrawlerSelectionModalOverlay" class="hidden"></div>
+    <div id="dungeonCrawlerSelectionModal" class="hidden">
+        <h3 id="dungeonCrawlerSelectionModalTitle">Select Dungeon Crawlers</h3>
+        <p id="dungeonCrawlerSelectionModalInfo" style="font-size: 0.9em; margin-bottom: 10px;">Select up to <span id="dungeonCrawlerMaxSelectCount">0</span> crawlers for this dungeon. (Future: Their stats will aid you!)</p>
+        <div id="availableDungeonCrawlersList" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px; border: 1px solid var(--border-color); padding: 10px;">
+            <!-- Available crawlers will be listed here -->
+        </div>
+        <h4>Selected Crawlers:</h4>
+        <div id="selectedDungeonCrawlersDisplay" style="min-height: 50px; border: 1px dashed var(--border-color); padding: 10px; margin-bottom: 15px;">
+            <!-- Selected crawlers will appear here -->
+        </div>
+        <div id="dungeonCrawlerSelectionModalButtons" style="display: flex; justify-content: center; gap: 15px;">
+            <button id="dungeonCrawlerConfirmSelectionBtn" class="action-button">Confirm Selection</button>
+            <button id="dungeonCrawlerCancelSelectionBtn" class="action-button">Cancel</button>
+        </div>
+    </div>
+    <!-- +++ END OF NEW MODAL +++ -->
+
+    <script type="module" id="firebaseModule">
+        // ... your firebase script ...
+    </script>
 
     <script type="module" id="firebaseModule">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
@@ -1149,6 +1250,15 @@ function updateAdventureCardPvDisplay() {
             const itemSelectionModalTitle = document.getElementById('itemSelectionModalTitle');
             const itemSelectionModalList = document.getElementById('itemSelectionModalList');
             const itemSelectionModalCloseBtn = document.getElementById('itemSelectionModalCloseBtn');
+                const dungeonCrawlerSelectionModalOverlay = document.getElementById('dungeonCrawlerSelectionModalOverlay');
+            const dungeonCrawlerSelectionModal = document.getElementById('dungeonCrawlerSelectionModal');
+            const dungeonCrawlerSelectionModalTitle = document.getElementById('dungeonCrawlerSelectionModalTitle');
+            const dungeonCrawlerSelectionModalInfo = document.getElementById('dungeonCrawlerSelectionModalInfo');
+            const dungeonCrawlerMaxSelectCountSpan = document.getElementById('dungeonCrawlerMaxSelectCount');
+            const availableDungeonCrawlersListDiv = document.getElementById('availableDungeonCrawlersList');
+            const selectedDungeonCrawlersDisplayDiv = document.getElementById('selectedDungeonCrawlersDisplay');
+            const dungeonCrawlerConfirmSelectionBtn = document.getElementById('dungeonCrawlerConfirmSelectionBtn');
+            const dungeonCrawlerCancelSelectionBtn = document.getElementById('dungeonCrawlerCancelSelectionBtn');
 
             // --- Game State Variables ---
             let currentUser = null; 
@@ -1827,6 +1937,7 @@ function showCustomPopup(message, title = "Notification", options = {}) {
                         }
                         showPage('adventures-page'); // Show the default game page
                         await loadPunkVoyageIds(); // Load the fixed list of IDs
+                        await loadDungeonCrawlerIds();
 
                     } catch (error) {
                         console.error("Error during user state processing in onAuthStateChanged:", error);
@@ -2443,12 +2554,10 @@ function recalculateTotalAvailableAdventurers() {
                 document.querySelectorAll('.enter-dungeon-btn:not([disabled])').forEach(button => {
                     button.addEventListener('click', handleEnterDungeon);
                 });
-                document.querySelectorAll('.select-dungeon-crawlers-btn:not([disabled])').forEach(button => {
+                 document.querySelectorAll('.select-dungeon-crawlers-btn:not([disabled])').forEach(button => {
                     button.addEventListener('click', (event) => {
                         const dungeonId = event.target.dataset.dungeonId;
-                        // For now, just a placeholder popup. Actual selection UI will be more complex.
-                        showCustomPopup(`Dungeon Crawler selection for ${dungeonId} coming soon! For now, one adventurer will embark.`, "Feature Coming Soon");
-                        // Later, this will open a modal to select from `playerDungeonCrawlers`.
+                        openDungeonCrawlerSelectionModal(dungeonId); // <<< CHANGED THIS LINE
                     });
                 });
             }
@@ -5711,6 +5820,37 @@ async function loadPunkVoyageIds() { // This was originally line 2414
     }
 } // This was originally line 2444
 
+   async function loadDungeonCrawlerIds() {
+        console.log("loadDungeonCrawlerIds: Attempting to load Dungeon Crawler inscription IDs.");
+        try {
+            // PASTE YOUR DUNGEON CRAWLER NFT IDs HERE, formatted as a JavaScript array
+            // It should look like: const crawlerIdsArray = [ "crawler_id1", "crawler_id2", ... ];
+            const crawlerIdsArray = [
+                // EXAMPLE: "some_crawler_inscription_id_1i0",
+                // EXAMPLE: "another_crawler_inscription_id_2i0"
+            ]; // <<<<------ YOU WILL ADD YOUR IDs HERE LATER
+
+            if (!Array.isArray(crawlerIdsArray) /* || crawlerIdsArray.length === 0 */) { // Allow empty for now
+                console.warn("loadDungeonCrawlerIds: Embedded crawlerIdsArray is not a valid array or is empty. Dungeon Crawler feature might be limited.");
+                // No critical error if empty, just means no crawlers defined yet
+                PUNK_VOYAGE_DUNGEON_CRAWLER_IDS_SET.clear(); // Use .clear() to empty the Set
+                dungeonCrawlerIdsLoaded = true; // Mark as "loaded" (even if empty) to prevent re-attempts
+                return true; // Still return true as the process completed without error
+            }
+
+            PUNK_VOYAGE_DUNGEON_CRAWLER_IDS_SET.clear(); // Clear before adding new ones
+            crawlerIdsArray.forEach(id => PUNK_VOYAGE_DUNGEON_CRAWLER_IDS_SET.add(id));
+
+            console.log(`loadDungeonCrawlerIds: Successfully loaded ${PUNK_VOYAGE_DUNGEON_CRAWLER_IDS_SET.size} Dungeon Crawler inscription IDs.`);
+            dungeonCrawlerIdsLoaded = true;
+            return true;
+        } catch (error) {
+            console.error('loadDungeonCrawlerIds: Error processing embedded IDs:', error);
+            PUNK_VOYAGE_DUNGEON_CRAWLER_IDS_SET.clear();
+            dungeonCrawlerIdsLoaded = false; // Mark as failed
+            return false;
+        }
+    }
 
 async function fetchWalletInscriptions(userAddress, walletName) {
     if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'block';
@@ -5897,7 +6037,55 @@ function renderOwnedPunkVoyageOrdinals(ownedInscriptions) { // ownedInscriptions
     userOrdinalsListElement.appendChild(ul);
     userOrdinalsDisplayElement.style.display = 'block'; // Make sure the section is visible
 }
+async function fetchPlayerDungeonCrawlers(userAddress, walletName) {
+    if (!dungeonCrawlerIdsLoaded) {
+        console.warn("Dungeon Crawler ID list not loaded. Cannot fetch player's crawlers.");
+        playerDungeonCrawlers = [];
+        return;
+    }
 
+    console.log(`Fetching Dungeon Crawlers for ${userAddress} via ${walletName}... (Currently Placeholder)`);
+    // This will be similar to fetchWalletInscriptions but will use PUNK_VOYAGE_DUNGEON_CRAWLER_IDS_SET
+    // For now, let's simulate owning a few if the main Punk Voyage collection is used as a stand-in, or add dummy data
+    
+    playerDungeonCrawlers = []; // Clear previous
+
+    // --- SIMULATION / PLACEHOLDER ---
+    // If you want to test with some dummy data:
+    if (PUNK_VOYAGE_DUNGEON_CRAWLER_IDS_SET.size > 0) { // Only if you've added IDs to the set
+        let count = 0;
+        PUNK_VOYAGE_DUNGEON_CRAWLER_IDS_SET.forEach(id => {
+            if (count < 5) { // Simulate owning up to 5
+                 // In a real scenario, you'd fetch actual details (name, image, stats)
+                playerDungeonCrawlers.push({ 
+                    id: id, // The inscription ID
+                    uniqueInstanceId: `crawler_${id.slice(0,8)}`, // Create a unique ID for this instance
+                    name: `Crawler #${id.slice(0,4)}`, // Placeholder name
+                    imageUrl: `https://api.hiro.so/ordinals/v1/inscriptions/${id}/content`, // Placeholder image
+                    attack: Math.floor(Math.random() * 10) + 5, // Random placeholder stats
+                    defense: Math.floor(Math.random() * 10) + 5
+                });
+                count++;
+            }
+        });
+         console.log("Simulated owning Dungeon Crawlers:", playerDungeonCrawlers);
+    } else {
+        console.log("No Dungeon Crawler IDs defined in PUNK_VOYAGE_DUNGEON_CRAWLER_IDS_SET. Player will have no crawlers.");
+    }
+    // --- END SIMULATION ---
+
+    // In the real version, you'd:
+    // 1. Fetch all inscriptions from the user's wallet (like in fetchWalletInscriptions)
+    // 2. Filter those against PUNK_VOYAGE_DUNGEON_CRAWLER_IDS_SET
+    // 3. For each owned crawler, fetch its metadata (name, image, and importantly, its ATK/DEF stats if they are part of the inscription metadata)
+    // 4. Populate playerDungeonCrawlers with objects containing { id, uniqueInstanceId, name, imageUrl, attack, defense }
+    
+    // For now, we assume it's populated (e.g., by the simulation above or if you manually add to playerDungeonCrawlers for testing)
+    if (currentUser.uid) { // Save if state changed (e.g. simulated crawlers were added)
+        saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
+    }
+}
+// Call this function after wallet connection in updateWalletDisplay if crawler IDs are loaded
             // --- Leaderboard Logic ---
             async function fetchAndDisplayLeaderboards(resourceType = 'pvTokens') {
                 if (!db) { console.error("Firestore not initialized for fetching leaderboards."); return; }
@@ -6041,6 +6229,129 @@ function renderOwnedPunkVoyageOrdinals(ownedInscriptions) { // ownedInscriptions
             if (upgradeScrollSlot) upgradeScrollSlot.addEventListener('click', () => openItemSelectionModal('scroll'));
             if (itemSelectionModalCloseBtn) itemSelectionModalCloseBtn.addEventListener('click', closeItemSelectionModal);
             if (itemSelectionModalOverlay) itemSelectionModalOverlay.addEventListener('click', (event) => { if(event.target === itemSelectionModalOverlay) closeItemSelectionModal(); });
+            let currentDungeonIdForCrawlerSelection = null;
+            let tempSelectedCrawlers = []; // Store uniqueInstanceIds of crawlers selected in the modal
+
+            function openDungeonCrawlerSelectionModal(dungeonId) {
+                currentDungeonIdForCrawlerSelection = dungeonId;
+                const dungeon = dungeonsData.find(d => d.id === dungeonId);
+                if (!dungeon || dungeon.type !== "party_npc") {
+                    console.error("Invalid dungeon or not a party dungeon for crawler selection:", dungeonId);
+                    return;
+                }
+
+                tempSelectedCrawlers = []; // Reset temporary selection
+                dungeonCrawlerMaxSelectCountSpan.textContent = dungeon.maxPartySize - 1; // Player is 1, rest are crawlers
+
+                availableDungeonCrawlersListDiv.innerHTML = '';
+                if (playerDungeonCrawlers.length === 0) {
+                    availableDungeonCrawlersListDiv.innerHTML = "<p>You don't own any Dungeon Crawler NFTs.</p>";
+                } else {
+                    playerDungeonCrawlers.forEach(crawler => {
+                        // In the future, you'd also check if this crawler is already busy in another dungeon party
+                        const crawlerBtn = document.createElement('button');
+                        crawlerBtn.classList.add('crawler-item-btn');
+                        crawlerBtn.dataset.crawlerInstanceId = crawler.uniqueInstanceId;
+                        // Basic display: Name (ATK/DEF) - You'd style this better
+                        crawlerBtn.innerHTML = `
+                            <img src="${crawler.imageUrl || 'https://via.placeholder.com/30'}" alt="C" style="width:30px; height:30px; margin-right:8px; border-radius:3px;">
+                            ${crawler.name} (ATK: ${crawler.attack || 'N/A'}, DEF: ${crawler.defense || 'N/A'})
+                        `;
+                        crawlerBtn.onclick = () => toggleCrawlerSelection(crawler, crawlerBtn, dungeon.maxPartySize - 1);
+                        availableDungeonCrawlersListDiv.appendChild(crawlerBtn);
+                    });
+                }
+
+                updateSelectedCrawlersDisplay(); // Clear and update the "Selected Crawlers" display
+                dungeonCrawlerSelectionModalOverlay.classList.remove('hidden');
+                dungeonCrawlerSelectionModal.classList.remove('hidden');
+            }
+
+            function toggleCrawlerSelection(crawler, buttonElement, maxSelect) {
+                const index = tempSelectedCrawlers.findIndex(cId => cId === crawler.uniqueInstanceId);
+                if (index > -1) { // Already selected, so deselect
+                    tempSelectedCrawlers.splice(index, 1);
+                    buttonElement.classList.remove('selected-for-dungeon');
+                } else { // Not selected, try to select
+                    if (tempSelectedCrawlers.length < maxSelect) {
+                        tempSelectedCrawlers.push(crawler.uniqueInstanceId);
+                        buttonElement.classList.add('selected-for-dungeon');
+                    } else {
+                        showCustomPopup(`You can select a maximum of ${maxSelect} crawlers for this dungeon.`, "Selection Limit Reached");
+                    }
+                }
+                updateSelectedCrawlersDisplay();
+            }
+
+            function updateSelectedCrawlersDisplay() {
+                selectedDungeonCrawlersDisplayDiv.innerHTML = '';
+                if (tempSelectedCrawlers.length === 0) {
+                    selectedDungeonCrawlersDisplayDiv.innerHTML = '<p style="font-size:0.9em; opacity:0.7;">No crawlers selected.</p>';
+                    return;
+                }
+                tempSelectedCrawlers.forEach(crawlerInstanceId => {
+                    const crawlerData = playerDungeonCrawlers.find(c => c.uniqueInstanceId === crawlerInstanceId);
+                    if (crawlerData) {
+                        const tag = document.createElement('span');
+                        tag.classList.add('selected-crawler-tag');
+                        tag.textContent = `${crawlerData.name}`;
+                        
+                        const removeBtn = document.createElement('button');
+                        removeBtn.classList.add('remove-crawler-btn');
+                        removeBtn.innerHTML = '×'; // Multiplication sign as an X
+                        removeBtn.title = `Remove ${crawlerData.name}`;
+                        removeBtn.onclick = (event) => {
+                            event.stopPropagation(); // Prevent card click if nested
+                            const crawlerButtonInList = availableDungeonCrawlersListDiv.querySelector(`.crawler-item-btn[data-crawler-instance-id="${crawlerInstanceId}"]`);
+                            toggleCrawlerSelection(crawlerData, crawlerButtonInList, parseInt(dungeonCrawlerMaxSelectCountSpan.textContent));
+                        };
+                        tag.appendChild(removeBtn);
+                        selectedDungeonCrawlersDisplayDiv.appendChild(tag);
+                    }
+                });
+            }
+
+            function closeDungeonCrawlerSelectionModal() {
+                dungeonCrawlerSelectionModalOverlay.classList.add('hidden');
+                dungeonCrawlerSelectionModal.classList.add('hidden');
+                currentDungeonIdForCrawlerSelection = null;
+                tempSelectedCrawlers = [];
+            }
+
+            if (dungeonCrawlerConfirmSelectionBtn) {
+                dungeonCrawlerConfirmSelectionBtn.addEventListener('click', () => {
+                    if (currentDungeonIdForCrawlerSelection) {
+                        // Store tempSelectedCrawlers with the dungeon instance or handle them before entering.
+                        // For now, we'll just log and close. The actual use of these crawlers is for Step 4.
+                        console.log(`Confirmed selection for dungeon ${currentDungeonIdForCrawlerSelection}:`, tempSelectedCrawlers);
+                        
+                        // Update the display on the main dungeons page (under the "Select Crawlers" button)
+                        const selectedCrawlersDisplayOnPage = document.getElementById(`selectedCrawlersDisplay_${currentDungeonIdForCrawlerSelection}`);
+                        if (selectedCrawlersDisplayOnPage) {
+                            if (tempSelectedCrawlers.length > 0) {
+                                const names = tempSelectedCrawlers.map(id => {
+                                    const crawler = playerDungeonCrawlers.find(c => c.uniqueInstanceId === id);
+                                    return crawler ? crawler.name : 'Unknown';
+                                }).join(', ');
+                                selectedCrawlersDisplayOnPage.textContent = `Selected: ${names}`;
+                            } else {
+                                selectedCrawlersDisplayOnPage.textContent = 'No crawlers selected.';
+                            }
+                        }
+                        // In a full implementation, you'd likely pass tempSelectedCrawlers to handleEnterDungeon
+                        // or store it associated with the dungeon entry.
+                        closeDungeonCrawlerSelectionModal();
+                    }
+                });
+            }
+            if (dungeonCrawlerCancelSelectionBtn) {
+                dungeonCrawlerCancelSelectionBtn.addEventListener('click', closeDungeonCrawlerSelectionModal);
+            }
+            if (dungeonCrawlerSelectionModalOverlay) {
+                dungeonCrawlerSelectionModalOverlay.addEventListener('click', (event) => {
+                    if (event.target === dungeonCrawlerSelectionModalOverlay) closeDungeonCrawlerSelectionModal();
+                });
+            }
 
             if (upgradeItemButton) {
                 upgradeItemButton.addEventListener('click', () => {
@@ -6136,6 +6447,9 @@ function renderOwnedPunkVoyageOrdinals(ownedInscriptions) { // ownedInscriptions
             let connectedAccount = null; let connectedWalletName = null;
 // --- START OF FULL updateWalletDisplay FUNCTION TO REPLACE ---
 // (This will replace your existing function from approx. line 5407 to its end)
+
+
+
 function updateWalletDisplay(account, walletName = '') {
     if (account) {
         const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
@@ -6164,6 +6478,14 @@ function updateWalletDisplay(account, walletName = '') {
             console.log(`DEBUG updateWalletDisplay: punkVoyageIdsLoaded: ${punkVoyageIdsLoaded}, PUNK_VOYAGE_IDS_SET size: ${PUNK_VOYAGE_IDS_SET ? PUNK_VOYAGE_IDS_SET.size : 'undefined'}`);
             fetchWalletInscriptions(connectedAccount, connectedWalletName);
             // fetchWalletInscriptions will update ordinalBonusAdventurers, call recalculateTotalAvailableAdventurers, and save.
+            
+            // +++ FETCH DUNGEON CRAWLERS +++
+            if (dungeonCrawlerIdsLoaded) {
+                fetchPlayerDungeonCrawlers(connectedAccount, connectedWalletName);
+            } else {
+                console.warn("Dungeon Crawler IDs not loaded, skipping fetch for them.");
+            }
+            // +++ END FETCH DUNGEON CRAWLERS +++
         } else {
             console.warn("Wallet connected, but Punk Voyage IDs not loaded or connectedAccount/Name is an issue. Ordinal check skipped. Bonus will be 0.");
             if (userOrdinalsDisplayElement) {
@@ -6256,6 +6578,8 @@ function updateWalletDisplay(account, walletName = '') {
                 updateWalletDisplay(connectedAccount, 'UniSat');
                 // ADD THIS LINE:
                 if (punkVoyageIdsLoaded) fetchWalletInscriptions(connectedAccount, connectedWalletName);
+                                if (dungeonCrawlerIdsLoaded && connectedAccount) fetchPlayerDungeonCrawlers(connectedAccount, connectedWalletName);
+
 
                 window.unisat.on('accountsChanged', (newAccs) => {
                     if (connectedWalletName === 'UniSat') {
@@ -6264,6 +6588,8 @@ function updateWalletDisplay(account, walletName = '') {
                         updateWalletDisplay(connectedAccount, connectedAccount ? 'UniSat' : '');
                         // ADD THIS LINE (for account changes):
                         if (punkVoyageIdsLoaded && connectedAccount) fetchWalletInscriptions(connectedAccount, connectedWalletName);
+                                                if (dungeonCrawlerIdsLoaded && connectedAccount) fetchPlayerDungeonCrawlers(connectedAccount, connectedWalletName);
+
                         else if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none'; // Hide if no account
                     }
                 });
@@ -6346,6 +6672,8 @@ if (walletOptions) {
                 connectedWalletName = 'Xverse'; // Set wallet name
                 updateWalletDisplay(connectedAccount, connectedWalletName);
                   if (punkVoyageIdsLoaded) fetchWalletInscriptions(connectedAccount, connectedWalletName);
+                                  if (dungeonCrawlerIdsLoaded && connectedAccount) fetchPlayerDungeonCrawlers(connectedAccount, connectedWalletName);
+
                 // You might want to check Xverse documentation for an 'accountsChanged' event
                 // to handle account switches in the wallet, similar to UniSat.
             } else {
