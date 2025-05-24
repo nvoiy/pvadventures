@@ -5340,51 +5340,62 @@ initializeTheme();
         }
     }         
     
-        async function handleWalletConnected(walletAddress, walletName) {
-            console.log(`Wallet connected: ${walletName} - ${walletAddress}`);
-            window.connectedAccount = walletAddress;
-            window.connectedWalletName = walletName;
-            currentUser = { uid: walletAddress, name: walletName };
+   async function handleWalletConnected(walletAddress, walletName) {
+    console.log(`Wallet connected: ${walletName} - ${walletAddress}`);
+    window.connectedAccount = walletAddress;
+    window.connectedWalletName = walletName;
+    currentUser = { uid: walletAddress, name: walletName }; // Set currentUser early
 
-            updateWalletDisplay(window.connectedAccount, window.connectedWalletName);
+    // 1. Load essential ID lists first
+    console.log("handleWalletConnected: Attempting to load Punk Voyage IDs...");
+    if (!punkVoyageIdsLoaded) { // Check if already loaded to prevent redundant calls
+        await loadPunkVoyageIds();
+    }
+    console.log("handleWalletConnected: Attempting to load Dungeon Crawler IDs...");
+    if (!dungeonCrawlerIdsLoaded) { // Check if already loaded
+        await loadDungeonCrawlerIds();
+    }
+    console.log("handleWalletConnected: ID loading phase complete. punkVoyageIdsLoaded:", punkVoyageIdsLoaded, "dungeonCrawlerIdsLoaded:", dungeonCrawlerIdsLoaded);
 
-            const currentThemeIsDark = body.classList.contains('dark-mode');
-            loadTwitterWidget(currentThemeIsDark ? 'dark' : 'light');
+    // 2. Now update the wallet display. This function will internally check flags
+    //    and call fetchWalletInscriptions / fetchPlayerDungeonCrawlers if IDs are loaded.
+    updateWalletDisplay(window.connectedAccount, window.connectedWalletName);
 
-            let isNewUser = false; // Flag to track if this is a first-time connection for this wallet
+    const currentThemeIsDark = body.classList.contains('dark-mode');
+    loadTwitterWidget(currentThemeIsDark ? 'dark' : 'light');
 
-            try {
-                const loadedState = await loadGameStateFromFirebase(walletAddress);
-                if (loadedState) {
-                    console.log("Existing game state found for wallet. Applying it.", walletAddress);
-                    applyLoadedGameState(loadedState);
-                    // userNickname is set within applyLoadedGameState
-                } else {
-                    console.log("No game state for wallet. Creating initial state.", walletAddress);
-                    isNewUser = true;
-                    let initialNickname = `Voyager ${walletAddress.substring(0, 4)}`;
-                    await createInitialGameState(walletAddress, initialNickname);
-                    // userNickname is set within createInitialGameState -> applyLoadedGameState
-                }
+    let isNewUser = false;
 
-                // Prompt for nickname if it's a new user OR if existing nickname is default
-                if (isNewUser || (userNickname && userNickname.startsWith("Voyager "))) {
-                    // Use a timeout to ensure any welcome popups from createInitialGameState clear first
-                    setTimeout(() => {
-                        promptAndSetNickname(walletAddress);
-                    }, 500); // Small delay
-                }
-
-
-                showPage('adventures-page');
-                if (!punkVoyageIdsLoaded) await loadPunkVoyageIds();
-                if (!dungeonCrawlerIdsLoaded) await loadDungeonCrawlerIds();
-
-            } catch (error) {
-                console.error("Error during wallet state processing:", error);
-                showCustomPopup("An error occurred loading your game data. Details: " + error.message, "Load Error");
-            }
+    try {
+        const loadedState = await loadGameStateFromFirebase(walletAddress);
+        if (loadedState) {
+            console.log("Existing game state found for wallet. Applying it.", walletAddress);
+            applyLoadedGameState(loadedState);
+            // userNickname is set within applyLoadedGameState
+        } else {
+            console.log("No game state for wallet. Creating initial state.", walletAddress);
+            isNewUser = true;
+            let initialNickname = `Voyager ${walletAddress.substring(0, 4)}`;
+            await createInitialGameState(walletAddress, initialNickname);
+            // userNickname is set within createInitialGameState -> applyLoadedGameState
         }
+
+        // Prompt for nickname if it's a new user OR if existing nickname is default
+        if (isNewUser || (userNickname && userNickname.startsWith("Voyager "))) {
+            setTimeout(() => {
+                promptAndSetNickname(walletAddress);
+            }, 500);
+        }
+
+        showPage('adventures-page'); // Show default page after state is handled
+
+    } catch (error) {
+        console.error("Error during wallet state processing in handleWalletConnected:", error);
+        showCustomPopup("An error occurred loading your game data. Details: " + error.message, "Load Error");
+        // If loading/creating state fails, we might want to revert to a disconnected visual state
+        // updateWalletDisplay(null); // Or call handleWalletDisconnected() if more reset is needed
+    }
+}
 
          function handleWalletDisconnected() {
              console.log("Wallet disconnected or no account found / Initializing disconnected state.");
