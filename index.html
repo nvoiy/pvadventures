@@ -1509,8 +1509,8 @@ const dungeonsData = [
         description: "A party challenge (offline NPCs for now - Future Multiplayer!). Player requires 40 Attack & 40 Defense. Max 5 participants. Can be attempted 2 times daily.", 
         durationHours: 4, 
         requiredAdventureId: "4",
-        attackRequirement: 40, 
-        defenseRequirement: 40,
+        attackRequirement: 15, 
+        defenseRequirement: 15,
         type: "party_npc", 
         maxPartySize: 5,
         maxEntriesPerDay: 2,
@@ -6052,17 +6052,43 @@ async function fetchPlayerDungeonCrawlers(userAddress, walletName) {
 
     // --- SIMULATION / PLACEHOLDER ---
     // If you want to test with some dummy data:
-    if (PUNK_VOYAGE_DUNGEON_CRAWLER_IDS_SET.size > 0) { // Only if you've added IDs to the set
+    // Temporarily add some dummy crawlers if the set is empty for UI testing
+    if (PUNK_VOYAGE_DUNGEON_CRAWLER_IDS_SET.size === 0) { // <<< MODIFIED THIS CONDITION FOR TESTING
+        console.log("DEV MODE: Adding dummy crawlers for UI testing as actual ID set is empty.");
+        playerDungeonCrawlers.push({ 
+            id: "dummy_crawler_1i0", 
+            uniqueInstanceId: "crawler_dummy1", 
+            name: "Test Crawler Alpha", 
+            imageUrl: "https://via.placeholder.com/30/FF0000/FFFFFF?Text=C1", 
+            attack: 10, 
+            defense: 5 
+        });
+        playerDungeonCrawlers.push({ 
+            id: "dummy_crawler_2i0", 
+            uniqueInstanceId: "crawler_dummy2", 
+            name: "Test Crawler Beta", 
+            imageUrl: "https://via.placeholder.com/30/00FF00/FFFFFF?Text=C2", 
+            attack: 7, 
+            defense: 8 
+        });
+        playerDungeonCrawlers.push({ 
+            id: "dummy_crawler_3i0", 
+            uniqueInstanceId: "crawler_dummy3", 
+            name: "Test Crawler Gamma", 
+            imageUrl: "https://via.placeholder.com/30/0000FF/FFFFFF?Text=C3", 
+            attack: 5, 
+            defense: 10 
+        });
+    } else if (PUNK_VOYAGE_DUNGEON_CRAWLER_IDS_SET.size > 0) { 
         let count = 0;
         PUNK_VOYAGE_DUNGEON_CRAWLER_IDS_SET.forEach(id => {
-            if (count < 5) { // Simulate owning up to 5
-                 // In a real scenario, you'd fetch actual details (name, image, stats)
+            if (count < 5) { 
                 playerDungeonCrawlers.push({ 
-                    id: id, // The inscription ID
-                    uniqueInstanceId: `crawler_${id.slice(0,8)}`, // Create a unique ID for this instance
-                    name: `Crawler #${id.slice(0,4)}`, // Placeholder name
-                    imageUrl: `https://api.hiro.so/ordinals/v1/inscriptions/${id}/content`, // Placeholder image
-                    attack: Math.floor(Math.random() * 10) + 5, // Random placeholder stats
+                    id: id, 
+                    uniqueInstanceId: `crawler_${id.slice(0,8)}`, 
+                    name: `Crawler #${id.slice(0,4)}`, 
+                    imageUrl: `https://api.hiro.so/ordinals/v1/inscriptions/${id}/content`, 
+                    attack: Math.floor(Math.random() * 10) + 5, 
                     defense: Math.floor(Math.random() * 10) + 5
                 });
                 count++;
