@@ -1186,8 +1186,16 @@ function updateAdventureCardPvDisplay() {
             let allRaffles = []; 
             let playerRaffleEntries = {}; 
             
-            let lastDailyRewardDayClaimed = 0;
+let lastDailyRewardDayClaimed = 0;
             let lastDailyRewardClaimTimestamp = 0;
+
+            // +++ NEW DUNGEON STATE VARIABLES +++
+            let playerDungeonEntriesToday = { dungeon_1: 0, dungeon_2: 0 };
+            let lastDungeonResetTimestamp = 0;
+            let playerDungeonCrawlers = []; // To store owned Dungeon Crawler NFT instances
+            const PUNK_VOYAGE_DUNGEON_CRAWLER_IDS_SET = new Set(); // Will be populated later
+            let dungeonCrawlerIdsLoaded = false;
+            // +++ END OF NEW DUNGEON STATE VARIABLES +++
 
             let popupMessageQueue = [];
             let isPopupCurrentlyVisible = false;
@@ -1231,16 +1239,67 @@ function updateAdventureCardPvDisplay() {
                 { id: "ring_warding", name: "Ring of Minor Warding", type: "Ring", description: "Offers slight protection. (+1% Gold/Diamond find).", perk: {type: "flatCurrencyChanceBoost", goldBonus: 0.01, diamondBonus: 0.01}, recipe: {"Stone": 10, "Clover": 5}, iconUrlOrColor: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafybeidvav6u7a4naahsxhqalytbmnr7mhmonhanqhcuerchy7fkldjiua/ring1.jpeg", tier: 2}, 
                 { id: "ring_swiftness", name: "Band of Swiftness", type: "Ring", description: "Slightly reduces adventure times. (-5 min)", perk: {type: "timeReduction", value: 300}, recipe: {"Leather": 8, "Gizmo Tail": 3}, iconUrlOrColor: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafybeidvav6u7a4naahsxhqalytbmnr7mhmonhanqhcuerchy7fkldjiua/ring2.jpeg", tier: 2}, 
             { id: "ring_cursedpower", name: "Cursed Ring of Power", type: "Ring", description: "Grants power, but at a cost. (+5 Attack, -2 Defense)", perk: {type: "statBoost", attack: 5, defense: -2}, recipe: {"Rider's Sigil": 3, "Shadowgem": 2, "Essence of Death": 1}, iconUrlOrColor: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafybeidvav6u7a4naahsxhqalytbmnr7mhmonhanqhcuerchy7fkldjiua/ring3.jpg", tier: 4},
-            { // ADD THIS NEW PET
+{ // ADD THIS NEW PET
                 id: "pet_gizmo",
                 name: "Gizmo",
                 type: "Pet",
                 description: "A loyal and surprisingly resilient Gizmo. (+2 Attack, +2 Defense)",
                 perk: { type: "statBoost", attack: 2, defense: 2 },
-                recipe: { "Ancient Tablet Fragment": 1, "Flame Essence": 1, "Bitcoin": 1, "Wood": 10 }, // Same as old whistle recipe
+                recipe: { "Ancient Tablet Fragment": 1, "Flame Essence": 1, "Bitcoin": 1, "Wood": 10 },
                 iconUrlOrColor: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafkreig66h6ldt3ms7ochmu63ynuztayedsqma6ovj77bexarqb7be6qmy",
-                tier: 3 // Example tier, adjust as needed
+                tier: 3 
+            },
+            // +++ NEW DUNGEON SET & DROPS (NOT CRAFTABLE, NO RECIPES) +++
+            { 
+                id: "dungeon_helmet", name: "Dungeon Helmet of Assault", type: "Helmet", 
+                description: "A sturdy helmet retrieved from the crypt. (+3 Attack)", 
+                perk: { type: "attackBoost", value: 3 }, 
+                iconUrlOrColor: "#A0522D", // Placeholder color (SaddleBrown)
+                tier: 2 // Example tier
+            },
+            { 
+                id: "dungeon_boots", name: "Dungeon Boots of Swiftness", type: "Boots", 
+                description: "Boots that have tread forgotten paths. (+3 Attack)", 
+                perk: { type: "attackBoost", value: 3 }, 
+                iconUrlOrColor: "#8B4513", // Placeholder color (SaddleBrown)
+                tier: 2 // Example tier
+            },
+            { 
+                id: "dungeon_sword", name: "Crypt Lord's Blade", type: "Weapon", 
+                description: "A powerful sword, pulsing with dungeon energy. (+10 Attack)", 
+                perk: { type: "attackBoost", value: 10 }, 
+                iconUrlOrColor: "#708090", // Placeholder color (SlateGray)
+                tier: 4 // Example tier
+            },
+            { 
+                id: "dungeon_armour", name: "Crypt Lord's Plate", type: "Armour", 
+                description: "Resilient armour forged in the depths. (+20 Defense)", 
+                perk: { type: "defenseBoost", value: 20 }, 
+                iconUrlOrColor: "#696969", // Placeholder color (DimGray)
+                tier: 4 // Example tier
+            },
+            {
+                id: "pizza_pendant", name: "Pizza Pendant of Greed", type: "Amulet", // Changed to Amulet for a free slot
+                description: "Smells faintly of pepperoni. Grants +1 daily entry attempt to both Dungeon 1 & 2 if equipped.",
+                perk: { type: "dungeonEntryBonus", dungeon1: 1, dungeon2: 1 },
+                iconUrlOrColor: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafkreihygyxc7xt2pqrqaxv2dnxnc77slx5kb2bqsfnvcpbmyk4k56wpmi", // Example new icon for pizza
+                tier: 3
+            },
+            {
+                id: "orb_of_haste", name: "Orb of Minor Haste", type: "Misc",
+                description: "Swirls with temporal energies. Reduces adventure times by 5%.",
+                perk: { type: "timeReductionPercent", value: 0.05 }, // 5% reduction
+                iconUrlOrColor: "#ADD8E6", // Placeholder LightBlue
+                tier: 3
+            },
+            {
+                id: "pet_dog", name: "$DOG Pet", type: "Pet",
+                description: "A good boy. After completing a dungeon, fetches 1 random adventure material.",
+                perk: { type: "dungeonMaterialFetch", count: 1 },
+                iconUrlOrColor: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafkreig2yfhcvhvoocqflpao2wshk6u4vjfxj42scwujxyb6qytpnmv2ry", // Example new icon for dog
+                tier: 3 
             }
+            // +++ END OF NEW DUNGEON ITEMS +++
         ];
             const shopItemsData = [ 
                 { id: "potion2", name: "PV Doubler (1 Use)", description: "Doubles PV rewards from NEXT adventure.", price: 200, iconUrlOrColor: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafybeihk33icq4ytbr5m54tor4qkibqwphgu72l3si5ydcmvkj2oav42i4/pv%20doubler.jpg", type: "buff", durationAdventures: 1, effect: { type: "pvMultiplier", value: 2 } }, 
@@ -1318,12 +1377,47 @@ function updateAdventureCardPvDisplay() {
             dailyRewardsData.push({ day: day, reward: rewardsArray.join(', ') });
         }
 const dungeonsData = [
-                { id: "dungeon_1", name: "Death Rider's Crypt Lvl 1", description: "A challenging foray into a crypt tied to Adventure 4.", durationHours: 2, requiredAdventureId: "4", placeholderReward: "1000 PV, 10 Gold" }, // REMOVED requiredTimeLeftSeconds
-                { id: "dungeon_2", name: "Death Rider's Crypt Lvl 2", description: "A deeper, tougher challenge in the crypt.", durationHours: 4, requiredAdventureId: "4", placeholderReward: "2500 PV, 25 Gold, 1 Diamond" }, // REMOVED requiredTimeLeftSeconds
-                // Add more dungeons here with increasing difficulty and rewards
-            ];
+    { 
+        id: "dungeon_1", 
+        name: "Death Rider's Crypt Lvl 1", 
+        description: "A solo challenge in a crypt. Requires 10 Attack & 10 Defense. Can be attempted 3 times daily.", 
+        durationHours: 2, 
+        requiredAdventureId: "4", // Player must have an adventurer on Adventure 4 to unlock dungeons
+        attackRequirement: 10,
+        defenseRequirement: 10,
+        type: "solo",
+        maxEntriesPerDay: 3,
+        drops: [ // Rarer than Adventure 4
+            { id: "dungeon_helmet", name: "Dungeon Helmet", chance: 0.03, qty: 1, type: "equipment" }, // Example rarity
+            { id: "dungeon_boots", name: "Dungeon Boots", chance: 0.03, qty: 1, type: "equipment" }
+        ],
+        placeholderReward: "1000 PV, 10 Gold" // Base reward, drops are separate
+    },
+    { 
+        id: "dungeon_2", 
+        name: "Death Rider's Crypt Lvl 2", 
+        description: "A party challenge (offline NPCs for now - Future Multiplayer!). Player requires 40 Attack & 40 Defense. Max 5 participants. Can be attempted 2 times daily.", 
+        durationHours: 4, 
+        requiredAdventureId: "4",
+        attackRequirement: 40, 
+        defenseRequirement: 40,
+        type: "party_npc", 
+        maxPartySize: 5,
+        maxEntriesPerDay: 2,
+        drops: [ // Even rarer
+            { id: "dungeon_sword", name: "Dungeon Sword", chance: 0.02, qty: 1, type: "equipment" },
+            { id: "dungeon_armour", name: "Dungeon Armour", chance: 0.02, qty: 1, type: "equipment" },
+            { id: "pizza_pendant", name: "Pizza Pendant", chance: 0.015, qty: 1, type: "equipment" },
+            { id: "orb_of_haste", name: "Orb of Haste", chance: 0.015, qty: 1, type: "equipment" },
+            { id: "pet_dog", name: "$DOG Pet", chance: 0.01, qty: 1, type: "equipment" }
+        ],
+        placeholderReward: "2500 PV, 25 Gold, 1 Diamond"
+    }
+    // Add more dungeons here with increasing difficulty and rewards
+];
             const adventureProgressionConfig = [ { id: "1", blockId: "adventure-1-block", unlockQuestId: null, unlockMessage: "" }, { id: "2", blockId: "adventure-2-block", unlockQuestId: 1, unlockMessage: "Complete 'Spirit Forest' 5 times to unlock." }, { id: "3", blockId: "adventure-3-block", unlockQuestId: 2, unlockMessage: "Complete 'Mountain of the Marowan' 5 times to unlock." }, { id: "4", blockId: "adventure-4-block", unlockQuestId: 3, unlockMessage: "Complete 'Fire Fields of Flyinals' 5 times to unlock." } ];
             const upgradeChances = [1, 0.85, 0.50, 0.35, 0.13]; // For +0->+1, +1->+2, ..., +4->+5
+            const dungeonSetItemIds = ["dungeon_helmet", "dungeon_boots", "dungeon_sword", "dungeon_armour"];
 
 
             // --- Perk Scaling Function ---
@@ -1367,6 +1461,14 @@ const dungeonsData = [
                             scaledPerk.defense = Math.round(itemMaster.perk.defense * scaleFactor);
                         }
                         break;
+                    // +++ ADD NEW PERK TYPES (THEY DON'T SCALE WITH ITEM LEVEL AS DEFINED) +++
+                    case "dungeonEntryBonus":
+                    case "timeReductionPercent":
+                    case "dungeonMaterialFetch":
+                        // These perks currently do not scale with item level in their definition.
+                        // So, the original perk object (already copied into scaledPerk) is returned.
+                        break;
+                    // +++ END NEW PERK TYPES +++
                     default:
                         // No scaling for unknown perk types
                         break;
@@ -1421,13 +1523,25 @@ const dungeonsData = [
                         if(scaledPerk.defense !== undefined) currentStats.push(`Defense ${scaledPerk.defense > 0 ? '+' : ''}${scaledPerk.defense}`);
                         perkString = currentStats.join(', ') + '.';
 
-                        if (currentItemLevel > 0 && (basePerkForDisplay.attack !== scaledPerk.attack || basePerkForDisplay.defense !== scaledPerk.defense)) {
+                          if (currentItemLevel > 0 && (basePerkForDisplay.attack !== scaledPerk.attack || basePerkForDisplay.defense !== scaledPerk.defense)) {
                             let baseStatsArr = [];
                             if(basePerkForDisplay.attack !== undefined) baseStatsArr.push(`Atk ${basePerkForDisplay.attack > 0 ? '+' : ''}${basePerkForDisplay.attack}`);
                             if(basePerkForDisplay.defense !== undefined) baseStatsArr.push(`Def ${basePerkForDisplay.defense > 0 ? '+' : ''}${basePerkForDisplay.defense}`);
                             baseString = ` (Base: ${baseStatsArr.join(', ')})`;
                         }
+                    // +++ ADD DISPLAY FOR NEW PERKS +++
+                    } else if (scaledPerk.type === "dungeonEntryBonus") {
+                        let bonusStrings = [];
+                        if (scaledPerk.dungeon1) bonusStrings.push(`D1: +${scaledPerk.dungeon1}`);
+                        if (scaledPerk.dungeon2) bonusStrings.push(`D2: +${scaledPerk.dungeon2}`);
+                        perkString = `Daily Dungeon Entries ${bonusStrings.join(', ')}.`;
+                        // Base string not really applicable as these don't scale with level by default
+                    } else if (scaledPerk.type === "timeReductionPercent") {
+                        perkString = `Adventure Time -${(scaledPerk.value * 100).toFixed(0)}%.`;
+                    } else if (scaledPerk.type === "dungeonMaterialFetch") {
+                        perkString = `Fetches ${scaledPerk.count} random material(s) after dungeon.`;
                     }
+                    // +++ END DISPLAY FOR NEW PERKS +++
                     contentHtml += `<p class="perk-info">Perk: ${perkString}${baseString}</p>`;
                 }
                 if (itemData.level > 0) { // Item level for +X display
@@ -1786,9 +1900,20 @@ function resetGameStateToDefaults() {
     if (selectedItemForUpgradeDisplay) selectedItemForUpgradeDisplay.innerHTML = 'Item: None';
     if (selectedScrollForUpgradeDisplay) selectedScrollForUpgradeDisplay.innerHTML = 'Scroll: None';
     if (upgradeSuccessRateDisplay) upgradeSuccessRateDisplay.textContent = '';
-    if (document.getElementById('dungeonListContainer')) document.getElementById('dungeonListContainer').innerHTML = ''; // <-- ADD THIS LINE
+    if (document.getElementById('dungeonListContainer')) document.getElementById('dungeonListContainer').innerHTML = '';
 
-    recalculateTotalAvailableAdventurers(); // Call this to set totalAvailableAdventurers correctly after reset
+    // +++ RESET DUNGEON STATE +++
+    playerDungeonEntriesToday = { dungeon_1: 0, dungeon_2: 0 };
+    lastDungeonResetTimestamp = 0;
+    playerDungeonCrawlers = [];
+    dungeonCrawlerIdsLoaded = false;
+    if (document.getElementById('dungeonCrawlerSelectionArea')) { // If UI exists, clear it
+        document.getElementById('dungeonCrawlerSelectionArea').innerHTML = '';
+        document.getElementById('dungeonCrawlerSelectionArea').style.display = 'none';
+    }
+    // +++ END RESET DUNGEON STATE +++
+
+    recalculateTotalAvailableAdventurers(); // Call this to set totalAvailableAdventurers correctly after reset // Call this to set totalAvailableAdventurers correctly after reset
     updatePlayerCombatStatsDisplay();
     ordinalBonusAdventurers = 0;
 
@@ -1959,10 +2084,17 @@ function resetGameStateToDefaults() {
                                 petSlotUnlocked: false,
                     playerRaffleEntries: {},
                     lastDailyRewardDayClaimed: 0, 
-                    lastDailyRewardClaimTimestamp: 0 
+                    lastDailyRewardClaimTimestamp: 0,
+                    // +++ ADDED FOR DUNGEONS +++
+                    playerDungeonEntriesToday: { dungeon_1: 0, dungeon_2: 0 },
+                    lastDungeonResetTimestamp: 0,
+                    playerDungeonCrawlers: [],
+                    dungeonCrawlerIdsLoaded: false // Client will try to load on startup
+                    // +++ END OF ADDED FOR DUNGEONS +++
                 };
                 await saveGameStateToFirebase(userId, initialGameState); 
                 applyLoadedGameState(initialGameState); 
+                checkAndResetDailyDungeonEntries(); // Initialize for new player
                 showCustomPopup(`Welcome, ${nicknameToUse}! Your new voyage begins!`, "New Game Created");
             }
             
@@ -1990,7 +2122,12 @@ function getCurrentGameState() {
         playerRaffleEntries: playerRaffleEntries || {},
         lastDailyRewardDayClaimed: lastDailyRewardDayClaimed,
         lastDailyRewardClaimTimestamp: lastDailyRewardClaimTimestamp,
-        ordinalBonusAdventurers: ordinalBonusAdventurers // <<< ADD THIS LINE
+        ordinalBonusAdventurers: ordinalBonusAdventurers, // <<< ADD THIS LINE
+        playerDungeonEntriesToday: playerDungeonEntriesToday || { dungeon_1: 0, dungeon_2: 0 },
+        lastDungeonResetTimestamp: lastDungeonResetTimestamp || 0,
+        playerDungeonCrawlers: Array.isArray(playerDungeonCrawlers) ? playerDungeonCrawlers : [],
+        dungeonCrawlerIdsLoaded: dungeonCrawlerIdsLoaded || false // Though this is usually determined on client start
+        // +++ END OF ADDED FOR DUNGEONS +++
     };
 }
 
@@ -2146,6 +2283,13 @@ function applyLoadedGameState(loadedState) {
             activePotions = activePotions.filter(p => (p.endTime && Date.now() < p.endTime) || (p.adventuresLeft !== undefined && p.adventuresLeft > 0) || (!p.endTime && p.adventuresLeft === undefined));
         }
 
+        // +++ LOAD DUNGEON STATE +++
+        playerDungeonEntriesToday = loadedState.playerDungeonEntriesToday || { dungeon_1: 0, dungeon_2: 0 };
+        lastDungeonResetTimestamp = loadedState.lastDungeonResetTimestamp || 0;
+        playerDungeonCrawlers = Array.isArray(loadedState.playerDungeonCrawlers) ? loadedState.playerDungeonCrawlers : [];
+        // dungeonCrawlerIdsLoaded is generally set at client start, not loaded from save.
+        // +++ END LOAD DUNGEON STATE +++
+
         recalculateTotalAvailableAdventurers();
 
         updateStatsDisplay();
@@ -2167,6 +2311,10 @@ function applyLoadedGameState(loadedState) {
              // Default to showing the adventures page if no active page found
              showPage('adventures-page');
         }
+
+        // +++ CHECK AND RESET DAILY DUNGEON ENTRIES +++
+        checkAndResetDailyDungeonEntries();
+        // +++ END CHECK +++
 
         console.log("Game state applied successfully.");
     } catch (error) {
@@ -2209,49 +2357,99 @@ function recalculateTotalAvailableAdventurers() {
     console.log(`Recalculated totalAvailableAdventurers: ${totalAvailableAdventurers} (Base: ${MAX_PLAYER_ADVENTURERS}, Bonus: ${ordinalBonusAdventurers}, Busy: ${totalAdventurersBusy})`); // <-- MODIFY LOG
 }
             
-            function renderDungeonsPage() {
+             function renderDungeonsPage() {
                 if (!dungeonListContainer) return;
-                dungeonListContainer.innerHTML = ''; // Clear previous content
+                dungeonListContainer.innerHTML = ''; 
 
-                // Check the unlock condition once for all dungeons
-                const adventure4 = activeAdventures.find(adv => adv.originalAdventureId === "4");
-
-                // Corrected unlock condition:
-                // Dungeon is UNLOCKED if Adventure 4 is active.
-                const partyDungeonConditionMet = !!adventure4; // True if adventure4 object exists (is active)
+                // General unlock condition for all dungeons
+                const adventure4Active = activeAdventures.find(adv => adv.originalAdventureId === "4");
+                const dungeonsGloballyUnlocked = !!adventure4Active;
 
                 dungeonsData.forEach(dungeon => {
                     const dungeonDiv = document.createElement('div');
                     dungeonDiv.classList.add('dungeon-entry');
                     dungeonDiv.dataset.dungeonId = dungeon.id;
 
-                    // Dungeon is LOCKED if the condition is NOT met.
-                    const isLocked = !partyDungeonConditionMet;
-
+                    let isLocked = !dungeonsGloballyUnlocked;
+                    let lockReason = "";
                     if (isLocked) {
+                        lockReason = "Unlock Requirement: Adventure 4 active.";
+                    }
+
+                    const playerAttack = parseInt(playerAttackStatElement.textContent) || 0;
+                    const playerDefense = parseInt(playerDefenseStatElement.textContent) || 0;
+
+                    if (!isLocked && (playerAttack < dungeon.attackRequirement || playerDefense < dungeon.defenseRequirement)) {
+                        isLocked = true;
+                        lockReason = `Requires: ${dungeon.attackRequirement} ATK & ${dungeon.defenseRequirement} DEF. (You: ${playerAttack} ATK, ${playerDefense} DEF)`;
+                    }
+                    
+                    let effectiveMaxEntries = dungeon.maxEntriesPerDay;
+                    // Check for Pizza Pendant bonus
+                    const pizzaPendantEquipped = Object.values(equippedItems).some(instanceId => {
+                        if (!instanceId) return false;
+                        const item = playerInventory.find(invItem => invItem.uniqueInstanceId === instanceId);
+                        return item && item.id === "pizza_pendant";
+                    });
+                    if (pizzaPendantEquipped) {
+                        if (dungeon.id === "dungeon_1" && dungeon.maxEntriesPerDay) effectiveMaxEntries++;
+                        if (dungeon.id === "dungeon_2" && dungeon.maxEntriesPerDay) effectiveMaxEntries++;
+                    }
+
+                    const entriesToday = playerDungeonEntriesToday[dungeon.id] || 0;
+                    if (!isLocked && entriesToday >= effectiveMaxEntries) {
+                        isLocked = true;
+                        lockReason = `Daily limit reached (${entriesToday}/${effectiveMaxEntries}). Resets daily.`;
+                    }
+                    
+                    if (!isLocked && totalAvailableAdventurers < 1) {
+                        isLocked = true; // Not enough adventurers, but this doesn't need a specific lockReason in the overlay
+                                         // as the button will be disabled.
+                    }
+
+
+                    if (isLocked && dungeonDiv.classList.contains('locked')) { // Only add if truly locked by a displayed reason
+                         // Keep existing locked class if it was already set
+                    } else if (isLocked) {
                         dungeonDiv.classList.add('locked');
                     }
 
-                    // Corrected display text for the requirement
-                    const requirementText = `Unlock Requirement: Adventure 4 active.`;
 
+                    let additionalInfo = '';
+                    if (dungeon.type === "party_npc") {
+                        additionalInfo += `<p style="font-size:0.9em; color:var(--highlight-color-gold);"><em>This is an offline NPC-assisted dungeon. Multiplayer coming soon!</em></p>`;
+                        // Placeholder for Dungeon Crawler selection UI trigger
+                        additionalInfo += `<button class="action-button select-dungeon-crawlers-btn" data-dungeon-id="${dungeon.id}" ${isLocked ? 'disabled' : ''}>Select Crawlers (Max ${dungeon.maxPartySize -1})</button>`;
+                        additionalInfo += `<div id="selectedCrawlersDisplay_${dungeon.id}" style="font-size:0.85em; margin-top:5px;"></div>`;
+                    }
+                    
                     dungeonDiv.innerHTML = `
                         <div class="dungeon-icon-placeholder" style="background-color: #4A2A00;">${dungeon.id.replace('dungeon_', '').toUpperCase()}</div>
                         <div class="dungeon-info">
                             <h3>${dungeon.name}</h3>
                             <p>${dungeon.description}</p>
-                             <p>Duration: ${dungeon.durationHours} Hours</p>
-                             <p>Reward: ${dungeon.placeholderReward}</p>
-                             ${isLocked ? `<p class="dungeon-requirements">${requirementText}</p>` : `<p class="dungeon-requirements" style="color:var(--highlight-color-connected);">Unlocked!</p>`}
+                            <p>Duration: ${dungeon.durationHours} Hours</p>
+                            <p>Reqs: ${dungeon.attackRequirement} ATK, ${dungeon.defenseRequirement} DEF</p>
+                            <p>Daily Attempts: ${entriesToday} / ${effectiveMaxEntries}</p>
+                            <p>Reward: ${dungeon.placeholderReward}</p>
+                            ${lockReason ? `<p class="dungeon-requirements">${lockReason}</p>` : (dungeonsGloballyUnlocked ? `<p class="dungeon-requirements" style="color:var(--highlight-color-connected);">Unlocked!</p>` : '')}
+                            ${additionalInfo}
                         </div>
                         <button class="action-button enter-dungeon-btn" data-dungeon-id="${dungeon.id}" ${isLocked || totalAvailableAdventurers < 1 ? 'disabled' : ''}>Enter</button>
                     `;
                     dungeonListContainer.appendChild(dungeonDiv);
                 });
 
-                // Add event listeners to the buttons we just created
                 document.querySelectorAll('.enter-dungeon-btn:not([disabled])').forEach(button => {
                     button.addEventListener('click', handleEnterDungeon);
+                });
+                document.querySelectorAll('.select-dungeon-crawlers-btn:not([disabled])').forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        const dungeonId = event.target.dataset.dungeonId;
+                        // For now, just a placeholder popup. Actual selection UI will be more complex.
+                        showCustomPopup(`Dungeon Crawler selection for ${dungeonId} coming soon! For now, one adventurer will embark.`, "Feature Coming Soon");
+                        // Later, this will open a modal to select from `playerDungeonCrawlers`.
+                    });
                 });
             }
             
@@ -2351,7 +2549,23 @@ function recalculateTotalAvailableAdventurers() {
                 playerAttackStatElement.textContent = totalAttack;
                 playerDefenseStatElement.textContent = totalDefense;
             }
+            function getDungeonSetBonusTimeReduction() {
+                let equippedSetPieces = 0;
+                dungeonSetItemIds.forEach(setItemId => {
+                    if (Object.values(equippedItems).some(instanceId => {
+                        if (!instanceId) return false;
+                        const item = playerInventory.find(invItem => invItem.uniqueInstanceId === instanceId);
+                        return item && item.id === setItemId;
+                    })) {
+                        equippedSetPieces++;
+                    }
+                });
 
+                if (equippedSetPieces >= 4) { // All 4 pieces equipped
+                    return 0.20; // 20% time reduction
+                }
+                return 0; // No bonus
+            }
 
             function renderMaterials() { 
                 if (!materialsListContainer) return;
@@ -2607,70 +2821,100 @@ function recalculateTotalAvailableAdventurers() {
                 if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
             }
 
-            function handleEnterDungeon(event) {
-                 if (!currentUser) {
-                     showCustomPopup("You must be logged in to enter a dungeon.", "Login Required");
-                     return;
-                 }
-                 const dungeonId = event.target.dataset.dungeonId;
-                 const dungeon = dungeonsData.find(d => d.id === dungeonId);
+                 function handleEnterDungeon(event) {
+                if (!currentUser) {
+                    showCustomPopup("You must be logged in to enter a dungeon.", "Login Required");
+                    return;
+                }
+                const dungeonId = event.target.dataset.dungeonId;
+                const dungeon = dungeonsData.find(d => d.id === dungeonId);
 
-                 if (!dungeon) {
-                     console.error("Dungeon data not found for ID:", dungeonId);
-                     showCustomPopup("Error finding dungeon data.", "Dungeon Error");
-                     return;
-                 }
+                if (!dungeon) {
+                    console.error("Dungeon data not found for ID:", dungeonId);
+                    showCustomPopup("Error finding dungeon data.", "Dungeon Error");
+                    return;
+                }
 
-                 // Re-check the unlock condition at the moment of clicking
-                const adventure4 = activeAdventures.find(adv => adv.originalAdventureId === "4");
+                // 1. General Dungeon Unlock Check (Adventure 4 Active)
+                const adventure4Active = activeAdventures.find(adv => adv.originalAdventureId === "4");
+                if (!adventure4Active) {
+                    showCustomPopup(`Dungeons are locked. You need an adventurer on Adventure 4.`, "Dungeon Locked");
+                    renderDungeonsPage(); return;
+                }
 
-                // Corrected unlock condition check:
-                // Must be on Adventure 4
-                const partyDungeonConditionMet = !!adventure4;
+                // 2. Stat Requirements Check
+                const playerAttack = parseInt(playerAttackStatElement.textContent) || 0;
+                const playerDefense = parseInt(playerDefenseStatElement.textContent) || 0;
+                if (playerAttack < dungeon.attackRequirement || playerDefense < dungeon.defenseRequirement) {
+                    showCustomPopup(`Cannot enter ${dungeon.name}. Requires ${dungeon.attackRequirement} ATK & ${dungeon.defenseRequirement} DEF. You have ${playerAttack} ATK & ${playerDefense} DEF.`, "Requirements Not Met");
+                    renderDungeonsPage(); return;
+                }
 
-                if (!partyDungeonConditionMet) {
-                     showCustomPopup(`This dungeon requires an adventurer on Adventure 4.`, "Dungeon Locked"); // MODIFIED MESSAGE
-                     renderDungeonsPage(); // Re-render to show updated state
-                     return;
-                 }
+                // 3. Daily Entry Limit Check (with Pizza Pendant bonus)
+                let effectiveMaxEntries = dungeon.maxEntriesPerDay;
+                const pizzaPendantEquipped = Object.values(equippedItems).some(instanceId => {
+                    if (!instanceId) return false;
+                    const item = playerInventory.find(invItem => invItem.uniqueInstanceId === instanceId);
+                    return item && item.id === "pizza_pendant";
+                });
+                if (pizzaPendantEquipped) {
+                    if (dungeon.id === "dungeon_1") effectiveMaxEntries++;
+                    if (dungeon.id === "dungeon_2") effectiveMaxEntries++;
+                }
 
-                 if (totalAvailableAdventurers < 1) {
-                     showCustomPopup("Not enough adventurers available to enter the dungeon.", "Adventurers Needed");
-                     renderDungeonsPage(); // Re-render to show updated state
-                     return;
-                 }
+                const entriesToday = playerDungeonEntriesToday[dungeon.id] || 0;
+                if (entriesToday >= effectiveMaxEntries) {
+                    showCustomPopup(`Daily limit for ${dungeon.name} reached (${entriesToday}/${effectiveMaxEntries}). Resets daily.`, "Limit Reached");
+                    renderDungeonsPage(); return;
+                }
+                
+                // 4. Available Adventurers Check
+                if (totalAvailableAdventurers < 1) { // All dungeons currently cost 1 player adventurer
+                    showCustomPopup("Not enough adventurers available to enter the dungeon.", "Adventurers Needed");
+                    renderDungeonsPage(); return;
+                }
 
-                // Spend 1 adventurer from the AVAILABLE pool
-                 // We don't decrement totalAvailableAdventurers here directly.
-                 // It will be decremented when we add the new entry to activeDungeons
-                 // and call recalculateTotalAvailableAdventurers() below.
+                // For Dungeon 2 (party_npc):
+                // For now, we simulate using 1 player adventurer and acknowledge future NPC/multiplayer.
+                // Actual NPC selection and stat contribution will be a later feature.
+                let adventurersForThisDungeon = 1; // Player always contributes 1
+                let partyMembersInfo = "";
+                if (dungeon.type === "party_npc") {
+                    // In the future, `selectedCrawlers` would be an array of objects from a selection modal.
+                    // For now, we can just acknowledge it.
+                    // let selectedCrawlers = getCurrentlySelectedCrawlersForDungeon(dungeon.id); // Imaginary function
+                    // adventurersForThisDungeon += selectedCrawlers.length; // If NPCs counted against a separate pool
+                    partyMembersInfo = ` (Future: plus selected NPC crawlers)`;
+                }
+                
+                // Dungeon entry cost confirmed, proceed
+                playerDungeonEntriesToday[dungeon.id] = (playerDungeonEntriesToday[dungeon.id] || 0) + 1;
 
-                 let calculatedDurationMs = dungeon.durationHours * GAME_HOUR_IN_REAL_SECONDS * 1000;
-                 // Note: Item perks for time reduction are currently only applied to Adventures.
-                 // You would need to add logic here if you want items to affect dungeon time too.
-                 // For simplicity, we'll use the base duration for dungeons for now.
+                let calculatedDurationMs = dungeon.durationHours * GAME_HOUR_IN_REAL_SECONDS * 1000;
+                // Dungeon set bonus does NOT apply to dungeon duration, only adventures.
+                // Orb of Haste does not apply to dungeon duration for now.
 
-                 const returnTime = Date.now() + calculatedDurationMs;
+                const returnTime = Date.now() + calculatedDurationMs;
 
-                 const newActiveDungeon = {
-                     id: nextActiveAdventureId++, // Use the shared counter
-                     dungeonId: dungeon.id,
-                     name: dungeon.name,
-                     adventurers: 1, // Dungeons use 1 adventurer from available pool
-                     returnTime: returnTime
-                 };
+                const newActiveDungeon = {
+                    id: nextActiveAdventureId++,
+                    dungeonId: dungeon.id,
+                    name: dungeon.name,
+                    adventurers: adventurersForThisDungeon, // This is the player's adventurer for now
+                    returnTime: returnTime,
+                    // Store selected crawlers if/when that UI is implemented:
+                    // selectedCrawlers: (dungeon.type === "party_npc" ? getCurrentlySelectedCrawlersForDungeon(dungeon.id) : []) 
+                };
 
-                 activeDungeons.push(newActiveDungeon); // Add the new dungeon run
+                activeDungeons.push(newActiveDungeon);
+                recalculateTotalAvailableAdventurers(); // This updates totalAvailableAdventurers and dependent UI
 
-                 recalculateTotalAvailableAdventurers(); // This updates totalAvailableAdventurers and UI
+                showCustomPopup(`Sent ${adventurersForThisDungeon} adventurer${adventurersForThisDungeon > 1 ? 's' : ''}${partyMembersInfo} to ${dungeon.name}! They will return in ${dungeon.durationHours} hours.`, "Dungeon Entry");
 
-                 showCustomPopup(`Sent 1 adventurer to ${dungeon.name}! They will return in ${dungeon.durationHours} hours.`, "Dungeon Entry");
+                renderActiveTasksInSidebar();
+                renderDungeonsPage(); // Update button states & entry counts
 
-                 renderActiveTasksInSidebar(); // Update sidebar (will rename this function later)
-                 renderDungeonsPage(); // Update the dungeon page button states
-                 updateStatsDisplay(); // Already done by recalculateTotalAvailableAdventurers, but harmless
-
-                 if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
+                if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
             }
 
 function usePetWhistleUnlock(itemUniqueId) {
@@ -2872,7 +3116,25 @@ function usePetWhistleUnlock(itemUniqueId) {
                     });
                 });
             }
+            // INSERT THIS NEW FUNCTION (e.g., after renderDailyRewards around line 2145)
 
+            function checkAndResetDailyDungeonEntries() {
+                const now = Date.now();
+                if (!lastDungeonResetTimestamp || (now - lastDungeonResetTimestamp >= TWENTY_FOUR_HOURS_MS)) {
+                    console.log("Resetting daily dungeon entries.");
+                    playerDungeonEntriesToday = { dungeon_1: 0, dungeon_2: 0 };
+                    lastDungeonResetTimestamp = now; // Set to the beginning of the current 24h cycle for consistency
+                    
+                    // If the dungeons page is active, re-render it to show updated entry counts
+                    if (document.getElementById('dungeons-page') && document.getElementById('dungeons-page').classList.contains('active')) {
+                        renderDungeonsPage();
+                    }
+                    // Save the game state after reset
+                    if (currentUser && currentUser.uid) {
+                        saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
+                    }
+                }
+            }
             function renderShopItems() { 
                 if (!shopItemsDiv) return; 
                 shopItemsDiv.innerHTML = ''; 
@@ -3097,63 +3359,113 @@ function usePetWhistleUnlock(itemUniqueId) {
                 // ... (keep your existing completeAdventure function body here)
             }
 
-            function completeDungeon(instanceId) { // <-- ADD THIS NEW FUNCTION
-                if(!currentUser) return;
+            function completeDungeon(instanceId) {
+                if (!currentUser) return;
                 const dunIdx = activeDungeons.findIndex(dun => dun.id === instanceId);
                 if (dunIdx === -1) return;
 
                 const completedDun = { ...activeDungeons[dunIdx] };
-                const dungeonMasterData = dungeonsData.find(d => d.id === completedDun.dungeonId); // Get master data for rewards
+                const dungeonMasterData = dungeonsData.find(d => d.id === completedDun.dungeonId);
 
-                // Step 1: Remove the dungeon from the active list
                 activeDungeons.splice(dunIdx, 1);
-
-                // Step 2: Return adventurer(s) and update available count
-                // Adventurers return automatically when removed from activeDungeons via recalculateTotalAvailableAdventurers
                 recalculateTotalAvailableAdventurers();
 
-                // Step 3: Give rewards (placeholder for now)
-                let gainedItemsSummary = [];
-                if (dungeonMasterData && dungeonMasterData.placeholderReward) {
-                     const rewardParts = dungeonMasterData.placeholderReward.split(',').map(s => s.trim());
-                     rewardParts.forEach(part => {
-                         const pvMatch = part.match(/(\d+)\s*PV/i);
-                         const goldMatch = part.match(/(\d+)\s*Gold/i);
-                         const diamondMatch = part.match(/(\d+)\s*Diamond/i);
-                         // No material drops from placeholder dungeons for now
+                let gainedCurrencySummary = [];
+                let gainedItemsSummary = []; // For actual item drops
 
-                         if (pvMatch) {
-                             currentPvTokens += parseInt(pvMatch[1]);
-                             gainedItemsSummary.push(pvMatch[0]);
-                         } else if (goldMatch) {
-                             currentGold += parseInt(goldMatch[1]);
-                             gainedItemsSummary.push(goldMatch[0]);
-                         } else if (diamondMatch) {
-                             currentDiamonds += parseInt(diamondMatch[1]);
-                             gainedItemsSummary.push(diamondMatch[0]);
-                         } else {
-                             gainedItemsSummary.push(part); // Add unknown parts
-                         }
-                     });
-                } else {
-                     gainedItemsSummary.push("Placeholder Rewards");
+                // --- Currency Rewards (from placeholderReward string) ---
+                if (dungeonMasterData && dungeonMasterData.placeholderReward) {
+                    const rewardParts = dungeonMasterData.placeholderReward.split(',').map(s => s.trim());
+                    rewardParts.forEach(part => {
+                        const pvMatch = part.match(/(\d+)\s*PV/i);
+                        const goldMatch = part.match(/(\d+)\s*Gold/i);
+                        const diamondMatch = part.match(/(\d+)\s*Diamond/i);
+                        if (pvMatch) { currentPvTokens += parseInt(pvMatch[1]); gainedCurrencySummary.push(pvMatch[0]); }
+                        else if (goldMatch) { currentGold += parseInt(goldMatch[1]); gainedCurrencySummary.push(goldMatch[0]); }
+                        else if (diamondMatch) { currentDiamonds += parseInt(diamondMatch[1]); gainedCurrencySummary.push(diamondMatch[0]); }
+                    });
+                }
+
+                // --- Item Drops (from dungeonMasterData.drops array) ---
+                if (dungeonMasterData && Array.isArray(dungeonMasterData.drops)) {
+                    dungeonMasterData.drops.forEach(dropAttempt => {
+                        if (Math.random() < dropAttempt.chance) {
+                            const itemMaster = craftableItemsData.find(ci => ci.id === dropAttempt.id);
+                            if (itemMaster) {
+                                // Check if player already owns this base item
+                                const alreadyOwned = playerInventory.some(invItem => invItem.id === itemMaster.id) ||
+                                    Object.values(equippedItems).some(equippedInstanceId => {
+                                        if (!equippedInstanceId) return false;
+                                        const eqItem = playerInventory.find(pi => pi.uniqueInstanceId === equippedInstanceId);
+                                        return eqItem && eqItem.id === itemMaster.id;
+                                    });
+
+                                if (!alreadyOwned) {
+                                    playerInventory.push({ id: itemMaster.id, level: 0, uniqueInstanceId: `item_${nextUniqueInstanceId++}` });
+                                    gainedItemsSummary.push(`1x ${itemMaster.name}`);
+                                } else {
+                                    console.log(`Attempted to drop ${itemMaster.name}, but player already owns it.`);
+                                    // Optionally, give a small PV compensation or nothing
+                                    // gainedItemsSummary.push(`(Duplicate ${itemMaster.name} - Converted to 25 PV)`); currentPvTokens += 25; 
+                                }
+                            }
+                        }
+                    });
+                }
+                
+                // --- $DOG Pet Effect ---
+                const dogPetEquipped = Object.values(equippedItems).some(instanceId => {
+                    if (!instanceId) return false;
+                    const item = playerInventory.find(invItem => invItem.uniqueInstanceId === instanceId);
+                    return item && item.id === "pet_dog";
+                });
+
+                if (dogPetEquipped) {
+                    const allPossibleAdventureMaterials = [];
+                    Object.values(adventuresData).forEach(adv => {
+                        if (adv.drops) {
+                            adv.drops.forEach(drop => {
+                                // Ensure it's a material and not an item like 'ring_cursedpower'
+                                if (playerMaterials.hasOwnProperty(drop.name)) {
+                                    allPossibleAdventureMaterials.push(drop.name);
+                                }
+                            });
+                        }
+                    });
+                    if (allPossibleAdventureMaterials.length > 0) {
+                        const randomMaterialIndex = Math.floor(Math.random() * allPossibleAdventureMaterials.length);
+                        const fetchedMaterial = allPossibleAdventureMaterials[randomMaterialIndex];
+                        playerMaterials[fetchedMaterial] = (playerMaterials[fetchedMaterial] || 0) + 1;
+                        gainedItemsSummary.push(`$DOG fetched: 1x ${fetchedMaterial}`);
+                    }
                 }
 
 
-                // Step 4: Show popup
-                showCustomPopup(
-                    `${completedDun.adventurers} adventurer(s) returned from ${completedDun.name}!\n\nRewards:\n- ${gainedItemsSummary.join(', ')}`,
-                    "Dungeon Complete!"
-                );
+                // --- Popup Message Construction ---
+                let popupMessage = `${completedDun.adventurers} adventurer(s) returned from ${completedDun.name}!\n\nRewards:`;
+                if (gainedCurrencySummary.length > 0) {
+                    popupMessage += `\n- ${gainedCurrencySummary.join(', ')}`;
+                } else {
+                    popupMessage += `\n- No base currency rewards this time.`;
+                }
+                if (gainedItemsSummary.length > 0) {
+                    popupMessage += `\n\nItems Found/Fetched:`;
+                    gainedItemsSummary.forEach(itemStr => {
+                        popupMessage += `\n  - ${itemStr}`;
+                    });
+                }
+                showCustomPopup(popupMessage, "Dungeon Complete!");
 
-
-                // Step 5: Update UI and save state
-                // recalculateTotalAvailableAdventurers already updates stats & adventure display states
-                renderActiveTasksInSidebar(); // Update sidebar (will rename this function later)
-                if (document.getElementById('dungeons-page').classList.contains('active')) { // Re-render dungeon page if active
+                // Update UI and save state
+                renderActiveTasksInSidebar();
+                if (document.getElementById('dungeons-page').classList.contains('active')) {
                     renderDungeonsPage();
                 }
-                // updateStatsDisplay(); // Redundant due to recalculateTotalAvailableAdventurers
+                if (gainedItemsSummary.length > 0) { // Re-render inventory if items were gained
+                    renderInventory();
+                }
+                renderMaterials(); // If $DOG fetched a material
+                updateStatsDisplay(); 
 
                 if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
             }
@@ -3502,21 +3814,45 @@ function updateAdventureDisplayStates() {
                                         const advInstance = activeAdventures[existingActiveAdventureIndex];
                                         advInstance.adventurers += numAdventurersToSend; // Add more adventurers to it
                                         
-                                        let calculatedDurationMs = originalDurationHours * GAME_HOUR_IN_REAL_SECONDS * 1000;
-                                        Object.values(equippedItems).forEach(equippedInstanceId => {
-                                            if (!equippedInstanceId) return;
-                                            const invItem = playerInventory.find(i => i.uniqueInstanceId === equippedInstanceId);
-                                            if(invItem) {
-                                                const itemMaster = craftableItemsData.find(im => im.id === invItem.id);
-                                                if (itemMaster && itemMaster.perk) {
-                                                    const scaledPerk = getScaledItemPerk(itemMaster, invItem.level || 0);
-                                                    if (scaledPerk.type === "timeReduction") {
-                                                        const reductionInAcceleratedSeconds = scaledPerk.value / 3600 * GAME_HOUR_IN_REAL_SECONDS;
-                                                        calculatedDurationMs = Math.max(1000, calculatedDurationMs - (reductionInAcceleratedSeconds * 1000));
-                                                    }
-                                                }
-                                            }
-                                        });
+                                                          let baseDurationMs = originalDurationHours * GAME_HOUR_IN_REAL_SECONDS * 1000;
+                        let calculatedDurationMs = baseDurationMs;
+                        let totalPercentageReduction = 0;
+                        let flatTimeReductionSeconds = 0;
+
+                        // 1. Apply percentage reductions first (Set Bonus, Orb of Haste)
+                        totalPercentageReduction += getDungeonSetBonusTimeReduction(); // Dungeon Set Bonus
+
+                        Object.values(equippedItems).forEach(equippedInstanceId => {
+                            if (!equippedInstanceId) return;
+                            const invItem = playerInventory.find(i => i.uniqueInstanceId === equippedInstanceId);
+                            if (invItem) {
+                                const itemMaster = craftableItemsData.find(im => im.id === invItem.id);
+                                if (itemMaster && itemMaster.perk) {
+                                    const scaledPerk = getScaledItemPerk(itemMaster, invItem.level || 0);
+                                    if (scaledPerk.type === "timeReductionPercent") { // Like Orb of Haste
+                                        totalPercentageReduction += scaledPerk.value;
+                                    }
+                                }
+                            }
+                        });
+                        calculatedDurationMs = baseDurationMs * (1 - totalPercentageReduction);
+                        
+                        // 2. Then apply flat time reductions (like Warped Boots)
+                        Object.values(equippedItems).forEach(equippedInstanceId => {
+                            if (!equippedInstanceId) return;
+                            const invItem = playerInventory.find(i => i.uniqueInstanceId === equippedInstanceId);
+                            if (invItem) {
+                                const itemMaster = craftableItemsData.find(im => im.id === invItem.id);
+                                if (itemMaster && itemMaster.perk) {
+                                    const scaledPerk = getScaledItemPerk(itemMaster, invItem.level || 0);
+                                     if (scaledPerk.type === "timeReduction") { // Flat reduction from items like boots
+                                        flatTimeReductionSeconds += scaledPerk.value;
+                                    }
+                                }
+                            }
+                        });
+                        const flatReductionMs = (flatTimeReductionSeconds / 3600) * (GAME_HOUR_IN_REAL_SECONDS * 1000) ;
+                        calculatedDurationMs = Math.max(1000, calculatedDurationMs - flatReductionMs);
                                         advInstance.returnTime = Date.now() + calculatedDurationMs; // Reset its timer
 
                                         // Step 2: Now that activeAdventures is updated, recalculate the available count
@@ -3543,21 +3879,45 @@ function updateAdventureDisplayStates() {
                         }
                         // We DON'T directly change totalAvailableAdventurers here anymore.
 
-                        let calculatedDurationMs = originalDurationHours * GAME_HOUR_IN_REAL_SECONDS * 1000; 
-                        Object.values(equippedItems).forEach(equippedInstanceId => { 
+                         let baseDurationMs = originalDurationHours * GAME_HOUR_IN_REAL_SECONDS * 1000;
+                        let calculatedDurationMs = baseDurationMs;
+                        let totalPercentageReduction = 0;
+                        let flatTimeReductionSeconds = 0;
+
+                        // 1. Apply percentage reductions first (Set Bonus, Orb of Haste)
+                        totalPercentageReduction += getDungeonSetBonusTimeReduction(); // Dungeon Set Bonus
+
+                        Object.values(equippedItems).forEach(equippedInstanceId => {
                             if (!equippedInstanceId) return;
                             const invItem = playerInventory.find(i => i.uniqueInstanceId === equippedInstanceId);
-                            if(invItem) {
+                            if (invItem) {
                                 const itemMaster = craftableItemsData.find(im => im.id === invItem.id);
-                                 if (itemMaster && itemMaster.perk) {
+                                if (itemMaster && itemMaster.perk) {
                                     const scaledPerk = getScaledItemPerk(itemMaster, invItem.level || 0);
-                                    if (scaledPerk.type === "timeReduction") {
-                                        const reductionInAcceleratedSeconds = scaledPerk.value / 3600 * GAME_HOUR_IN_REAL_SECONDS;
-                                        calculatedDurationMs = Math.max(1000, calculatedDurationMs - (reductionInAcceleratedSeconds * 1000));
+                                    if (scaledPerk.type === "timeReductionPercent") { // Like Orb of Haste
+                                        totalPercentageReduction += scaledPerk.value;
                                     }
                                 }
                             }
                         });
+                        calculatedDurationMs = baseDurationMs * (1 - totalPercentageReduction);
+                        
+                        // 2. Then apply flat time reductions (like Warped Boots)
+                        Object.values(equippedItems).forEach(equippedInstanceId => {
+                            if (!equippedInstanceId) return;
+                            const invItem = playerInventory.find(i => i.uniqueInstanceId === equippedInstanceId);
+                            if (invItem) {
+                                const itemMaster = craftableItemsData.find(im => im.id === invItem.id);
+                                if (itemMaster && itemMaster.perk) {
+                                    const scaledPerk = getScaledItemPerk(itemMaster, invItem.level || 0);
+                                     if (scaledPerk.type === "timeReduction") { // Flat reduction from items like boots
+                                        flatTimeReductionSeconds += scaledPerk.value;
+                                    }
+                                }
+                            }
+                        });
+                        const flatReductionMs = (flatTimeReductionSeconds / 3600) * (GAME_HOUR_IN_REAL_SECONDS * 1000) ;
+                        calculatedDurationMs = Math.max(1000, calculatedDurationMs - flatReductionMs);
                         
                         const returnTime = Date.now() + calculatedDurationMs; 
                         const newActiveAdventure = { id: nextActiveAdventureId++, originalAdventureId: adventureIdBase, name: adventureName, adventurers: numAdventurersToSend, returnTime: returnTime, pvReward: actualPvRewardForAdventure, goldChance: goldChance, diamondChance: diamondChance }; 
