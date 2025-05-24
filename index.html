@@ -2494,22 +2494,27 @@ function recalculateTotalAvailableAdventurers() {
     console.log(`Recalculated totalAvailableAdventurers: ${totalAvailableAdventurers} (Base: ${MAX_PLAYER_ADVENTURERS}, Bonus: ${ordinalBonusAdventurers}, Busy: ${totalAdventurersBusy})`); // <-- MODIFY LOG
 }
             
-             function renderDungeonsPage() {
+function renderDungeonsPage() {
                 if (!dungeonListContainer) return;
                 dungeonListContainer.innerHTML = ''; 
 
-                // General unlock condition for all dungeons
                 const adventure4Active = activeAdventures.find(adv => adv.originalAdventureId === "4");
                 const dungeonsGloballyUnlocked = !!adventure4Active;
 
                 dungeonsData.forEach(dungeon => {
+                    // +++ ADD A LOG AT THE START OF THE LOOP FOR THE SPECIFIC DUNGEON +++
+                    if (dungeon.id === "dungeon_2") {
+                        console.log(`--- Rendering Dungeon 2 ---`);
+                    }
+                    // +++ END LOG +++
+
                     const dungeonDiv = document.createElement('div');
                     dungeonDiv.classList.add('dungeon-entry');
                     dungeonDiv.dataset.dungeonId = dungeon.id;
 
-                    let isLockedForEntry = !dungeonsGloballyUnlocked; // Determines if the "Enter" button is locked
-                    let canSelectCrawlers = dungeonsGloballyUnlocked; // Can select if dungeons are generally unlocked
-                    let displayLockReason = ""; // For the red text message
+                    let isLockedForEntry = !dungeonsGloballyUnlocked; 
+                    let canSelectCrawlers = dungeonsGloballyUnlocked; 
+                    let displayLockReason = ""; 
 
                     if (!dungeonsGloballyUnlocked) {
                         displayLockReason = "Unlock Requirement: Adventure 4 active.";
@@ -2524,6 +2529,9 @@ function recalculateTotalAvailableAdventurers() {
 
                     if (dungeon.type === "party_npc") {
                         const confirmedCrawlersForThisDungeon = confirmedCrawlersForDungeons[dungeon.id] || [];
+                        if (dungeon.id === "dungeon_2") { // Log specific to Dungeon 2 crawler processing
+                            console.log(`D2: Confirmed Crawlers:`, JSON.parse(JSON.stringify(confirmedCrawlersForThisDungeon)));
+                        }
                         if (confirmedCrawlersForThisDungeon.length > 0) {
                             let crawlerAttackBonus = 0;
                             let crawlerDefenseBonus = 0;
@@ -2540,18 +2548,20 @@ function recalculateTotalAvailableAdventurers() {
                                 partyStatContributionText = ` (Party Total: ${partyAttack} ATK, ${partyDefense} DEF)`;
                             }
                         }
+                        if (dungeon.id === "dungeon_2") { // Log specific to Dungeon 2 party stats
+                            console.log(`D2: Player Base ATK/DEF: ${playerBaseAttack}/${playerBaseDefense}, Party ATK/DEF: ${partyAttack}/${partyDefense}, Required: ${dungeon.attackRequirement}/${dungeon.defenseRequirement}`);
+                        }
                     }
 
-                    // Check for stat lock for entry, but doesn't necessarily disable crawler selection
                     if (!isLockedForEntry && (partyAttack < dungeon.attackRequirement || partyDefense < dungeon.defenseRequirement)) {
-                        isLockedForEntry = true; // Lock entry
-                        if (!displayLockReason) { // Only set if no other fundamental lock reason exists
+                        isLockedForEntry = true; 
+                        if (!displayLockReason) { 
                            displayLockReason = `Requires: ${dungeon.attackRequirement} ATK & ${dungeon.defenseRequirement} DEF. (Your Party: ${partyAttack} ATK, ${partyDefense} DEF)`;
                         }
+                        if (dungeon.id === "dungeon_2") console.log(`D2: Locked for entry due to stats.`);
                     }
                     
                     let effectiveMaxEntries = dungeon.maxEntriesPerDay;
-                    // ... (pizza pendant logic remains the same) ...
                     const pizzaPendantEquipped = Object.values(equippedItems).some(instanceId => {
                         if (!instanceId) return false;
                         const item = playerInventory.find(invItem => invItem.uniqueInstanceId === instanceId);
@@ -2561,33 +2571,37 @@ function recalculateTotalAvailableAdventurers() {
                         if (dungeon.id === "dungeon_1" && dungeon.maxEntriesPerDay) effectiveMaxEntries++;
                         if (dungeon.id === "dungeon_2" && dungeon.maxEntriesPerDay) effectiveMaxEntries++;
                     }
-                    // ...
 
                     const entriesToday = playerDungeonEntriesToday[dungeon.id] || 0;
-                    if (entriesToday >= effectiveMaxEntries) { // Check this condition independently
-                        isLockedForEntry = true; // Lock entry
-                        canSelectCrawlers = false; // Also disable crawler selection if daily limit reached
-                        if (!displayLockReason || displayLockReason.includes("Requires:")) { // Prioritize daily limit message or if only stat message was there
+                    if (entriesToday >= effectiveMaxEntries) { 
+                        isLockedForEntry = true; 
+                        canSelectCrawlers = false; 
+                        if (!displayLockReason || displayLockReason.includes("Requires:")) { 
                            displayLockReason = `Daily limit reached (${entriesToday}/${effectiveMaxEntries}). Resets daily.`;
                         }
+                        if (dungeon.id === "dungeon_2") console.log(`D2: Locked for entry AND crawler selection due to daily limit.`);
                     }
                     
-                    // The "Enter" button also depends on having available adventurers
                     let enterButtonDisabled = isLockedForEntry || (totalAvailableAdventurers < 1);
 
+                    if (dungeon.id === "dungeon_2") { // Log flags specifically for Dungeon 2 before setting button states
+                        console.log(`D2 Mid-Render States: dungeonsGloballyUnlocked: ${dungeonsGloballyUnlocked}, isLockedForEntry: ${isLockedForEntry}, canSelectCrawlers: ${canSelectCrawlers}, displayLockReason: "${displayLockReason}", totalAvailableAdventurers: ${totalAvailableAdventurers}, enterButtonDisabled: ${enterButtonDisabled}`);
+                    }
 
-                    // Update the dungeonDiv's locked class based on whether entry is possible or a fundamental lock reason exists
-                    if (isLockedForEntry && displayLockReason) { // If entry is locked AND there's a reason to show
+                    if (isLockedForEntry && displayLockReason) { 
                         dungeonDiv.classList.add('locked');
                     } else {
                         dungeonDiv.classList.remove('locked');
                     }
 
-
                     let additionalInfo = '';
                     if (dungeon.type === "party_npc") {
                         additionalInfo += `<p style="font-size:0.9em; color:var(--highlight-color-gold);"><em>This is an offline NPC-assisted dungeon. Multiplayer coming soon!</em></p>`;
-                        // "Select Crawlers" button is disabled only if `canSelectCrawlers` is false
+                        
+                        // +++ LOGGING FOR SELECT CRAWLERS BUTTON STATE (Dungeon 2 specific) +++
+                        if (dungeon.id === "dungeon_2") {
+                            console.log(`D2: "Select Crawlers" button will be disabled: ${!canSelectCrawlers}`);
+                        }
                         additionalInfo += `<button class="action-button select-dungeon-crawlers-btn" data-dungeon-id="${dungeon.id}" ${!canSelectCrawlers ? 'disabled' : ''}>Select Crawlers (Max ${dungeon.maxPartySize -1})</button>`;
                         
                         let currentConfirmedForThisDungeon = confirmedCrawlersForDungeons[dungeon.id] || [];
@@ -2602,7 +2616,11 @@ function recalculateTotalAvailableAdventurers() {
                         additionalInfo += `<div id="selectedCrawlersDisplay_${dungeon.id}" style="font-size:0.85em; margin-top:5px;">${confirmedDisplayHtml}</div>`;
                     }
                     
-                    // Update the innerHTML for the dungeon entry
+                    // +++ LOGGING FOR ENTER BUTTON STATE (Dungeon 2 specific) +++
+                    if (dungeon.id === "dungeon_2") {
+                         console.log(`D2: "Enter" button will be disabled: ${enterButtonDisabled}`);
+                    }
+
                     dungeonDiv.innerHTML = `
                         <div class="dungeon-icon-placeholder" style="background-color: #4A2A00;">${dungeon.id.replace('dungeon_', '').toUpperCase()}</div>
                         <div class="dungeon-info">
