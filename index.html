@@ -2017,6 +2017,7 @@ function resetGameStateToDefaults() {
     playerDungeonEntriesToday = { dungeon_1: 0, dungeon_2: 0 };
     lastDungeonResetTimestamp = 0;
     playerDungeonCrawlers = [];
+    confirmedCrawlersForDungeons = {}; // <<< ADD THIS LINE
     dungeonCrawlerIdsLoaded = false;
     if (document.getElementById('dungeonCrawlerSelectionArea')) { // If UI exists, clear it
         document.getElementById('dungeonCrawlerSelectionArea').innerHTML = '';
@@ -2200,6 +2201,7 @@ function resetGameStateToDefaults() {
                     playerDungeonEntriesToday: { dungeon_1: 0, dungeon_2: 0 },
                     lastDungeonResetTimestamp: 0,
                     playerDungeonCrawlers: [],
+                    confirmedCrawlersForDungeons: {}, // <<< ADD THIS LINE
                     dungeonCrawlerIdsLoaded: false // Client will try to load on startup
                     // +++ END OF ADDED FOR DUNGEONS +++
                 };
@@ -2216,7 +2218,15 @@ function getCurrentGameState() {
         gold: currentGold || 0,
         diamonds: currentDiamonds || 0,
         activeAdventures: Array.isArray(activeAdventures) ? activeAdventures.map(adv => ({ id: adv.id, originalAdventureId: adv.originalAdventureId, name: adv.name || "Unknown Adventure", adventurers: adv.adventurers || 0, returnTime: adv.returnTime || Date.now(), pvReward: adv.pvReward || 0, goldChance: adv.goldChance || 0, diamondChance: adv.diamondChance || 0 })) : [],
-        activeDungeons: Array.isArray(activeDungeons) ? activeDungeons.map(dun => ({ id: dun.id, dungeonId: dun.dungeonId, name: dun.name || "Unknown Dungeon", adventurers: dun.adventurers || 0, returnTime: dun.returnTime || Date.now() })) : [], // <-- ADD THIS LINE
+        activeDungeons: Array.isArray(activeDungeons) ? activeDungeons.map(dun => ({ 
+            id: dun.id, 
+            dungeonId: dun.dungeonId, 
+            name: dun.name || "Unknown Dungeon", 
+            adventurers: dun.adventurers || 0, 
+            returnTime: dun.returnTime || Date.now(),
+            npcCrawlers: Array.isArray(dun.npcCrawlers) ? dun.npcCrawlers : [] // Save selected NPC crawlers
+        })) : [],
+        confirmedCrawlersForDungeons: confirmedCrawlersForDungeons || {}, // <<< ADD THIS LINE
         playerInventory: Array.isArray(playerInventory) ? playerInventory : [],
         nextUniqueInstanceId: nextUniqueInstanceId,
         playerMaterials: playerMaterials || { ...initialPlayerMaterials },
@@ -2398,8 +2408,24 @@ function applyLoadedGameState(loadedState) {
         playerDungeonEntriesToday = loadedState.playerDungeonEntriesToday || { dungeon_1: 0, dungeon_2: 0 };
         lastDungeonResetTimestamp = loadedState.lastDungeonResetTimestamp || 0;
         playerDungeonCrawlers = Array.isArray(loadedState.playerDungeonCrawlers) ? loadedState.playerDungeonCrawlers : [];
+        playerDungeonCrawlers = Array.isArray(loadedState.playerDungeonCrawlers) ? loadedState.playerDungeonCrawlers : [];
+        confirmedCrawlersForDungeons = loadedState.confirmedCrawlersForDungeons || {}; // <<< ADD THIS LINE
         // dungeonCrawlerIdsLoaded is generally set at client start, not loaded from save.
         // +++ END LOAD DUNGEON STATE +++
+        
+        // Ensure activeDungeons loads npcCrawlers correctly
+        activeDungeons = Array.isArray(loadedState.activeDungeons) ? loadedState.activeDungeons.map(dunData => { 
+             return {
+                 id: dunData.id || nextActiveAdventureId++, 
+                 dungeonId: dunData.dungeonId || "unknown_dungeon",
+                 name: dunData.name || "Unknown Dungeon",
+                 adventurers: dunData.adventurers || 0,
+                 returnTime: typeof dunData.returnTime === 'number' ? dunData.returnTime : Date.now(),
+                 npcCrawlers: Array.isArray(dunData.npcCrawlers) ? dunData.npcCrawlers : [] // <<< ADD THIS LINE
+             };
+         }) : [];
+         // The nextActiveAdventureId recalculation after this block should still be fine.
+
 
         recalculateTotalAvailableAdventurers();
 
@@ -2487,12 +2513,36 @@ function recalculateTotalAvailableAdventurers() {
                         lockReason = "Unlock Requirement: Adventure 4 active.";
                     }
 
-                    const playerAttack = parseInt(playerAttackStatElement.textContent) || 0;
-                    const playerDefense = parseInt(playerDefenseStatElement.textContent) || 0;
+ const playerBaseAttack = parseInt(playerAttackStatElement.textContent) || 0;
+                    const playerBaseDefense = parseInt(playerDefenseStatElement.textContent) || 0;
 
-                    if (!isLocked && (playerAttack < dungeon.attackRequirement || playerDefense < dungeon.defenseRequirement)) {
+                    let partyAttack = playerBaseAttack;
+                    let partyDefense = playerBaseDefense;
+                    let partyStatContributionText = "";
+
+                    if (dungeon.type === "party_npc") {
+                        const confirmedCrawlersForThisDungeon = confirmedCrawlersForDungeons[dungeon.id] || [];
+                        if (confirmedCrawlersForThisDungeon.length > 0) {
+                            let crawlerAttackBonus = 0;
+                            let crawlerDefenseBonus = 0;
+                            confirmedCrawlersForThisDungeon.forEach(crawlerInstanceId => {
+                                const crawlerData = playerDungeonCrawlers.find(c => c.uniqueInstanceId === crawlerInstanceId);
+                                if (crawlerData) {
+                                    crawlerAttackBonus += (crawlerData.attack || 0);
+                                    crawlerDefenseBonus += (crawlerData.defense || 0);
+                                }
+                            });
+                            partyAttack += crawlerAttackBonus;
+                            partyDefense += crawlerDefenseBonus;
+                            if (crawlerAttackBonus > 0 || crawlerDefenseBonus > 0) {
+                                partyStatContributionText = ` (Party Total: ${partyAttack} ATK, ${partyDefense} DEF)`;
+                            }
+                        }
+                    }
+
+                    if (!isLocked && (partyAttack < dungeon.attackRequirement || partyDefense < dungeon.defenseRequirement)) {
                         isLocked = true;
-                        lockReason = `Requires: ${dungeon.attackRequirement} ATK & ${dungeon.defenseRequirement} DEF. (You: ${playerAttack} ATK, ${playerDefense} DEF)`;
+                        lockReason = `Requires: ${dungeon.attackRequirement} ATK & ${dungeon.defenseRequirement} DEF. (Your Party: ${partyAttack} ATK, ${partyDefense} DEF)`;
                     }
                     
                     let effectiveMaxEntries = dungeon.maxEntriesPerDay;
@@ -2531,7 +2581,17 @@ function recalculateTotalAvailableAdventurers() {
                         additionalInfo += `<p style="font-size:0.9em; color:var(--highlight-color-gold);"><em>This is an offline NPC-assisted dungeon. Multiplayer coming soon!</em></p>`;
                         // Placeholder for Dungeon Crawler selection UI trigger
                         additionalInfo += `<button class="action-button select-dungeon-crawlers-btn" data-dungeon-id="${dungeon.id}" ${isLocked ? 'disabled' : ''}>Select Crawlers (Max ${dungeon.maxPartySize -1})</button>`;
-                        additionalInfo += `<div id="selectedCrawlersDisplay_${dungeon.id}" style="font-size:0.85em; margin-top:5px;"></div>`;
+                        
+                        let currentConfirmedForThisDungeon = confirmedCrawlersForDungeons[dungeon.id] || [];
+                        let confirmedDisplayHtml = 'No crawlers selected.';
+                        if (currentConfirmedForThisDungeon.length > 0) {
+                             const names = currentConfirmedForThisDungeon.map(id => {
+                                const crawler = playerDungeonCrawlers.find(c => c.uniqueInstanceId === id);
+                                return crawler ? crawler.name : 'Unknown';
+                            }).join(', ');
+                            confirmedDisplayHtml = `Selected: ${names}`;
+                        }
+                        additionalInfo += `<div id="selectedCrawlersDisplay_${dungeon.id}" style="font-size:0.85em; margin-top:5px;">${confirmedDisplayHtml}</div>`;
                     }
                     
                     dungeonDiv.innerHTML = `
@@ -2540,7 +2600,7 @@ function recalculateTotalAvailableAdventurers() {
                             <h3>${dungeon.name}</h3>
                             <p>${dungeon.description}</p>
                             <p>Duration: ${dungeon.durationHours} Hours</p>
-                            <p>Reqs: ${dungeon.attackRequirement} ATK, ${dungeon.defenseRequirement} DEF</p>
+                            <p>Reqs: ${dungeon.attackRequirement} ATK, ${dungeon.defenseRequirement} DEF${partyStatContributionText}</p>
                             <p>Daily Attempts: ${entriesToday} / ${effectiveMaxEntries}</p>
                             <p>Reward: ${dungeon.placeholderReward}</p>
                             ${lockReason ? `<p class="dungeon-requirements">${lockReason}</p>` : (dungeonsGloballyUnlocked ? `<p class="dungeon-requirements" style="color:var(--highlight-color-connected);">Unlocked!</p>` : '')}
@@ -2952,11 +3012,27 @@ function recalculateTotalAvailableAdventurers() {
                 }
 
                 // 2. Stat Requirements Check
-                const playerAttack = parseInt(playerAttackStatElement.textContent) || 0;
-                const playerDefense = parseInt(playerDefenseStatElement.textContent) || 0;
-                if (playerAttack < dungeon.attackRequirement || playerDefense < dungeon.defenseRequirement) {
-                    showCustomPopup(`Cannot enter ${dungeon.name}. Requires ${dungeon.attackRequirement} ATK & ${dungeon.defenseRequirement} DEF. You have ${playerAttack} ATK & ${playerDefense} DEF.`, "Requirements Not Met");
-                    renderDungeonsPage(); return;
+                 // 2. Stat Requirements Check (with party contributions for party_npc dungeons)
+                const playerBaseAttack = parseInt(playerAttackStatElement.textContent) || 0;
+                const playerBaseDefense = parseInt(playerDefenseStatElement.textContent) || 0;
+                let currentPartyAttack = playerBaseAttack;
+                let currentPartyDefense = playerBaseDefense;
+
+                if (dungeon.type === "party_npc") {
+                    const confirmedCrawlers = confirmedCrawlersForDungeons[dungeon.id] || [];
+                    confirmedCrawlers.forEach(crawlerInstanceId => {
+                        const crawlerData = playerDungeonCrawlers.find(c => c.uniqueInstanceId === crawlerInstanceId);
+                        if (crawlerData) {
+                            currentPartyAttack += (crawlerData.attack || 0);
+                            currentPartyDefense += (crawlerData.defense || 0);
+                        }
+                    });
+                }
+
+                if (currentPartyAttack < dungeon.attackRequirement || currentPartyDefense < dungeon.defenseRequirement) {
+                    showCustomPopup(`Cannot enter ${dungeon.name}. Requires ${dungeon.attackRequirement} ATK & ${dungeon.defenseRequirement} DEF. Your current party total is ${currentPartyAttack} ATK & ${currentPartyDefense} DEF.`, "Requirements Not Met");
+                    renderDungeonsPage(); // Re-render to show updated info if needed
+                    return;
                 }
 
                 // 3. Daily Entry Limit Check (with Pizza Pendant bonus)
@@ -3009,10 +3085,10 @@ function recalculateTotalAvailableAdventurers() {
                     id: nextActiveAdventureId++,
                     dungeonId: dungeon.id,
                     name: dungeon.name,
-                    adventurers: adventurersForThisDungeon, // This is the player's adventurer for now
+                    adventurers: adventurersForThisDungeon, // Player's adventurer
                     returnTime: returnTime,
-                    // Store selected crawlers if/when that UI is implemented:
-                    // selectedCrawlers: (dungeon.type === "party_npc" ? getCurrentlySelectedCrawlersForDungeon(dungeon.id) : []) 
+                    // Include the instance IDs of confirmed NPC crawlers for this dungeon run
+                    npcCrawlers: (dungeon.type === "party_npc" ? (confirmedCrawlersForDungeons[dungeon.id] || []) : []) 
                 };
 
                 activeDungeons.push(newActiveDungeon);
@@ -3551,7 +3627,16 @@ function usePetWhistleUnlock(itemUniqueId) {
 
 
                 // --- Popup Message Construction ---
-                let popupMessage = `${completedDun.adventurers} adventurer(s) returned from ${completedDun.name}!\n\nRewards:`;
+                let partyCompositionMessage = `${completedDun.adventurers} player adventurer(s)`;
+                if (completedDun.npcCrawlers && completedDun.npcCrawlers.length > 0) {
+                    const crawlerNames = completedDun.npcCrawlers.map(id => {
+                        const crawlerData = playerDungeonCrawlers.find(c => c.uniqueInstanceId === id);
+                        return crawlerData ? crawlerData.name : "Unknown Crawler";
+                    }).join(', ');
+                    partyCompositionMessage += ` (and NPC Crawlers: ${crawlerNames})`;
+                }
+
+                let popupMessage = `${partyCompositionMessage} returned from ${completedDun.name}!\n\nRewards:`;
                 if (gainedCurrencySummary.length > 0) {
                     popupMessage += `\n- ${gainedCurrencySummary.join(', ')}`;
                 } else {
@@ -6257,6 +6342,7 @@ async function fetchPlayerDungeonCrawlers(userAddress, walletName) {
             if (itemSelectionModalOverlay) itemSelectionModalOverlay.addEventListener('click', (event) => { if(event.target === itemSelectionModalOverlay) closeItemSelectionModal(); });
             let currentDungeonIdForCrawlerSelection = null;
             let tempSelectedCrawlers = []; // Store uniqueInstanceIds of crawlers selected in the modal
+                        let confirmedCrawlersForDungeons = {};
 
             function openDungeonCrawlerSelectionModal(dungeonId) {
                 currentDungeonIdForCrawlerSelection = dungeonId;
@@ -6347,15 +6433,16 @@ async function fetchPlayerDungeonCrawlers(userAddress, walletName) {
             if (dungeonCrawlerConfirmSelectionBtn) {
                 dungeonCrawlerConfirmSelectionBtn.addEventListener('click', () => {
                     if (currentDungeonIdForCrawlerSelection) {
-                        // Store tempSelectedCrawlers with the dungeon instance or handle them before entering.
-                        // For now, we'll just log and close. The actual use of these crawlers is for Step 4.
-                        console.log(`Confirmed selection for dungeon ${currentDungeonIdForCrawlerSelection}:`, tempSelectedCrawlers);
+                        // Store the confirmed selection for this dungeon
+                        confirmedCrawlersForDungeons[currentDungeonIdForCrawlerSelection] = [...tempSelectedCrawlers]; // Store a copy
+
+                        console.log(`Confirmed selection for dungeon ${currentDungeonIdForCrawlerSelection}:`, confirmedCrawlersForDungeons[currentDungeonIdForCrawlerSelection]);
                         
-                        // Update the display on the main dungeons page (under the "Select Crawlers" button)
+                        // Update the display on the main dungeons page
                         const selectedCrawlersDisplayOnPage = document.getElementById(`selectedCrawlersDisplay_${currentDungeonIdForCrawlerSelection}`);
                         if (selectedCrawlersDisplayOnPage) {
-                            if (tempSelectedCrawlers.length > 0) {
-                                const names = tempSelectedCrawlers.map(id => {
+                            if (confirmedCrawlersForDungeons[currentDungeonIdForCrawlerSelection].length > 0) {
+                                const names = confirmedCrawlersForDungeons[currentDungeonIdForCrawlerSelection].map(id => {
                                     const crawler = playerDungeonCrawlers.find(c => c.uniqueInstanceId === id);
                                     return crawler ? crawler.name : 'Unknown';
                                 }).join(', ');
@@ -6364,8 +6451,6 @@ async function fetchPlayerDungeonCrawlers(userAddress, walletName) {
                                 selectedCrawlersDisplayOnPage.textContent = 'No crawlers selected.';
                             }
                         }
-                        // In a full implementation, you'd likely pass tempSelectedCrawlers to handleEnterDungeon
-                        // or store it associated with the dungeon entry.
                         closeDungeonCrawlerSelectionModal();
                     }
                 });
