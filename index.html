@@ -6963,6 +6963,8 @@ async function fetchPlayerDungeonCrawlers(userAddress, walletName) {
             initializeTheme(); 
             setInterval(updateTimers, 1000);
             document.querySelectorAll('.adventure-num-select').forEach(select => { select.value = "5"; });
+handleWalletDisconnected(); // This will reset state and prompt for connection
+initializeTheme();
             
             const connectWalletBtn = document.getElementById('connectWalletBtn'); const walletDropdown = document.getElementById('walletDropdown'); const walletOptions = walletDropdown.querySelectorAll('li'); const walletAddressDisplay = document.getElementById('walletAddressDisplay');
             let connectedAccount = null; let connectedWalletName = null;
@@ -7310,8 +7312,6 @@ if (walletOptions) {
                 }
             });
         }
-        handleWalletDisconnected(); // This will reset state and prompt for connection
-initializeTheme();
         }); // End of 'firebaseReady' event listener
     </script>
 </body>
