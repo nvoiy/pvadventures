@@ -5236,20 +5236,19 @@ initializeTheme();
 
 
 
-        function updateWalletDisplay(account, walletName = '') {
-             console.log("updateWalletDisplay CALLED. punkVoyageIdsLoaded is:", punkVoyageIdsLoaded);
-            // Ensure critical elements are defined before proceeding
+         function updateWalletDisplay(account, walletName = '') {
+            console.log("updateWalletDisplay CALLED. punkVoyageIdsLoaded is:", punkVoyageIdsLoaded, "Account:", account, "WalletName:", walletName);
             const connectWalletBtnElement = document.getElementById('connectWalletBtn');
             const walletAddressDisplayElement = document.getElementById('walletAddressDisplay');
-            const playerNicknameDisplayElement = document.getElementById('playerNicknameDisplay'); // Assuming this is its ID
+            const playerNicknameDisplayElement = document.getElementById('playerNicknameDisplay');
 
-            if (account) {
+            if (account) { // This 'account' is the walletAddress passed in
                 const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
-                if (connectWalletBtnElement) { // Check if the element exists
+                if (connectWalletBtnElement) {
                     connectWalletBtnElement.textContent = `${walletName}: ${shortAddress}`;
                     connectWalletBtnElement.classList.add('connected');
                 }
-                if (walletAddressDisplayElement) walletAddressDisplayElement.textContent = `Wallet: ${account}`; // Check
+                if (walletAddressDisplayElement) walletAddressDisplayElement.textContent = `Wallet: ${account}`;
 
                 walletVerificationPendingForBonus = false;
 
@@ -5263,16 +5262,17 @@ initializeTheme();
                     }
                 }
 
-                if (punkVoyageIdsLoaded && connectedAccount && connectedWalletName) {
-                    fetchWalletInscriptions(connectedAccount, connectedWalletName);
+                // Use the 'account' and 'walletName' parameters directly for the check and calls
+                if (punkVoyageIdsLoaded && account && walletName) {
+                    fetchWalletInscriptions(account, walletName); // Pass parameters
                     if (dungeonCrawlerIdsLoaded) {
-                        fetchPlayerDungeonCrawlers(connectedAccount, connectedWalletName);
+                        fetchPlayerDungeonCrawlers(account, walletName); // Pass parameters
                     }
                 } else {
-                    console.warn("Wallet connected, but asset ID lists not loaded or account/name issue. Ordinal/Crawler check skipped.");
+                    console.warn("Wallet connected, but asset ID lists not loaded or account/name issue. Ordinal/Crawler check skipped. Details - punkVoyageIdsLoaded:", punkVoyageIdsLoaded, "passed account:", account, "passed walletName:", walletName);
                     if (userOrdinalsDisplayElement) {
                          userOrdinalsDisplayElement.style.display = 'block';
-                         if(userOrdinalsListElement) userOrdinalsListElement.innerHTML = "<p>Could not check Ordinals: Game's collection ID list not ready.</p>";
+                         if(userOrdinalsListElement) userOrdinalsListElement.innerHTML = "<p>Could not check Ordinals: Game's collection ID list not ready or wallet info missing.</p>";
                     }
                     let previousBonus = ordinalBonusAdventurers;
                     ordinalBonusAdventurers = 0;
@@ -5283,17 +5283,17 @@ initializeTheme();
                          }
                     }
                 }
-                if (playerNicknameDisplayElement && userNickname) { // Check
+                if (playerNicknameDisplayElement && userNickname) {
                     playerNicknameDisplayElement.textContent = userNickname;
                 }
 
             } else { // Wallet disconnected or not present
-                if (connectWalletBtnElement) { // Check
+                if (connectWalletBtnElement) {
                     connectWalletBtnElement.textContent = 'CONNECT WALLET';
                     connectWalletBtnElement.classList.remove('connected');
                 }
-                if (walletAddressDisplayElement) walletAddressDisplayElement.textContent = ''; // Check
-                if (playerNicknameDisplayElement) playerNicknameDisplayElement.textContent = 'Voyager'; // Check
+                if (walletAddressDisplayElement) walletAddressDisplayElement.textContent = '';
+                if (playerNicknameDisplayElement) playerNicknameDisplayElement.textContent = 'Voyager';
 
                 if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none';
                 if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = '';
