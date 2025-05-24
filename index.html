@@ -7248,9 +7248,8 @@ if (walletOptions) {
             if (addrToUse) {
                 connectedAccount = addrToUse;
                 connectedWalletName = 'Xverse'; // Set wallet name
-                updateWalletDisplay(connectedAccount, connectedWalletName);
-                  if (punkVoyageIdsLoaded) fetchWalletInscriptions(connectedAccount, connectedWalletName);
-                                  if (dungeonCrawlerIdsLoaded && connectedAccount) fetchPlayerDungeonCrawlers(connectedAccount, connectedWalletName);
+                // NOW, CALL handleWalletConnected INSTEAD OF THE DIRECT CALLS
+                await handleWalletConnected(connectedAccount, connectedWalletName);
 
                 // You might want to check Xverse documentation for an 'accountsChanged' event
                 // to handle account switches in the wallet, similar to UniSat.
