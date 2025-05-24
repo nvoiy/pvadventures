@@ -990,7 +990,7 @@
                         <p>Embark on an epic journey in Punk Voyage Adventures! This guide will help you navigate the cosmos of possibilities, from sending your brave adventurers on perilous quests to crafting legendary gear.</p>
 
                         <div class="help-gif-container">
-                            <img src="https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeibyu3nj3yofxnngakyoyekde2vyffe73mnesrw3ogqmidrm3wgpli" alt="Helpful Guide GIF">
+                            <img src="https://raw.githubusercontent.com/nvoiy/pvadventures/main/HELP.gif" alt="Helpful Guide GIF">
                         </div>
 
                         <h3>Getting Started</h3>
@@ -1825,15 +1825,15 @@ const dungeonsData = [
 function processPopupQueue() {
     if (isPopupCurrentlyVisible || popupMessageQueue.length === 0) { return; }
 
-    const isAuthContextPopup = welcomeScreen && !welcomeScreen.classList.contains('hidden');
+    // welcomeScreen is removed, so isAuthContextPopup logic is no longer relevant in the same way.
+    // We'll assume popups are always for the game context now.
+    // const isAuthContextPopup = welcomeScreen && !welcomeScreen.classList.contains('hidden');
     const { message, title, craftCallback, confirmCallback, secondaryActionCallback, secondaryActionText, confirmText, cancelText } = popupMessageQueue.shift();
 
-    if (!isAuthContextPopup && (title.includes("Error") || title.includes("Failed"))) {
-        console.warn("Stale auth popup suppressed. Original message:", title, message);
-        isPopupCurrentlyVisible = false;
-        processPopupQueue();
-        return;
-    }
+    // Simplified check: If a critical error occurs very early before currentUser might be set (e.g. Firebase init fail),
+    // those popups are handled by the Firebase init catch block.
+    // This check was to prevent showing game-related error popups if the user wasn't even in the game yet.
+    // With wallet-only, the game UI is always visible.
 
     isPopupCurrentlyVisible = true;
     if (customPopupTitleEl) customPopupTitleEl.textContent = title;
@@ -1848,23 +1848,22 @@ function processPopupQueue() {
     const existingSecondaryBtn = document.getElementById('popupSecondaryActionBtn');
     if (existingSecondaryBtn) existingSecondaryBtn.remove();
 
-
     currentPopupConfirmCallback = null;
     currentPopupCraftCallback = null;
-    let currentPopupSecondaryActionCallback = null; // Store secondary callback
+    let currentPopupSecondaryActionCallback = null;
 
     if (craftCallback) {
         currentPopupCraftCallback = craftCallback;
         const craftAgainBtn = document.createElement('button');
         craftAgainBtn.id = 'popupCraftAgainBtn';
         craftAgainBtn.className = 'action-button';
-        craftAgainBtn.textContent = 'Craft Again'; // Or make this an option
+        craftAgainBtn.textContent = 'Craft Again';
         craftAgainBtn.style.backgroundColor = 'var(--highlight-color-connected)';
         craftAgainBtn.style.color = 'white';
         customPopupButtonsEl.insertBefore(craftAgainBtn, customPopupCloseBtn);
         customPopupCloseBtn.textContent = cancelText || "No Thanks";
         customPopupCloseBtn.classList.remove('hidden');
-    } else if (confirmCallback) { // Standard confirm/cancel or confirm/secondaryAction
+    } else if (confirmCallback) {
         currentPopupConfirmCallback = confirmCallback;
         customPopupConfirmBtn.textContent = confirmText || "Confirm";
         customPopupConfirmBtn.classList.remove('hidden');
@@ -1873,39 +1872,33 @@ function processPopupQueue() {
             currentPopupSecondaryActionCallback = secondaryActionCallback;
             const secondaryBtn = document.createElement('button');
             secondaryBtn.id = 'popupSecondaryActionBtn';
-            secondaryBtn.className = 'action-button'; // You might want a different style
+            secondaryBtn.className = 'action-button';
             secondaryBtn.textContent = secondaryActionText;
-            // Add listener for secondary button
             secondaryBtn.addEventListener('click', () => {
                 if (currentPopupSecondaryActionCallback) {
                     currentPopupSecondaryActionCallback();
                 }
                 hideCustomPopup();
-            }, { once: true }); // Ensure listener is added only once per show
-            customPopupButtonsEl.insertBefore(secondaryBtn, customPopupCancelBtn.nextSibling); // Insert before any final "cancel/close"
-
-            // If secondary action exists, the original 'cancel' button becomes the third option or is hidden
-            // For now, let's assume customPopupCancelBtn acts as a general "close/cancel" if no specific cancelText
+            }, { once: true });
+            customPopupButtonsEl.insertBefore(secondaryBtn, customPopupCancelBtn.nextSibling);
             if (cancelText) {
                 customPopupCancelBtn.textContent = cancelText;
                 customPopupCancelBtn.classList.remove('hidden');
             } else {
-                customPopupCancelBtn.classList.add('hidden'); // Hide default cancel if we have confirm + secondary
+                customPopupCancelBtn.classList.add('hidden');
             }
-
-        } else { // Just confirm and cancel
+        } else {
             customPopupCancelBtn.textContent = cancelText || "Cancel";
             customPopupCancelBtn.classList.remove('hidden');
         }
-    } else { // Simple notification
-        customPopupCloseBtn.textContent = confirmText || "OK"; // confirmText can be "OK" for simple popups
+    } else {
+        customPopupCloseBtn.textContent = confirmText || "OK";
         customPopupCloseBtn.classList.remove('hidden');
     }
 
     if (customPopupOverlay) customPopupOverlay.classList.remove('hidden');
     if (customPopup) customPopup.classList.remove('hidden');
 
-    // Focus logic
     if (customPopupConfirmBtn && !customPopupConfirmBtn.classList.contains('hidden')) {
         customPopupConfirmBtn.focus();
     } else if (document.getElementById('popupCraftAgainBtn')) {
@@ -7047,7 +7040,7 @@ initializeTheme();
 
              // No welcome screen, game container remains visible
              // gameContainer.classList.add('hidden');
-             // welcomeScreen.classList.remove('hidden');
+
 
              showPage('adventures-page'); // Show a default page
              if(sidebarActiveAdventuresList) {
