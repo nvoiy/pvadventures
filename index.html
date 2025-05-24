@@ -775,6 +775,31 @@
 <input type="number" id="num-adventurers-4" class="adventure-num-select" value="1" min="1">
                                 <button class="adventure-send-btn active-adv4" data-adventure-id="4" data-adventure-name="Tomb of the Death Riders" data-duration-hours="168" data-pv-reward="700" data-gold-chance="0.05" data-diamond-chance="0.01" data-adventurer-requirement="5">SEND</button> </div> </div> <div class="adventure-drops-area"> <button class="adventure-drops-button" data-adventure-id="4">DROPS</button> <div class="drops-popover" id="drops-popover-4"></div>  </div> </div> 
                             </div>
+                            <div class="adventure" id="adventure-5-block"> 
+                                <div class="adventure-lock-overlay hidden"> {/* Initially hidden, will be controlled by JS */}</div>
+                                <div class="adventure-icon" style="background-color: #2F4F4F; display:flex; align-items:center; justify-content:center; font-size:1.5em; color:white;">A5</div> {/* Placeholder Icon - DarkSlateGray */}
+                                <div class="adventure-main-info"> 
+                                    <div class="adventure-content"> 
+                                        <div class="adventure-details">
+                                            ADVENTURE 5, THE CYBER VOID ECHO<br>
+                                            ADVENTURE TIME = 720 HOURS (30 DAYS)<br>
+                                            <span class="prize">PRIZE = 6250 PV TOKENS</span><br>
+                                            <span class="gold">GUARANTEED = 5 GOLD</span><br>
+                                            <span class="chance-diamond">10% CHANCE OF 3 DIAMONDS</span>
+                                            <div class="adventure-requirement">Requires: 10 Adventurers</div>
+                                        </div>
+                                        <div class="adventure-controls">
+                                            <label for="num-adventurers-5">ADVENTURERS:</label> 
+                                            <input type="number" id="num-adventurers-5" class="adventure-num-select" value="1" min="1">
+                                            <button class="adventure-send-btn" data-adventure-id="5" data-adventure-name="The Cyber Void Echo" data-duration-hours="720" data-pv-reward="3125" data-gold-guaranteed="5" data-diamond-chance="0.10" data-diamond-reward-multiplier="3" data-adventurer-requirement="10" style="background-color: #8A2BE2; color:white;">SEND</button> {/* BlueViolet style */}
+                                        </div> 
+                                    </div> 
+                                    <div class="adventure-drops-area"> 
+                                        <button class="adventure-drops-button" data-adventure-id="5">DROPS</button> 
+                                        <div class="drops-popover" id="drops-popover-5"></div>  
+                                    </div> 
+                                </div> 
+                            </div>
                         </div> 
                     </div> 
                 </section>
@@ -1320,7 +1345,7 @@ function updateAdventureCardPvDisplay() {
             const initialPlayerMaterials = { 
                 "Leather": 0, "Wood": 0, "Clover": 0, "Fabric": 0, "Iron": 0, "Gizmo Tail": 0, 
                 "Stone": 0, "Obsidian": 0, "Bitcoin": 0, "Bone": 0, "Flame Essence": 0, 
-                "Essence of Death": 0, "Rider's Sigil": 0, "Ancient Tablet Fragment": 0, "Shadowgem": 0 
+                "Essence of Death": 0, "Rider's Sigil": 0, "Ancient Tablet Fragment": 0, "Shadowgem": 0,                 "Glitch Fabric": 0, "Quantum Shard": 0
             };
             let playerMaterials = { ...initialPlayerMaterials };
 
@@ -1364,13 +1389,32 @@ let lastDailyRewardDayClaimed = 0;
                 "1": { name: "Spirit Forest", drops: [ { name: "Leather", chance: 0.15, qty: 1}, { name: "Wood", chance: 0.20, qty: 1}, { name: "Clover", chance: 0.05, qty: 1}, { name: "Fabric", chance: 0.04, qty: 1} ] }, 
                 "2": { name: "Mountain of the Marowan", drops: [ { name: "Iron", chance: 0.15, qty: 1}, { name: "Gizmo Tail", chance: 0.03, qty: 1}, { name: "Stone", chance: 0.20, qty: 1} ] }, 
                 "3": { name: "Fire Fields of Flyinals", adventurerRequirement: 2, drops: [ { name: "Obsidian", chance: 0.15, qty: 1}, { name: "Bitcoin", chance: 0.001, qty: 1}, { name: "Flame Essence", chance: 0.085, qty: 1} ] }, 
-                "4": { name: "Tomb of the Death Riders", adventurerRequirement: 5, drops: [ { name: "Bone", chance: 0.25, qty: 1}, { name: "Essence of Death", chance: 0.15, qty: 1}, { name: "Bitcoin", chance: 0.019, qty: 1},  { name: "Rider's Sigil", chance: 0.14, qty: 1}, { name: "Ancient Tablet Fragment", chance: 0.08, qty: 1}, { name: "Shadowgem", chance: 0.05, qty: 1} ] } // Cursed ring removed
+                "4": { name: "Tomb of the Death Riders", adventurerRequirement: 5, drops: [ { name: "Bone", chance: 0.25, qty: 1}, { name: "Essence of Death", chance: 0.15, qty: 1}, { name: "Bitcoin", chance: 0.019, qty: 1},  { name: "Rider's Sigil", chance: 0.14, qty: 1}, { name: "Ancient Tablet Fragment", chance: 0.08, qty: 1}, { name: "Shadowgem", chance: 0.05, qty: 1} ] },
+                            "5": { 
+                name: "The Cyber Void Echo", 
+                adventurerRequirement: 10, 
+                drops: [ 
+                    { name: "Glitch Fabric", chance: 0.05, qty: 1 }, // New Material 1
+                    { name: "Quantum Shard", chance: 0.05, qty: 1 }  // New Material 2
+                ] 
+            },
+            "5": { 
+                    name: "The Cyber Void Echo", 
+                    adventurerRequirement: 10,
+                    guaranteedGold: 5, // Add this
+                    diamondRewardMultiplier: 3, // Add this (applied if diamondChance hits)
+                    drops: [ 
+                        { name: "Glitch Fabric", chance: 0.05, qty: 1 }, 
+                        { name: "Quantum Shard", chance: 0.05, qty: 1 }
+                    ] 
+                }
             };
             const materialTiers = {
                 1: ["Leather", "Wood", "Clover", "Fabric"],
                 2: ["Iron", "Gizmo Tail", "Stone"],
                 3: ["Obsidian", "Bitcoin", "Flame Essence"], 
-                4: ["Bone", "Essence of Death", "Rider's Sigil", "Ancient Tablet Fragment", "Shadowgem"]
+                4: ["Bone", "Essence of Death", "Rider's Sigil", "Ancient Tablet Fragment", "Shadowgem"],
+                5: ["Glitch Fabric", "Quantum Shard"]
             };
                          const scrollData = { // scrollTier: 1=Basic (+0->+1), 2=Advanced (Up to +3), 3=Master (Up to +5)
                 low: { name: "Basic Upgrade Scroll", descriptionName: "Basic Upgrade Scroll (+0 to +1)", icon: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafybeihk33icq4ytbr5m54tor4qkibqwphgu72l3si5ydcmvkj2oav42i4/low%20upgrade%20scroll.jpg", tier: 1, shopId: "scroll_low" },
@@ -1483,7 +1527,8 @@ let lastDailyRewardDayClaimed = 0;
                 { id: 11, text: "Reach 10 Attack Power", reward: "1 Gold, 50 PV", completed: false, progress: 0, target: 10, metric: "attackPower" },
                 { id: 12, text: "Successfully upgrade an item to +3", reward: "1 Diamond, 100 PV", completed: false, progress: 0, target: 1, metric: "itemUpgradedToPlus3" },
                 { id: 13, text: "Use a PV Doubler Potion", reward: "25 PV", completed: false, progress: 0, target: 1, metric: "potionUsed_potion2" },
-                { id: 14, text: "Find 5 Gold from adventures", reward: "100 PV, 1 Diamond", completed: false, progress: 0, target: 5, metric: "goldFoundAdventures" }
+                { id: 14, text: "Find 5 Gold from adventures", reward: "100 PV, 1 Diamond", completed: false, progress: 0, target: 5, metric: "goldFoundAdventures" },
+                { id: 15, text: "Complete Tomb of the Death Riders 5 times", reward: "500 PV, 2 Diamonds", completed: false, progress: 0, target: 5, adventureName: "Tomb of the Death Riders" }
             ];
         const dailyRewardsData = [];
         // Define material tiers for easier access in rewards
@@ -1562,10 +1607,24 @@ const dungeonsData = [
             { id: "pet_dog", name: "$DOG Pet", chance: 0.91, qty: 1, type: "equipment" }
         ],
         placeholderReward: "2500 PV, 25 Gold, 1 Diamond"
+    },
+    {
+        id: "dungeon_3",
+        name: "ATH City (Coming Soon)",
+        description: "The fabled city of All-Time Highs. Only the most seasoned voyagers dare to dream of its riches. (Currently inaccessible)",
+        durationHours: 999, // Placeholder
+        requiredAdventureId: "99", // Effectively locks it for now
+        attackRequirement: 9999,
+        defenseRequirement: 9999,
+        type: "solo", // Or "party_npc" - TBD
+        maxEntriesPerDay: 0,
+        drops: [],
+        placeholderReward: "??? PV, ??? Gold, ??? Diamonds",
+        isLockedContent: true // Special flag to indicate it's a hard lock
     }
     // Add more dungeons here with increasing difficulty and rewards
 ];
-            const adventureProgressionConfig = [ { id: "1", blockId: "adventure-1-block", unlockQuestId: null, unlockMessage: "" }, { id: "2", blockId: "adventure-2-block", unlockQuestId: 1, unlockMessage: "Complete 'Spirit Forest' 5 times to unlock." }, { id: "3", blockId: "adventure-3-block", unlockQuestId: 2, unlockMessage: "Complete 'Mountain of the Marowan' 5 times to unlock." }, { id: "4", blockId: "adventure-4-block", unlockQuestId: 3, unlockMessage: "Complete 'Fire Fields of Flyinals' 5 times to unlock." } ];
+            const adventureProgressionConfig = [ { id: "1", blockId: "adventure-1-block", unlockQuestId: null, unlockMessage: "" }, { id: "2", blockId: "adventure-2-block", unlockQuestId: 1, unlockMessage: "Complete 'Spirit Forest' 5 times to unlock." }, { id: "3", blockId: "adventure-3-block", unlockQuestId: 2, unlockMessage: "Complete 'Mountain of the Marowan' 5 times to unlock." }, { id: "4", blockId: "adventure-4-block", unlockQuestId: 3, unlockMessage: "Complete 'Fire Fields of Flyinals' 5 times to unlock." },{ id: "5", blockId: "adventure-5-block", unlockQuestId: 15, unlockMessage: "Complete 'Tomb of the Death Riders' 5 times to unlock." } ];
             const upgradeChances = [1, 0.85, 0.50, 0.35, 0.13]; // For +0->+1, +1->+2, ..., +4->+5
             const dungeonSetItemIds = ["dungeon_helmet", "dungeon_boots", "dungeon_sword", "dungeon_armour"];
 
@@ -2563,6 +2622,12 @@ function recalculateTotalAvailableAdventurers() {
                         displayLockReason = "Unlock Requirement: Adventure 4 active.";
                         if (dungeon.id === "dungeon_2") console.log(`D2 Lock Reason: Adventure 4 not active.`);
                     }
+                     else if (dungeon.isLockedContent) {
+                        isLockedForEntry = true;
+                        canSelectCrawlers = false;
+                        displayLockReason = "Content Coming Soon!";
+                        if (dungeon.id === "dungeon_3") console.log(`D3 Lock Reason: Coming Soon.`);
+                    }
 
                     // 2. Daily Entry Limit (applies to both entry and crawler selection)
                     let effectiveMaxEntries = dungeon.maxEntriesPerDay;
@@ -2583,62 +2648,77 @@ function recalculateTotalAvailableAdventurers() {
                     }
                     
                     // 3. Stat Requirements (only affects entry, not crawler selection ability)
+                    // 3. Calculate Party Stats & Set Contribution Text for Display
                     const playerBaseAttack = parseInt(playerAttackStatElement.textContent) || 0;
                     const playerBaseDefense = parseInt(playerDefenseStatElement.textContent) || 0;
-                    let partyAttack = playerBaseAttack;
-                    let partyDefense = playerBaseDefense;
-                    let partyStatContributionText = `(Player: ${playerBaseAttack} ATK, ${playerBaseDefense} DEF)`;
+                    let partyAttack = playerBaseAttack; // This will be the actual value used for checks
+                    let partyDefense = playerBaseDefense; // This will be the actual value used for checks
+                    let partyStatContributionText = ""; // This is purely for display
 
-
-                    if (dungeon.type === "party_npc") {
+                    if (dungeon.type === "party_npc" && !dungeon.isLockedContent) { // Only calculate and show for party dungeons not "coming soon"
                         const confirmedCrawlersForThisDungeon = confirmedCrawlersForDungeons[dungeon.id] || [];
+                        let crawlerAttackBonus = 0;
+                        let crawlerDefenseBonus = 0;
+
                         if (dungeon.id === "dungeon_2") { // Log specific to Dungeon 2 crawler processing
                             console.log(`D2: Confirmed Crawlers for stat calc:`, JSON.parse(JSON.stringify(confirmedCrawlersForThisDungeon)));
                             console.log(`D2: Full playerDungeonCrawlers list:`, JSON.parse(JSON.stringify(playerDungeonCrawlers)));
                         }
+
                         if (confirmedCrawlersForThisDungeon.length > 0) {
-                            let crawlerAttackBonus = 0;
-                            let crawlerDefenseBonus = 0;
                             confirmedCrawlersForThisDungeon.forEach(crawlerInstanceId => {
                                 const crawlerData = playerDungeonCrawlers.find(c => c.uniqueInstanceId === crawlerInstanceId);
                                 if (crawlerData) {
                                     if (dungeon.id === "dungeon_2") console.log(`D2: Found crawler data for ${crawlerInstanceId}: ATK=${crawlerData.attack}, DEF=${crawlerData.defense}`);
-                                    crawlerAttackBonus += (parseInt(crawlerData.attack) || 0); // Ensure parsing
-                                    crawlerDefenseBonus += (parseInt(crawlerData.defense) || 0); // Ensure parsing
+                                    crawlerAttackBonus += (parseInt(crawlerData.attack) || 0);
+                                    crawlerDefenseBonus += (parseInt(crawlerData.defense) || 0);
                                 } else {
                                     if (dungeon.id === "dungeon_2") console.log(`D2: No crawler data found in playerDungeonCrawlers for instance ID: ${crawlerInstanceId}`);
                                 }
                             });
-                            partyAttack += crawlerAttackBonus;
-                            partyDefense += crawlerDefenseBonus;
-                            if (crawlerAttackBonus > 0 || crawlerDefenseBonus > 0) {
-                                // PartyStatContributionText is built up further down now
-                            }
-                             if (dungeon.id === "dungeon_2") console.log(`D2: Crawler Bonus ATK/DEF: ${crawlerAttackBonus}/${crawlerDefenseBonus}`);
                         }
-                        // This console log was here, it's good:
-                         if (dungeon.id === "dungeon_2") console.log(`D2 Calculated Party Stats (after potential crawler bonus): ${partyAttack} ATK, ${partyDefense} DEF. Required: ${dungeon.attackRequirement}/${dungeon.defenseRequirement}`);
-                    }
-                    // The partyStatContributionText is now constructed *after* all calculations
-                    if (dungeon.type === "party_npc") { // Reconstruct text for party_npc dungeons
+                        partyAttack += crawlerAttackBonus; // Actual party attack for requirement check
+                        partyDefense += crawlerDefenseBonus; // Actual party defense for requirement check
+                        
+                        // Build the display string
                         partyStatContributionText = ` (Player: ${playerBaseAttack} ATK, ${playerBaseDefense} DEF`;
-                        const confirmedForDisplay = confirmedCrawlersForDungeons[dungeon.id] || [];
-                        if (confirmedForDisplay.length > 0) {
-                            let displayCrawlerAttack = 0;
-                            let displayCrawlerDefense = 0;
-                            confirmedForDisplay.forEach(id => {
-                                const crData = playerDungeonCrawlers.find(c => c.uniqueInstanceId === id);
-                                if (crData) {
-                                    displayCrawlerAttack += (parseInt(crData.attack) || 0);
-                                    displayCrawlerDefense += (parseInt(crData.defense) || 0);
-                                }
-                            });
-                            partyStatContributionText += ` + Crawlers: ${displayCrawlerAttack} ATK, ${displayCrawlerDefense} DEF = Party Total: ${partyAttack} ATK, ${partyDefense} DEF`;
+                        if (confirmedCrawlersForThisDungeon.length > 0) {
+                             partyStatContributionText += ` + Crawlers: ${crawlerAttackBonus} ATK, ${crawlerDefenseBonus} DEF = Party Total: ${partyAttack} ATK, ${partyDefense} DEF`;
                         }
                         partyStatContributionText += `)`;
-                    } else { // For solo dungeons, just show player stats if different from party (should be same)
+                        
+                        if (dungeon.id === "dungeon_2") {
+                            console.log(`D2: Crawler Bonus ATK/DEF: ${crawlerAttackBonus}/${crawlerDefenseBonus}`);
+                            console.log(`D2 Calculated Party Stats for Check: ${partyAttack} ATK, ${partyDefense} DEF. Required: ${dungeon.attackRequirement}/${dungeon.defenseRequirement}`);
+                        }
+                    } else if (!dungeon.isLockedContent) { // For solo dungeons (not "Coming Soon")
                         partyStatContributionText = ` (Player: ${playerBaseAttack} ATK, ${playerBaseDefense} DEF)`;
+                        // partyAttack and partyDefense are already playerBaseAttack/Defense
+                        if (dungeon.id === "dungeon_1") console.log(`D1 Calculated Party (Player) Stats: ${partyAttack} ATK, ${partyDefense} DEF. Required: ${dungeon.attackRequirement}/${dungeon.defenseRequirement}`);
                     }
+
+
+                    // 4. Stat Requirements Check (uses the partyAttack & partyDefense calculated above)
+                    // This check is only relevant if not already locked by previous conditions (global, content, daily limit).
+                    if (!isLockedForEntry) { 
+                        if (partyAttack < dungeon.attackRequirement || partyDefense < dungeon.defenseRequirement) {
+                            isLockedForEntry = true; 
+                            if (!displayLockReason) { 
+                               displayLockReason = `Requires: ${dungeon.attackRequirement} ATK & ${dungeon.defenseRequirement} DEF. (Your Party: ${partyAttack} ATK, ${partyDefense} DEF)`;
+                            }
+                            if (dungeon.id === "dungeon_2" || dungeon.id === "dungeon_1") console.log(`D${dungeon.id.slice(-1)} Lock Reason (for entry): Stats not met. Party: ${partyAttack}/${partyDefense}`);
+                        }
+                    }
+
+                    // 5. Available Adventurers (only affects entry, if not already locked for other reasons)
+                    if (!isLockedForEntry && totalAvailableAdventurers < 1) {
+                        isLockedForEntry = true;
+                        if (!displayLockReason) {
+                            // displayLockReason = "No adventurers available."; // Optional
+                        }
+                         if (dungeon.id === "dungeon_2" || dungeon.id === "dungeon_1") console.log(`D${dungeon.id.slice(-1)} Lock Reason (for entry): No available adventurers.`);
+                    }
+                    // --- End Determine Lock Status ---
 
 
                     // ... (rest of the logic for checking stats, limits, etc.)
@@ -2707,9 +2787,9 @@ function recalculateTotalAvailableAdventurers() {
                             ${displayLockReason ? `<p class="dungeon-requirements">${displayLockReason}</p>` : (dungeonsGloballyUnlocked ? `<p class="dungeon-requirements" style="color:var(--highlight-color-connected);">Unlocked!</p>` : '')}
                             ${additionalInfo}
                         </div>
-                        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;"> {/* Wrapper for buttons */}
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;"> 
                             <button class="action-button enter-dungeon-btn" data-dungeon-id="${dungeon.id}" ${enterButtonDisabled ? 'disabled' : ''}>Enter</button>
-                            <div class="dungeon-drops-area"> {/* Similar to adventure-drops-area */}
+                            <div class="dungeon-drops-area"> 
                                 <button class="action-button dungeon-drops-button" data-dungeon-id="${dungeon.id}">DROPS</button>
                                 <div class="drops-popover" id="dungeon-drops-popover-${dungeon.id}"></div> 
                             </div>
@@ -2742,10 +2822,35 @@ function recalculateTotalAvailableAdventurers() {
                             });
                             dropsHtml += '</ul>';
                             popover.innerHTML = dropsHtml;
-                            popover.style.display = 'block';
+                            popover.style.display = 'block'; // Display first to get its dimensions
+
+                            // +++ POPOVER POSITION ADJUSTMENT +++
+                            const buttonRect = event.target.getBoundingClientRect();
+                            const popoverRect = popover.getBoundingClientRect();
+                            const viewportHeight = window.innerHeight;
+
+                            popover.style.left = '50%'; // Keep horizontal centering
+                            popover.style.transform = 'translateX(-50%)'; // Keep horizontal centering
+
+                            if (buttonRect.bottom + popoverRect.height > viewportHeight - 10) { // 10px buffer
+                                // Not enough space below, position above
+                                popover.style.top = `auto`;
+                                popover.style.bottom = `calc(100% + 5px)`;
+                            } else {
+                                // Enough space below
+                                popover.style.bottom = `auto`;
+                                popover.style.top = `calc(100% + 5px)`;
+                            }
+                            // +++ END POPOVER POSITION ADJUSTMENT +++
+
                         } else if (popover) {
                             popover.innerHTML = '<h5>No specific item drops listed for this dungeon.</h5>';
                             popover.style.display = 'block';
+                             // Basic positioning for the "no drops" message too
+                            popover.style.left = '50%';
+                            popover.style.transform = 'translateX(-50%)';
+                            popover.style.top = `calc(100% + 5px)`;
+                            popover.style.bottom = 'auto';
                         }
                     });
                     button.addEventListener('mouseleave', (event) => {
@@ -3826,51 +3931,179 @@ function usePetWhistleUnlock(itemUniqueId) {
             function completeAdventure(instanceId) {
                 if(!currentUser) return;
                 const advIdx = activeAdventures.findIndex(adv => adv.id === instanceId);
-                if (advIdx === -1) return;
+                if (advIdx === -1) {
+                    console.warn(`completeAdventure: Could not find active adventure with instanceId ${instanceId}. Already completed or invalid.`);
+                    // It's possible it was already processed if multiple timer ticks landed very close.
+                    // To prevent errors, try to ensure renderActiveTasksInSidebar is robust.
+                    if (activeAdventures.length === 0 && sidebarActiveAdventuresList) { // If no adventures left, clear sidebar
+                        renderActiveTasksInSidebar();
+                    }
+                    return; 
+                }
                 
-                // Make a copy of the adventure data *before* removing it from the list,
-                // so we can use its details for calculating rewards.
-                const completedAdv = { ...activeAdventures[advIdx] };
+                const completedAdv = { ...activeAdventures[advIdx] }; // Make a copy before splicing
 
-                // --- All your existing reward calculation logic stays the same ---
-                // (e.g., basePvReward, pvMultiplierFromPotions, pvBonusAdditiveEffect, earnedPvThisTrip,
-                //  gold/diamond chances, material drops, totalAdventuresCompleted++, potion updates, etc.)
-                // This part is long, so I'm not repeating it all here, just make sure it uses 'completedAdv'
-                // for its data (like completedAdv.adventurers, completedAdv.name, etc.)
-                let basePvReward = completedAdv.pvReward; 
+                // --- Reward Calculation ---
+                let basePvReward = completedAdv.pvReward; // This is already the PER ADVENTURER base from button
                 let pvMultiplierFromPotions = 1; 
                 let pvBonusAdditiveEffect = 0;
-                activePotions.forEach(p => { if(p.effect && p.effect.type === "pvMultiplier" && p.adventuresLeft > 0) { pvMultiplierFromPotions *= p.effect.value; }});
-                Object.values(equippedItems).forEach(equippedInstanceId => { if (!equippedInstanceId) return; const invItem = playerInventory.find(i => i.uniqueInstanceId === equippedInstanceId); if (invItem) { const itemMaster = craftableItemsData.find(im => im.id === invItem.id); if (itemMaster && itemMaster.perk) { const scaledPerk = getScaledItemPerk(itemMaster, invItem.level || 0); if (scaledPerk && scaledPerk.type === "pvBonus") { pvBonusAdditiveEffect += scaledPerk.value; }}}});
+
+                activePotions.forEach(p => { 
+                    if(p.effect && p.effect.type === "pvMultiplier" && p.adventuresLeft > 0) { 
+                        pvMultiplierFromPotions *= p.effect.value; 
+                    }
+                });
+
+                Object.values(equippedItems).forEach(equippedInstanceId => { 
+                    if (!equippedInstanceId) return; 
+                    const invItem = playerInventory.find(i => i.uniqueInstanceId === equippedInstanceId); 
+                    if (invItem) { 
+                        const itemMaster = craftableItemsData.find(im => im.id === invItem.id); 
+                        if (itemMaster && itemMaster.perk) { 
+                            const scaledPerk = getScaledItemPerk(itemMaster, invItem.level || 0); 
+                            if (scaledPerk && scaledPerk.type === "pvBonus") { 
+                                pvBonusAdditiveEffect += scaledPerk.value; 
+                            }
+                        }
+                    }
+                });
+                
                 let earnedPvThisTrip = Math.floor(basePvReward * completedAdv.adventurers * (1 + pvBonusAdditiveEffect) * pvMultiplierFromPotions); 
                 currentPvTokens += earnedPvThisTrip;
-                let totalGoldChanceIncreaseBonus = 0; let flatGoldBonusFromPotions = 0; let flatGoldBonusFromItems = 0; let flatDiamondBonusFromItems = 0; let materialChanceEffectiveMultiplier = 1;
-                activePotions.forEach(p => { if(p.effect && p.effect.type === "goldChanceBonus" && p.adventuresLeft > 0) { flatGoldBonusFromPotions += p.effect.flatValue || 0; }});
-                Object.values(equippedItems).forEach(equippedInstanceId => { if (!equippedInstanceId) return; const invItem = playerInventory.find(i => i.uniqueInstanceId === equippedInstanceId); if(invItem) { const itemMaster = craftableItemsData.find(im => im.id === invItem.id); if (itemMaster && itemMaster.perk) { const scaledPerk = getScaledItemPerk(itemMaster, invItem.level || 0); if (scaledPerk) { if (scaledPerk.type === "goldChanceIncrease") totalGoldChanceIncreaseBonus += scaledPerk.value; if (scaledPerk.type === "flatCurrencyChanceBoost") { flatGoldBonusFromItems += (scaledPerk.goldBonus || 0); flatDiamondBonusFromItems += (scaledPerk.diamondBonus || 0); } if (scaledPerk.type === "materialChanceMultiplier") materialChanceEffectiveMultiplier *= scaledPerk.value; }}}});
-                let totalGoldFoundThisTrip = 0; let totalDiamondsFoundThisTrip = 0; let allFoundDrops = {};
-                for (let i = 0; i < completedAdv.adventurers; i++) { const finalGoldChance = (completedAdv.goldChance * (1 + totalGoldChanceIncreaseBonus)) + flatGoldBonusFromPotions + flatGoldBonusFromItems; if (completedAdv.goldChance > 0 && Math.random() < finalGoldChance) { currentGold += 1; totalGoldFoundThisTrip++; } const finalDiamondChance = completedAdv.diamondChance + flatDiamondBonusFromItems; if (completedAdv.diamondChance > 0 && Math.random() < finalDiamondChance) { currentDiamonds += 1; totalDiamondsFoundThisTrip++; } const adventureBaseData = adventuresData[completedAdv.originalAdventureId]; if (adventureBaseData && adventureBaseData.drops) { adventureBaseData.drops.forEach(drop => { if (Math.random() < (drop.chance * materialChanceEffectiveMultiplier)) { if (drop.name === "ring_cursedpower") { const cursedRingExists = playerInventory.some(invItem => invItem.id === "ring_cursedpower") || Object.values(equippedItems).some(eqId => { const eqInvItem = playerInventory.find(pi => pi.uniqueInstanceId === eqId); return eqInvItem && eqInvItem.id === "ring_cursedpower"; }); if (!cursedRingExists) { playerInventory.push({id: "ring_cursedpower", level: 0, uniqueInstanceId: `item_${nextUniqueInstanceId++}`}); allFoundDrops[drop.name] = (allFoundDrops[drop.name] || 0) + (drop.qty || 1); }} else if (materialTiers[1].includes(drop.name) || materialTiers[2].includes(drop.name) || materialTiers[3].includes(drop.name) || materialTiers[4].includes(drop.name)) { playerMaterials[drop.name] = (playerMaterials[drop.name] || 0) + (drop.qty || 1); allFoundDrops[drop.name] = (allFoundDrops[drop.name] || 0) + (drop.qty || 1); quests.forEach(q => { if (q.metric === `materialCollected_${drop.name}` && !q.completed && !q.claimed) {q.progress = (q.progress || 0) + (drop.qty || 1); if (q.progress >= q.target) { q.completed = true; if (!q.claimed) showCustomPopup(`Quest Completed: ${q.text}`, "Quest Complete!");}} });}}});}}
+
+                let totalGoldFoundThisTrip = 0; 
+                let totalDiamondsFoundThisTrip = 0; 
+                let allFoundDrops = {}; // For popup summary
+
+                let totalGoldChanceIncreaseBonus = 0; 
+                let flatGoldBonusFromPotions = 0; 
+                let flatGoldBonusFromItems = 0; 
+                let flatDiamondBonusFromItems = 0; 
+                let materialChanceEffectiveMultiplier = 1;
+
+                activePotions.forEach(p => { 
+                    if(p.effect && p.effect.type === "goldChanceBonus" && p.adventuresLeft > 0) { 
+                        flatGoldBonusFromPotions += p.effect.flatValue || 0; 
+                    }
+                });
+
+                Object.values(equippedItems).forEach(equippedInstanceId => { 
+                    if (!equippedInstanceId) return; 
+                    const invItem = playerInventory.find(i => i.uniqueInstanceId === equippedInstanceId); 
+                    if(invItem) { 
+                        const itemMaster = craftableItemsData.find(im => im.id === invItem.id); 
+                        if (itemMaster && itemMaster.perk) { 
+                            const scaledPerk = getScaledItemPerk(itemMaster, invItem.level || 0); 
+                            if (scaledPerk) { 
+                                if (scaledPerk.type === "goldChanceIncrease") totalGoldChanceIncreaseBonus += scaledPerk.value; 
+                                if (scaledPerk.type === "flatCurrencyChanceBoost") { 
+                                    flatGoldBonusFromItems += (scaledPerk.goldBonus || 0); 
+                                    flatDiamondBonusFromItems += (scaledPerk.diamondBonus || 0); 
+                                } 
+                                if (scaledPerk.type === "materialChanceMultiplier") materialChanceEffectiveMultiplier *= scaledPerk.value; 
+                            }
+                        }
+                    }
+                });
+
+                const adventureMasterData = adventuresData[completedAdv.originalAdventureId];
+
+                // Guaranteed Gold (e.g., for Adventure 5)
+                if (adventureMasterData && adventureMasterData.guaranteedGold) {
+                    const guaranteedGoldAmount = adventureMasterData.guaranteedGold * completedAdv.adventurers;
+                    currentGold += guaranteedGoldAmount;
+                    totalGoldFoundThisTrip += guaranteedGoldAmount;
+                }
+
+                // Per-adventurer chance-based rewards
+                for (let i = 0; i < completedAdv.adventurers; i++) { 
+                    // Gold Chance (if not guaranteed or if it's an additional chance component)
+                    if (!adventureMasterData || !adventureMasterData.guaranteedGold || (adventureMasterData.guaranteedGold && completedAdv.goldChance > 0)) {
+                        const finalGoldChance = (completedAdv.goldChance * (1 + totalGoldChanceIncreaseBonus)) + flatGoldBonusFromPotions + flatGoldBonusFromItems; 
+                        if (completedAdv.goldChance > 0 && Math.random() < finalGoldChance) { 
+                            currentGold += 1; 
+                            totalGoldFoundThisTrip += 1; 
+                        } 
+                    }
+
+                    // Diamond Chance (with potential multiplier)
+                    const finalDiamondChance = completedAdv.diamondChance + flatDiamondBonusFromItems; 
+                    if (completedAdv.diamondChance > 0 && Math.random() < finalDiamondChance) {
+                        let diamondsAwarded = 1;
+                        if (adventureMasterData && adventureMasterData.diamondRewardMultiplier) {
+                            diamondsAwarded = adventureMasterData.diamondRewardMultiplier;
+                        }
+                        currentDiamonds += diamondsAwarded; 
+                        totalDiamondsFoundThisTrip += diamondsAwarded; 
+                    }
+                    
+                    // Material Drops
+                    if (adventureMasterData && adventureMasterData.drops) { 
+                        adventureMasterData.drops.forEach(drop => { 
+                            if (Math.random() < (drop.chance * materialChanceEffectiveMultiplier)) { 
+                                if (playerMaterials.hasOwnProperty(drop.name)) { 
+                                    playerMaterials[drop.name] = (playerMaterials[drop.name] || 0) + (drop.qty || 1); 
+                                    allFoundDrops[drop.name] = (allFoundDrops[drop.name] || 0) + (drop.qty || 1); 
+                                    quests.forEach(q => { 
+                                        if (q.metric === `materialCollected_${drop.name}` && !q.completed && !q.claimed) {
+                                            q.progress = (q.progress || 0) + (drop.qty || 1); 
+                                            if (q.progress >= q.target) { 
+                                                q.completed = true; 
+                                                if (!q.claimed) showCustomPopup(`Quest Completed: ${q.text}`, "Quest Complete!");
+                                            }
+                                        } 
+                                    });
+                                } else { // Potentially an equippable item drop
+                                     const itemMasterInfo = craftableItemsData.find(ci => ci.id === drop.name);
+                                     if (itemMasterInfo) { 
+                                        const itemExistsInInv = playerInventory.some(invItem => invItem.id === itemMasterInfo.id) || 
+                                                               Object.values(equippedItems).some(eqId => {
+                                                                    if(!eqId) return false;
+                                                                    const eqInvItem = playerInventory.find(pi => pi.uniqueInstanceId === eqId);
+                                                                    return eqInvItem && eqInvItem.id === itemMasterInfo.id;
+                                                                });
+                                        if (!itemExistsInInv) {
+                                            playerInventory.push({id: itemMasterInfo.id, level: 0, uniqueInstanceId: `item_${nextUniqueInstanceId++}`});
+                                            allFoundDrops[itemMasterInfo.name] = (allFoundDrops[itemMasterInfo.name] || 0) + (drop.qty || 1);
+                                        }
+                                     } else {
+                                        console.warn("Unknown item drop defined in adventuresData that is not a material:", drop.name);
+                                     }
+                                }
+                            }
+                        });
+                    }
+                } // End of per-adventurer loop
+
                 totalAdventuresCompleted++;
-                activePotions.forEach(p => { if(p.adventuresLeft !== undefined && p.adventuresLeft > 0) { if ( (p.effect.type === "pvMultiplier" && pvMultiplierFromPotions > 1) || (p.effect.type === "goldChanceBonus" && flatGoldBonusFromPotions > 0) ) { p.adventuresLeft--; }}});
+
+                // Update Potions
+                activePotions.forEach(p => { 
+                    if(p.adventuresLeft !== undefined && p.adventuresLeft > 0) { 
+                        // Only decrement if the potion's effect was actually applied in this adventure type
+                        if ( (p.effect.type === "pvMultiplier" && pvMultiplierFromPotions > 1) || 
+                             (p.effect.type === "goldChanceBonus" && flatGoldBonusFromPotions > 0) ) { 
+                            p.adventuresLeft--; 
+                        }
+                    }
+                });
                 activePotions = activePotions.filter(p => (p.endTime && Date.now() < p.endTime) || (p.adventuresLeft !== undefined && p.adventuresLeft > 0) );
-                // --- End of existing reward calculation logic ---
+                
+                // --- Remove adventure from active list ---
+                activeAdventures.splice(advIdx, 1); 
 
-                // Step 1: Remove the adventure from the active list
-                activeAdventures.splice(advIdx, 1);
-
-                // Step 2: Now that activeAdventures is updated, recalculate the available count
+                // --- Recalculate available adventurers (important after splice) ---
                 recalculateTotalAvailableAdventurers(); 
-                // The line 'totalAvailableAdventurers += completedAdv.adventurers;' has been REMOVED.
-
-                // Construct the popup message
+                
+                // --- Construct Popup Message ---
                 let popupMessage = `${completedAdv.adventurers} adventurer(s) returned from ${completedAdv.name}!\n\nRewards:\n- ${earnedPvThisTrip} PV Tokens`;
                 if(totalGoldFoundThisTrip > 0) { popupMessage += `\n- ${totalGoldFoundThisTrip} Gold`; }
                 if(totalDiamondsFoundThisTrip > 0) { popupMessage += `\n- ${totalDiamondsFoundThisTrip} Diamond(s)`;}
                 const foundDropNames = Object.keys(allFoundDrops);
                 if (foundDropNames.length > 0) {
-                    popupMessage += `\n\nMaterials Found:`;
-                    foundDropNames.forEach(dropName => {
-                        const dItem = craftableItemsData.find(cd => cd.id === dropName);
-                        popupMessage += `\n  - ${allFoundDrops[dropName]}x ${dItem ? dItem.name : dropName}`;
+                    popupMessage += `\n\nMaterials/Items Found:`; // Changed from "Materials Found"
+                    foundDropNames.forEach(dropNameKey => { // dropNameKey could be material name or item name now
+                        popupMessage += `\n  - ${allFoundDrops[dropNameKey]}x ${dropNameKey}`;
                     });
                 }
                 if (totalAdventuresCompleted > 0 && totalAdventuresCompleted % 100 === 0) {
@@ -3879,32 +4112,54 @@ function usePetWhistleUnlock(itemUniqueId) {
                 }
                 showCustomPopup(popupMessage, "Adventure Complete!");
                 
-                // --- All your existing quest update logic stays the same ---
-                quests.forEach(quest => {  /* ... your existing quest update logic ... */ 
+                // --- Quest Updates ---
+                quests.forEach(quest => {  
                     if (!quest.completed && !quest.claimed) { 
                         let progressChanged = false;
                         if (quest.adventureName === completedAdv.name) { quest.progress = (quest.progress || 0) + completedAdv.adventurers; progressChanged = true; }
-                        if (quest.metric === "pvCollected") { quest.progress = Math.min(quest.target, (quest.progress || 0) + earnedPvThisTrip); progressChanged = true; }
-                        if (quest.metric === "goldCollected") { quest.progress = Math.min(quest.target, (quest.progress || 0) + totalGoldFoundThisTrip); progressChanged = true; }
-                        if (quest.metric === "adventurersSentOnQuests") { quest.progress = (quest.progress || 0) + completedAdv.adventurers; progressChanged = true; }
-                        if (quest.metric === "pvBalance") { quest.progress = currentPvTokens; progressChanged = true; }
+                        if (quest.metric === "pvBalance") { quest.progress = currentPvTokens; progressChanged = true; } // Check actual balance
                         if (quest.metric === "totalAdventuresCompletedOverall") { quest.progress = totalAdventuresCompleted; progressChanged = true; }
                         if (quest.metric === "goldFoundAdventures") { quest.progress = (quest.progress || 0) + totalGoldFoundThisTrip; progressChanged = true; }
-                        if (quest.metric === "equippedTier1Set") { const bootsEquipped = Object.values(equippedItems).some(id => playerInventory.find(i => i.uniqueInstanceId === id && i.id === "boots1")); const rucksackEquipped = Object.values(equippedItems).some(id => playerInventory.find(i => i.uniqueInstanceId === id && i.id === "rucksack1")); quest.progress = (bootsEquipped ? 1 : 0) + (rucksackEquipped ? 1 : 0); progressChanged = true;}
-                        if (quest.metric === "attackPower"){ let currentAttack = 0; Object.values(equippedItems).forEach(eqId => { if(!eqId) return; const invI = playerInventory.find(i=>i.uniqueInstanceId === eqId); if(invI) { const mI = craftableItemsData.find(mi => mi.id === invI.id); if (mI && mI.perk) { const scaledPerk = getScaledItemPerk(mI, invI.level || 0); if(scaledPerk.type === "attackBoost") currentAttack += scaledPerk.value; if(scaledPerk.type === "statBoost" && scaledPerk.attack) currentAttack += scaledPerk.attack; } }}); quest.progress = currentAttack; progressChanged = true;}
-                        if (progressChanged && quest.progress >= quest.target && !quest.completed) { quest.completed = true; if(!quest.claimed) showCustomPopup(`Quest Completed: ${quest.text}`, "Quest Complete!"); if ([1,2,3].includes(quest.id)) { updateAdventureDisplayStates(); }}
+                        
+                        if (quest.metric === "equippedTier1Set") { 
+                            const bootsEquipped = Object.values(equippedItems).some(id => id && playerInventory.find(i => i.uniqueInstanceId === id && i.id === "boots1")); 
+                            const rucksackEquipped = Object.values(equippedItems).some(id => id && playerInventory.find(i => i.uniqueInstanceId === id && i.id === "rucksack1")); 
+                            quest.progress = (bootsEquipped ? 1 : 0) + (rucksackEquipped ? 1 : 0); progressChanged = true;
+                        }
+                        if (quest.metric === "attackPower"){ 
+                            let currentAttack = 0; 
+                            Object.values(equippedItems).forEach(eqId => { 
+                                if(!eqId) return; 
+                                const invI = playerInventory.find(i=>i.uniqueInstanceId === eqId); 
+                                if(invI) { 
+                                    const mI = craftableItemsData.find(mi => mi.id === invI.id); 
+                                    if (mI && mI.perk) { 
+                                        const scaledPerk = getScaledItemPerk(mI, invI.level || 0); 
+                                        if(scaledPerk.type === "attackBoost") currentAttack += scaledPerk.value; 
+                                        if(scaledPerk.type === "statBoost" && scaledPerk.attack) currentAttack += scaledPerk.attack; 
+                                    } 
+                                }
+                            }); 
+                            quest.progress = currentAttack; progressChanged = true;
+                        }
+
+                        if (progressChanged && quest.progress >= quest.target && !quest.completed) { 
+                            quest.completed = true; 
+                            if(!quest.claimed) showCustomPopup(`Quest Completed: ${q.text}`, "Quest Complete!"); 
+                            if ([1,2,3,15].includes(quest.id)) { updateAdventureDisplayStates(); } // Include quest 15 for Adv 5
+                        }
                     }
                 });
-                // --- End of existing quest update logic ---
-
-                // Update UI
-                renderActivePotions();
-                updateAdventureDisplayStates();
-                if(document.getElementById('quests-page').classList.contains('active')) { renderQuests(); }
-                updateStatsDisplay(); // This will now reflect the recalculated totalAvailableAdventurers
-                renderActiveTasksInSidebar();
-                renderMaterials(); // Render materials if any were found
-                if (foundDropNames.includes("ring_cursedpower")) renderInventory(); // Re-render inv if specific items found
+                
+                // --- Final UI Updates ---
+                renderActivePotions(); // After potion adventure counts are updated
+                updateAdventureDisplayStates(); // After adventure might unlock next one via quest
+                // updateStatsDisplay(); // Called by recalculateTotalAvailableAdventurers
+                // renderActiveTasksInSidebar(); // Called by recalculateTotalAvailableAdventurers (if list changes) or by updateTimers
+                renderMaterials(); // If materials were found
+                if (foundDropNames.some(name => craftableItemsData.find(ci => ci.name === name))) { // Re-render if an equippable item dropped
+                    renderInventory();
+                }
 
                 if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
             }
@@ -4229,7 +4484,11 @@ function updateAdventureDisplayStates() {
                             }
                         }
                         // We DON'T directly change totalAvailableAdventurers here anymore.
-
+                        const requiredAdventurers = parseInt(button.dataset.adventurerRequirement) || 0;
+                        if (requiredAdventurers > 0 && numAdventurersToSend < requiredAdventurers) {
+                            showCustomPopup(`This adventure ("${adventureName}") requires at least ${requiredAdventurers} adventurer(s). You selected ${numAdventurersToSend}.`, "Requirements Not Met");
+                            return; // Stop processing
+                        }
                          let baseDurationMs = originalDurationHours * GAME_HOUR_IN_REAL_SECONDS * 1000;
                         let calculatedDurationMs = baseDurationMs;
                         let totalPercentageReduction = 0;
