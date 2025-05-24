@@ -214,10 +214,11 @@
         .adventure-lock-overlay.hidden { display: none; }
         .adventure.locked-by-progression .adventure-send-btn, .adventure.locked-by-progression .adventure-num-select { filter: grayscale(100%) opacity(0.7); cursor: not-allowed !important; }
         .adventure-icon { width: 150px; height: 150px; border: 2px solid var(--border-color); background-size: cover; background-position: center; background-repeat: no-repeat; flex-shrink: 0; border-radius: 5px; transition: border-color 0.3s; }
-        .adventure-icon.tree { background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblzgkncylseo57qr7kyhsxdgb3bq2aghcmj6gdf2ihhagpxp3uoy/adventure1.png'); } 
-        .adventure-icon.mountain { background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblzgkncylseo57qr7kyhsxdgb3bq2aghcmj6gdf2ihhagpxp3uoy/adventure2.png'); } 
-        .adventure-icon.fire-fields { background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblzgkncylseo57qr7kyhsxdgb3bq2aghcmj6gdf2ihhagpxp3uoy/adventure3.png'); }
-        .adventure-icon.tomb { background-image: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeignh3fvjn5cxire5d52foozgud23boulezgssmw6egepvoty5vk3q'); }
+        .adventure-icon.tree { background-image: url('https://raw.githubusercontent.com/nvoiy/pvadventures/main/adventure1.jpg'); } 
+        .adventure-icon.mountain { background-image: url('https://raw.githubusercontent.com/nvoiy/pvadventures/main/adventure2.jpg'); } 
+        .adventure-icon.fire-fields { background-image: url('https://raw.githubusercontent.com/nvoiy/pvadventures/main/adventure3.jpg'); }
+        .adventure-icon.tomb { background-image: url('https://raw.githubusercontent.com/nvoiy/pvadventures/main/adventure4.jpg'); }
+        .adventure-icon.adventure-5-icon { background-image: url('https://raw.githubusercontent.com/nvoiy/pvadventures/main/imgnew%20(2).jpg'); }
         .adventure-main-info { flex-grow: 1; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; } 
         .adventure-content { display: flex; flex-direction: column; gap: 10px; } 
         .adventure-details { font-size: 1.1em; line-height: 1.5; } 
@@ -841,7 +842,7 @@
                             </div>
                             <div class="adventure" id="adventure-5-block"> 
                                 <div class="adventure-lock-overlay hidden"> {/* Initially hidden, will be controlled by JS */}</div>
-                                <div class="adventure-icon" style="background-color: #2F4F4F; display:flex; align-items:center; justify-content:center; font-size:1.5em; color:white;">A5</div> {/* Placeholder Icon - DarkSlateGray */}
+                                <div class="adventure-icon adventure-5-icon"></div>
                                 <div class="adventure-main-info"> 
                                     <div class="adventure-content"> 
                                         <div class="adventure-details">
@@ -887,7 +888,7 @@
                     <h2 class="page-title">SHOP</h2> 
                      <div class="shop-top-section">
                         <div class="shop-image-container">
-                             <img src="https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeihnh2oz5tfkuscwq7k2llmjwp6d7nrk54b7yoc6727ppayissbg24" alt="Shop Decorative Image">
+                         <img src="https://raw.githubusercontent.com/nvoiy/pvadventures/main/SHOP.gif" alt="Shop Decorative Image">
                         </div>
                         <div class="swap-section-container"> 
                             <div class="swap-section">
@@ -908,7 +909,7 @@
                 <section id="crafting-page" class="page-content">
                     <h2 class="page-title">CRAFTING</h2>
                     <div class="crafting-gif-container">
-                        <img src="https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeibtfrmufw37ujdz77bua6d2lzfb5kmizo5q67rt4lunxmtdgzgfre" alt="Crafting Anvil GIF">
+                    <img src="https://raw.githubusercontent.com/nvoiy/pvadventures/main/CRAFT.gif" alt="Crafting Anvil GIF">
                     </div>
                     <div class="crafting-section-wrapper"> 
                         <h3 >Craft Items</h3> 
@@ -2665,24 +2666,18 @@ function recalculateTotalAvailableAdventurers() {
                 const dungeonsGloballyUnlocked = !!adventure4Active;
 
                 dungeonsData.forEach(dungeon => {
-                    if (dungeon.id === "dungeon_2") {
-                        console.log(`--- Rendering Dungeon 2 ---`);
-                        console.log(`D2 Initial State: dungeonsGloballyUnlocked: ${dungeonsGloballyUnlocked}, totalAvailableAdventurers: ${totalAvailableAdventurers}`);
-                    }
-
                     const dungeonDiv = document.createElement('div');
                     dungeonDiv.classList.add('dungeon-entry');
                     dungeonDiv.dataset.dungeonId = dungeon.id;
 
                     // --- Determine Lock Status ---
-                    let isLockedForEntry = false; // Assume unlocked initially for entry logic
-                    let canSelectCrawlers = true;  // Assume can select crawlers initially
+                    let isLockedForEntry = false; 
+                    let canSelectCrawlers = true;  
                     let displayLockReason = "";
 
-                    // 1. Fundamental Global Lock (Adventure 4)
                     if (!dungeonsGloballyUnlocked) {
                         isLockedForEntry = true;
-                        canSelectCrawlers = false; // If dungeons aren't unlocked, can't select for them
+                        canSelectCrawlers = false; 
                         displayLockReason = "Unlock Requirement: Adventure 4 active.";
                         if (dungeon.id === "dungeon_2") console.log(`D2 Lock Reason: Adventure 4 not active.`);
                     }
@@ -2693,9 +2688,8 @@ function recalculateTotalAvailableAdventurers() {
                         if (dungeon.id === "dungeon_3") console.log(`D3 Lock Reason: Coming Soon.`);
                     }
 
-                    // 2. Daily Entry Limit (applies to both entry and crawler selection)
                     let effectiveMaxEntries = dungeon.maxEntriesPerDay;
-                    const pizzaPendantEquipped = Object.values(equippedItems).some(instanceId => /* ...pizza check... */
+                    const pizzaPendantEquipped = Object.values(equippedItems).some(instanceId => 
                         instanceId && playerInventory.find(invItem => invItem.uniqueInstanceId === instanceId && invItem.id === "pizza_pendant")
                     );
                     if (pizzaPendantEquipped) {
@@ -2706,25 +2700,23 @@ function recalculateTotalAvailableAdventurers() {
 
                     if (entriesToday >= effectiveMaxEntries) {
                         isLockedForEntry = true;
-                        canSelectCrawlers = false; // Can't select if limit reached
+                        canSelectCrawlers = false; 
                         displayLockReason = `Daily limit reached (${entriesToday}/${effectiveMaxEntries}). Resets daily.`;
                         if (dungeon.id === "dungeon_2") console.log(`D2 Lock Reason: Daily limit ${entriesToday}/${effectiveMaxEntries}.`);
                     }
                     
-                    // 3. Stat Requirements (only affects entry, not crawler selection ability)
-                    // 3. Calculate Party Stats & Set Contribution Text for Display
                     const playerBaseAttack = parseInt(playerAttackStatElement.textContent) || 0;
                     const playerBaseDefense = parseInt(playerDefenseStatElement.textContent) || 0;
-                    let partyAttack = playerBaseAttack; // This will be the actual value used for checks
-                    let partyDefense = playerBaseDefense; // This will be the actual value used for checks
-                    let partyStatContributionText = ""; // This is purely for display
+                    let partyAttack = playerBaseAttack; 
+                    let partyDefense = playerBaseDefense; 
+                    let partyStatContributionText = ""; 
 
-                    if (dungeon.type === "party_npc" && !dungeon.isLockedContent) { // Only calculate and show for party dungeons not "coming soon"
+                    if (dungeon.type === "party_npc" && !dungeon.isLockedContent) { 
                         const confirmedCrawlersForThisDungeon = confirmedCrawlersForDungeons[dungeon.id] || [];
                         let crawlerAttackBonus = 0;
                         let crawlerDefenseBonus = 0;
 
-                        if (dungeon.id === "dungeon_2") { // Log specific to Dungeon 2 crawler processing
+                        if (dungeon.id === "dungeon_2") { 
                             console.log(`D2: Confirmed Crawlers for stat calc:`, JSON.parse(JSON.stringify(confirmedCrawlersForThisDungeon)));
                             console.log(`D2: Full playerDungeonCrawlers list:`, JSON.parse(JSON.stringify(playerDungeonCrawlers)));
                         }
@@ -2741,10 +2733,9 @@ function recalculateTotalAvailableAdventurers() {
                                 }
                             });
                         }
-                        partyAttack += crawlerAttackBonus; // Actual party attack for requirement check
-                        partyDefense += crawlerDefenseBonus; // Actual party defense for requirement check
+                        partyAttack += crawlerAttackBonus; 
+                        partyDefense += crawlerDefenseBonus; 
                         
-                        // Build the display string
                         partyStatContributionText = ` (Player: ${playerBaseAttack} ATK, ${playerBaseDefense} DEF`;
                         if (confirmedCrawlersForThisDungeon.length > 0) {
                              partyStatContributionText += ` + Crawlers: ${crawlerAttackBonus} ATK, ${crawlerDefenseBonus} DEF = Party Total: ${partyAttack} ATK, ${partyDefense} DEF`;
@@ -2755,15 +2746,11 @@ function recalculateTotalAvailableAdventurers() {
                             console.log(`D2: Crawler Bonus ATK/DEF: ${crawlerAttackBonus}/${crawlerDefenseBonus}`);
                             console.log(`D2 Calculated Party Stats for Check: ${partyAttack} ATK, ${partyDefense} DEF. Required: ${dungeon.attackRequirement}/${dungeon.defenseRequirement}`);
                         }
-                    } else if (!dungeon.isLockedContent) { // For solo dungeons (not "Coming Soon")
+                    } else if (!dungeon.isLockedContent) { 
                         partyStatContributionText = ` (Player: ${playerBaseAttack} ATK, ${playerBaseDefense} DEF)`;
-                        // partyAttack and partyDefense are already playerBaseAttack/Defense
                         if (dungeon.id === "dungeon_1") console.log(`D1 Calculated Party (Player) Stats: ${partyAttack} ATK, ${partyDefense} DEF. Required: ${dungeon.attackRequirement}/${dungeon.defenseRequirement}`);
                     }
 
-
-                    // 4. Stat Requirements Check (uses the partyAttack & partyDefense calculated above)
-                    // This check is only relevant if not already locked by previous conditions (global, content, daily limit).
                     if (!isLockedForEntry) { 
                         if (partyAttack < dungeon.attackRequirement || partyDefense < dungeon.defenseRequirement) {
                             isLockedForEntry = true; 
@@ -2774,54 +2761,39 @@ function recalculateTotalAvailableAdventurers() {
                         }
                     }
 
-                    // 5. Available Adventurers (only affects entry, if not already locked for other reasons)
                     if (!isLockedForEntry && totalAvailableAdventurers < 1) {
                         isLockedForEntry = true;
-                        if (!displayLockReason) {
-                            // displayLockReason = "No adventurers available."; // Optional
-                        }
                          if (dungeon.id === "dungeon_2" || dungeon.id === "dungeon_1") console.log(`D${dungeon.id.slice(-1)} Lock Reason (for entry): No available adventurers.`);
                     }
-                    // --- End Determine Lock Status ---
 
-
-                    // ... (rest of the logic for checking stats, limits, etc.)
-
-
-                    if (partyAttack < dungeon.attackRequirement || partyDefense < dungeon.defenseRequirement) {
-                        isLockedForEntry = true; // Lock entry if stats not met
-                        // Only set displayLockReason if a more fundamental one isn't already set
-                        if (!displayLockReason) {
-                           displayLockReason = `Requires: ${dungeon.attackRequirement} ATK & ${dungeon.defenseRequirement} DEF. (Your Party: ${partyAttack} ATK, ${partyDefense} DEF)`;
-                        }
-                        if (dungeon.id === "dungeon_2") console.log(`D2 Lock Reason (for entry): Stats not met. Party: ${partyAttack}/${partyDefense}`);
-                    }
-
-                    // 4. Available Adventurers (only affects entry)
-                    if (totalAvailableAdventurers < 1) {
-                        isLockedForEntry = true;
-                        // No specific displayLockReason here, button will just be disabled.
-                        if (dungeon.id === "dungeon_2") console.log(`D2 Lock Reason (for entry): No available adventurers.`);
-                    }
-
-                    // --- Determine Button States ---
-                    let enterButtonDisabled = isLockedForEntry; // Enter button directly reflects entry lock
-                    let selectCrawlersButtonDisabled = !canSelectCrawlers; // Select button only by fundamental locks
+                    let enterButtonDisabled = isLockedForEntry; 
+                    let selectCrawlersButtonDisabled = !canSelectCrawlers; 
 
                     if (dungeon.id === "dungeon_2") {
                         console.log(`D2 Final Button States Before HTML: selectCrawlersButtonDisabled: ${selectCrawlersButtonDisabled}, enterButtonDisabled: ${enterButtonDisabled}`);
                         console.log(`D2 Display Lock Reason: "${displayLockReason}"`);
                     }
                     
-                    // --- Apply .locked class for visual greying out ---
-                    // Grey out if entry is impossible OR if there's a fundamental lock preventing even crawler selection
                     if (isLockedForEntry || !canSelectCrawlers) {
                          dungeonDiv.classList.add('locked');
                     } else {
                         dungeonDiv.classList.remove('locked');
                     }
 
-
+                    // +++ ICON HTML LOGIC WITH TEXT HIDING +++
+                    let iconHtml;
+                    if (dungeon.id === "dungeon_1") {
+iconHtml = `<div class="dungeon-icon-placeholder" style="background-image: url('https://raw.githubusercontent.com/nvoiy/pvadventures/main/dungeon1.jpg'); background-size: cover; background-position: center; color: transparent; font-size: 0;"></div>`;
+                    } else if (dungeon.id === "dungeon_2") {
+                        iconHtml = `<div class="dungeon-icon-placeholder" style="background-image: url('https://raw.githubusercontent.com/nvoiy/pvadventures/main/dungeon2.jpg'); background-size: cover; background-position: center; color: transparent; font-size: 0;"></div>`;
+                    } else if (dungeon.id === "dungeon_3") { // ATH City
+                        iconHtml = `<div class="dungeon-icon-placeholder" style="background-image: url('https://raw.githubusercontent.com/nvoiy/pvadventures/main/imgnew%20(5).jpg'); background-size: cover; background-position: center; color: transparent; font-size: 0;"></div>`;
+                    } else {
+                        // Fallback for any other/new dungeons if not specified - THIS ONE WILL SHOW TEXT
+                        iconHtml = `<div class="dungeon-icon-placeholder" style="background-color: #4A2A00;">${dungeon.id.replace('dungeon_', '').toUpperCase()}</div>`;
+                    }
+                    // +++ END OF ICON HTML LOGIC +++
+                    
                     let additionalInfo = '';
                     if (dungeon.type === "party_npc") {
                         additionalInfo += `<p style="font-size:0.9em; color:var(--highlight-color-gold);"><em>This is an offline NPC-assisted dungeon. Multiplayer coming soon!</em></p>`;
@@ -2840,7 +2812,7 @@ function recalculateTotalAvailableAdventurers() {
                     }
                     
                     dungeonDiv.innerHTML = `
-                        <div class="dungeon-icon-placeholder" style="background-color: #4A2A00;">${dungeon.id.replace('dungeon_', '').toUpperCase()}</div>
+                        ${iconHtml} 
                         <div class="dungeon-info">
                             <h3>${dungeon.name}</h3>
                             <p>${dungeon.description}</p>
@@ -2872,7 +2844,7 @@ function recalculateTotalAvailableAdventurers() {
                         openDungeonCrawlerSelectionModal(dungeonId);
                     });
                 });
-                          document.querySelectorAll('.dungeon-drops-button').forEach(button => {
+                document.querySelectorAll('.dungeon-drops-button').forEach(button => {
                     button.addEventListener('mouseenter', (event) => {
                         const dungeonId = event.target.dataset.dungeonId;
                         const popover = document.getElementById(`dungeon-drops-popover-${dungeonId}`);
@@ -2886,31 +2858,25 @@ function recalculateTotalAvailableAdventurers() {
                             });
                             dropsHtml += '</ul>';
                             popover.innerHTML = dropsHtml;
-                            popover.style.display = 'block'; // Display first to get its dimensions
+                            popover.style.display = 'block'; 
 
-                            // +++ POPOVER POSITION ADJUSTMENT +++
                             const buttonRect = event.target.getBoundingClientRect();
                             const popoverRect = popover.getBoundingClientRect();
                             const viewportHeight = window.innerHeight;
 
-                            popover.style.left = '50%'; // Keep horizontal centering
-                            popover.style.transform = 'translateX(-50%)'; // Keep horizontal centering
+                            popover.style.left = '50%'; 
+                            popover.style.transform = 'translateX(-50%)'; 
 
-                            if (buttonRect.bottom + popoverRect.height > viewportHeight - 10) { // 10px buffer
-                                // Not enough space below, position above
+                            if (buttonRect.bottom + popoverRect.height > viewportHeight - 10) { 
                                 popover.style.top = `auto`;
                                 popover.style.bottom = `calc(100% + 5px)`;
                             } else {
-                                // Enough space below
                                 popover.style.bottom = `auto`;
                                 popover.style.top = `calc(100% + 5px)`;
                             }
-                            // +++ END POPOVER POSITION ADJUSTMENT +++
-
                         } else if (popover) {
                             popover.innerHTML = '<h5>No specific item drops listed for this dungeon.</h5>';
                             popover.style.display = 'block';
-                             // Basic positioning for the "no drops" message too
                             popover.style.left = '50%';
                             popover.style.transform = 'translateX(-50%)';
                             popover.style.top = `calc(100% + 5px)`;
