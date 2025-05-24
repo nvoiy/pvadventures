@@ -328,20 +328,49 @@
         
         .swap-section h3 { font-size: 1.8em; text-align: center; margin-bottom: 15px; }
         .shop-section-wrapper, .crafting-section-wrapper { width: 100%; max-width: 800px; margin-bottom:30px;} .shop-section-wrapper h3, #crafting-page h3 { font-size: 1.8em; text-align: center; margin-bottom: 20px; color: var(--label-color); }
-        .quest-list, .shop-items, .crafting-items-container, .inventory-items-container { display: flex; flex-direction: column; gap: 18px; width:100%; max-width:800px; margin:0 auto; }
-        .quest-item { display: flex; justify-content: space-between; align-items: center; background-color: var(--adventure-block-bg); border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; transition: background-color 0.3s, border-color 0.3s; }
-.quest-item.available-to-claim {
-    border: 2px solid var(--quest-available-outline) !important; /* Use !important to override base border if needed */
-    box-shadow: 0 0 8px var(--quest-available-outline);
-}
-.quest-item.completed-and-claimed {
-    border: 2px solid var(--quest-completed-outline) !important;
-    box-shadow: 0 0 8px var(--quest-completed-outline);
-    opacity: 0.7; /* Optional: make claimed quests slightly faded */
-}
-        .quest-item .quest-info { flex-grow: 1; }
-        .quest-item .quest-actions { text-align: right; flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
-        .shop-item, .craftable-item-card, .inventory-item-card { position:relative; background-color: var(--adventure-block-bg); border: 1px solid var(--border-color); padding: 18px; border-radius: 8px; display: flex; align-items: center; transition: background-color 0.3s, border-color 0.3s; gap: 15px; }
+        .quest-list, .shop-items, .crafting-items-container { display: flex; flex-direction: column; gap: 18px; width:100%; max-width:800px; margin:0 auto; }
+        /* --- MODIFIED FOR INVENTORY GRID --- */
+        .inventory-items-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Adjust 280px for desired card width */
+            gap: 15px;
+            width: 100%;
+            max-width: 900px; /* Can be wider for grid */
+            margin: 0 auto;
+            padding: 10px; /* Add some padding around the grid */
+        }
+        /* ... */
+        .shop-item, .craftable-item-card { position:relative; background-color: var(--adventure-block-bg); border: 1px solid var(--border-color); padding: 18px; border-radius: 8px; display: flex; align-items: center; transition: background-color 0.3s, border-color 0.3s; gap: 15px; }
+        /* --- MODIFIED FOR INVENTORY ITEM CARD IN GRID --- */
+        .inventory-item-card {
+            position: relative;
+            background-color: var(--adventure-block-bg);
+            border: 1px solid var(--border-color);
+            padding: 12px; /* Slightly less padding for smaller cards */
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column; /* Stack elements vertically */
+            align-items: center; /* Center content */
+            text-align: center; /* Center text */
+            transition: background-color 0.3s, border-color 0.3s;
+            gap: 8px; /* Smaller gap for vertical stacking */
+            min-height: 180px; /* Ensure a consistent height */
+            justify-content: space-between; /* Distribute space for button at bottom */
+        }
+        .inventory-item-card .item-icon-placeholder {
+            margin-right: 0; /* Remove margin as it's centered now */
+            margin-bottom: 8px;
+        }
+        .inventory-item-card .item-info {
+            flex-grow: 0; /* Don't let info section grow excessively */
+            width: 100%;
+        }
+        .inventory-item-card .item-actions {
+            margin-top: auto; /* Push actions to the bottom */
+            width: 100%; /* Make actions take full width for centering button */
+            display: flex;
+            justify-content: center;
+        }
         .quest-item p, .shop-item p, .craftable-item-card p, .inventory-item-card p { font-size: 1.05em; margin:3px 0; }
         .quest-item .quest-reward, .shop-item .shop-price, .craftable-item-card .crafting-cost, .inventory-item-card .item-type { margin-left: auto; white-space: nowrap; text-align: right; }
         .shop-item .shop-price { color: var(--highlight-color-pv); } .action-button { padding: 6px 12px; font-size: 0.9em; } 
@@ -387,6 +416,14 @@
         .equipment-slot.item-level-plus1 { border: 2px solid var(--item-upgrade-plus1-border) !important; box-shadow: 0 0 6px var(--item-upgrade-plus1-border); }
         .equipment-slot.item-level-plus2 { border: 2px solid var(--item-upgrade-plus2-border) !important; box-shadow: 0 0 7px var(--item-upgrade-plus2-border); }
         .equipment-slot.item-level-plus3 { border: 2px solid var(--item-upgrade-plus3-border) !important; box-shadow: 0 0 7px var(--item-upgrade-plus3-border); }
+        .dungeon-drops-area { 
+            position: relative; 
+            align-self: center; /* Center the button if its wrapper is full width */
+        } 
+        .dungeon-drops-button { 
+            font-size: 0.9em; 
+            padding: 4px 8px; 
+        }
 
         #inventory-page { align-items: center; }
         #inventory-page > h4 { font-size: 1.8em; color: var(--label-color); margin-top: 25px; margin-bottom: 15px; text-align: center; width: 100%; max-width: 800px; margin-left:auto; margin-right:auto; }
@@ -690,7 +727,10 @@
                     <p>Defense: <span id="playerDefenseStat">0</span></p>
                 </div>
                 <div class="materials-display" id="materialsDisplay"> 
-                    <h4>MY MATERIALS</h4> 
+                    <h4 style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>MY MATERIALS</span>
+                        <button id="toggleMaterialsBtn" class="action-button" style="font-size: 0.7em; padding: 2px 5px;">Hide</button>
+                    </h4> 
                     <div id="materialsListContainer"></div>
                 </div> 
                                <div id="userOrdinalsDisplay" class="materials-display" style="text-align:center; display: none; margin-top: 20px;">
@@ -1537,7 +1577,7 @@ const dungeonsData = [
                 }
                 if (itemLevel === 0) { return itemMaster.perk; }
 
-                const scaleFactors = [1.00, 1.05, 1.10, 1.15, 1.20, 1.25]; // Index 0 for +0, 1 for +1, etc.
+                const scaleFactors = [1.00, 1.10, 1.20, 1.30, 1.40, 1.50]; // Index 0 for +0, 1 for +1, etc.
                 const scaleFactor = scaleFactors[itemLevel] || 1.00; // Default to 1.00 if level out of bounds
 
                 const scaledPerk = JSON.parse(JSON.stringify(itemMaster.perk)); // Deep copy to avoid modifying original
@@ -2667,7 +2707,13 @@ function recalculateTotalAvailableAdventurers() {
                             ${displayLockReason ? `<p class="dungeon-requirements">${displayLockReason}</p>` : (dungeonsGloballyUnlocked ? `<p class="dungeon-requirements" style="color:var(--highlight-color-connected);">Unlocked!</p>` : '')}
                             ${additionalInfo}
                         </div>
-                        <button class="action-button enter-dungeon-btn" data-dungeon-id="${dungeon.id}" ${enterButtonDisabled ? 'disabled' : ''}>Enter</button>
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;"> {/* Wrapper for buttons */}
+                            <button class="action-button enter-dungeon-btn" data-dungeon-id="${dungeon.id}" ${enterButtonDisabled ? 'disabled' : ''}>Enter</button>
+                            <div class="dungeon-drops-area"> {/* Similar to adventure-drops-area */}
+                                <button class="action-button dungeon-drops-button" data-dungeon-id="${dungeon.id}">DROPS</button>
+                                <div class="drops-popover" id="dungeon-drops-popover-${dungeon.id}"></div> 
+                            </div>
+                        </div>
                     `;
                     dungeonListContainer.appendChild(dungeonDiv);
                 });
@@ -2680,6 +2726,34 @@ function recalculateTotalAvailableAdventurers() {
                     button.addEventListener('click', (event) => {
                         const dungeonId = event.target.dataset.dungeonId;
                         openDungeonCrawlerSelectionModal(dungeonId);
+                    });
+                });
+                          document.querySelectorAll('.dungeon-drops-button').forEach(button => {
+                    button.addEventListener('mouseenter', (event) => {
+                        const dungeonId = event.target.dataset.dungeonId;
+                        const popover = document.getElementById(`dungeon-drops-popover-${dungeonId}`);
+                        const dungeonInfo = dungeonsData.find(d => d.id === dungeonId);
+                        
+                        if (popover && dungeonInfo && dungeonInfo.drops && dungeonInfo.drops.length > 0) {
+                            let dropsHtml = '<h5>Possible Drops:</h5><ul>';
+                            dungeonInfo.drops.forEach(drop => {
+                                const dItemMaster = craftableItemsData.find(ci => ci.id === drop.id);
+                                dropsHtml += `<li>${drop.qty || 1}x ${dItemMaster ? dItemMaster.name : drop.name || drop.id} (${(drop.chance * 100).toFixed(3)}%)</li>`;
+                            });
+                            dropsHtml += '</ul>';
+                            popover.innerHTML = dropsHtml;
+                            popover.style.display = 'block';
+                        } else if (popover) {
+                            popover.innerHTML = '<h5>No specific item drops listed for this dungeon.</h5>';
+                            popover.style.display = 'block';
+                        }
+                    });
+                    button.addEventListener('mouseleave', (event) => {
+                        const dungeonId = event.target.dataset.dungeonId;
+                        const popover = document.getElementById(`dungeon-drops-popover-${dungeonId}`);
+                        if (popover) {
+                            popover.style.display = 'none';
+                        }
                     });
                 });
             }
@@ -6882,7 +6956,26 @@ if (walletOptions) {
         showCustomPopup(errorMessage, 'Wallet Error');
     }
 }
+            const toggleMaterialsBtn = document.getElementById('toggleMaterialsBtn');
+            if (toggleMaterialsBtn && materialsListContainer) {
+                // Check local storage for saved state
+                const isMaterialsHidden = localStorage.getItem('materialsHidden') === 'true';
+                if (isMaterialsHidden) {
+                    materialsListContainer.classList.add('hidden');
+                    toggleMaterialsBtn.textContent = 'Show';
+                }
 
+                toggleMaterialsBtn.addEventListener('click', () => {
+                    materialsListContainer.classList.toggle('hidden');
+                    if (materialsListContainer.classList.contains('hidden')) {
+                        toggleMaterialsBtn.textContent = 'Show';
+                        localStorage.setItem('materialsHidden', 'true');
+                    } else {
+                        toggleMaterialsBtn.textContent = 'Hide';
+                        localStorage.setItem('materialsHidden', 'false');
+                    }
+                });
+            }
         }); // End of 'firebaseReady' event listener
     </script>
 </body>
