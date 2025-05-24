@@ -1577,7 +1577,7 @@ const dungeonsData = [
                 }
                 if (itemLevel === 0) { return itemMaster.perk; }
 
-                const scaleFactors = [1.00, 1.10, 1.20, 1.30, 1.40, 1.50]; // Index 0 for +0, 1 for +1, etc.
+                const scaleFactors = [1.00, 1.15, 1.25, 1.35, 1.50, 1.70]; // Index 0 for +0, 1 for +1, etc.
                 const scaleFactor = scaleFactors[itemLevel] || 1.00; // Default to 1.00 if level out of bounds
 
                 const scaledPerk = JSON.parse(JSON.stringify(itemMaster.perk)); // Deep copy to avoid modifying original
@@ -2758,7 +2758,10 @@ function recalculateTotalAvailableAdventurers() {
                 });
             }
             
-     function renderActiveTasksInSidebar() { // Renamed from renderActiveAdventuresInSidebar
+            function renderActiveTasksInSidebar() { // Renamed from renderActiveAdventuresInSidebar
+                // +++ ADD LOG HERE +++
+                console.log("renderActiveTasksInSidebar CALLED. activeAdventures:", JSON.parse(JSON.stringify(activeAdventures)), "activeDungeons:", JSON.parse(JSON.stringify(activeDungeons)));
+                // +++ END LOG +++
                 if (!sidebarActiveAdventuresList || !sidebarActiveAdventuresContainer) return;
 
                 // Combine and sort active tasks
@@ -3236,13 +3239,17 @@ function recalculateTotalAvailableAdventurers() {
                 };
 
                 activeDungeons.push(newActiveDungeon);
-                recalculateTotalAvailableAdventurers(); // This updates totalAvailableAdventurers and dependent UI
+                // +++ ADD LOGS HERE +++
+                console.log("New dungeon pushed:", JSON.parse(JSON.stringify(newActiveDungeon)));
+                console.log("Current activeDungeons array:", JSON.parse(JSON.stringify(activeDungeons)));
 
-                showCustomPopup(`Sent ${adventurersForThisDungeon} adventurer${adventurersForThisDungeon > 1 ? 's' : ''}${partyMembersInfo} to ${dungeon.name}! They will return in ${dungeon.durationHours} hours.`, "Dungeon Entry");
+                console.log("Calling recalculateTotalAvailableAdventurers after new dungeon push...");
+                recalculateTotalAvailableAdventurers(); 
 
-                renderActiveTasksInSidebar();
-                renderDungeonsPage(); // Update button states & entry counts
-
+                console.log("Explicitly calling renderActiveTasksInSidebar after new dungeon...");
+                renderActiveTasksInSidebar(); 
+                renderDungeonsPage(); 
+                
                 if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
             }
 
@@ -3989,91 +3996,88 @@ function updateAdventureDisplayStates() {
 
 
             function updateTimers() {
-                let taskCompletedThisTick = false; // Use a more general flag
+                let taskCompletedThisTick = false;
+                const now = Date.now(); // Get current time once per tick
 
-                // --- Process Active Adventures ---
-                // Loop through activeAdventures to update timers and check for completion
-                // (Keep your existing loop over activeAdventures here)
-                activeAdventures.forEach(adv => {
-                    const timeLeftMs = adv.returnTime - Date.now();
-                    document.querySelectorAll(`.active-adventure-item[data-instance-id="${adv.id}"] .timer`).forEach(timerSpan => {
-                        if(timerSpan) timerSpan.textContent = formatTimeLeft(timeLeftMs);
+                // --- Process Active Adventures (iterate backwards for safe removal) ---
+                for (let i = activeAdventures.length - 1; i >= 0; i--) {
+                    const adv = activeAdventures[i];
+                    const timeLeftMs = adv.returnTime - now;
+                    
+                    const adventureTimerElements = document.querySelectorAll(`.active-adventure-item[data-instance-id="${adv.id}"] .timer`);
+                    adventureTimerElements.forEach(timerSpan => {
+                        if (timerSpan) timerSpan.textContent = formatTimeLeft(timeLeftMs);
                     });
+
                     if (timeLeftMs <= 0) {
-                        completeAdventure(adv.id);
-                        taskCompletedThisTick = true; // Set flag if any task completes
+                        console.log(`Timer: Adventure ${adv.name} (ID: ${adv.id}) ended. Calling completeAdventure.`);
+                        completeAdventure(adv.id); // This will splice from activeAdventures
+                        taskCompletedThisTick = true;
                     }
-                });
-
-
-                // --- Process Active Dungeons --- // <-- ADD THIS BLOCK
-                activeDungeons.forEach(dun => {
-                    const timeLeftMs = dun.returnTime - Date.now();
-                     // Find the element in the sidebar for this dungeon entry
-                     const dunItemDiv = sidebarActiveAdventuresList.querySelector(`.active-adventure-item[data-instance-id="${dun.id}"]`);
-                     if (dunItemDiv) {
-                        const timerSpan = dunItemDiv.querySelector('.timer');
-                         if (timerSpan) timerSpan.textContent = formatTimeLeft(timeLeftMs);
-                     }
-                    if (timeLeftMs <= 0) {
-                        completeDungeon(dun.id);
-                        taskCompletedThisTick = true; // Set flag if any task completes
-                    }
-                });
-
-
-                // --- Update Sidebar Display if any task completed ---
-                // Check if the sidebar display needs a full re-render
-                if (taskCompletedThisTick) { // Check the general flag
-                    renderActiveTasksInSidebar(); // Call the renamed render function
                 }
 
-                // --- Process Active Potions --- (Keep your existing potion logic here)
+                // --- Process Active Dungeons (iterate backwards for safe removal) ---
+                for (let i = activeDungeons.length - 1; i >= 0; i--) {
+                    const dun = activeDungeons[i];
+                    const timeLeftMs = dun.returnTime - now;
+
+                    const dungeonTimerElements = document.querySelectorAll(`.active-adventure-item[data-instance-id="${dun.id}"] .timer`);
+                     dungeonTimerElements.forEach(timerSpan => {
+                        if (timerSpan) timerSpan.textContent = formatTimeLeft(timeLeftMs);
+                    });
+
+                    if (timeLeftMs <= 0) {
+                        console.log(`Timer: Dungeon ${dun.name} (ID: ${dun.id}) ended. Calling completeDungeon.`);
+                        completeDungeon(dun.id); // This will splice from activeDungeons
+                        taskCompletedThisTick = true;
+                    }
+                }
+
+                // If any task completed, the completion functions themselves would have called
+                // recalculateTotalAvailableAdventurers, which in turn calls renderDungeonsPage (if active)
+                // and updateAdventureDisplayStates. They also call renderActiveTasksInSidebar implicitly
+                // via recalculate. However, a direct call here ensures it happens if other UI elements
+                // were relying on this specific call pattern.
+                if (taskCompletedThisTick) {
+                    console.log("Task completed this tick, re-rendering active tasks sidebar.");
+                    renderActiveTasksInSidebar(); 
+                }
+
+                // --- Process Active Potions ---
                 let potionsChanged = false;
-                const now = Date.now();
-                activePotions.forEach(potion => {
+                activePotions.forEach(potion => { // This loop doesn't modify activePotions directly, so forEach is fine
                     if (potion.endTime) {
                         if (now >= potion.endTime) potionsChanged = true;
-                        // Note: Finding potion element by name might be fragile if multiple potions have same name
-                        // A unique ID or dataset attribute would be better, but let's stick to existing for now
                         const potionItemDiv = Array.from(activePotionsList.children).find(child => child.innerHTML.includes(`<strong>${potion.name}</strong>`));
                         if (potionItemDiv) {
                             const timerSpan = potionItemDiv.querySelector('.timer');
                             if (timerSpan) timerSpan.textContent = formatTimeLeft(potion.endTime - now);
                         }
                     }
-                    // Add check for adventuresLeft if needed (handled in completeAdventure/Dungeon)
                 });
                 if (potionsChanged) {
                     activePotions = activePotions.filter(p => p.endTime ? p.endTime > now : true);
-                    // Filter potions with adventuresLeft == 0 if that logic isn't handled in completeAdventure/Dungeon
-                     activePotions = activePotions.filter(p => p.adventuresLeft === undefined || p.adventuresLeft > 0);
+                    activePotions = activePotions.filter(p => p.adventuresLeft === undefined || p.adventuresLeft > 0);
                     renderActivePotions();
                 }
 
-                // --- Process Raffles --- (Keep your existing raffle logic here)
+                // --- Process Raffles ---
                  let rafflesUpdatedByTimer = false;
-                 allRaffles.forEach(raffle => {
+                 allRaffles.forEach(raffle => { // This loop doesn't modify allRaffles directly
                      if (raffle.status === 'active') {
-                         const timeLeftMs = raffle.endTime - Date.now();
-                         // Find the element in the whitelist container for this raffle
+                         const timeLeftMs = raffle.endTime - now;
                          const raffleCard = whitelistRafflesContainer.querySelector(`.raffle-card[data-raffle-id="${raffle.id}"]`);
                          if (raffleCard) {
                               const timerSpan = raffleCard.querySelector('.raffle-timer');
-                              if (timerSpan) {
-                                  timerSpan.textContent = formatTimeLeft(timeLeftMs);
-                              }
+                              if (timerSpan) timerSpan.textContent = formatTimeLeft(timeLeftMs);
                          }
-
                          if (timeLeftMs <= 0) {
-                             raffle.status = 'ended'; // Mark as ended in client state
+                             raffle.status = 'ended'; 
                              rafflesUpdatedByTimer = true;
-                             // Note: Winner drawing is still manual via admin button click
                          }
                      }
                  });
                  if (rafflesUpdatedByTimer && document.getElementById('whitelist-page').classList.contains('active')) {
-                     // Only re-render raffles if the whitelist page is active
                      renderWhitelistRaffles();
                  }
             }
@@ -4262,6 +4266,8 @@ function updateAdventureDisplayStates() {
                         
                         // Step 1: Add the new adventure to our list
                         activeAdventures.push(newActiveAdventure); 
+                        console.log("New adventure pushed:", JSON.parse(JSON.stringify(newActiveAdventure)));
+                        console.log("Current activeAdventures array:", JSON.parse(JSON.stringify(activeAdventures)));
                         
                         // Step 2: Now that activeAdventures is updated, recalculate the available count
                         recalculateTotalAvailableAdventurers();
