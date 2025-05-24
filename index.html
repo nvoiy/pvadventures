@@ -2618,7 +2618,6 @@ function applyLoadedGameState(loadedState) {
          }) : [];
          // The nextActiveAdventureId recalculation after this block should still be fine.
 
-
         recalculateTotalAvailableAdventurers();
 
         updateStatsDisplay();
@@ -3265,11 +3264,12 @@ iconHtml = `<div class="dungeon-icon-placeholder" style="background-image: url('
                         card.addEventListener('mousemove', (e) => showItemTooltip(e, { ...itemData, level: invItem.level || 0 }));
                         card.addEventListener('mouseleave', hideItemTooltip);
                     } 
-                }); 
-                inventoryItemsContainer.querySelectorAll('.equip-btn').forEach(b => b.addEventListener('click', e => equipItem(e.target.dataset.itemUniqueId))); 
-                updatePlayerCombatStatsDisplay(); 
-            }
 
+            });
+            inventoryItemsContainer.querySelectorAll('.equip-btn').forEach(b => b.addEventListener('click', e => equipItem(e.target.dataset.itemUniqueId)));
+            updatePlayerCombatStatsDisplay();
+            renderActiveSpecialties(); // <<< ADD THIS LINE
+        }
 
             function useRiderScrollUnlock(itemUniqueId) {
                 if (!currentUser) return;
