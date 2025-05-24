@@ -5237,6 +5237,7 @@ initializeTheme();
 
 
         function updateWalletDisplay(account, walletName = '') {
+             console.log("updateWalletDisplay CALLED. punkVoyageIdsLoaded is:", punkVoyageIdsLoaded);
             // Ensure critical elements are defined before proceeding
             const connectWalletBtnElement = document.getElementById('connectWalletBtn');
             const walletAddressDisplayElement = document.getElementById('walletAddressDisplay');
