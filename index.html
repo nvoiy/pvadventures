@@ -1825,15 +1825,8 @@ const dungeonsData = [
 function processPopupQueue() {
     if (isPopupCurrentlyVisible || popupMessageQueue.length === 0) { return; }
 
-    // welcomeScreen is removed, so isAuthContextPopup logic is no longer relevant in the same way.
-    // We'll assume popups are always for the game context now.
-    // const isAuthContextPopup = welcomeScreen && !welcomeScreen.classList.contains('hidden');
+    // welcomeScreen related logic has been removed as the welcome screen itself is gone.
     const { message, title, craftCallback, confirmCallback, secondaryActionCallback, secondaryActionText, confirmText, cancelText } = popupMessageQueue.shift();
-
-    // Simplified check: If a critical error occurs very early before currentUser might be set (e.g. Firebase init fail),
-    // those popups are handled by the Firebase init catch block.
-    // This check was to prevent showing game-related error popups if the user wasn't even in the game yet.
-    // With wallet-only, the game UI is always visible.
 
     isPopupCurrentlyVisible = true;
     if (customPopupTitleEl) customPopupTitleEl.textContent = title;
@@ -1848,22 +1841,23 @@ function processPopupQueue() {
     const existingSecondaryBtn = document.getElementById('popupSecondaryActionBtn');
     if (existingSecondaryBtn) existingSecondaryBtn.remove();
 
+
     currentPopupConfirmCallback = null;
     currentPopupCraftCallback = null;
-    let currentPopupSecondaryActionCallback = null;
+    let currentPopupSecondaryActionCallback = null; 
 
     if (craftCallback) {
         currentPopupCraftCallback = craftCallback;
         const craftAgainBtn = document.createElement('button');
         craftAgainBtn.id = 'popupCraftAgainBtn';
         craftAgainBtn.className = 'action-button';
-        craftAgainBtn.textContent = 'Craft Again';
+        craftAgainBtn.textContent = 'Craft Again'; 
         craftAgainBtn.style.backgroundColor = 'var(--highlight-color-connected)';
         craftAgainBtn.style.color = 'white';
         customPopupButtonsEl.insertBefore(craftAgainBtn, customPopupCloseBtn);
         customPopupCloseBtn.textContent = cancelText || "No Thanks";
         customPopupCloseBtn.classList.remove('hidden');
-    } else if (confirmCallback) {
+    } else if (confirmCallback) { 
         currentPopupConfirmCallback = confirmCallback;
         customPopupConfirmBtn.textContent = confirmText || "Confirm";
         customPopupConfirmBtn.classList.remove('hidden');
@@ -1872,33 +1866,36 @@ function processPopupQueue() {
             currentPopupSecondaryActionCallback = secondaryActionCallback;
             const secondaryBtn = document.createElement('button');
             secondaryBtn.id = 'popupSecondaryActionBtn';
-            secondaryBtn.className = 'action-button';
+            secondaryBtn.className = 'action-button'; 
             secondaryBtn.textContent = secondaryActionText;
             secondaryBtn.addEventListener('click', () => {
                 if (currentPopupSecondaryActionCallback) {
                     currentPopupSecondaryActionCallback();
                 }
                 hideCustomPopup();
-            }, { once: true });
-            customPopupButtonsEl.insertBefore(secondaryBtn, customPopupCancelBtn.nextSibling);
+            }, { once: true }); 
+            customPopupButtonsEl.insertBefore(secondaryBtn, customPopupCancelBtn.nextSibling); 
+
             if (cancelText) {
                 customPopupCancelBtn.textContent = cancelText;
                 customPopupCancelBtn.classList.remove('hidden');
             } else {
-                customPopupCancelBtn.classList.add('hidden');
+                customPopupCancelBtn.classList.add('hidden'); 
             }
-        } else {
+
+        } else { 
             customPopupCancelBtn.textContent = cancelText || "Cancel";
             customPopupCancelBtn.classList.remove('hidden');
         }
-    } else {
-        customPopupCloseBtn.textContent = confirmText || "OK";
+    } else { 
+        customPopupCloseBtn.textContent = confirmText || "OK"; 
         customPopupCloseBtn.classList.remove('hidden');
     }
 
     if (customPopupOverlay) customPopupOverlay.classList.remove('hidden');
     if (customPopup) customPopup.classList.remove('hidden');
 
+    // Focus logic
     if (customPopupConfirmBtn && !customPopupConfirmBtn.classList.contains('hidden')) {
         customPopupConfirmBtn.focus();
     } else if (document.getElementById('popupCraftAgainBtn')) {
