@@ -8,7 +8,7 @@
     <script src="https://unpkg.com/@sats-connect/core@latest/dist/bundles/sats-connect.js"></script>
     <style>
         :root {
-            --body-bg-image-url: url('https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeigsu7ak3jbbia6w66slcz2rnk6b6ysundurmgz5etoq6xh23vsbpm');
+        --body-bg-image-url: url('https://raw.githubusercontent.com/nvoiy/pvadventures/main/background.jpg');
             --border-color: #000000;
             --text-color: #000000;
             --label-color: #333333; 
@@ -715,7 +715,7 @@
 <body>
     <div id="itemTooltip"></div> <!-- Tooltip Element -->
     <div id="welcomeScreen">
-        <img id="welcomeImageLarge" src="https://beige-managing-snail-510.mypinata.cloud/ipfs/bafybeiblrc356d6jb72bgbxmo475c7si4ae5gmugw3nlb2citjiz4jzibm" alt="Punk Voyage Adventures Welcome">
+        <img id="welcomeImageLarge" src="https://raw.githubusercontent.com/nvoiy/pvadventures/main/ENTRY.gif" alt="Punk Voyage Adventures Welcome">
         <div id="authFormContainer">
             <h2 id="authFormTitle">Login to Punk Voyage Adventures</h2>
             <form id="loginRegisterForm">
@@ -750,11 +750,10 @@
 
     <div class="game-container hidden" id="gameContainer">
         <header> 
-            <div class="header-title-container">
-                <img src="https://beige-managing-snail-510.mypinata.cloud/ipfs/bafkreih3vukswhuqnqaburhqp7xzqijo356eluotfopwiwk4z2kxy3obmu" alt="Punk Voyage Logo" class="header-logo">
-                <h1>PUNK VOYAGE ADVENTURES</h1>
-                <span class="header-byline">by NV.Art</span>
-            </div>
+        <div class="header-title-container">
+            <h1>PUNK VOYAGE ADVENTURES</h1>
+            <span class="header-byline">by NV.Art</span>
+        </div>
             <div class="header-controls"> 
                 <div class="player-info-wallet"> 
                      <div class="player-stats" id="playerStats"> PLAYER <span id="playerNicknameDisplay">Voyager</span>, WELCOME<br> <span class="pv">PV = <span id="pvCount">0</span></span> , <span class="gold">GOLD = <span id="goldCount">0</span></span>, <span class="diamond">DIAMOND = <span id="diamondCount">0</span></span> <div class="wallet-address" id="walletAddressDisplay"></div> 
@@ -767,13 +766,13 @@
                     <div class="social-title">SOCIALS</div> 
                     <div class="social-buttons"> 
                         <a href="https://x.com/nvart_" target="_blank" class="social-icon-link">
-                            <img src="https://beige-managing-snail-510.mypinata.cloud/ipfs/bafkreic6eqw6jyae55x3uhqtvrbt2woamgifhtck5vquluwlwvl2yhjj7q" alt="X/Twitter">
+                            <img src="https://raw.githubusercontent.com/nvoiy/pvadventures/main/twitter-x-logo.jpg" alt="X/Twitter">
                         </a> 
                         <a href="https://discord.com/invite/4CEtXAFf3x" target="_blank" class="social-icon-link">
-                            <img src="https://beige-managing-snail-510.mypinata.cloud/ipfs/bafkreidjwxzcb5qeb76qjgo4ft5ha3fuskaxkeho7ppv7umoc5ihm5ohwq" alt="Discord">
+                            <img src="https://raw.githubusercontent.com/nvoiy/pvadventures/main/discordlogo.jpg" alt="Discord">
                         </a> 
                         <a href="https://magiceden.io/tr/ordinals/marketplace/punkvoyage" target="_blank" title="Punk Voyage on Magic Eden" class="social-icon-link">
-                            <img src="https://beige-managing-snail-510.mypinata.cloud/ipfs/bafkreihixbhp2x6w7w5odpo5zyt2dbqdd54f3eepgvmt3zsfg7ax6jnftu" alt="Magic Eden">
+                            <img src="https://raw.githubusercontent.com/nvoiy/pvadventures/main/images.png" alt="Magic Eden">
                         </a>
                     </div> 
                 </nav>
@@ -1488,7 +1487,7 @@ let lastDailyRewardDayClaimed = 0;
             };
 
             const craftableItemsData = [ // item tier: 0-4
-                { id: "boots1", name: "Warped Boots", type: "Boots", description: "Reduces adventure time by 30 minutes.", perk: { type: "timeReduction", value: 1800 }, recipe: { "Leather": 5, "Fabric": 3 }, iconUrlOrColor: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafybeidvav6u7a4naahsxhqalytbmnr7mhmonhanqhcuerchy7fkldjiua/boots.jpg", tier: 1 }, 
+                { id: "boots1", name: "Warped Boots", type: "Boots", description: "Reduces adventure time by 30 minutes.", perk: { type: "timeReduction", value: 1800 }, recipe: { "Leather": 5, "Fabric": 3 }, iconUrlOrColor: "https://raw.githubusercontent.com/nvoiy/pvadventures/main/boots.jpg", tier: 1 }, 
                 { id: "amulet1", name: "Amulet of Greed", type: "Amulet", description: "Increases Gold find chance by +50% of current chance.", perk: { type: "goldChanceIncrease", value: 0.5 }, recipe: { "Iron": 3, "Gizmo Tail": 1 }, iconUrlOrColor: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafkreih7mmirdvzhdw3duyd67y6taqklq5qpcns6vw765msuafd74i44by", tier: 2 }, 
             { id: "rucksack1", name: "Efficient Rucksack", type: "Rucksack", description: "+10% PV tokens from adventures.", perk: { type: "pvBonus", value: 0.10 }, recipe: { "Fabric": 5, "Leather": 2 }, iconUrlOrColor: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafybeihen2etj7vabkt7rwtxsstvgqixhu7aww7eri7j3w5qcjux7ssxzm/pouch.jpg", tier: 1 }, 
                 { id: "trinket1", name: "Lucky Rabbit's Foot", type: "Trinket", description: "Increases material find chance by x1.3 (multiplicative).", perk: { type: "materialChanceMultiplier", value: 1.3 }, recipe: { "Clover": 3, "Bone": 2 }, iconUrlOrColor: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafybeihk33icq4ytbr5m54tor4qkibqwphgu72l3si5ydcmvkj2oav42i4/rabbit%20foot.jpg", tier: 4 }, 
@@ -1509,53 +1508,53 @@ let lastDailyRewardDayClaimed = 0;
                 tier: 3 
             },
             // +++ NEW DUNGEON SET & DROPS (NOT CRAFTABLE, NO RECIPES) +++
-            { 
-                id: "dungeon_helmet", name: "Dungeon Helmet of Assault", type: "Helmet", 
-                description: "A sturdy helmet retrieved from the crypt. (+3 Attack)", 
-                perk: { type: "attackBoost", value: 3 }, 
-                iconUrlOrColor: "#A0522D", // Placeholder color (SaddleBrown)
+            {
+                id: "dungeon_helmet", name: "Dungeon Helmet of Assault", type: "Helmet",
+                description: "A sturdy helmet retrieved from the crypt. (+3 Attack)",
+                perk: { type: "attackBoost", value: 3 },
+                iconUrlOrColor: "https://raw.githubusercontent.com/nvoiy/pvadventures/main/dHELMET.jpg",
                 tier: 2 // Example tier
             },
-            { 
-                id: "dungeon_boots", name: "Dungeon Boots of Swiftness", type: "Boots", 
-                description: "Boots that have tread forgotten paths. (+3 Attack)", 
-                perk: { type: "attackBoost", value: 3 }, 
-                iconUrlOrColor: "#8B4513", // Placeholder color (SaddleBrown)
+            {
+                id: "dungeon_boots", name: "Dungeon Boots of Swiftness", type: "Boots",
+                description: "Boots that have tread forgotten paths. (+3 Attack)",
+                perk: { type: "attackBoost", value: 3 },
+                iconUrlOrColor: "https://raw.githubusercontent.com/nvoiy/pvadventures/main/dBOOTS.jpg",
                 tier: 2 // Example tier
             },
-            { 
-                id: "dungeon_sword", name: "Crypt Lord's Blade", type: "Weapon", 
-                description: "A powerful sword, pulsing with dungeon energy. (+10 Attack)", 
-                perk: { type: "attackBoost", value: 10 }, 
-                iconUrlOrColor: "#708090", // Placeholder color (SlateGray)
-                tier: 4 // Example tier
-            },
-            { 
-                id: "dungeon_armour", name: "Crypt Lord's Plate", type: "Armour", 
-                description: "Resilient armour forged in the depths. (+20 Defense)", 
-                perk: { type: "defenseBoost", value: 20 }, 
-                iconUrlOrColor: "#696969", // Placeholder color (DimGray)
+            {
+                id: "dungeon_sword", name: "Crypt Lord's Blade", type: "Weapon",
+                description: "A powerful sword, pulsing with dungeon energy. (+10 Attack)",
+                perk: { type: "attackBoost", value: 10 },
+                iconUrlOrColor: "https://raw.githubusercontent.com/nvoiy/pvadventures/main/dWEAPON.jpg",
                 tier: 4 // Example tier
             },
             {
+                id: "dungeon_armour", name: "Crypt Lord's Plate", type: "Armour",
+                description: "Resilient armour forged in the depths. (+20 Defense)",
+                perk: { type: "defenseBoost", value: 20 },
+                iconUrlOrColor: "https://raw.githubusercontent.com/nvoiy/pvadventures/main/dARMOR.jpg",
+                tier: 4 // Example tier
+            },
+ {
                 id: "pizza_pendant", name: "Pizza Pendant of Greed", type: "Amulet", // Changed to Amulet for a free slot
                 description: "Smells faintly of pepperoni. Grants +1 daily entry attempt to both Dungeon 1 & 2 if equipped.",
                 perk: { type: "dungeonEntryBonus", dungeon1: 1, dungeon2: 1 },
-                iconUrlOrColor: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafkreihygyxc7xt2pqrqaxv2dnxnc77slx5kb2bqsfnvcpbmyk4k56wpmi", // Example new icon for pizza
+                iconUrlOrColor: "https://raw.githubusercontent.com/nvoiy/pvadventures/main/pizzapendant.jpg",
                 tier: 3
             },
             {
                 id: "orb_of_haste", name: "Orb of Minor Haste", type: "Misc",
                 description: "Swirls with temporal energies. Reduces adventure times by 5%.",
                 perk: { type: "timeReductionPercent", value: 0.05 }, // 5% reduction
-                iconUrlOrColor: "#ADD8E6", // Placeholder LightBlue
+                iconUrlOrColor: "https://raw.githubusercontent.com/nvoiy/pvadventures/main/orbofhaste.jpg",
                 tier: 3
             },
             {
                 id: "pet_dog", name: "$DOG Pet", type: "Pet",
                 description: "A good boy. After completing a dungeon, fetches 1 random adventure material.",
                 perk: { type: "dungeonMaterialFetch", count: 1 },
-                iconUrlOrColor: "https://green-tough-gopher-310.mypinata.cloud/ipfs/bafkreig2yfhcvhvoocqflpao2wshk6u4vjfxj42scwujxyb6qytpnmv2ry", // Example new icon for dog
+                iconUrlOrColor: "https://raw.githubusercontent.com/nvoiy/pvadventures/main/pet3.jpg", // Example new icon for dog
                 tier: 3 
             }
             // +++ END OF NEW DUNGEON ITEMS +++
