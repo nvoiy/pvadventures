@@ -6884,74 +6884,74 @@ initializeTheme();
 
 
 
-     function updateWalletDisplay(account, walletName = '') {
-         if (account) {
-             const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
-             if (connectWalletBtn) {
-                 connectWalletBtn.textContent = `${walletName}: ${shortAddress}`;
-                 connectWalletBtn.classList.add('connected');
-             }
-             if (walletAddressDisplay) walletAddressDisplay.textContent = `Wallet: ${account}`;
+         function updateWalletDisplay(account, walletName = '') {
+            if (account) {
+                const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
+                if (connectWalletBtn) {
+                    connectWalletBtn.textContent = `${walletName}: ${shortAddress}`;
+                    connectWalletBtn.classList.add('connected');
+                }
+                if (walletAddressDisplay) walletAddressDisplay.textContent = `Wallet: ${account}`;
 
-             walletVerificationPendingForBonus = false;
+                walletVerificationPendingForBonus = false;
 
-             if (customPopup && !customPopup.classList.contains('hidden') && customPopupTitleEl) {
-                 const currentPopupTitle = customPopupTitleEl.textContent;
-                 if (currentPopupTitle === "Wallet Bonus Information" ||
-                     currentPopupTitle === "Wallet Connection Required" ||
-                     currentPopupTitle === "Verify Wallet Bonus" ||
-                     currentPopupTitle === "Wallet Verification Needed") {
-                     hideCustomPopup();
-                 }
-             }
+                if (customPopup && !customPopup.classList.contains('hidden') && customPopupTitleEl) {
+                    const currentPopupTitle = customPopupTitleEl.textContent;
+                    if (currentPopupTitle === "Wallet Bonus Information" ||
+                        currentPopupTitle === "Wallet Connection Required" ||
+                        currentPopupTitle === "Verify Wallet Bonus" ||
+                        currentPopupTitle === "Wallet Verification Needed") {
+                        hideCustomPopup();
+                    }
+                }
 
-             if (punkVoyageIdsLoaded && connectedAccount && connectedWalletName) {
-                 fetchWalletInscriptions(connectedAccount, connectedWalletName);
-                 if (dungeonCrawlerIdsLoaded) {
-                     fetchPlayerDungeonCrawlers(connectedAccount, connectedWalletName);
-                 }
-             } else {
-                 console.warn("Wallet connected, but asset ID lists not loaded or account/name issue. Ordinal/Crawler check skipped.");
-                 if (userOrdinalsDisplayElement) {
-                      userOrdinalsDisplayElement.style.display = 'block';
-                      if(userOrdinalsListElement) userOrdinalsListElement.innerHTML = "<p>Could not check Ordinals: Game's collection ID list not ready.</p>";
-                 }
-                 let previousBonus = ordinalBonusAdventurers;
-                 ordinalBonusAdventurers = 0;
-                 if (previousBonus > 0) {
-                      recalculateTotalAvailableAdventurers();
-                      if (currentUser && currentUser.uid) {
-                         saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
-                      }
-                 }
-             }
-             // Consider if playerNicknameDisplay needs an update here if nickname comes from wallet/ENS
-             if (playerNicknameDisplay && userNickname) { // Update nickname display if available
-                 playerNicknameDisplay.textContent = userNickname;
-             }
+                if (punkVoyageIdsLoaded && connectedAccount && connectedWalletName) {
+                    fetchWalletInscriptions(connectedAccount, connectedWalletName);
+                    if (dungeonCrawlerIdsLoaded) {
+                        fetchPlayerDungeonCrawlers(connectedAccount, connectedWalletName);
+                    }
+                } else {
+                    console.warn("Wallet connected, but asset ID lists not loaded or account/name issue. Ordinal/Crawler check skipped.");
+                    if (userOrdinalsDisplayElement) {
+                         userOrdinalsDisplayElement.style.display = 'block';
+                         if(userOrdinalsListElement) userOrdinalsListElement.innerHTML = "<p>Could not check Ordinals: Game's collection ID list not ready.</p>";
+                    }
+                    let previousBonus = ordinalBonusAdventurers;
+                    ordinalBonusAdventurers = 0;
+                    if (previousBonus > 0) {
+                         recalculateTotalAvailableAdventurers();
+                         if (currentUser && currentUser.uid) { // currentUser.uid here is the wallet address
+                            saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
+                         }
+                    }
+                }
+                if (playerNicknameDisplay && userNickname) {
+                    playerNicknameDisplay.textContent = userNickname;
+                }
 
+            } else { // Wallet disconnected or not present
+                if (connectWalletBtn) {
+                    connectWalletBtn.textContent = 'CONNECT WALLET';
+                    connectWalletBtn.classList.remove('connected');
+                }
+                if (walletAddressDisplay) walletAddressDisplay.textContent = '';
+                if (playerNicknameDisplay) playerNicknameDisplay.textContent = 'Voyager';
 
-         } else { // Wallet disconnected or not present (this part handles UI for disconnection)
-             if (connectWalletBtn) {
-                 connectWalletBtn.textContent = 'CONNECT WALLET';
-                 connectWalletBtn.classList.remove('connected');
-             }
-             if (walletAddressDisplay) walletAddressDisplay.textContent = '';
-             if (playerNicknameDisplay) playerNicknameDisplay.textContent = 'Voyager'; // Reset nickname display
-
-             if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none';
-             if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = '';
-             
-             // If a wallet was previously connected and is now disconnected
-             if (connectedAccount !== null || connectedWalletName !== null) {
-                 console.log("Wallet was connected, now disconnecting session.");
-                 handleWalletDisconnected(); // Call the centralized disconnect handler
-             }
-             // These are already set in handleWalletDisconnected
-             // connectedAccount = null;
-             // connectedWalletName = null;
-         }
-     }
+                if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none';
+                if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = '';
+                
+                // The actual state reset (like setting connectedAccount to null)
+                // is handled by handleWalletDisconnected. This function (updateWalletDisplay)
+                // should primarily focus on UI updates based on the account status.
+                // The recursive call was removed from here:
+                // if (connectedAccount !== null || connectedWalletName !== null) {
+                //     console.log("Wallet was connected, now disconnecting session (from updateWalletDisplay).");
+                //     // handleWalletDisconnected(); // <<< THIS LINE IS REMOVED/COMMENTED
+                // }
+                window.connectedAccount = null;
+                window.connectedWalletName = null;
+            }
+        }
 // --- END OF FULL updateWalletDisplay FUNCTION TO REPLACE ---
             if(connectWalletBtn && walletDropdown) { connectWalletBtn.addEventListener('click', (event) => { event.stopPropagation(); walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block'; }); document.addEventListener('click', (event) => { if (walletDropdown && connectWalletBtn && !connectWalletBtn.contains(event.target) && !walletDropdown.contains(event.target)) { walletDropdown.style.display = 'none'; } }); }
        async function connectWithSatsConnect(walletTypeHint = null) {
@@ -6994,12 +6994,12 @@ initializeTheme();
     }         
     
      async function handleWalletConnected(walletAddress, walletName) {
-             console.log(`Wallet connected: ${walletName} - ${walletAddress}`);
-             connectedAccount = walletAddress;
-             connectedWalletName = walletName;
-             currentUser = { uid: walletAddress, name: walletName }; // Set a simplified currentUser
+                console.log(`Wallet connected: ${walletName} - ${walletAddress}`);
+                window.connectedAccount = walletAddress;      // Use window.
+                window.connectedWalletName = walletName;    // Use window.
+                currentUser = { uid: walletAddress, name: walletName };
 
-             updateWalletDisplay(connectedAccount, connectedWalletName); // Update button text etc.
+                updateWalletDisplay(window.connectedAccount, window.connectedWalletName);
 
              // Game container should already be visible due to HTML changes
              // gameContainer.classList.remove('hidden');
@@ -7039,32 +7039,40 @@ initializeTheme();
          }
 
          function handleWalletDisconnected() {
-             console.log("Wallet disconnected or no account found.");
+             console.log("Wallet disconnected or no account found / Initializing disconnected state.");
              currentUser = null;
-             userNickname = '';
-             connectedAccount = null;
-             connectedWalletName = null;
+             userNickname = ''; // Reset global nickname variable
 
-             // gameContainer.classList.add('hidden'); // Game stays visible, but state resets
-             // welcomeScreen.classList.remove('hidden'); // No welcome screen anymore
+             // Explicitly set the global variables to null
+             window.connectedAccount = null;
+             window.connectedWalletName = null;
 
-             resetGameStateToDefaults();
-             updateStatsDisplay();
-             updateWalletDisplay(null); // Update button to "CONNECT WALLET"
+             resetGameStateToDefaults(); // This should handle resetting game-specific states
+             updateStatsDisplay();       // Update UI based on reset state
+             updateWalletDisplay(null);  // This will set button to "CONNECT WALLET"
 
-             // Optionally, navigate to a default "please connect" page or disable interactions
-             showPage('adventures-page'); // Or a dedicated "Connect Wallet to Play" page
-             if(sidebarActiveAdventuresList) sidebarActiveAdventuresList.innerHTML = '<p style="text-align:center;">Connect wallet to see active tasks.</p>';
+             // No welcome screen, game container remains visible
+             // gameContainer.classList.add('hidden');
+             // welcomeScreen.classList.remove('hidden');
 
+             showPage('adventures-page'); // Show a default page
+             if(sidebarActiveAdventuresList) {
+                 sidebarActiveAdventuresList.innerHTML = '<p style="text-align:center;">Connect wallet to see active tasks.</p>';
+             }
+             if(userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none';
+             if(userOrdinalsListElement) userOrdinalsListElement.innerHTML = '';
+             if(playerNicknameDisplay) playerNicknameDisplay.textContent = "Voyager"; // Reset display
+
+             console.log("handleWalletDisconnected finished. State reset.");
          }
     
     async function connectUnisat() {
     try {
         if (typeof window.unisat !== 'undefined') {
             const accounts = await window.unisat.requestAccounts();
-            if (accounts && accounts.length > 0) {
-                const walletAddress = accounts[0];
-                const walletName = 'UniSat';
+if (accounts && accounts.length > 0) {
+    const walletAddress = accounts[0];
+    const walletName = 'UniSat';
                 await handleWalletConnected(walletAddress, walletName); // New call
 
                 window.unisat.on('accountsChanged', async (newAccs) => { // Make async
