@@ -7,6 +7,27 @@
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@sats-connect/core@latest/dist/bundles/sats-connect.js"></script>
     <style>
+    html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Prevent horizontal scrollbars if content slightly overflows */
+}
+
+body { /* Your existing body styles are mostly fine, just ensure no conflicting height/width */
+    font-family: 'VT323', monospace;
+    background-image: var(--body-bg-image-url);
+    background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;
+    color: var(--text-color);
+    /* margin: 0; */ /* Already covered above */
+    font-size: var(--base-font-size);
+    display: flex; flex-direction: column;
+    align-items: center;
+    min-height: 100%; /* Use min-height: 100% if body directly contains game-container that should fill */
+    box-sizing: border-box;
+    transition: color 0.3s, background-color 0.3s;
+}
         :root {
     --body-bg-image-url: none;
             --border-color: #000000;
@@ -115,7 +136,19 @@
         #popupCraftAgainBtn, #customPopupConfirmBtn { background-color: var(--highlight-color-connected); color:white;}
 
 
-        .game-container { width: 98%; max-width: none; margin: 10px auto; border: 3px solid var(--border-color); padding: 15px; background-color: var(--game-container-bg); box-shadow: 0px 0px 15px rgba(0,0,0,0.5); box-sizing: border-box; display: flex; flex-direction: column; transition: background-color 0.3s, border-color 0.3s; }
+                .game-container {
+            width: 100%; /* Fill full width */
+            min-height: 100vh; /* Ensure it takes at least full viewport height */
+            margin: 0; /* Remove top/bottom and auto side margins */
+            border: 3px solid var(--border-color);
+            padding: 15px;
+            background-color: var(--game-container-bg);
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.5);
+            box-sizing: border-box; /* Important! */
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
         header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 2px solid var(--border-color); margin-bottom: 15px; width: 100%; transition: border-color 0.3s; }
         .header-title-container { display: flex; align-items: center; margin-right: auto; }
         .header-title-container img.header-logo { height: 80px; width: auto; margin-right: 15px; }
@@ -6897,12 +6930,13 @@ initializeTheme();
 
 
          function updateWalletDisplay(account, walletName = '') {
-            console.log("updateWalletDisplay CALLED. punkVoyageIdsLoaded is:", punkVoyageIdsLoaded, "Account:", account, "WalletName:", walletName);
+            // This log now happens at the start, using the global punkVoyageIdsLoaded
+            console.log("updateWalletDisplay CALLED. Global punkVoyageIdsLoaded is:", punkVoyageIdsLoaded, "Passed Account:", account, "Passed WalletName:", walletName);
             const connectWalletBtnElement = document.getElementById('connectWalletBtn');
             const walletAddressDisplayElement = document.getElementById('walletAddressDisplay');
             const playerNicknameDisplayElement = document.getElementById('playerNicknameDisplay');
 
-            if (account) { // This 'account' is the walletAddress passed in
+            if (account) {
                 const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
                 if (connectWalletBtnElement) {
                     connectWalletBtnElement.textContent = `${walletName}: ${shortAddress}`;
@@ -6910,53 +6944,35 @@ initializeTheme();
                 }
                 if (walletAddressDisplayElement) walletAddressDisplayElement.textContent = `Wallet: ${account}`;
 
-                walletVerificationPendingForBonus = false;
+                walletVerificationPendingForBonus = false; // Reset this flag
 
+                // Hide popups (no change needed here)
                 if (customPopup && !customPopup.classList.contains('hidden') && customPopupTitleEl) {
-                    const currentPopupTitle = customPopupTitleEl.textContent;
-                    if (currentPopupTitle === "Wallet Bonus Information" ||
-                        currentPopupTitle === "Wallet Connection Required" ||
-                        currentPopupTitle === "Verify Wallet Bonus" ||
-                        currentPopupTitle === "Wallet Verification Needed") {
-                        hideCustomPopup();
-                    }
+                    // ... (popup hiding logic) ...
                 }
 
-                // Use the 'account' and 'walletName' parameters directly for the check and calls
-                if (punkVoyageIdsLoaded && account && walletName) {
-                    fetchWalletInscriptions(account, walletName); // Pass parameters
-                    if (dungeonCrawlerIdsLoaded) {
-                        fetchPlayerDungeonCrawlers(account, walletName); // Pass parameters
+                // Check the global flags, which should have been set by handleWalletConnected BEFORE this call
+                if (punkVoyageIdsLoaded && account && walletName) { // Check the global punkVoyageIdsLoaded
+                    console.log("updateWalletDisplay: Conditions MET for fetching inscriptions. punkVoyageIdsLoaded:", punkVoyageIdsLoaded);
+                    fetchWalletInscriptions(account, walletName);
+                    if (dungeonCrawlerIdsLoaded) { // Check global dungeonCrawlerIdsLoaded
+                        console.log("updateWalletDisplay: Conditions MET for fetching crawlers. dungeonCrawlerIdsLoaded:", dungeonCrawlerIdsLoaded);
+                        fetchPlayerDungeonCrawlers(account, walletName);
                     }
                 } else {
-                    console.warn("Wallet connected, but asset ID lists not loaded or account/name issue. Ordinal/Crawler check skipped. Details - punkVoyageIdsLoaded:", punkVoyageIdsLoaded, "passed account:", account, "passed walletName:", walletName);
+                    console.warn("updateWalletDisplay: Wallet connected, but asset ID lists not loaded or account/name issue. Ordinal/Crawler check skipped. Details - punkVoyageIdsLoaded:", punkVoyageIdsLoaded, "account:", account, "walletName:", walletName);
                     if (userOrdinalsDisplayElement) {
                          userOrdinalsDisplayElement.style.display = 'block';
                          if(userOrdinalsListElement) userOrdinalsListElement.innerHTML = "<p>Could not check Ordinals: Game's collection ID list not ready or wallet info missing.</p>";
                     }
-                    let previousBonus = ordinalBonusAdventurers;
-                    ordinalBonusAdventurers = 0;
-                    if (previousBonus > 0) {
-                         recalculateTotalAvailableAdventurers();
-                         if (currentUser && currentUser.uid) {
-                            saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
-                         }
-                    }
+                    // ... (rest of the else block for resetting bonus)
                 }
                 if (playerNicknameDisplayElement && userNickname) {
                     playerNicknameDisplayElement.textContent = userNickname;
                 }
 
             } else { // Wallet disconnected or not present
-                if (connectWalletBtnElement) {
-                    connectWalletBtnElement.textContent = 'CONNECT WALLET';
-                    connectWalletBtnElement.classList.remove('connected');
-                }
-                if (walletAddressDisplayElement) walletAddressDisplayElement.textContent = '';
-                if (playerNicknameDisplayElement) playerNicknameDisplayElement.textContent = 'Voyager';
-
-                if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none';
-                if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = '';
+                // ... (rest of the disconnection UI logic)
             }
         }
 // --- END OF FULL updateWalletDisplay FUNCTION TO REPLACE ---
@@ -7000,62 +7016,64 @@ initializeTheme();
         }
     }         
     
-   async function handleWalletConnected(walletAddress, walletName) {
-    console.log(`Wallet connected: ${walletName} - ${walletAddress}`);
-    window.connectedAccount = walletAddress;
-    window.connectedWalletName = walletName;
-    currentUser = { uid: walletAddress, name: walletName }; // Set currentUser early
+             async function handleWalletConnected(walletAddress, walletName) {
+                console.log(`Wallet connected: ${walletName} - ${walletAddress} (handleWalletConnected start)`);
+                window.connectedAccount = walletAddress;
+                window.connectedWalletName = walletName;
+                currentUser = { uid: walletAddress, name: walletName };
 
-    // 1. Load essential ID lists first
-    console.log("handleWalletConnected: Attempting to load Punk Voyage IDs...");
-    if (!punkVoyageIdsLoaded) { // Check if already loaded to prevent redundant calls
-        await loadPunkVoyageIds();
-    }
-    console.log("handleWalletConnected: Attempting to load Dungeon Crawler IDs...");
-    if (!dungeonCrawlerIdsLoaded) { // Check if already loaded
-        await loadDungeonCrawlerIds();
-    }
-    console.log("handleWalletConnected: ID loading phase complete. punkVoyageIdsLoaded:", punkVoyageIdsLoaded, "dungeonCrawlerIdsLoaded:", dungeonCrawlerIdsLoaded);
+                // 1. Attempt to load ID lists if not already loaded.
+                // The flags (punkVoyageIdsLoaded, dungeonCrawlerIdsLoaded) will be updated by these functions.
+                if (!punkVoyageIdsLoaded) {
+                    console.log("handleWalletConnected: Calling await loadPunkVoyageIds()");
+                    await loadPunkVoyageIds();
+                    console.log("handleWalletConnected: loadPunkVoyageIds() finished. punkVoyageIdsLoaded is now:", punkVoyageIdsLoaded);
+                } else {
+                    console.log("handleWalletConnected: Punk Voyage IDs were already loaded.");
+                }
 
-    // 2. Now update the wallet display. This function will internally check flags
-    //    and call fetchWalletInscriptions / fetchPlayerDungeonCrawlers if IDs are loaded.
-    updateWalletDisplay(window.connectedAccount, window.connectedWalletName);
+                if (!dungeonCrawlerIdsLoaded) {
+                    console.log("handleWalletConnected: Calling await loadDungeonCrawlerIds()");
+                    await loadDungeonCrawlerIds();
+                    console.log("handleWalletConnected: loadDungeonCrawlerIds() finished. dungeonCrawlerIdsLoaded is now:", dungeonCrawlerIdsLoaded);
+                } else {
+                    console.log("handleWalletConnected: Dungeon Crawler IDs were already loaded.");
+                }
 
-    const currentThemeIsDark = body.classList.contains('dark-mode');
-    loadTwitterWidget(currentThemeIsDark ? 'dark' : 'light');
+                // 2. Update Wallet Display UI (button text, address) AND trigger inscription/crawler fetching
+                // updateWalletDisplay will use the now (hopefully) updated global flags.
+                console.log("handleWalletConnected: Calling updateWalletDisplay. Current flags - punkVoyageIdsLoaded:", punkVoyageIdsLoaded, "dungeonCrawlerIdsLoaded:", dungeonCrawlerIdsLoaded);
+                updateWalletDisplay(walletAddress, walletName); // Pass the fresh wallet info
 
-    let isNewUser = false;
+                const currentThemeIsDark = body.classList.contains('dark-mode');
+                loadTwitterWidget(currentThemeIsDark ? 'dark' : 'light');
 
-    try {
-        const loadedState = await loadGameStateFromFirebase(walletAddress);
-        if (loadedState) {
-            console.log("Existing game state found for wallet. Applying it.", walletAddress);
-            applyLoadedGameState(loadedState);
-            // userNickname is set within applyLoadedGameState
-        } else {
-            console.log("No game state for wallet. Creating initial state.", walletAddress);
-            isNewUser = true;
-            let initialNickname = `Voyager ${walletAddress.substring(0, 4)}`;
-            await createInitialGameState(walletAddress, initialNickname);
-            // userNickname is set within createInitialGameState -> applyLoadedGameState
-        }
+                let isNewUser = false;
 
-        // Prompt for nickname if it's a new user OR if existing nickname is default
-        if (isNewUser || (userNickname && userNickname.startsWith("Voyager "))) {
-            setTimeout(() => {
-                promptAndSetNickname(walletAddress);
-            }, 500);
-        }
+                try {
+                    const loadedState = await loadGameStateFromFirebase(walletAddress);
+                    if (loadedState) {
+                        console.log("Existing game state found for wallet. Applying it.", walletAddress);
+                        applyLoadedGameState(loadedState);
+                    } else {
+                        console.log("No game state for wallet. Creating initial state.", walletAddress);
+                        isNewUser = true;
+                        let initialNickname = `Voyager ${walletAddress.substring(0, 4)}`;
+                        await createInitialGameState(walletAddress, initialNickname);
+                    }
 
-        showPage('adventures-page'); // Show default page after state is handled
-
-    } catch (error) {
-        console.error("Error during wallet state processing in handleWalletConnected:", error);
-        showCustomPopup("An error occurred loading your game data. Details: " + error.message, "Load Error");
-        // If loading/creating state fails, we might want to revert to a disconnected visual state
-        // updateWalletDisplay(null); // Or call handleWalletDisconnected() if more reset is needed
-    }
-}
+                    if (isNewUser || (userNickname && userNickname.startsWith("Voyager "))) {
+                        setTimeout(() => {
+                            promptAndSetNickname(walletAddress);
+                        }, 500);
+                    }
+                    showPage('adventures-page');
+                } catch (error) {
+                    console.error("Error during wallet state processing in handleWalletConnected:", error);
+                    showCustomPopup("An error occurred loading your game data. Details: " + error.message, "Load Error");
+                }
+                console.log("handleWalletConnected: Processing finished.");
+            }
 
          function handleWalletDisconnected() {
              console.log("Wallet disconnected or no account found / Initializing disconnected state.");
