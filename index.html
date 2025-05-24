@@ -8,7 +8,7 @@
     <script src="https://unpkg.com/@sats-connect/core@latest/dist/bundles/sats-connect.js"></script>
     <style>
         :root {
-        --body-bg-image-url: url('https://raw.githubusercontent.com/nvoiy/pvadventures/main/background.jpg');
+    --body-bg-image-url: none;
             --border-color: #000000;
             --text-color: #000000;
             --label-color: #333333; 
@@ -74,36 +74,6 @@
         --item-upgrade-plus4-border: #FF8C00; 
         --item-upgrade-plus5-border: #FF4500; 
         }
-        
-        #welcomeScreen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: var(--body-bg-image-url); 
-            background-size: cover; 
-            background-position: center; 
-            background-repeat: no-repeat;
-            display: flex; 
-            flex-direction: column; justify-content: center; align-items: center;
-            z-index: 3000; text-align: center; padding: 20px; box-sizing: border-box;
-            overflow-y: auto; 
-        }
-        #welcomeImageLarge { display: block; margin: 0 auto 20px auto; max-width: 80%; max-height: 50vh; object-fit: contain; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
-        #authFormContainer { background-color: var(--section-bg); padding: 20px 30px; border-radius: 10px; border: 2px solid var(--border-color); box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: background-color 0.3s, border-color 0.3s; z-index: 3001; width: 100%; max-width: 480px; }
-        #authFormContainer h2 { margin-top: 0; margin-bottom: 15px; font-size: 1.8em; color: var(--label-color); transition: color 0.3s; }
-        body.dark-mode #authFormContainer h2 {  color: var(--orange-label); }
-        .auth-form-field { margin-bottom: 12px; text-align: left; }
-        .auth-form-field label { display: block; margin-bottom: 4px; font-size: 1.0em; color: var(--label-color); font-weight: bold; transition: color 0.3s; }
-        body.dark-mode .auth-form-field label {  color: var(--orange-label); }
-        .auth-form-field input { font-family: 'VT323', monospace; font-size: 1.1em; padding: 8px; border: 2px solid var(--border-color); background-color: var(--dropdown-bg); color: var(--text-color); border-radius: 5px; width: calc(100% - 20px); box-sizing: border-box; transition: background-color 0.3s, border-color 0.3s, color 0.3s; }
-        .auth-buttons { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; margin-bottom: 10px; }
-        #loginButton, #registerButton, #googleSignInButton { font-family: 'VT323', monospace; font-size: 1.2em; padding: 10px 15px; cursor: pointer; border-radius: 5px; transition: background-color 0.2s; width: 100%; box-sizing: border-box; }
-        #loginButton, #registerButton { background-color: var(--highlight-color-connected); color: #FFFFFF; border: 2px solid #3c8c3c; }
-        #loginButton:hover, #registerButton:hover { background-color: #3e8e41; }
-        #googleSignInButton { background-color: #4285F4; color: white; border: 2px solid #3578E5; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        #googleSignInButton:hover { background-color: #3367D6; }
-        #googleSignInButton img {  height: 20px; width: 20px; background-color: white; border-radius: 2px; }
-        .auth-links-container {  margin-top: 15px; }
-        #authToggleLink, #forgotPasswordLink { display: inline-block; margin: 5px 10px; font-size: 0.9em; color: var(--highlight-color-pv); cursor: pointer; text-decoration: underline; }
-        #authToggleLink:hover, #forgotPasswordLink:hover { color: var(--highlight-color-gold); }
 
         .hidden { display: none !important; }
 
@@ -730,41 +700,8 @@
 </head>
 <body>
     <div id="itemTooltip"></div> <!-- Tooltip Element -->
-    <div id="welcomeScreen">
-        <img id="welcomeImageLarge" src="https://raw.githubusercontent.com/nvoiy/pvadventures/main/ENTRY.gif" alt="Punk Voyage Adventures Welcome">
-        <div id="authFormContainer">
-            <h2 id="authFormTitle">Login to Punk Voyage Adventures</h2>
-            <form id="loginRegisterForm">
-                <div class="auth-form-field">
-                    <label for="authEmail">Email:</label>
-                    <input type="email" id="authEmail" autocomplete="email">
-                </div>
-                <div class="auth-form-field">
-                    <label for="authPassword">Password:</label>
-                    <input type="password" id="authPassword" autocomplete="current-password">
-                <small style="display: block; font-size: 0.8em; opacity: 0.7; margin-top: 3px;">(Password must be at least 6 characters long.)</small>
-                </div>
-                <div class="auth-form-field hidden" id="authNicknameField">
-                    <label for="authNickname">Nickname (for in-game display):</label>
-                    <input type="text" id="authNickname" maxlength="20">
-                </div>
-                <div class="auth-buttons">
-                    <button type="button" id="loginButton">Login</button>
-                    <button type="button" id="registerButton" class="hidden">Register</button>
-                </div>
-            </form>
-            <button type="button" id="googleSignInButton">
-                <img src="https://beige-managing-snail-510.mypinata.cloud/ipfs/bafkreidpivlm24hjxcx7wlknozui7lgwpbtoaeio7dqqeg3b4drbcpwesu" alt="Google G Logo">
-                Sign in with Google
-            </button>
-            <div class="auth-links-container">
-                <a id="authToggleLink">Need an account? Register</a>
-                <a id="forgotPasswordLink">Forgot Password?</a>
-            </div>
-        </div>
-    </div>
 
-    <div class="game-container hidden" id="gameContainer">
+    <div class="game-container" id="gameContainer">
         <header> 
         <div class="header-title-container">
             <h1>PUNK VOYAGE ADVENTURES</h1>
@@ -777,7 +714,7 @@
                     <div class="wallet-connector"><button class="connect-wallet-btn" id="connectWalletBtn">CONNECT WALLET</button><ul class="wallet-dropdown" id="walletDropdown"><li data-wallet="xverse_provider">XVERSE</li><li data-wallet="unisat">UNISAT</li></ul>
                     </div> 
                 </div>
-                 <button id="signOutButton" class="hidden">Sign Out</button> 
+     
                 <nav class="socials-nav" id="headerSocialsNav"> 
                     <div class="social-title">SOCIALS</div> 
                     <div class="social-buttons"> 
@@ -1324,22 +1261,6 @@ function updateAdventureCardPvDisplay() {
             const GAME_HOUR_IN_REAL_SECONDS = 1; 
             const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
 
-
-            // --- HTML Element Constants ---
-            const welcomeScreen = document.getElementById('welcomeScreen');
-            const authFormContainer = document.getElementById('authFormContainer');
-            const authFormTitle = document.getElementById('authFormTitle');
-            const loginRegisterForm = document.getElementById('loginRegisterForm');
-            const authEmailInput = document.getElementById('authEmail');
-            const authPasswordInput = document.getElementById('authPassword');
-            const authNicknameField = document.getElementById('authNicknameField');
-            const authNicknameInput = document.getElementById('authNickname');
-            const loginButton = document.getElementById('loginButton');
-            const registerButton = document.getElementById('registerButton');
-            const googleSignInButton = document.getElementById('googleSignInButton'); 
-            const authToggleLink = document.getElementById('authToggleLink');
-            const forgotPasswordLink = document.getElementById('forgotPasswordLink');
-            const signOutButton = document.getElementById('signOutButton');
 
             const gameContainer = document.getElementById('gameContainer');
             const playerNicknameDisplay = document.getElementById('playerNicknameDisplay');
@@ -2075,92 +1996,6 @@ function showCustomPopup(message, title = "Notification", options = {}) {
                 });
             }
 
-            // --- Firebase Auth State Change Listener ---
-            onAuthStateChanged(auth, async (user) => {
-                currentUser = user;
-                if (user) {
-                    // User is signed in or has just signed up
-                    console.log("Auth state changed: User is present.", user.uid, user.email);
-                    welcomeScreen.classList.add('hidden');
-                    gameContainer.classList.remove('hidden');
-                    signOutButton.classList.remove('hidden');
-
-                    if (user.email && user.email.toLowerCase() === 'nvoiysol@gmail.com' && adminRafflePanel) {
-                        adminRafflePanel.classList.remove('hidden');
-                    } else if (adminRafflePanel) {
-                        adminRafflePanel.classList.add('hidden');
-                    }
-
-                    const currentThemeIsDark = body.classList.contains('dark-mode');
-                    loadTwitterWidget(currentThemeIsDark ? 'dark' : 'light');
-
-                    try {
-                        const loadedState = await loadGameStateFromFirebase(user.uid);
-
-                        if (loadedState) {
-                            // EXISTING USER WITH SAVED DATA
-                            console.log("User has existing game state. Applying it.", user.uid);
-                            applyLoadedGameState(loadedState);
-                        } else {
-                            // NEW USER (or user whose data was not found/corrupted)
-                            console.log("No existing game state found for user. Will create initial state.", user.uid);
-                            let nicknameToUseForNewUser = "Voyager"; // Default
-
-                            // This block should only be relevant if it's truly a new sign-up,
-                            // and the welcomeScreen elements are still technically accessible.
-                            if (authNicknameInput && authNicknameInput.value.trim() !== "") {
-                                // This is the primary way to get nickname for new email/password registration
-                                nicknameToUseForNewUser = authNicknameInput.value.trim();
-                                console.log("Determined nickname for new user from authNicknameInput:", nicknameToUseForNewUser);
-                            } else if (user.displayName && user.displayName.trim() !== "") {
-                                // Fallback for Google Sign-In or if authNicknameInput was somehow cleared
-                                nicknameToUseForNewUser = user.displayName.trim();
-                                console.log("Determined nickname for new user from user.displayName:", nicknameToUseForNewUser);
-                            } else {
-                                console.log("Could not determine nickname from form or user.displayName. Defaulting to:", nicknameToUseForNewUser);
-                            }
-
-                            await createInitialGameState(user.uid, nicknameToUseForNewUser);
-
-                            // Clear the auth form fields after successful use for a new user.
-                            // This helps prevent stale data if the user logs out and then tries to register again in the same session.
-                            if(loginRegisterForm) loginRegisterForm.reset();
-                            if(authNicknameInput) authNicknameInput.value = ''; // Specifically clear nickname
-                        }
-                        showPage('adventures-page'); // Show the default game page
-                        await loadPunkVoyageIds(); // Load the fixed list of IDs
-                        await loadDungeonCrawlerIds();
-
-                    } catch (error) {
-                        console.error("Error during user state processing in onAuthStateChanged:", error);
-                        showCustomPopup("An error occurred loading your game data. Please try logging out and back in. Details: " + error.message, "Load Error");
-                        // Optionally, sign the user out if loading fails catastrophically
-                        // await fbSignOut(auth);
-                    }
-
-                } else {
-                    // User is signed out
-                    console.log("Auth state changed: User is signed out.");
-                    currentUser = null;
-                    userNickname = ''; // Clear global nickname
-                    welcomeScreen.classList.remove('hidden');
-                    gameContainer.classList.add('hidden');
-                    signOutButton.classList.add('hidden');
-                    if (adminRafflePanel) adminRafflePanel.classList.add('hidden');
-
-                    resetGameStateToDefaults(); // Reset all game variables to their initial empty/default states
-                    updateStatsDisplay();       // Update UI to reflect reset state
-                    updateWalletDisplay(null);  // Clear wallet display
-
-                    // Reset the auth form to its default (login) state
-                    if (authFormTitle) authFormTitle.textContent = "Login to Punk Voyage Adventures";
-                    if (authNicknameField) authNicknameField.classList.add('hidden');
-                    if (loginButton) loginButton.classList.remove('hidden');
-                    if (registerButton) registerButton.classList.add('hidden');
-                    if (authToggleLink) authToggleLink.textContent = "Need an account? Register";
-                    if (loginRegisterForm) loginRegisterForm.reset(); // Clear any typed text
-                }
-            });
             
 function resetGameStateToDefaults() {
     currentPvTokens = 0; currentGold = 0; currentDiamonds = 0;
@@ -7136,84 +6971,74 @@ async function fetchPlayerDungeonCrawlers(userAddress, walletName) {
 
 
 
-function updateWalletDisplay(account, walletName = '') {
-    if (account) {
-        const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
-        if (connectWalletBtn) {
-            connectWalletBtn.textContent = `${walletName}: ${shortAddress}`;
-            connectWalletBtn.classList.add('connected');
-        }
-        if (walletAddressDisplay) walletAddressDisplay.textContent = `Wallet: ${account}`;
+     function updateWalletDisplay(account, walletName = '') {
+         if (account) {
+             const shortAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
+             if (connectWalletBtn) {
+                 connectWalletBtn.textContent = `${walletName}: ${shortAddress}`;
+                 connectWalletBtn.classList.add('connected');
+             }
+             if (walletAddressDisplay) walletAddressDisplay.textContent = `Wallet: ${account}`;
 
-        // Wallet is now connected, so verification is no longer pending from a previous state.
-        walletVerificationPendingForBonus = false;
+             walletVerificationPendingForBonus = false;
 
-        // Hide any wallet verification related popups that might have been shown
-        if (customPopup && !customPopup.classList.contains('hidden') && customPopupTitleEl) {
-            const currentPopupTitle = customPopupTitleEl.textContent;
-            if (currentPopupTitle === "Wallet Bonus Information" ||
-                currentPopupTitle === "Wallet Connection Required" || // Kept for safety from older states
-                currentPopupTitle === "Verify Wallet Bonus" ||      // Kept for safety
-                currentPopupTitle === "Wallet Verification Needed") {
-                hideCustomPopup();
-            }
-        }
-
-        // Now that wallet is connected and flags are cleared, fetch inscriptions
-        if (punkVoyageIdsLoaded && connectedAccount && connectedWalletName) {
-            console.log(`DEBUG updateWalletDisplay: punkVoyageIdsLoaded: ${punkVoyageIdsLoaded}, PUNK_VOYAGE_IDS_SET size: ${PUNK_VOYAGE_IDS_SET ? PUNK_VOYAGE_IDS_SET.size : 'undefined'}`);
-            fetchWalletInscriptions(connectedAccount, connectedWalletName);
-            // fetchWalletInscriptions will update ordinalBonusAdventurers, call recalculateTotalAvailableAdventurers, and save.
-            
-            // +++ FETCH DUNGEON CRAWLERS +++
-            if (dungeonCrawlerIdsLoaded) {
-                fetchPlayerDungeonCrawlers(connectedAccount, connectedWalletName);
-            } else {
-                console.warn("Dungeon Crawler IDs not loaded, skipping fetch for them.");
-            }
-            // +++ END FETCH DUNGEON CRAWLERS +++
-        } else {
-            console.warn("Wallet connected, but Punk Voyage IDs not loaded or connectedAccount/Name is an issue. Ordinal check skipped. Bonus will be 0.");
-            if (userOrdinalsDisplayElement) {
-                 userOrdinalsDisplayElement.style.display = 'block';
-                 if(userOrdinalsListElement) userOrdinalsListElement.innerHTML = "<p>Could not check Ordinals: Game's collection ID list not ready.</p>";
-            }
-            // If we can't check, assume no bonus for safety in this session part
-            let previousBonus = ordinalBonusAdventurers;
-            ordinalBonusAdventurers = 0;
-            if (previousBonus > 0) { // Only recalc if it actually changes
-                 recalculateTotalAvailableAdventurers(); // This updates UI
-                 if (currentUser && currentUser.uid) { // Save the new 0 bonus state
-                    saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
+             if (customPopup && !customPopup.classList.contains('hidden') && customPopupTitleEl) {
+                 const currentPopupTitle = customPopupTitleEl.textContent;
+                 if (currentPopupTitle === "Wallet Bonus Information" ||
+                     currentPopupTitle === "Wallet Connection Required" ||
+                     currentPopupTitle === "Verify Wallet Bonus" ||
+                     currentPopupTitle === "Wallet Verification Needed") {
+                     hideCustomPopup();
                  }
-            }
-        }
+             }
 
-    } else { // Wallet disconnected or not present
-        if (connectWalletBtn) {
-            connectWalletBtn.textContent = 'CONNECT WALLET';
-            connectWalletBtn.classList.remove('connected');
-        }
-        if (walletAddressDisplay) walletAddressDisplay.textContent = '';
+             if (punkVoyageIdsLoaded && connectedAccount && connectedWalletName) {
+                 fetchWalletInscriptions(connectedAccount, connectedWalletName);
+                 if (dungeonCrawlerIdsLoaded) {
+                     fetchPlayerDungeonCrawlers(connectedAccount, connectedWalletName);
+                 }
+             } else {
+                 console.warn("Wallet connected, but asset ID lists not loaded or account/name issue. Ordinal/Crawler check skipped.");
+                 if (userOrdinalsDisplayElement) {
+                      userOrdinalsDisplayElement.style.display = 'block';
+                      if(userOrdinalsListElement) userOrdinalsListElement.innerHTML = "<p>Could not check Ordinals: Game's collection ID list not ready.</p>";
+                 }
+                 let previousBonus = ordinalBonusAdventurers;
+                 ordinalBonusAdventurers = 0;
+                 if (previousBonus > 0) {
+                      recalculateTotalAvailableAdventurers();
+                      if (currentUser && currentUser.uid) {
+                         saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
+                      }
+                 }
+             }
+             // Consider if playerNicknameDisplay needs an update here if nickname comes from wallet/ENS
+             if (playerNicknameDisplay && userNickname) { // Update nickname display if available
+                 playerNicknameDisplay.textContent = userNickname;
+             }
 
-        if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none';
-        if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = '';
 
-        // If wallet disconnects, the saved bonus might make walletVerificationPendingForBonus = true on next load.
-        // For the current session, if wallet disconnects, active bonus is lost.
-        if (connectedAccount !== null || connectedWalletName !== null) { // only if there WAS a connection
-            let previousBonusBeforeDisconnect = ordinalBonusAdventurers;
-            ordinalBonusAdventurers = 0;
-            // walletVerificationPendingForBonus will be determined on next app load/login if a bonus was saved
-            recalculateTotalAvailableAdventurers();
-            if (currentUser && currentUser.uid && previousBonusBeforeDisconnect !== 0) {
-                saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
-            }
-        }
-        connectedAccount = null;
-        connectedWalletName = null;
-    }
-}
+         } else { // Wallet disconnected or not present (this part handles UI for disconnection)
+             if (connectWalletBtn) {
+                 connectWalletBtn.textContent = 'CONNECT WALLET';
+                 connectWalletBtn.classList.remove('connected');
+             }
+             if (walletAddressDisplay) walletAddressDisplay.textContent = '';
+             if (playerNicknameDisplay) playerNicknameDisplay.textContent = 'Voyager'; // Reset nickname display
+
+             if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none';
+             if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = '';
+             
+             // If a wallet was previously connected and is now disconnected
+             if (connectedAccount !== null || connectedWalletName !== null) {
+                 console.log("Wallet was connected, now disconnecting session.");
+                 handleWalletDisconnected(); // Call the centralized disconnect handler
+             }
+             // These are already set in handleWalletDisconnected
+             // connectedAccount = null;
+             // connectedWalletName = null;
+         }
+     }
 // --- END OF FULL updateWalletDisplay FUNCTION TO REPLACE ---
             if(connectWalletBtn && walletDropdown) { connectWalletBtn.addEventListener('click', (event) => { event.stopPropagation(); walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block'; }); document.addEventListener('click', (event) => { if (walletDropdown && connectWalletBtn && !connectWalletBtn.contains(event.target) && !walletDropdown.contains(event.target)) { walletDropdown.style.display = 'none'; } }); }
        async function connectWithSatsConnect(walletTypeHint = null) {
@@ -7254,29 +7079,91 @@ function updateWalletDisplay(account, walletName = '') {
             showCustomPopup(`An error occurred with SatsConnect: ${e.message || 'Unknown error'}`, 'Wallet Error');
         }
     }         
+    
+     async function handleWalletConnected(walletAddress, walletName) {
+             console.log(`Wallet connected: ${walletName} - ${walletAddress}`);
+             connectedAccount = walletAddress;
+             connectedWalletName = walletName;
+             currentUser = { uid: walletAddress, name: walletName }; // Set a simplified currentUser
+
+             updateWalletDisplay(connectedAccount, connectedWalletName); // Update button text etc.
+
+             // Game container should already be visible due to HTML changes
+             // gameContainer.classList.remove('hidden');
+
+             const currentThemeIsDark = body.classList.contains('dark-mode');
+             loadTwitterWidget(currentThemeIsDark ? 'dark' : 'light');
+
+             try {
+                 const loadedState = await loadGameStateFromFirebase(walletAddress);
+                 if (loadedState) {
+                     console.log("Existing game state found for wallet. Applying it.", walletAddress);
+                     applyLoadedGameState(loadedState);
+                     if (!loadedState.nickname || loadedState.nickname.startsWith("Voyager ")) {
+                         // Optionally prompt to set nickname if it's default or missing
+                         // promptSetNickname(walletAddress, loadedState.nickname);
+                     }
+                 } else {
+                     console.log("No game state for wallet. Creating initial state.", walletAddress);
+                     // For nickname, use a default or prompt user
+                     let initialNickname = `Voyager ${walletAddress.substring(0, 4)}`;
+                     // You might want a popup here to ask for a nickname
+                     // For now, using a default:
+                     await createInitialGameState(walletAddress, initialNickname);
+                 }
+                 showPage('adventures-page');
+                 if (!punkVoyageIdsLoaded) await loadPunkVoyageIds();
+                 if (!dungeonCrawlerIdsLoaded) await loadDungeonCrawlerIds();
+
+                 // These are now called within updateWalletDisplay after connection
+                 // if (punkVoyageIdsLoaded) fetchWalletInscriptions(connectedAccount, connectedWalletName);
+                 // if (dungeonCrawlerIdsLoaded) fetchPlayerDungeonCrawlers(connectedAccount, connectedWalletName);
+
+             } catch (error) {
+                 console.error("Error during wallet state processing:", error);
+                 showCustomPopup("An error occurred loading your game data. Details: " + error.message, "Load Error");
+             }
+         }
+
+         function handleWalletDisconnected() {
+             console.log("Wallet disconnected or no account found.");
+             currentUser = null;
+             userNickname = '';
+             connectedAccount = null;
+             connectedWalletName = null;
+
+             // gameContainer.classList.add('hidden'); // Game stays visible, but state resets
+             // welcomeScreen.classList.remove('hidden'); // No welcome screen anymore
+
+             resetGameStateToDefaults();
+             updateStatsDisplay();
+             updateWalletDisplay(null); // Update button to "CONNECT WALLET"
+
+             // Optionally, navigate to a default "please connect" page or disable interactions
+             showPage('adventures-page'); // Or a dedicated "Connect Wallet to Play" page
+             if(sidebarActiveAdventuresList) sidebarActiveAdventuresList.innerHTML = '<p style="text-align:center;">Connect wallet to see active tasks.</p>';
+
+         }
+    
     async function connectUnisat() {
     try {
         if (typeof window.unisat !== 'undefined') {
             const accounts = await window.unisat.requestAccounts();
             if (accounts && accounts.length > 0) {
-                connectedAccount = accounts[0];
-                connectedWalletName = 'UniSat';
-                updateWalletDisplay(connectedAccount, 'UniSat');
-                // ADD THIS LINE:
-                if (punkVoyageIdsLoaded) fetchWalletInscriptions(connectedAccount, connectedWalletName);
-                                if (dungeonCrawlerIdsLoaded && connectedAccount) fetchPlayerDungeonCrawlers(connectedAccount, connectedWalletName);
+                const walletAddress = accounts[0];
+                const walletName = 'UniSat';
+                await handleWalletConnected(walletAddress, walletName); // New call
 
-
-                window.unisat.on('accountsChanged', (newAccs) => {
-                    if (connectedWalletName === 'UniSat') {
-                        connectedAccount = (newAccs && newAccs.length > 0) ? newAccs[0] : null;
-                        if (!connectedAccount) connectedWalletName = null;
-                        updateWalletDisplay(connectedAccount, connectedAccount ? 'UniSat' : '');
-                        // ADD THIS LINE (for account changes):
-                        if (punkVoyageIdsLoaded && connectedAccount) fetchWalletInscriptions(connectedAccount, connectedWalletName);
-                                                if (dungeonCrawlerIdsLoaded && connectedAccount) fetchPlayerDungeonCrawlers(connectedAccount, connectedWalletName);
-
-                        else if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none'; // Hide if no account
+                window.unisat.on('accountsChanged', async (newAccs) => { // Make async
+                    if (walletName === 'UniSat') { // Use the captured walletName
+                        const newAddress = (newAccs && newAccs.length > 0) ? newAccs[0] : null;
+                        if (newAddress !== connectedAccount) { // Only if address actually changed
+                            if (newAddress) {
+                                await handleWalletConnected(newAddress, walletName);
+                            } else {
+                                handleWalletDisconnected();
+                            }
+                        }
                     }
                 });
             }
@@ -7423,6 +7310,8 @@ if (walletOptions) {
                 }
             });
         }
+        handleWalletDisconnected(); // This will reset state and prompt for connection
+initializeTheme();
         }); // End of 'firebaseReady' event listener
     </script>
 </body>
