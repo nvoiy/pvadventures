@@ -4423,38 +4423,63 @@ function updateAdventureDisplayStates() {
             async function handleDrawWinners(event) { await drawRaffleWinners(event.target.dataset.raffleId, false); }
             async function handleDrawNow(event) { await drawRaffleWinners(event.target.dataset.raffleId, true); }
             async function handleDeleteRaffle(event) { if (!currentUser || !currentUser.email || currentUser.email.toLowerCase() !== 'nvoiysol@gmail.com' || !db) return; const raffleId = event.target.dataset.raffleId; const raffleName = allRaffles.find(r => r.id === raffleId)?.name || "this raffle"; if (confirm(`Are you sure you want to delete "${raffleName}"? This cannot be undone.`)) { const raffleDocRef = doc(db, "raffles", raffleId); try { await deleteDoc(raffleDocRef); showCustomPopup(`Raffle "${raffleName}" deleted.`, "Admin Action"); await fetchAndDisplayRaffles(); } catch (error) { console.error("Error deleting raffle:", error); showCustomPopup("Failed to delete raffle.", "Admin Error"); } }}
-async function loadPunkVoyageIds() { // This was originally line 2414
-    console.log("loadPunkVoyageIds: Loading embedded Punk Voyage inscription IDs.");
-    try {
-        // PASTE YOUR 1665 IDs HERE, formatted as a JavaScript array
-        // It should look like: const idsArray = [ "id1", "id2", "id3", ... ];
-        const idsArray = [
-    "0bad7bab126b907355c767d29128b2d762999b8d50acd8f5eebb31418ce7b485i527",
-    "f217c636d35a75756e4965135547a72b4b35bd9527cd6510d25a56153d3a1398i1012"
-];
+async function loadPunkVoyageIds() {
+    console.log("loadPunkVoyageIds: Function CALLED. Current punkVoyageIdsLoaded state:", punkVoyageIdsLoaded); // Log entry and current flag state
 
-        if (!Array.isArray(idsArray) || idsArray.length === 0) {
-            console.error("loadPunkVoyageIds: Embedded idsArray is not a valid non-empty array. Make sure you pasted your IDs correctly between the brackets [ ... ] and that each ID is a string in quotes, separated by commas.");
+    // If already loaded, no need to re-process. This can prevent issues if called multiple times.
+    if (punkVoyageIdsLoaded) {
+        console.log("loadPunkVoyageIds: Already loaded. Skipping.");
+        return true;
+    }
+
+    try {
+        console.log("loadPunkVoyageIds: Attempting to define idsArray.");
+        // For testing with a small, known-good array:
+        const idsArray = [
+            "0bad7bab126b907355c767d29128b2d762999b8d50acd8f5eebb31418ce7b485i527", // Example ID 1
+            "f217c636d35a75756e4965135547a72b4b35bd9527cd6510d25a56153d3a1398i1012"  // Example ID 2
+            // --- OR ---
+            // Put your full array back here once the fundamental loading issue is solved
+            // Make sure there are NO syntax errors (extra/missing commas, quotes)
+        ];
+        console.log("loadPunkVoyageIds: idsArray defined. Length:", idsArray.length);
+
+        if (!Array.isArray(idsArray)) { // Added a more specific check
+            console.error("loadPunkVoyageIds: idsArray is NOT an array after definition. This is unexpected.");
             if(userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'block';
-            if(userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>Error: Collection ID list is empty or invalid. Please check the code.</p>`;
-            PUNK_VOYAGE_IDS_SET = new Set();
-            punkVoyageIdsLoaded = false; // Explicitly set flag
+            if(userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>Error: Collection ID list is malformed (not an array).</p>`;
+            punkVoyageIdsLoaded = false; // Ensure flag is false on error
             return false;
         }
 
+        if (idsArray.length === 0) { // Check for empty array specifically
+            console.warn("loadPunkVoyageIds: Embedded idsArray is empty. No Punk Voyage IDs will be checked.");
+            // If an empty list is valid (meaning user owns 0 of your collection type),
+            // then this might be okay, but the "not ready" message implies it's an issue.
+            // For now, let's assume an empty list after trying to load is an issue for the bonus.
+            if(userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'block';
+            if(userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>Warning: Game's collection ID list is empty.</p>`;
+            PUNK_VOYAGE_IDS_SET = new Set(); // Ensure set is empty
+            punkVoyageIdsLoaded = true; // Set to true, as the "loading" process (of an empty list) completed.
+                                       // The subsequent check in fetchWalletInscriptions will find 0 owned.
+            console.log("loadPunkVoyageIds: Set punkVoyageIdsLoaded to true (for empty list).");
+            return true; // Indicate successful loading of an empty list.
+        }
+
         PUNK_VOYAGE_IDS_SET = new Set(idsArray);
-        console.log(`loadPunkVoyageIds: Successfully loaded ${PUNK_VOYAGE_IDS_SET.size} Punk Voyage inscription IDs from embedded array.`);
-        punkVoyageIdsLoaded = true; // Explicitly set flag
-        return true;
+        console.log(`loadPunkVoyageIds: Successfully processed ${PUNK_VOYAGE_IDS_SET.size} IDs into PUNK_VOYAGE_IDS_SET. Setting punkVoyageIdsLoaded to true.`);
+        punkVoyageIdsLoaded = true; // CRITICAL: Set the global flag
+        return true; // Indicate success
+
     } catch (error) {
-        console.error('loadPunkVoyageIds: Error processing embedded IDs:', error);
+        console.error('loadPunkVoyageIds: CRITICAL ERROR processing embedded IDs:', error, error.stack); // Log stack for more details
         if(userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'block';
-        if(userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>Error: Could not process embedded collection ID list. Error: ${error.message}</p>`;
-        PUNK_VOYAGE_IDS_SET = new Set();
-        punkVoyageIdsLoaded = false; // Explicitly set flag
-        return false;
+        if(userOrdinalsListElement) userOrdinalsListElement.innerHTML = `<p>Critical Error: Could not process embedded collection ID list. Error: ${error.message}</p>`;
+        PUNK_VOYAGE_IDS_SET = new Set(); // Reset the set on error
+        punkVoyageIdsLoaded = false;     // CRITICAL: Ensure flag is false on error
+        return false; // Indicate failure
     }
-} // This was originally line 2444
+}
 
    async function loadDungeonCrawlerIds() {
         console.log("loadDungeonCrawlerIds: Attempting to load Dungeon Crawler inscription IDs.");
@@ -5314,50 +5339,51 @@ initializeTheme();
         }
     }         
     
-     async function handleWalletConnected(walletAddress, walletName) {
-                console.log(`Wallet connected: ${walletName} - ${walletAddress}`);
-                window.connectedAccount = walletAddress;      // Use window.
-                window.connectedWalletName = walletName;    // Use window.
-                currentUser = { uid: walletAddress, name: walletName };
+        async function handleWalletConnected(walletAddress, walletName) {
+            console.log(`Wallet connected: ${walletName} - ${walletAddress}`);
+            window.connectedAccount = walletAddress;
+            window.connectedWalletName = walletName;
+            currentUser = { uid: walletAddress, name: walletName };
 
-                updateWalletDisplay(window.connectedAccount, window.connectedWalletName);
+            updateWalletDisplay(window.connectedAccount, window.connectedWalletName);
 
-             // Game container should already be visible due to HTML changes
-             // gameContainer.classList.remove('hidden');
+            const currentThemeIsDark = body.classList.contains('dark-mode');
+            loadTwitterWidget(currentThemeIsDark ? 'dark' : 'light');
 
-             const currentThemeIsDark = body.classList.contains('dark-mode');
-             loadTwitterWidget(currentThemeIsDark ? 'dark' : 'light');
+            let isNewUser = false; // Flag to track if this is a first-time connection for this wallet
 
-             try {
-                 const loadedState = await loadGameStateFromFirebase(walletAddress);
-                 if (loadedState) {
-                     console.log("Existing game state found for wallet. Applying it.", walletAddress);
-                     applyLoadedGameState(loadedState);
-                     if (!loadedState.nickname || loadedState.nickname.startsWith("Voyager ")) {
-                         // Optionally prompt to set nickname if it's default or missing
-                         // promptSetNickname(walletAddress, loadedState.nickname);
-                     }
-                 } else {
-                     console.log("No game state for wallet. Creating initial state.", walletAddress);
-                     // For nickname, use a default or prompt user
-                     let initialNickname = `Voyager ${walletAddress.substring(0, 4)}`;
-                     // You might want a popup here to ask for a nickname
-                     // For now, using a default:
-                     await createInitialGameState(walletAddress, initialNickname);
-                 }
-                 showPage('adventures-page');
-                 if (!punkVoyageIdsLoaded) await loadPunkVoyageIds();
-                 if (!dungeonCrawlerIdsLoaded) await loadDungeonCrawlerIds();
+            try {
+                const loadedState = await loadGameStateFromFirebase(walletAddress);
+                if (loadedState) {
+                    console.log("Existing game state found for wallet. Applying it.", walletAddress);
+                    applyLoadedGameState(loadedState);
+                    // userNickname is set within applyLoadedGameState
+                } else {
+                    console.log("No game state for wallet. Creating initial state.", walletAddress);
+                    isNewUser = true;
+                    let initialNickname = `Voyager ${walletAddress.substring(0, 4)}`;
+                    await createInitialGameState(walletAddress, initialNickname);
+                    // userNickname is set within createInitialGameState -> applyLoadedGameState
+                }
 
-                 // These are now called within updateWalletDisplay after connection
-                 // if (punkVoyageIdsLoaded) fetchWalletInscriptions(connectedAccount, connectedWalletName);
-                 // if (dungeonCrawlerIdsLoaded) fetchPlayerDungeonCrawlers(connectedAccount, connectedWalletName);
+                // Prompt for nickname if it's a new user OR if existing nickname is default
+                if (isNewUser || (userNickname && userNickname.startsWith("Voyager "))) {
+                    // Use a timeout to ensure any welcome popups from createInitialGameState clear first
+                    setTimeout(() => {
+                        promptAndSetNickname(walletAddress);
+                    }, 500); // Small delay
+                }
 
-             } catch (error) {
-                 console.error("Error during wallet state processing:", error);
-                 showCustomPopup("An error occurred loading your game data. Details: " + error.message, "Load Error");
-             }
-         }
+
+                showPage('adventures-page');
+                if (!punkVoyageIdsLoaded) await loadPunkVoyageIds();
+                if (!dungeonCrawlerIdsLoaded) await loadDungeonCrawlerIds();
+
+            } catch (error) {
+                console.error("Error during wallet state processing:", error);
+                showCustomPopup("An error occurred loading your game data. Details: " + error.message, "Load Error");
+            }
+        }
 
          function handleWalletDisconnected() {
              console.log("Wallet disconnected or no account found / Initializing disconnected state.");
@@ -5386,7 +5412,30 @@ initializeTheme();
 
              console.log("handleWalletDisconnected finished. State reset.");
          }
-    
+    async function promptAndSetNickname(walletAddressForNickname) {
+            const newNickname = prompt("Welcome, Voyager! Please set your in-game nickname (max 20 chars):", userNickname || `Voyager${walletAddressForNickname.slice(0,4)}`);
+            if (newNickname && newNickname.trim() !== "") {
+                userNickname = newNickname.trim().substring(0, 20);
+                if (playerNicknameDisplay) {
+                    playerNicknameDisplay.textContent = userNickname;
+                }
+                // Update the nickname in Firebase
+                if (currentUser && currentUser.uid === walletAddressForNickname) { // Ensure we're updating the correct user
+                    const playerDocRef = doc(db, 'playerProgress', walletAddressForNickname);
+                    try {
+                        await updateDoc(playerDocRef, { nickname: userNickname });
+                        console.log("Nickname updated in Firebase:", userNickname);
+                        showCustomPopup(`Nickname set to: ${userNickname}`, "Nickname Set");
+                    } catch (error) {
+                        console.error("Error updating nickname in Firebase:", error);
+                        showCustomPopup("Could not save nickname. Please try again later.", "Nickname Error");
+                    }
+                }
+            } else if (newNickname !== null) { // User clicked OK but left it empty
+                showCustomPopup("Nickname cannot be empty. Your default nickname will be used for now.", "Nickname Info");
+            }
+            // If user cancels prompt, userNickname remains as it was (either loaded or default)
+        }
     async function connectUnisat() {
     try {
         if (typeof window.unisat !== 'undefined') {
