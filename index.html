@@ -2785,6 +2785,8 @@ function recalculateTotalAvailableAdventurers() {
                         const itemDiv = document.createElement('div');
                         itemDiv.classList.add('active-adventure-item'); // Reuse existing class for styling
                         itemDiv.dataset.instanceId = task.id; // Use the unique instance ID
+                                            console.log(`Sidebar Render: Task Type: ${task.type}, ID: ${task.id}, Name: ${task.name}`);
+
 
                         const timeLeftMs = task.returnTime - Date.now();
 
@@ -3237,7 +3239,13 @@ function recalculateTotalAvailableAdventurers() {
                     // Include the instance IDs of confirmed NPC crawlers for this dungeon run
                     npcCrawlers: (dungeon.type === "party_npc" ? (confirmedCrawlersForDungeons[dungeon.id] || []) : []) 
                 };
-
+console.log("--- PREPARING TO START DUNGEON ---");
+console.log("Dungeon Data:", JSON.parse(JSON.stringify(dungeon)));
+console.log("Calculated Duration (ms):", calculatedDurationMs);
+console.log("Return Time:", new Date(returnTime).toLocaleString());
+console.log("newActiveDungeon object to be pushed:", JSON.parse(JSON.stringify(newActiveDungeon)));
+console.log("Current activeAdventures BEFORE dungeon push:", JSON.parse(JSON.stringify(activeAdventures)));
+console.log("Current activeDungeons BEFORE dungeon push:", JSON.parse(JSON.stringify(activeDungeons)));
                 activeDungeons.push(newActiveDungeon);
                 // +++ ADD LOGS HERE +++
                 console.log("New dungeon pushed:", JSON.parse(JSON.stringify(newActiveDungeon)));
@@ -4152,6 +4160,7 @@ function updateAdventureDisplayStates() {
                             {
                                 confirmCallback: (confirmed) => {
                                     if (confirmed) {
+                                         console.log("Confirmed ADD MORE. Processing...");
                                         // Step 1: Update the adventure in the activeAdventures list
                                         const advInstance = activeAdventures[existingActiveAdventureIndex];
                                         advInstance.adventurers += numAdventurersToSend; // Add more adventurers to it
