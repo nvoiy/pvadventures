@@ -3902,7 +3902,7 @@ function usePetWhistleUnlock(itemUniqueId) {
                 updateAdventureDisplayStates();
                 if(document.getElementById('quests-page').classList.contains('active')) { renderQuests(); }
                 updateStatsDisplay(); // This will now reflect the recalculated totalAvailableAdventurers
-                renderActiveAdventuresInSidebar();
+                renderActiveTasksInSidebar();
                 renderMaterials(); // Render materials if any were found
                 if (foundDropNames.includes("ring_cursedpower")) renderInventory(); // Re-render inv if specific items found
 
@@ -3993,7 +3993,7 @@ function updateAdventureDisplayStates() {
 
                                     showCustomPopup(`Adventure "${adventureToCancel.name}" has been cancelled. Adventurers have returned.`, "Adventure Cancelled");
                                     updateStatsDisplay();
-                                    renderActiveAdventuresInSidebar();
+                                    renderActiveTasksInSidebar();
                                     updateAdventureDisplayStates();
                                     if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
                                 }
@@ -4211,7 +4211,7 @@ function updateAdventureDisplayStates() {
 
                                         // Update UI
                                         updateStatsDisplay(); 
-                                        renderActiveAdventuresInSidebar(); 
+                                        renderActiveTasksInSidebar(); 
                                         updateAdventureDisplayStates(); 
                                         if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
                                         showCustomPopup(`${numAdventurersToSend} adventurer(s) added to "${adventureName}". Timer reset.`, "Adventurers Added");
@@ -4283,7 +4283,7 @@ function updateAdventureDisplayStates() {
 
                         // Update UI
                         updateStatsDisplay(); 
-                        renderActiveAdventuresInSidebar(); 
+                        renderActiveTasksInSidebar(); 
                         updateAdventureDisplayStates(); 
                         if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
                     }
