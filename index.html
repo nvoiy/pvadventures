@@ -1256,47 +1256,29 @@ body { /* Your existing body styles are mostly fine, just ensure no conflicting 
     <script>
         
         document.addEventListener('firebaseReady', async () => {
-                    let punkVoyageIdsLoaded = false;
+                              let punkVoyageIdsLoaded = false; // This flag will be set by loadPunkVoyageIds
+            // Note: dungeonCrawlerIdsLoaded is declared later with other game state variables, which is fine.
             
-                    console.log("FirebaseReady event triggered. Starting main script logic.");
+            console.log("FirebaseReady event triggered. Starting main script logic.");
                     
-                const userOrdinalsDisplayElement = document.getElementById('userOrdinalsDisplay');
-    const userOrdinalsListElement = document.getElementById('userOrdinalsList');
-    let PUNK_VOYAGE_IDS_SET = new Set(); // To store your fixed inscription IDs for quick lookup
-    const PUNK_VOYAGE_ID_IMAGE_CACHE = {}; // Simple cache for inscription images
+            // --- DOM Element Grabbing (All const declarations for DOM elements go here first) ---
+            const userOrdinalsDisplayElement = document.getElementById('userOrdinalsDisplay');
+            const userOrdinalsListElement = document.getElementById('userOrdinalsList');
+            // PUNK_VOYAGE_IDS_SET and PUNK_VOYAGE_ID_IMAGE_CACHE are fine here
+            let PUNK_VOYAGE_IDS_SET = new Set(); // To store your fixed inscription IDs for quick lookup
+            const PUNK_VOYAGE_ID_IMAGE_CACHE = {}; // Simple cache for inscription images
 
-function updateAdventureCardPvDisplay() {
-            // The actual body of this function should start here.
-            // For example, from your previous working code:
-            console.log("Updating adventure card PV displays...");
-            const adventureSendButtons = document.querySelectorAll('.adventure-send-btn');
-            adventureSendButtons.forEach(button => {
-                const adventureBlock = button.closest('.adventure');
-                if (!adventureBlock) return;
-
-                const detailsDiv = adventureBlock.querySelector('.adventure-details');
-                if (!detailsDiv) return;
-
-                const prizeSpan = detailsDiv.querySelector('.prize');
-                if (prizeSpan && button.dataset.pvReward) {
-                    const basePvFromButton = parseInt(button.dataset.pvReward);
-                    const displayPv = basePvFromButton * 2; // Calculate the doubled PV for display
-                    prizeSpan.innerHTML = prizeSpan.innerHTML.replace(/(PRIZE\s*=\s*)(\d+)(\s*PV TOKENS)/i, `$1${displayPv}$3`);
-                    console.log(`Updated PV display for ${button.dataset.adventureName} to ${displayPv}`);
-                }
-            });
-        } 
-            console.log("'firebaseReady' event received by main script. Initializing game logic.");
-            
+            // Firebase SDK References
             const db = window.firebaseDb;
             const auth = window.fbAuth; 
             const { doc, getDoc, setDoc, collection, Timestamp, query, where, orderBy, getDocs, addDoc, runTransaction, updateDoc, deleteDoc, limit } = window.firebaseFirestore;
             const { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut: fbSignOut, onAuthStateChanged, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup } = window.firebaseAuthFunctions; 
 
+            // Game Constants
             const GAME_HOUR_IN_REAL_SECONDS = 1; 
             const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
 
-
+            // General UI Elements
             const gameContainer = document.getElementById('gameContainer');
             const playerNicknameDisplay = document.getElementById('playerNicknameDisplay');
             const darkModeToggle = document.getElementById('darkModeToggle');
@@ -1305,30 +1287,39 @@ function updateAdventureCardPvDisplay() {
             const pvCountElement = document.getElementById('pvCount');
             const goldCountElement = document.getElementById('goldCount');
             const diamondCountElement = document.getElementById('diamondCount');
-            const adventureSendButtons = document.querySelectorAll('.adventure-send-btn');
-            const adventureDropButtons = document.querySelectorAll('.adventure-drops-button');
-            
-            const swapInfoDisplay = document.getElementById('swapInfoDisplay');
-            const swapBtn = document.getElementById('swapBtn');
-            const reverseSwapDirectionBtn = document.getElementById('reverseSwapDirectionBtn');
-
-            const sidebarActiveAdventuresContainer = document.getElementById('sidebarActiveAdventuresDisplay'); 
-            const sidebarActiveAdventuresList = document.getElementById('sidebarActiveAdventuresList');
-            const activePotionsDisplay = document.getElementById('activePotionsDisplay');
-            const activePotionsList = document.getElementById('activePotionsList');
             const availableAdventurersCountElement = document.getElementById('availableAdventurersCount');
             const playerAttackStatElement = document.getElementById('playerAttackStat');
             const playerDefenseStatElement = document.getElementById('playerDefenseStat');
 
+            // Adventure Page Elements
+            const adventureSendButtons = document.querySelectorAll('.adventure-send-btn');
+            const adventureDropButtons = document.querySelectorAll('.adventure-drops-button');
+            
+            // Shop & Swap Elements
+            const swapInfoDisplay = document.getElementById('swapInfoDisplay');
+            const swapBtn = document.getElementById('swapBtn');
+            const reverseSwapDirectionBtn = document.getElementById('reverseSwapDirectionBtn');
+            const shopItemsDiv = document.getElementById('shopItems');
+
+            // Sidebar Elements
+            const sidebarActiveAdventuresContainer = document.getElementById('sidebarActiveAdventuresDisplay'); 
+            const sidebarActiveAdventuresList = document.getElementById('sidebarActiveAdventuresList');
+            const activePotionsDisplay = document.getElementById('activePotionsDisplay');
+            const activePotionsList = document.getElementById('activePotionsList');
             const menuItems = document.querySelectorAll('.right-sidebar-menu .main-menu-nav-list li');
+            
+            // Page Content & Other Sections
             const pageContents = document.querySelectorAll('.main-content-area .page-content'); 
             const questListDiv = document.getElementById('questList');
-            const shopItemsDiv = document.getElementById('shopItems');
             const materialsListContainer = document.getElementById('materialsListContainer'); 
             const craftingItemsContainer = document.getElementById('craftingItemsContainer');
             const inventoryItemsContainer = document.getElementById('inventoryItemsContainer');
             const equipmentSlotsDisplay = document.getElementById('equipmentSlotsDisplay');
             const dailyRewardsGrid = document.getElementById('dailyRewardsGrid');
+            const whitelistRafflesContainer = document.getElementById('whitelistRafflesContainer');
+            const itemTooltipElement = document.getElementById('itemTooltip');
+
+            // Popups
             const customPopupOverlay = document.getElementById('customPopupOverlay');
             const customPopup = document.getElementById('customPopup');
             const customPopupTitleEl = document.getElementById('customPopupTitle');
@@ -1337,11 +1328,10 @@ function updateAdventureCardPvDisplay() {
             const customPopupCloseBtn = document.getElementById('customPopupCloseBtn');
             const customPopupConfirmBtn = document.getElementById('customPopupConfirmBtn');
             const customPopupCancelBtn = document.getElementById('customPopupCancelBtn');
+
+            // Admin Raffle Panel
             const adminRafflePanel = document.getElementById('adminRafflePanel');
             const createRaffleForm = document.getElementById('createRaffleForm');
-            const whitelistRafflesContainer = document.getElementById('whitelistRafflesContainer');
-            const itemTooltipElement = document.getElementById('itemTooltip');
-
 
             // Leaderboard elements
             const leaderboardFilterButtons = document.querySelectorAll('.leaderboard-filter-btn');
@@ -1356,15 +1346,21 @@ function updateAdventureCardPvDisplay() {
             const upgradeItemButton = document.getElementById('upgradeItemButton');
             const upgradeSuccessRateDisplay = document.getElementById('upgradeSuccessRateDisplay');
             const upgradeResultDisplay = document.getElementById('upgradeResultDisplay');
-            const itemSelectionModalOverlay = document.getElementById('itemSelectionModalOverlay');
+
+            // Item Selection Modal
+            const itemSelectionModalOverlay = document.getElementById('itemSelectionModalOverlay'); // Assuming one set of these modal elements
             const itemSelectionModal = document.getElementById('itemSelectionModal');
             const itemSelectionModalTitle = document.getElementById('itemSelectionModalTitle');
             const itemSelectionModalList = document.getElementById('itemSelectionModalList');
             const itemSelectionModalCloseBtn = document.getElementById('itemSelectionModalCloseBtn');
-             const activeSpecialtiesDisplay = document.getElementById('activeSpecialtiesDisplay');
+
+            // Specialties Display
+            const activeSpecialtiesDisplay = document.getElementById('activeSpecialtiesDisplay');
             const toggleSpecialtiesBtn = document.getElementById('toggleSpecialtiesBtn');
             const specialtiesListContainer = document.getElementById('specialtiesListContainer');
-                const dungeonCrawlerSelectionModalOverlay = document.getElementById('dungeonCrawlerSelectionModalOverlay');
+
+            // Dungeon Crawler Selection Modal
+            const dungeonCrawlerSelectionModalOverlay = document.getElementById('dungeonCrawlerSelectionModalOverlay');
             const dungeonCrawlerSelectionModal = document.getElementById('dungeonCrawlerSelectionModal');
             const dungeonCrawlerSelectionModalTitle = document.getElementById('dungeonCrawlerSelectionModalTitle');
             const dungeonCrawlerSelectionModalInfo = document.getElementById('dungeonCrawlerSelectionModalInfo');
@@ -1373,7 +1369,26 @@ function updateAdventureCardPvDisplay() {
             const selectedDungeonCrawlersDisplayDiv = document.getElementById('selectedDungeonCrawlersDisplay');
             const dungeonCrawlerConfirmSelectionBtn = document.getElementById('dungeonCrawlerConfirmSelectionBtn');
             const dungeonCrawlerCancelSelectionBtn = document.getElementById('dungeonCrawlerCancelSelectionBtn');
+
+            // Wallet Connection Elements
+            const connectWalletBtn = document.getElementById('connectWalletBtn');
+            const walletDropdown = document.getElementById('walletDropdown');
+            const walletOptions = walletDropdown ? walletDropdown.querySelectorAll('li') : [];
+            // --- End of DOM Element Grabbing ---
+
+            console.log("'firebaseReady' event received by main script. Initializing game logic dependencies...");
+
+            // --- CRITICAL: Load NFT ID Lists EARLY ---
+            console.log("FirebaseReady: Pre-loading ID lists...");
+            // These functions will set their respective global flags (punkVoyageIdsLoaded, dungeonCrawlerIdsLoaded)
+            await loadPunkVoyageIds(); 
+            console.log("FirebaseReady: Punk Voyage IDs loading attempted. Global flag state:", punkVoyageIdsLoaded);
             
+            await loadDungeonCrawlerIds(); 
+            // dungeonCrawlerIdsLoaded is defined further down with other 'let' game state variables,
+            // but loadDungeonCrawlerIds() will set its value correctly.
+            console.log("FirebaseReady: Dungeon Crawler IDs loading attempted. Global flag state:", dungeonCrawlerIdsLoaded); 
+            // --- END CRITICAL LOAD ---
 
             // --- Game State Variables ---
             let currentUser = null; 
@@ -6966,6 +6981,25 @@ function updateWalletDisplay(account, walletName = '') { // Removed the boolean 
         if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = '';
     }
 }
+        // NFT/Crawler fetching is now handled by handleWalletConnected directly
+        // So, no calls to fetchWalletInscriptions or fetchPlayerDungeonCrawlers here.
+
+        if (playerNicknameDisplayElement && userNickname) {
+            playerNicknameDisplayElement.textContent = userNickname;
+        }
+
+    } else { // Wallet disconnected or not present
+        if (connectWalletBtnElement) {
+            connectWalletBtnElement.textContent = 'CONNECT WALLET';
+            connectWalletBtnElement.classList.remove('connected');
+        }
+        if (walletAddressDisplayElement) walletAddressDisplayElement.textContent = '';
+        if (playerNicknameDisplayElement) playerNicknameDisplayElement.textContent = 'Voyager'; // Default nickname
+
+        if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none';
+        if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = '';
+    }
+}
 // --- END OF FULL updateWalletDisplay FUNCTION TO REPLACE ---
             if(connectWalletBtn && walletDropdown) { connectWalletBtn.addEventListener('click', (event) => { event.stopPropagation(); walletDropdown.style.display = walletDropdown.style.display === 'block' ? 'none' : 'block'; }); document.addEventListener('click', (event) => { if (walletDropdown && connectWalletBtn && !connectWalletBtn.contains(event.target) && !walletDropdown.contains(event.target)) { walletDropdown.style.display = 'none'; } }); }
        async function connectWithSatsConnect(walletTypeHint = null) {
@@ -7007,7 +7041,7 @@ function updateWalletDisplay(account, walletName = '') { // Removed the boolean 
         }
     }         
     
-async function handleWalletConnected(walletAddress, walletName) {
+  async function handleWalletConnected(walletAddress, walletName) {
     console.log(`Wallet connected: ${walletName} - ${walletAddress} (handleWalletConnected start)`);
     window.connectedAccount = walletAddress;
     window.connectedWalletName = walletName;
