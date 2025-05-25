@@ -7111,8 +7111,25 @@ function updateWalletDisplay(account, walletName = '', idsWereLoadedForThisCall 
     console.log("handleWalletConnected: Processing finished.");
 }
 
-         function handleWalletDisconnected() {
+         async function handleWalletDisconnected() { // Added "async" here
              console.log("Wallet disconnected or no account found / Initializing disconnected state.");
+
+             // --- TRY TO SAVE CURRENT STATE BEFORE RESETTING ---
+             if (currentUser && currentUser.uid) {
+                 console.log(`Attempting to save game state for user ${currentUser.uid} before full disconnect processing.`);
+                 try {
+                     await saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
+                     console.log(`Game state saved for ${currentUser.uid} due to disconnect.`);
+                 } catch (error) {
+                     console.error(`Error saving game state during disconnect for ${currentUser.uid}:`, error);
+                     // Optionally, you could show a non-critical popup here if saving fails,
+                     // but the disconnect process should still continue.
+                 }
+             } else {
+                 console.warn("handleWalletDisconnected: currentUser or currentUser.uid was already null/undefined. Cannot save state.");
+             }
+             // --- END SAVE STATE ---
+
              currentUser = null;
              userNickname = ''; // Reset global nickname variable
 
@@ -7124,10 +7141,6 @@ function updateWalletDisplay(account, walletName = '', idsWereLoadedForThisCall 
              updateStatsDisplay();       // Update UI based on reset state
              updateWalletDisplay(null);  // This will set button to "CONNECT WALLET"
 
-             // No welcome screen, game container remains visible
-             // gameContainer.classList.add('hidden');
-
-
              showPage('adventures-page'); // Show a default page
              if(sidebarActiveAdventuresList) {
                  sidebarActiveAdventuresList.innerHTML = '<p style="text-align:center;">Connect wallet to see active tasks.</p>';
@@ -7136,7 +7149,7 @@ function updateWalletDisplay(account, walletName = '', idsWereLoadedForThisCall 
              if(userOrdinalsListElement) userOrdinalsListElement.innerHTML = '';
              if(playerNicknameDisplay) playerNicknameDisplay.textContent = "Voyager"; // Reset display
 
-             console.log("handleWalletDisconnected finished. State reset.");
+             console.log("handleWalletDisconnected finished. State reset. (Attempted save before reset)");
          }
     async function promptAndSetNickname(walletAddressForNickname) {
             const newNickname = prompt("Welcome, Voyager! Please set your in-game nickname (max 20 chars):", userNickname || `Voyager${walletAddressForNickname.slice(0,4)}`);
