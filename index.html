@@ -7151,6 +7151,7 @@ function updateWalletDisplay(account, walletName = '', idsWereLoadedForThisCall 
 
              console.log("handleWalletDisconnected finished. State reset. (Attempted save before reset)");
          }
+         
     async function promptAndSetNickname(walletAddressForNickname) {
             const newNickname = prompt("Welcome, Voyager! Please set your in-game nickname (max 20 chars):", userNickname || `Voyager${walletAddressForNickname.slice(0,4)}`);
             if (newNickname && newNickname.trim() !== "") {
@@ -7185,13 +7186,14 @@ if (accounts && accounts.length > 0) {
                 await handleWalletConnected(walletAddress, walletName); // New call
 
                 window.unisat.on('accountsChanged', async (newAccs) => { // Make async
-                    if (walletName === 'UniSat') { // Use the captured walletName
+                    if (connectedWalletName === 'UniSat') { // Use the global connectedWalletName
                         const newAddress = (newAccs && newAccs.length > 0) ? newAccs[0] : null;
                         if (newAddress !== connectedAccount) { // Only if address actually changed
                             if (newAddress) {
                                 await handleWalletConnected(newAddress, walletName);
                             } else {
-                                handleWalletDisconnected();
+                                // Call handleWalletDisconnected if newAccs is empty or null
+                                await handleWalletDisconnected(); // Make sure to await if it's async
                             }
                         }
                     }
@@ -7205,6 +7207,8 @@ if (accounts && accounts.length > 0) {
         showCustomPopup('An error occurred with UniSat Wallet.', 'Wallet Error');
     }
 }
+
+
 if (walletOptions) {
     walletOptions.forEach(option => {
         option.addEventListener('click', async (event) => {
@@ -7271,13 +7275,33 @@ if (walletOptions) {
             }
             
             if (addrToUse) {
-                connectedAccount = addrToUse;
-                connectedWalletName = 'Xverse'; // Set wallet name
-                // NOW, CALL handleWalletConnected INSTEAD OF THE DIRECT CALLS
-                await handleWalletConnected(connectedAccount, connectedWalletName);
+                // DO NOT set connectedAccount and connectedWalletName here directly.
+                // Let handleWalletConnected do it.
+                await handleWalletConnected(addrToUse, 'Xverse'); // Pass directly to the handler
 
                 // You might want to check Xverse documentation for an 'accountsChanged' event
                 // to handle account switches in the wallet, similar to UniSat.
+                // Example (you'll need to verify event name and logic with Xverse docs):
+                /*
+                if (xverseBitcoinProvider.on) { // Check if 'on' method exists
+                    xverseBitcoinProvider.on('accountsChanged', async (newAccounts) => {
+                        if (connectedWalletName === 'Xverse') { // Ensure it's for Xverse
+                            let newAddress = null;
+                            if (newAccounts && newAccounts.result && newAccounts.result.addresses && newAccounts.result.addresses.length > 0) {
+                                const newOrdInfo = newAccounts.result.addresses.find(a => a.purpose === 'ordinals' && a.addressType !== "stacks");
+                                const newPayInfo = newAccounts.result.addresses.find(a => a.purpose === 'payment' && a.addressType !== "stacks");
+                                newAddress = newOrdInfo ? newOrdInfo.address : (newPayInfo ? newPayInfo.address : null);
+                            }
+
+                            if (newAddress && newAddress !== connectedAccount) {
+                                await handleWalletConnected(newAddress, 'Xverse');
+                            } else if (!newAddress && connectedAccount) {
+                                await handleWalletDisconnected();
+                            }
+                        }
+                    });
+                }
+                */
             } else {
                 showCustomPopup('Could not retrieve a suitable Bitcoin address from Xverse Wallet.', 'Wallet Error');
             }
@@ -7296,6 +7320,8 @@ if (walletOptions) {
         showCustomPopup(errorMessage, 'Wallet Error');
     }
 }
+
+
             const toggleMaterialsBtn = document.getElementById('toggleMaterialsBtn');
             if (toggleMaterialsBtn && materialsListContainer) {
                 // Check local storage for saved state
