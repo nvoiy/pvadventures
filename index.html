@@ -1256,9 +1256,10 @@ body { /* Your existing body styles are mostly fine, just ensure no conflicting 
     <script>
         
         document.addEventListener('firebaseReady', async () => {
-                   let punkVoyageIdsLoaded = false;
-                   
+                    let punkVoyageIdsLoaded = false;
+            
                     console.log("FirebaseReady event triggered. Starting main script logic.");
+                    
                 const userOrdinalsDisplayElement = document.getElementById('userOrdinalsDisplay');
     const userOrdinalsListElement = document.getElementById('userOrdinalsList');
     let PUNK_VOYAGE_IDS_SET = new Set(); // To store your fixed inscription IDs for quick lookup
@@ -1372,6 +1373,7 @@ function updateAdventureCardPvDisplay() {
             const selectedDungeonCrawlersDisplayDiv = document.getElementById('selectedDungeonCrawlersDisplay');
             const dungeonCrawlerConfirmSelectionBtn = document.getElementById('dungeonCrawlerConfirmSelectionBtn');
             const dungeonCrawlerCancelSelectionBtn = document.getElementById('dungeonCrawlerCancelSelectionBtn');
+            
 
             // --- Game State Variables ---
             let currentUser = null; 
@@ -3763,18 +3765,16 @@ function usePetWhistleUnlock(itemUniqueId) {
                 const advIdx = activeAdventures.findIndex(adv => adv.id === instanceId);
                 if (advIdx === -1) {
                     console.warn(`completeAdventure: Could not find active adventure with instanceId ${instanceId}. Already completed or invalid.`);
-                    // It's possible it was already processed if multiple timer ticks landed very close.
-                    // To prevent errors, try to ensure renderActiveTasksInSidebar is robust.
-                    if (activeAdventures.length === 0 && sidebarActiveAdventuresList) { // If no adventures left, clear sidebar
+                    if (activeAdventures.length === 0 && sidebarActiveAdventuresList) { 
                         renderActiveTasksInSidebar();
                     }
                     return; 
                 }
                 
-                const completedAdv = { ...activeAdventures[advIdx] }; // Make a copy before splicing
+                const completedAdv = { ...activeAdventures[advIdx] }; 
 
                 // --- Reward Calculation ---
-                let basePvReward = completedAdv.pvReward; // This is already the PER ADVENTURER base from button
+                let basePvReward = completedAdv.pvReward; 
                 let pvMultiplierFromPotions = 1; 
                 let pvBonusAdditiveEffect = 0;
 
@@ -3803,7 +3803,7 @@ function usePetWhistleUnlock(itemUniqueId) {
 
                 let totalGoldFoundThisTrip = 0; 
                 let totalDiamondsFoundThisTrip = 0; 
-                let allFoundDrops = {}; // For popup summary
+                let allFoundDrops = {}; 
 
                 let totalGoldChanceIncreaseBonus = 0; 
                 let flatGoldBonusFromPotions = 0; 
@@ -3838,16 +3838,13 @@ function usePetWhistleUnlock(itemUniqueId) {
 
                 const adventureMasterData = adventuresData[completedAdv.originalAdventureId];
 
-                // Guaranteed Gold (e.g., for Adventure 5)
                 if (adventureMasterData && adventureMasterData.guaranteedGold) {
                     const guaranteedGoldAmount = adventureMasterData.guaranteedGold * completedAdv.adventurers;
                     currentGold += guaranteedGoldAmount;
                     totalGoldFoundThisTrip += guaranteedGoldAmount;
                 }
 
-                // Per-adventurer chance-based rewards
                 for (let i = 0; i < completedAdv.adventurers; i++) { 
-                    // Gold Chance (if not guaranteed or if it's an additional chance component)
                     if (!adventureMasterData || !adventureMasterData.guaranteedGold || (adventureMasterData.guaranteedGold && completedAdv.goldChance > 0)) {
                         const finalGoldChance = (completedAdv.goldChance * (1 + totalGoldChanceIncreaseBonus)) + flatGoldBonusFromPotions + flatGoldBonusFromItems; 
                         if (completedAdv.goldChance > 0 && Math.random() < finalGoldChance) { 
@@ -3856,7 +3853,6 @@ function usePetWhistleUnlock(itemUniqueId) {
                         } 
                     }
 
-                    // Diamond Chance (with potential multiplier)
                     const finalDiamondChance = completedAdv.diamondChance + flatDiamondBonusFromItems; 
                     if (completedAdv.diamondChance > 0 && Math.random() < finalDiamondChance) {
                         let diamondsAwarded = 1;
@@ -3867,7 +3863,6 @@ function usePetWhistleUnlock(itemUniqueId) {
                         totalDiamondsFoundThisTrip += diamondsAwarded; 
                     }
                     
-                    // Material Drops
                     if (adventureMasterData && adventureMasterData.drops) { 
                         adventureMasterData.drops.forEach(drop => { 
                             if (Math.random() < (drop.chance * materialChanceEffectiveMultiplier)) { 
@@ -3883,7 +3878,7 @@ function usePetWhistleUnlock(itemUniqueId) {
                                             }
                                         } 
                                     });
-                                } else { // Potentially an equippable item drop
+                                } else { 
                                      const itemMasterInfo = craftableItemsData.find(ci => ci.id === drop.name);
                                      if (itemMasterInfo) { 
                                         const itemExistsInInv = playerInventory.some(invItem => invItem.id === itemMasterInfo.id) || 
@@ -3903,14 +3898,12 @@ function usePetWhistleUnlock(itemUniqueId) {
                             }
                         });
                     }
-                } // End of per-adventurer loop
+                } 
 
                 totalAdventuresCompleted++;
 
-                // Update Potions
                 activePotions.forEach(p => { 
                     if(p.adventuresLeft !== undefined && p.adventuresLeft > 0) { 
-                        // Only decrement if the potion's effect was actually applied in this adventure type
                         if ( (p.effect.type === "pvMultiplier" && pvMultiplierFromPotions > 1) || 
                              (p.effect.type === "goldChanceBonus" && flatGoldBonusFromPotions > 0) ) { 
                             p.adventuresLeft--; 
@@ -3919,20 +3912,17 @@ function usePetWhistleUnlock(itemUniqueId) {
                 });
                 activePotions = activePotions.filter(p => (p.endTime && Date.now() < p.endTime) || (p.adventuresLeft !== undefined && p.adventuresLeft > 0) );
                 
-                // --- Remove adventure from active list ---
                 activeAdventures.splice(advIdx, 1); 
 
-                // --- Recalculate available adventurers (important after splice) ---
                 recalculateTotalAvailableAdventurers(); 
                 
-                // --- Construct Popup Message ---
                 let popupMessage = `${completedAdv.adventurers} adventurer(s) returned from ${completedAdv.name}!\n\nRewards:\n- ${earnedPvThisTrip} PV Tokens`;
                 if(totalGoldFoundThisTrip > 0) { popupMessage += `\n- ${totalGoldFoundThisTrip} Gold`; }
                 if(totalDiamondsFoundThisTrip > 0) { popupMessage += `\n- ${totalDiamondsFoundThisTrip} Diamond(s)`;}
                 const foundDropNames = Object.keys(allFoundDrops);
                 if (foundDropNames.length > 0) {
-                    popupMessage += `\n\nMaterials/Items Found:`; // Changed from "Materials Found"
-                    foundDropNames.forEach(dropNameKey => { // dropNameKey could be material name or item name now
+                    popupMessage += `\n\nMaterials/Items Found:`;
+                    foundDropNames.forEach(dropNameKey => { 
                         popupMessage += `\n  - ${allFoundDrops[dropNameKey]}x ${dropNameKey}`;
                     });
                 }
@@ -3942,12 +3932,11 @@ function usePetWhistleUnlock(itemUniqueId) {
                 }
                 showCustomPopup(popupMessage, "Adventure Complete!");
                 
-                // --- Quest Updates ---
-                quests.forEach(quest => {  // Quest variable is 'quest'
+                quests.forEach(quest => {  
                     if (!quest.completed && !quest.claimed) { 
                         let progressChanged = false;
                         if (quest.adventureName === completedAdv.name) { quest.progress = (quest.progress || 0) + completedAdv.adventurers; progressChanged = true; }
-                        if (quest.metric === "pvBalance") { quest.progress = currentPvTokens; progressChanged = true; } // Check actual balance
+                        if (quest.metric === "pvBalance") { quest.progress = currentPvTokens; progressChanged = true; } 
                         if (quest.metric === "totalAdventuresCompletedOverall") { quest.progress = totalAdventuresCompleted; progressChanged = true; }
                         if (quest.metric === "goldFoundAdventures") { quest.progress = (quest.progress || 0) + totalGoldFoundThisTrip; progressChanged = true; }
                         
@@ -3975,21 +3964,22 @@ function usePetWhistleUnlock(itemUniqueId) {
 
                         if (progressChanged && quest.progress >= quest.target && !quest.completed) { 
                             quest.completed = true; 
-                            if(!quest.claimed) showCustomPopup(`Quest Completed: ${quest.text}`, "Quest Complete!"); // <<< THIS LINE IS NOW FIXED
-                            if ([1,2,3,15].includes(quest.id)) { updateAdventureDisplayStates(); } // Include quest 15 for Adv 5
+                            if(!quest.claimed) showCustomPopup(`Quest Completed: ${quest.text}`, "Quest Complete!"); 
+                            if ([1,2,3,15].includes(quest.id)) { updateAdventureDisplayStates(); } 
                         }
                     }
                 });
                 
                 // --- Final UI Updates ---
-                renderActivePotions(); // After potion adventure counts are updated
-                updateAdventureDisplayStates(); // After adventure might unlock next one via quest
-                // updateStatsDisplay(); // Called by recalculateTotalAvailableAdventurers
-                // renderActiveTasksInSidebar(); // Called by recalculateTotalAvailableAdventurers (if list changes) or by updateTimers
-                renderMaterials(); // If materials were found
-                if (foundDropNames.some(name => craftableItemsData.find(ci => ci.name === name))) { // Re-render if an equippable item dropped
+                renderActivePotions(); 
+                updateAdventureDisplayStates(); 
+                renderMaterials(); 
+                if (foundDropNames.some(name => craftableItemsData.find(ci => ci.name === name))) { 
                     renderInventory();
                 }
+                
+                // Explicitly re-render the active tasks sidebar AFTER all processing for this adventure is done
+                renderActiveTasksInSidebar(); // <<< --- THIS LINE WAS ADDED ---
 
                 if (currentUser.uid) saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
             }
@@ -6931,8 +6921,8 @@ initializeTheme();
 
 
 
-function updateWalletDisplay(account, walletName = '', idsWereLoadedForThisCall = false, crawlersWereLoadedForThisCall = false) {
-    console.log("updateWalletDisplay CALLED. Passed idsWereLoadedForThisCall:", idsWereLoadedForThisCall, "Passed crawlersWereLoadedForThisCall:", crawlersWereLoadedForThisCall, "Passed Account:", account, "Passed WalletName:", walletName);
+function updateWalletDisplay(account, walletName = '') { // Removed the boolean flags as parameters
+    console.log("updateWalletDisplay CALLED. Account:", account, "WalletName:", walletName);
     const connectWalletBtnElement = document.getElementById('connectWalletBtn');
     const walletAddressDisplayElement = document.getElementById('walletAddressDisplay');
     const playerNicknameDisplayElement = document.getElementById('playerNicknameDisplay');
@@ -6945,8 +6935,9 @@ function updateWalletDisplay(account, walletName = '', idsWereLoadedForThisCall 
         }
         if (walletAddressDisplayElement) walletAddressDisplayElement.textContent = `Wallet: ${account}`;
 
-        walletVerificationPendingForBonus = false;
+        walletVerificationPendingForBonus = false; // Clear this flag as wallet is now connected
 
+        // Close any pending "verify wallet" popups
         if (customPopup && !customPopup.classList.contains('hidden') && customPopupTitleEl) {
             const currentPopupTitle = customPopupTitleEl.textContent;
             if (currentPopupTitle === "Wallet Bonus Information" ||
@@ -6956,30 +6947,9 @@ function updateWalletDisplay(account, walletName = '', idsWereLoadedForThisCall 
                 hideCustomPopup();
             }
         }
+        // NFT/Crawler fetching is now handled by handleWalletConnected directly
+        // So, no calls to fetchWalletInscriptions or fetchPlayerDungeonCrawlers here.
 
-        // Use the flags passed directly from handleWalletConnected for this specific call's logic
-        if (idsWereLoadedForThisCall && account && walletName) {
-            console.log("updateWalletDisplay: Conditions MET for fetching inscriptions. idsWereLoadedForThisCall:", idsWereLoadedForThisCall);
-            fetchWalletInscriptions(account, walletName);
-            if (crawlersWereLoadedForThisCall) {
-                console.log("updateWalletDisplay: Conditions MET for fetching crawlers. crawlersWereLoadedForThisCall:", crawlersWereLoadedForThisCall);
-                fetchPlayerDungeonCrawlers(account, walletName);
-            }
-        } else {
-            console.warn("updateWalletDisplay: Wallet connected, but asset ID lists not indicated as loaded via parameters OR account/name issue. Ordinal/Crawler check skipped. Details - idsWereLoadedForThisCall:", idsWereLoadedForThisCall, "crawlersWereLoadedForThisCall:", crawlersWereLoadedForThisCall, "account:", account, "walletName:", walletName);
-            if (userOrdinalsDisplayElement) {
-                 userOrdinalsDisplayElement.style.display = 'block';
-                 if(userOrdinalsListElement) userOrdinalsListElement.innerHTML = "<p>Could not check Ordinals: Game's collection ID list not ready or wallet info missing.</p>";
-            }
-            let previousBonus = ordinalBonusAdventurers;
-            ordinalBonusAdventurers = 0;
-            if (previousBonus > 0) {
-                 recalculateTotalAvailableAdventurers();
-                 if (currentUser && currentUser.uid) {
-                    saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
-                 }
-            }
-        }
         if (playerNicknameDisplayElement && userNickname) {
             playerNicknameDisplayElement.textContent = userNickname;
         }
@@ -6990,7 +6960,7 @@ function updateWalletDisplay(account, walletName = '', idsWereLoadedForThisCall 
             connectWalletBtnElement.classList.remove('connected');
         }
         if (walletAddressDisplayElement) walletAddressDisplayElement.textContent = '';
-        if (playerNicknameDisplayElement) playerNicknameDisplayElement.textContent = 'Voyager';
+        if (playerNicknameDisplayElement) playerNicknameDisplayElement.textContent = 'Voyager'; // Default nickname
 
         if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none';
         if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = '';
@@ -7037,68 +7007,109 @@ function updateWalletDisplay(account, walletName = '', idsWereLoadedForThisCall 
         }
     }         
     
-  async function handleWalletConnected(walletAddress, walletName) {
+async function handleWalletConnected(walletAddress, walletName) {
     console.log(`Wallet connected: ${walletName} - ${walletAddress} (handleWalletConnected start)`);
-    window.connectedAccount = walletAddress; // Using window to ensure global assignment if there was any doubt
+    window.connectedAccount = walletAddress;
     window.connectedWalletName = walletName;
-    currentUser = { uid: walletAddress, name: walletName };
+    currentUser = { uid: walletAddress, name: walletName }; // Set currentUser here
 
-    let idsAreNowLoaded = false;
-    let crawlersAreNowLoaded = false;
+    // The global flags punkVoyageIdsLoaded and dungeonCrawlerIdsLoaded
+    // should have been set by the awaits at the start of firebaseReady.
 
-    // 1. Load essential ID lists first
-    if (!punkVoyageIdsLoaded) { // Check the global flag first
-        console.log("handleWalletConnected: Calling await loadPunkVoyageIds()");
-        idsAreNowLoaded = await loadPunkVoyageIds(); // Capture the direct result
-        console.log("handleWalletConnected: loadPunkVoyageIds() finished. Result:", idsAreNowLoaded, "Global punkVoyageIdsLoaded is now:", punkVoyageIdsLoaded);
+    console.log("handleWalletConnected: Global punkVoyageIdsLoaded:", punkVoyageIdsLoaded, "Global dungeonCrawlerIdsLoaded:", dungeonCrawlerIdsLoaded);
+
+    // --- Step 1: Fetch inscriptions and crawlers to set bonuses BEFORE loading game state ---
+    if (punkVoyageIdsLoaded && walletAddress && walletName) {
+        console.log("handleWalletConnected: Fetching Punk Voyage inscriptions...");
+        await fetchWalletInscriptions(walletAddress, walletName); // This updates global ordinalBonusAdventurers
     } else {
-        idsAreNowLoaded = true; // It was already loaded globally
-        console.log("handleWalletConnected: Punk Voyage IDs were already loaded globally.");
+        console.warn("handleWalletConnected: Skipping Punk Voyage inscriptions fetch - IDs not loaded or missing wallet info.");
+        let previousBonus = ordinalBonusAdventurers;
+        ordinalBonusAdventurers = 0; // Ensure reset if IDs not loaded
+        if (previousBonus > 0) recalculateTotalAvailableAdventurers(); // Update if bonus was lost
     }
 
-    if (!dungeonCrawlerIdsLoaded) { // Check the global flag first
-        console.log("handleWalletConnected: Calling await loadDungeonCrawlerIds()");
-        crawlersAreNowLoaded = await loadDungeonCrawlerIds(); // Capture the direct result
-        console.log("handleWalletConnected: loadDungeonCrawlerIds() finished. Result:", crawlersAreNowLoaded, "Global dungeonCrawlerIdsLoaded is now:", dungeonCrawlerIdsLoaded);
+    if (dungeonCrawlerIdsLoaded && walletAddress && walletName) {
+        console.log("handleWalletConnected: Fetching Dungeon Crawlers...");
+        await fetchPlayerDungeonCrawlers(walletAddress, walletName); // This updates global playerDungeonCrawlers
     } else {
-        crawlersAreNowLoaded = true; // It was already loaded globally
-        console.log("handleWalletConnected: Dungeon Crawler IDs were already loaded globally.");
+        console.warn("handleWalletConnected: Skipping Dungeon Crawlers fetch - IDs not loaded or missing wallet info.");
+        playerDungeonCrawlers = []; // Ensure reset
     }
+    console.log("handleWalletConnected: Inscription/Crawler fetching complete. OrdinalBonusAdventurers:", ordinalBonusAdventurers);
 
-    console.log("handleWalletConnected: ID loading phase complete. Local flags for this call - idsAreNowLoaded:", idsAreNowLoaded, "crawlersAreNowLoaded:", crawlersAreNowLoaded);
 
-    // 2. Now update the wallet display. Pass the locally captured loading results.
-    updateWalletDisplay(walletAddress, walletName, idsAreNowLoaded, crawlersAreNowLoaded);
-
-    const currentThemeIsDark = body.classList.contains('dark-mode');
-    loadTwitterWidget(currentThemeIsDark ? 'dark' : 'light');
-
+    // --- Step 2: Load or Create Game State ---
     let isNewUser = false;
     try {
         const loadedState = await loadGameStateFromFirebase(walletAddress);
         if (loadedState) {
             console.log("Existing game state found for wallet. Applying it.", walletAddress);
-            applyLoadedGameState(loadedState);
+            applyLoadedGameState(loadedState); // This will now use the correct ordinalBonusAdventurers
         } else {
             console.log("No game state for wallet. Creating initial state.", walletAddress);
             isNewUser = true;
             let initialNickname = `Voyager ${walletAddress.substring(0, 4)}`;
+            // createInitialGameState itself will use the now-set global ordinalBonusAdventurers
             await createInitialGameState(walletAddress, initialNickname);
         }
 
+        // --- Step 3: Update Wallet Display (now just for UI text) ---
+        updateWalletDisplay(walletAddress, walletName);
+
+        // --- Step 4: Final UI and Game Setup ---
+        const currentThemeIsDark = body.classList.contains('dark-mode');
+        loadTwitterWidget(currentThemeIsDark ? 'dark' : 'light');
+
         if (isNewUser || (userNickname && userNickname.startsWith("Voyager "))) {
             setTimeout(() => {
-                promptAndSetNickname(walletAddress);
+                promptAndSetNickname(walletAddress); // Ensure this uses the correct currentUser
             }, 500);
         }
-        showPage('adventures-page');
+        showPage('adventures-page'); // Or the last visited page if you implement that
+
     } catch (error) {
-        console.error("Error during wallet state processing in handleWalletConnected:", error, error.stack); // Added stack
+        console.error("Error during wallet state processing in handleWalletConnected:", error, error.stack);
         showCustomPopup("An error occurred loading your game data. Details: " + error.message, "Load Error");
+        // Fallback: ensure display is at least minimally correct for disconnected state
+        updateWalletDisplay(null);
     }
     console.log("handleWalletConnected: Processing finished.");
 }
-
+const lastConnectedAddress = localStorage.getItem('lastConnectedWalletAddress');
+if (lastConnectedAddress) {
+    console.log("Found last connected address:", lastConnectedAddress, ". Attempting to pre-load its state.");
+    try {
+        const preLoadedState = await loadGameStateFromFirebase(lastConnectedAddress);
+        if (preLoadedState) {
+            // Temporarily set userNickname if available in preLoadedState for applyLoadedGameState
+            // userNickname will be properly set/confirmed upon actual wallet connection.
+            userNickname = preLoadedState.nickname || ''; 
+            // We need to fetch inscriptions for this pre-loaded user to get bonuses right for display
+            if (punkVoyageIdsLoaded) { // Ensure IDs are ready
+                await fetchWalletInscriptions(lastConnectedAddress, "StoredWallet"); // Use a placeholder name
+            }
+             if (dungeonCrawlerIdsLoaded) {
+                await fetchPlayerDungeonCrawlers(lastConnectedAddress, "StoredWallet");
+            }
+            applyLoadedGameState(preLoadedState);
+            // UI is updated, but currentUser is still null.
+            // Show a message indicating they need to connect wallet to verify & play
+             if (playerNicknameDisplay && userNickname) playerNicknameDisplay.textContent = userNickname;
+            console.log("Pre-loaded state applied. User needs to connect wallet to verify.");
+        } else {
+            console.log("No state found for last connected address, or error loading it.");
+             localStorage.removeItem('lastConnectedWalletAddress'); // Clear if no state found
+             handleWalletDisconnected(); // Proceed with normal disconnected state
+        }
+    } catch (error) {
+        console.error("Error pre-loading state:", error);
+        localStorage.removeItem('lastConnectedWalletAddress');
+        handleWalletDisconnected();
+    }
+} else {
+    handleWalletDisconnected(); // No last connected address, normal disconnected state
+}
          function handleWalletDisconnected() {
              console.log("Wallet disconnected or no account found / Initializing disconnected state.");
              currentUser = null;
