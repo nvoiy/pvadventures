@@ -2250,10 +2250,12 @@ function applyLoadedGameState(loadedState) {
             // No need to set button text here, processPopupQueue default is fine.
 
         } else if (isWalletCurrentlyConnected) {
-            // Wallet is already connected (e.g. auto-reconnect).
-            // Bonus will be determined by fetchWalletInscriptions, called by updateWalletDisplay.
-            ordinalBonusAdventurers = 0; // Set to 0, fetch will update.
-            walletVerificationPendingForBonus = false;
+            // Wallet is already connected. The bonus should be determined by fetchWalletInscriptions,
+            // which is called from updateWalletDisplay. We should not overwrite
+            // ordinalBonusAdventurers here if fetchWalletInscriptions might have already set it.
+            walletVerificationPendingForBonus = false; // Ensure this is false if wallet is connected.
+            console.log("applyLoadedGameState: Wallet is connected. ordinalBonusAdventurers will be determined by fetchWalletInscriptions. Current value before potential overwrite by loadedState (if any):", ordinalBonusAdventurers);
+            // REMOVED THE LINE: ordinalBonusAdventurers = 0;
         } else {
             // No saved bonus, or saved bonus was 0, and wallet not connected.
             ordinalBonusAdventurers = 0;
