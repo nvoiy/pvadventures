@@ -6957,8 +6957,9 @@ function updateWalletDisplay(account, walletName = '', idsWereLoadedForThisCall 
         }
         if (walletAddressDisplayElement) walletAddressDisplayElement.textContent = `Wallet: ${account}`;
 
-        walletVerificationPendingForBonus = false;
+        walletVerificationPendingForBonus = false; // Reset this flag as wallet is now connected
 
+        // Close popups related to wallet verification
         if (customPopup && !customPopup.classList.contains('hidden') && customPopupTitleEl) {
             const currentPopupTitle = customPopupTitleEl.textContent;
             if (currentPopupTitle === "Wallet Bonus Information" ||
@@ -6969,30 +6970,28 @@ function updateWalletDisplay(account, walletName = '', idsWereLoadedForThisCall 
             }
         }
 
-        // Use the flags passed directly from handleWalletConnected for this specific call's logic
+        // Logic for fetching inscriptions and crawlers
         if (idsWereLoadedForThisCall && account && walletName) {
             console.log("updateWalletDisplay: Conditions MET for fetching inscriptions. idsWereLoadedForThisCall:", idsWereLoadedForThisCall);
+            // fetchWalletInscriptions will handle its own logic for updating ordinalBonusAdventurers
+            // and saving if the bonus changes.
             fetchWalletInscriptions(account, walletName);
+
             if (crawlersWereLoadedForThisCall) {
                 console.log("updateWalletDisplay: Conditions MET for fetching crawlers. crawlersWereLoadedForThisCall:", crawlersWereLoadedForThisCall);
                 fetchPlayerDungeonCrawlers(account, walletName);
             }
         } else {
-            console.warn("updateWalletDisplay: Wallet connected, but asset ID lists not indicated as loaded via parameters OR account/name issue. Ordinal/Crawler check skipped. Details - idsWereLoadedForThisCall:", idsWereLoadedForThisCall, "crawlersWereLoadedForThisCall:", crawlersWereLoadedForThisCall, "account:", account, "walletName:", walletName);
+            console.warn("updateWalletDisplay: Wallet connected, but asset ID lists not indicated as loaded OR account/name issue. Ordinal/Crawler check skipped for now. Details - idsWereLoadedForThisCall:", idsWereLoadedForThisCall, "crawlersWereLoadedForThisCall:", crawlersWereLoadedForThisCall, "account:", account, "walletName:", walletName);
             if (userOrdinalsDisplayElement) {
                  userOrdinalsDisplayElement.style.display = 'block';
-                 if(userOrdinalsListElement) userOrdinalsListElement.innerHTML = "<p>Could not check Ordinals: Game's collection ID list not ready or wallet info missing.</p>";
+                 if(userOrdinalsListElement) userOrdinalsListElement.innerHTML = "<p>Could not check Ordinals: Game's collection ID list might not be ready or wallet info missing. This will be re-attempted.</p>";
             }
-            let previousBonus = ordinalBonusAdventurers;
-            ordinalBonusAdventurers = 0;
-            if (previousBonus > 0) {
-                 recalculateTotalAvailableAdventurers();
-                 if (currentUser && currentUser.uid) {
-                    saveGameStateToFirebase(currentUser.uid, getCurrentGameState());
-                 }
-            }
+            // DO NOT reset ordinalBonusAdventurers or save here.
+            // The loaded state from applyLoadedGameState should persist until fetchWalletInscriptions updates it.
         }
-        if (playerNicknameDisplayElement && userNickname) {
+
+        if (playerNicknameDisplayElement && userNickname) { // userNickname should be set by applyLoadedGameState or createInitialGameState
             playerNicknameDisplayElement.textContent = userNickname;
         }
 
@@ -7002,7 +7001,10 @@ function updateWalletDisplay(account, walletName = '', idsWereLoadedForThisCall 
             connectWalletBtnElement.classList.remove('connected');
         }
         if (walletAddressDisplayElement) walletAddressDisplayElement.textContent = '';
-        if (playerNicknameDisplayElement) playerNicknameDisplayElement.textContent = 'Voyager';
+        if (playerNicknameDisplayElement && typeof userNickname !== 'undefined') { // Check if userNickname is defined
+             playerNicknameDisplayElement.textContent = 'Voyager'; // Reset to default if disconnected
+        }
+
 
         if (userOrdinalsDisplayElement) userOrdinalsDisplayElement.style.display = 'none';
         if (userOrdinalsListElement) userOrdinalsListElement.innerHTML = '';
@@ -7049,67 +7051,80 @@ function updateWalletDisplay(account, walletName = '', idsWereLoadedForThisCall 
         }
     }         
     
-  async function handleWalletConnected(walletAddress, walletName) {
+async function handleWalletConnected(walletAddress, walletName) {
     console.log(`Wallet connected: ${walletName} - ${walletAddress} (handleWalletConnected start)`);
-    window.connectedAccount = walletAddress; // Using window to ensure global assignment if there was any doubt
+    window.connectedAccount = walletAddress;
     window.connectedWalletName = walletName;
-    currentUser = { uid: walletAddress, name: walletName };
+    currentUser = { uid: walletAddress, name: walletName }; // Set currentUser immediately
 
-    let idsAreNowLoaded = false;
-    let crawlersAreNowLoaded = false;
-
-    // 1. Load essential ID lists first
-    if (!punkVoyageIdsLoaded) { // Check the global flag first
-        console.log("handleWalletConnected: Calling await loadPunkVoyageIds()");
-        idsAreNowLoaded = await loadPunkVoyageIds(); // Capture the direct result
-        console.log("handleWalletConnected: loadPunkVoyageIds() finished. Result:", idsAreNowLoaded, "Global punkVoyageIdsLoaded is now:", punkVoyageIdsLoaded);
-    } else {
-        idsAreNowLoaded = true; // It was already loaded globally
-        console.log("handleWalletConnected: Punk Voyage IDs were already loaded globally.");
-    }
-
-    if (!dungeonCrawlerIdsLoaded) { // Check the global flag first
-        console.log("handleWalletConnected: Calling await loadDungeonCrawlerIds()");
-        crawlersAreNowLoaded = await loadDungeonCrawlerIds(); // Capture the direct result
-        console.log("handleWalletConnected: loadDungeonCrawlerIds() finished. Result:", crawlersAreNowLoaded, "Global dungeonCrawlerIdsLoaded is now:", dungeonCrawlerIdsLoaded);
-    } else {
-        crawlersAreNowLoaded = true; // It was already loaded globally
-        console.log("handleWalletConnected: Dungeon Crawler IDs were already loaded globally.");
-    }
-
-    console.log("handleWalletConnected: ID loading phase complete. Local flags for this call - idsAreNowLoaded:", idsAreNowLoaded, "crawlersAreNowLoaded:", crawlersAreNowLoaded);
-
-    // 2. Now update the wallet display. Pass the locally captured loading results.
-    updateWalletDisplay(walletAddress, walletName, idsAreNowLoaded, crawlersAreNowLoaded);
-
-    const currentThemeIsDark = body.classList.contains('dark-mode');
-    loadTwitterWidget(currentThemeIsDark ? 'dark' : 'light');
-
+    // 1. LOAD OR CREATE GAME STATE FIRST
     let isNewUser = false;
     try {
+        console.log(`handleWalletConnected: Attempting to load game state for ${walletAddress}`);
         const loadedState = await loadGameStateFromFirebase(walletAddress);
         if (loadedState) {
             console.log("Existing game state found for wallet. Applying it.", walletAddress);
-            applyLoadedGameState(loadedState);
+            applyLoadedGameState(loadedState); // This sets up all game variables from save
         } else {
             console.log("No game state for wallet. Creating initial state.", walletAddress);
             isNewUser = true;
             let initialNickname = `Voyager ${walletAddress.substring(0, 4)}`;
+            // createInitialGameState will set initial game variables AND save to Firebase
             await createInitialGameState(walletAddress, initialNickname);
         }
-
-        if (isNewUser || (userNickname && userNickname.startsWith("Voyager "))) {
-            setTimeout(() => {
-                promptAndSetNickname(walletAddress);
-            }, 500);
-        }
-        showPage('adventures-page');
     } catch (error) {
-        console.error("Error during wallet state processing in handleWalletConnected:", error, error.stack); // Added stack
-        showCustomPopup("An error occurred loading your game data. Details: " + error.message, "Load Error");
+        console.error("Error during game state loading/creation in handleWalletConnected:", error, error.stack);
+        showCustomPopup("An error occurred loading/creating your game data. Details: " + error.message, "State Error");
+        // If state loading fails critically, we might want to prevent further operations or handle disconnect
+        await handleWalletDisconnected(); // Attempt to clean up
+        return; // Exit if critical state error
     }
+
+    // 2. NOW, ATTEMPT TO LOAD ORDINAL/CRAWLER ID DEFINITIONS (if not already loaded)
+    // These flags (idsAreNowLoaded, crawlersAreNowLoaded) are local to this connection attempt's logic flow.
+    // The global flags (punkVoyageIdsLoaded, dungeonCrawlerIdsLoaded) track if they've *ever* been loaded successfully.
+    let idsAreNowLoaded = punkVoyageIdsLoaded; // Start with global status
+    let crawlersAreNowLoaded = dungeonCrawlerIdsLoaded;
+
+    if (!punkVoyageIdsLoaded) {
+        console.log("handleWalletConnected: Punk Voyage IDs not yet globally loaded. Calling await loadPunkVoyageIds()");
+        idsAreNowLoaded = await loadPunkVoyageIds(); // This updates the global punkVoyageIdsLoaded flag
+        console.log("handleWalletConnected: loadPunkVoyageIds() finished. Result for this call:", idsAreNowLoaded, "Global punkVoyageIdsLoaded is now:", punkVoyageIdsLoaded);
+    } else {
+        console.log("handleWalletConnected: Punk Voyage IDs were already globally loaded.");
+    }
+
+    if (!dungeonCrawlerIdsLoaded) {
+        console.log("handleWalletConnected: Dungeon Crawler IDs not yet globally loaded. Calling await loadDungeonCrawlerIds()");
+        crawlersAreNowLoaded = await loadDungeonCrawlerIds(); // This updates the global dungeonCrawlerIdsLoaded flag
+        console.log("handleWalletConnected: loadDungeonCrawlerIds() finished. Result for this call:", crawlersAreNowLoaded, "Global dungeonCrawlerIdsLoaded is now:", dungeonCrawlerIdsLoaded);
+    } else {
+        console.log("handleWalletConnected: Dungeon Crawler IDs were already globally loaded.");
+    }
+
+    console.log("handleWalletConnected: ID definition loading phase complete. Flags for updateWalletDisplay - idsAreNowLoaded:", idsAreNowLoaded, "crawlersAreNowLoaded:", crawlersAreNowLoaded);
+
+    // 3. UPDATE WALLET DISPLAY & FETCH LIVE ORDINALS/CRAWLERS
+    // Pass the results of the ID definition loading attempts for this specific connection event.
+    // updateWalletDisplay will then call fetchWalletInscriptions and fetchPlayerDungeonCrawlers
+    // which will update the (now loaded or newly created) game state if necessary.
+    updateWalletDisplay(walletAddress, walletName, idsAreNowLoaded, crawlersAreNowLoaded);
+
+    // 4. UI and Other Post-Connection Setup
+    const currentThemeIsDark = body.classList.contains('dark-mode');
+    loadTwitterWidget(currentThemeIsDark ? 'dark' : 'light');
+
+    if (isNewUser || (userNickname && userNickname.startsWith("Voyager "))) {
+        setTimeout(() => {
+            promptAndSetNickname(walletAddress); // promptAndSetNickname handles its own save
+        }, 500);
+    }
+    showPage('adventures-page'); // Ensure a page is shown
+
     console.log("handleWalletConnected: Processing finished.");
 }
+
+
 
          async function handleWalletDisconnected() { // Added "async" here
              console.log("Wallet disconnected or no account found / Initializing disconnected state.");
